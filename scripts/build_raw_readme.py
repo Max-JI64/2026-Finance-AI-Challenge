@@ -6,7 +6,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from inspect_sample_schema import PROJECT_ROOT, build_report
+from inspect_sample_schema import PROJECT_ROOT, build_report, inspect_csv
 
 
 README_PATH = PROJECT_ROOT / "data" / "raw" / "README.md"
@@ -110,6 +110,23 @@ def humanize_variable(name: str) -> str:
     return name.replace("_", " ")
 
 
+def format_size(size_bytes: int) -> str:
+    return f"{size_bytes:,} B ({size_bytes / 1024 / 1024:.2f} MiB)"
+
+
+def period_label(file_detail: dict[str, Any]) -> str:
+    filename = Path(file_detail["path"]).name
+    for year in range(2021, 2031):
+        if f"{year}년" in filename:
+            return f"{year}년 (파일명 기준)"
+    period_codes = file_detail.get("boundary_period_codes", [])
+    if not period_codes:
+        return "미확인"
+    if len(period_codes) == 1:
+        return f"{period_codes[0]} (앞·뒤 표본 기준)"
+    return f"{period_codes[0]}~{period_codes[-1]} (앞·뒤 표본 기준)"
+
+
 def variable_table(columns: list[dict[str, Any]]) -> list[str]:
     lines = [
         "| 번호 | 원본 변수명 | 표본 추정형 | 표본값 | 원본명 기준 의미 |",
@@ -179,6 +196,62 @@ def build_readme() -> str:
 
     lines.extend(
         [
+            "",
+            "## 원본 파일 인벤토리",
+            "",
+            "기간은 연도가 파일명에 있으면 파일명을 우선 사용했다. 연도 표기가 없는 CSV는 파일 앞·뒤 각각 최대 5행에서 관찰한 기준년분기 코드 범위이며 전체 스캔으로 확정한 기간이 아니다.",
+            "",
+            "| 데이터 번호 | 데이터 | 원본 파일명 | 기간 | 크기 | 형식 | 인코딩 | 변수 수 | 출처 |",
+            "| ---: | --- | --- | --- | ---: | --- | --- | ---: | --- |",
+        ]
+    )
+
+    for dataset in datasets:
+        meta = DATASET_META[dataset["dataset_name"]]
+        if dataset["dataset_name"] == "영역-상권":
+            component_names = ", ".join(Path(path).name for path in dataset["component_files"])
+            lines.append(
+                f"| {meta['number']} | {dataset['dataset_name']} | {component_names} | 공간 Snapshot(파일명에 기준시점 미표기) | "
+                f"{format_size(dataset['size_bytes'])} | CPG/DBF/PRJ/SHP/SHX | {dataset['encoding']} | {dataset['column_count']} | "
+                f"[서울 열린데이터광장]({meta['url']}) |"
+            )
+            continue
+
+        for file_detail in dataset["file_details"]:
+            lines.append(
+                f"| {meta['number']} | {dataset['dataset_name']} | `{Path(file_detail['path']).name}` | "
+                f"{period_label(file_detail)} | {format_size(file_detail['size_bytes'])} | CSV | "
+                f"{file_detail['encoding']} | {file_detail['column_count']} | [서울 열린데이터광장]({meta['url']}) |"
+            )
+
+    lines.extend(
+        [
+            "",
+            "### 핵심 1~9 외 참고 파일",
+            "",
+            "| 파일명 | 경계 표본 기간 | 크기 | 형식 | 인코딩 | 변수 수 | 현재 처리 |",
+            "| --- | --- | ---: | --- | --- | ---: | --- |",
+        ]
+    )
+    for extra_path_text in report["extra_files"]:
+        extra_path = PROJECT_ROOT / extra_path_text
+        extra = inspect_csv(extra_path)
+        lines.append(
+            f"| `{extra_path.name}` | {period_label(extra)} | {format_size(extra['size_bytes'])} | CSV | "
+            f"{extra['encoding']} | {extra['column_count']} | 집계 단위가 달라 원본 참고용으로만 보존 |"
+        )
+
+    lines.extend(
+        [
+            "",
+            "## 수집·갱신 기록",
+            "",
+            f"- 작업공간 확인 시각: {generated_at}",
+            "- 수집 방식: 재현 가능한 시점 고정을 위해 서울 열린데이터광장의 파일 Snapshot을 사용했다. API 실시간 조회는 현재 원본 수집 방식으로 사용하지 않는다.",
+            "- 다운로드일은 파일 내부나 파일명으로 확정할 수 없어 작업공간 확인 시각과 구분한다. 운영체제 수정시각을 다운로드일로 간주하지 않는다.",
+            "- 현재 `data/raw/`에는 해제된 CSV와 공간파일 구성요소가 있으며 원본 ZIP은 확인되지 않는다. 향후 압축파일을 다시 받을 경우 ZIP과 해제본을 별도 하위 경로에 함께 보존한다.",
+            "- 데이터 갱신 시 기존 파일을 덮어쓰지 않고 기준연도 또는 확인일이 드러나는 파일명·하위 폴더로 버전을 구분한다.",
+            "- `data/raw/`는 원본 전용이며 `data/interim/`, `data/processed/`와 물리적으로 분리되어 있다. 현재 두 가공 폴더에는 데이터 산출물이 없다.",
             "",
             "## 원본 파일 구성에서 확인된 주의사항",
             "",
@@ -268,4 +341,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

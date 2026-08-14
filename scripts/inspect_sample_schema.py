@@ -37,12 +37,31 @@ PRIMARY_DATASETS = (
 
 
 def detect_encoding(path: Path) -> str:
-    sample = path.read_bytes()[:MAX_ENCODING_BYTES]
+    with path.open("rb") as stream:
+        sample = stream.read(MAX_ENCODING_BYTES)
     candidates = ("utf-8-sig", "cp949", "euc-kr")
     return min(
         candidates,
         key=lambda encoding: sample.decode(encoding, errors="replace").count("\ufffd"),
     )
+
+
+def read_tail_rows(path: Path, encoding: str) -> list[list[str]]:
+    """Read at most 64 KiB from the file tail and return up to five rows."""
+
+    with path.open("rb") as stream:
+        stream.seek(0, 2)
+        file_size = stream.tell()
+        start = max(0, file_size - MAX_ENCODING_BYTES)
+        stream.seek(start)
+        tail_bytes = stream.read(MAX_ENCODING_BYTES)
+
+    tail_text = tail_bytes.decode(encoding, errors="replace")
+    tail_lines = tail_text.splitlines()
+    if start > 0 and tail_lines:
+        tail_lines = tail_lines[1:]
+    rows = list(csv.reader(io.StringIO("\n".join(tail_lines))))
+    return rows[-MAX_SAMPLE_ROWS:]
 
 
 def infer_type(values: list[str]) -> str:
@@ -77,6 +96,25 @@ def inspect_csv(path: Path) -> dict[str, Any]:
             except StopIteration:
                 break
 
+    tail_rows = read_tail_rows(path, encoding)
+    period_column = next(
+        (
+            index
+            for index, name in enumerate(header)
+            if name in {"기준_년분기_코드", "stdr_yyqu_cd"}
+        ),
+        None,
+    )
+    boundary_period_codes = []
+    if period_column is not None:
+        boundary_period_codes = sorted(
+            {
+                row[period_column]
+                for row in rows + tail_rows
+                if period_column < len(row) and row[period_column]
+            }
+        )
+
     columns = []
     for index, name in enumerate(header):
         values = [row[index] for row in rows if index < len(row)]
@@ -97,6 +135,7 @@ def inspect_csv(path: Path) -> dict[str, Any]:
         "column_count": len(header),
         "header": header,
         "columns": columns,
+        "boundary_period_codes": boundary_period_codes,
     }
 
 
@@ -249,6 +288,16 @@ def build_report() -> dict[str, Any]:
                 "headers_match_across_files": header_match,
                 "columns": representative["columns"],
                 "schema_variants": schema_variants,
+                "file_details": [
+                    {
+                        "path": item["path"],
+                        "size_bytes": item["size_bytes"],
+                        "encoding": item["encoding"],
+                        "column_count": item["column_count"],
+                        "boundary_period_codes": item["boundary_period_codes"],
+                    }
+                    for item in inspected
+                ],
             }
         )
 

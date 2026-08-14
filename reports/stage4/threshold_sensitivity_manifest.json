@@ -1,0 +1,23 @@
+{
+  "created_at_kst": "2026-08-14T23:43+09:00",
+  "status": "threshold_evidence_only",
+  "development_target_period": [
+    "20221",
+    "20244"
+  ],
+  "locked_test_target_period_excluded": [
+    "20251",
+    "20254"
+  ],
+  "thresholds": [
+    0.05,
+    0.08,
+    0.1,
+    0.12,
+    0.15,
+    0.18,
+    0.2
+  ],
+  "eligible_rows_all_periods": 329169,
+  "final_threshold_selected": false
+}

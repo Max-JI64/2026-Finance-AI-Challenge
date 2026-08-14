@@ -1,0 +1,134 @@
+{
+  "created_at_kst": "2026-08-14T23:17+09:00",
+  "panel": "data\\processed\\stage3_panel.parquet",
+  "row_count": 439141,
+  "column_count": 199,
+  "key": [
+    "기준_연도",
+    "기준_분기",
+    "상권_코드",
+    "서비스_업종_코드"
+  ],
+  "period": {
+    "min": "20211",
+    "max": "20254",
+    "quarters": 20
+  },
+  "sha256": "88370a02f592c020196613e69a9dc8e642cf3ba14a00003bb6cdd37198f40e07",
+  "chunk_size": 20000,
+  "raw_full_memory_load": false,
+  "source_sales_rows": 439141,
+  "source_store_rows": 1528872,
+  "auxiliary_rows": {
+    "flow": 34633,
+    "change": 34650,
+    "resident": 34275,
+    "worker": 34386,
+    "facility": 33138,
+    "apartment": 30790
+  },
+  "spatial_rows": 1650,
+  "qa": {
+    "source_sales_rows": 439141,
+    "final_rows": 439141,
+    "duplicate_key_count": 0,
+    "null_key_rows": 0,
+    "join_unmatched_rows": {
+      "점포_결합_여부": 0,
+      "유동__결합_여부": 60,
+      "변화__결합_여부": 0,
+      "상주__결합_여부": 1737,
+      "직장__결합_여부": 802,
+      "시설__결합_여부": 3492,
+      "아파트__결합_여부": 32742,
+      "공간__결합_여부": 0
+    }
+  },
+  "source_inventory": [
+    {
+      "file": "data\\raw\\서울시 상권분석서비스(추정매출-상권)_2024년.csv",
+      "size_bytes": 40356222,
+      "modified": 1749022175857099100
+    },
+    {
+      "file": "data\\raw\\서울시 상권분석서비스(추정매출-상권)_2025년.csv",
+      "size_bytes": 39698674,
+      "modified": 1779065035775627200
+    },
+    {
+      "file": "data\\raw\\서울시_상권분석서비스(추정매출-상권)_2021년.csv",
+      "size_bytes": 41190289,
+      "modified": 1749022331419948800
+    },
+    {
+      "file": "data\\raw\\서울시_상권분석서비스(추정매출-상권)_2022년.csv",
+      "size_bytes": 41112625,
+      "modified": 1749022210950927900
+    },
+    {
+      "file": "data\\raw\\서울시_상권분석서비스(추정매출-상권)_2023년.csv",
+      "size_bytes": 40887998,
+      "modified": 1749022191216509800
+    },
+    {
+      "file": "data\\raw\\서울시 상권분석서비스(점포-상권)_2024년.csv",
+      "size_bytes": 30972314,
+      "modified": 1749020905229276200
+    },
+    {
+      "file": "data\\raw\\서울시 상권분석서비스(점포-상권)_2025년.csv",
+      "size_bytes": 31051537,
+      "modified": 1779338909155781900
+    },
+    {
+      "file": "data\\raw\\서울시_상권분석서비스(점포-상권)_2021년.csv",
+      "size_bytes": 30665727,
+      "modified": 1749020941729354600
+    },
+    {
+      "file": "data\\raw\\서울시_상권분석서비스(점포-상권)_2022년.csv",
+      "size_bytes": 30837274,
+      "modified": 1749020979682559400
+    },
+    {
+      "file": "data\\raw\\서울시_상권분석서비스(점포-상권)_2023년.csv",
+      "size_bytes": 31066178,
+      "modified": 1749020972073166900
+    },
+    {
+      "file": "data\\raw\\서울시 상권분석서비스(길단위인구-상권).csv",
+      "size_bytes": 8156415,
+      "modified": 1786713685446345100
+    },
+    {
+      "file": "data\\raw\\서울시 상권분석서비스(상권변화지표-상권).csv",
+      "size_bytes": 2981158,
+      "modified": 1786713707753378300
+    },
+    {
+      "file": "data\\raw\\서울시 상권분석서비스(상주인구-상권).csv",
+      "size_bytes": 6383643,
+      "modified": 1786713725156596800
+    },
+    {
+      "file": "data\\raw\\서울시 상권분석서비스(직장인구-상권).csv",
+      "size_bytes": 5479490,
+      "modified": 1786713739314248200
+    },
+    {
+      "file": "data\\raw\\서울시 상권분석서비스(집객시설-상권).csv",
+      "size_bytes": 3799538,
+      "modified": 1786713762969218100
+    },
+    {
+      "file": "data\\raw\\서울시 상권분석서비스(아파트-상권).csv",
+      "size_bytes": 3774195,
+      "modified": 1786713776286565400
+    }
+  ],
+  "excluded": [
+    "상권변화지표-자치구",
+    "직장인구-상권배후지"
+  ],
+  "target_created": false
+}

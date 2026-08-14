@@ -1,0 +1,33 @@
+status:
+  cv_design: approved
+  target_threshold: approved
+
+target:
+  name: persistent_two_quarter_yoy_sales_decline
+  horizon_quarters: 2
+  formula: (future_q1_sales + future_q2_sales - year_ago_q1_sales - year_ago_q2_sales) / (year_ago_q1_sales + year_ago_q2_sales)
+  positive_when: future_q1_yoy_lt_0_and_future_q2_yoy_lt_0_and_combined_growth_lte_negative_threshold
+  threshold: 0.10
+  split_basis: target_end_period
+
+cross_validation:
+  strategy: expanding_window
+  folds:
+    - fold: 1
+      train_target_end_period: [20222, 20233]
+      validation_target_end_period: [20241, 20241]
+    - fold: 2
+      train_target_end_period: [20222, 20234]
+      validation_target_end_period: [20242, 20242]
+    - fold: 3
+      train_target_end_period: [20222, 20241]
+      validation_target_end_period: [20243, 20243]
+    - fold: 4
+      train_target_end_period: [20222, 20242]
+      validation_target_end_period: [20244, 20244]
+  purge_rule: training_target_end_precedes_validation_target_start
+
+final_evaluation:
+  refit_target_end_period: [20222, 20243]
+  locked_test_target_end_period: [20251, 20254]
+  test_access_rule: evaluate_once_after_model_and_threshold_are_fixed

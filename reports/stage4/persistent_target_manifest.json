@@ -1,0 +1,17 @@
+{
+  "created_at_kst": "2026-08-14T23:47+09:00",
+  "target_structure_approved": true,
+  "target_threshold_approved": true,
+  "definition": {
+    "future_quarters": 2,
+    "both_quarters_yoy_negative": true,
+    "combined_yoy_threshold": 0.1
+  },
+  "eligibility": {
+    "eligible_rows_all": 302479,
+    "eligible_rows_development": 222973,
+    "target_end_period_min": "20222",
+    "target_end_period_max": "20254"
+  },
+  "locked_test_statistics_used_for_selection": false
+}

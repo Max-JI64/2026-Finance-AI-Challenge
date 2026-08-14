@@ -6,7 +6,7 @@ https://daker.ai/public/hackathons/2026-finance-ai-challenge
 
 서울시 상권·업종의 **다음 분기 매출환경 악화 위험**을 예측하고, 사용자가 입력한 사업체 금융부담을 별도로 진단한 뒤 공식 정책자료에 근거한 지원정책 추천과 설명을 제공하는 MVP입니다.
 
-현재 상태는 **Stage 0 개발 기반 구축**입니다. 실제 데이터, 학습 모델, 정책 추천 및 RAG 기능은 아직 구현되지 않았으며 고정된 예시 결과를 반환하지 않습니다.
+현재 **Stage 0~3을 완료**해 원본 품질검증과 2021Q1~2025Q4 Panel Dataset을 생성했습니다. Target·학습 모델·정책 추천·RAG는 아직 구현하지 않았으며 고정된 예시 결과를 반환하지 않습니다.
 
 ## 예측 범위
 
@@ -46,6 +46,18 @@ Stage 0 전체 확인:
 ```powershell
 .\scripts\verify_stage0.ps1 -PythonPath '.\.venv\Scripts\python.exe'
 ```
+
+Stage 2 원본 품질검증과 Stage 3 Panel 재생성:
+
+```powershell
+& 'C:\Program Files\Python313\python.exe' .\src\data\run_stage2_quality.py
+& 'C:\Program Files\Python313\python.exe' .\src\data\build_stage3_panel.py
+```
+
+- Stage 2 결과: `reports/stage2/qa_summary.md`
+- Stage 3 결과: `data/processed/stage3_panel.parquet` (439,141행 × 199열)
+- Stage 3 명세: `reports/stage3/panel_manifest.json`, `reports/stage3/data_dictionary.csv`
+- 두 스크립트 모두 원본 CSV를 20,000행 청크로 읽으며 `data/raw/`를 수정하지 않습니다.
 
 개발 서버:
 
@@ -97,5 +109,4 @@ config/              경로·임계값·가중치·시드
 & 'C:\Program Files\Python313\python.exe' -m pytest
 ```
 
-현재 개발 환경의 검증 결과와 아직 사람이 확인해야 할 항목은 `reports/stage0/verification.md`에 기록합니다.
-
+단계별 검증 결과는 `reports/stage0/`, `reports/stage2/`, `reports/stage3/`에 기록합니다.

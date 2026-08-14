@@ -24,4 +24,21 @@
 | 2026-08-14 22:33 (KST) | 원본 분석 | CSV별 최대 64 KiB와 최대 5행, 공간 DBF 헤더와 최대 5개 레코드만 읽어 1~9번 데이터의 변수표를 작성했다. | `data/raw/README.md`, 전체 변수 행 232개 |
 | 2026-08-14 22:33 (KST) | 원본 분석 | 추정매출 2021~2025년 헤더가 동일하고, 점포 데이터는 2025년부터 영문 헤더로 변경된 사실을 기록했다. 전처리는 수행하지 않았다. | `data/raw/README.md`의 데이터별 변수표와 주의사항 |
 | 2026-08-14 22:33 (KST) | 향후 수집 | 정책추천·RAG 자료는 현재 수집하지 않고 Stage 8~9 시작 시 최신성 확인 후 필수·보조·선택 자료를 수집하도록 명시했다. | `data/raw/README.md`의 정책추천·RAG 후속 수집 목록 |
-
+| 2026-08-14 22:35 (KST) | 검증 | 변수표 232행, 데이터 섹션 9개, 정책·RAG 링크 8개, LOG 시간 형식을 자동 대조했다. 원본 외 `interim`·`processed`·`models`에는 가공 산출물을 만들지 않았다. | 문서 검증 통과, 전처리 미수행 |
+| 2026-08-14 22:44 (KST) | 정정 | 초기 인코딩 표본 함수가 결과는 64 KiB만 사용했지만 `read_bytes()`로 파일 전체를 메모리에 읽는 구현임을 발견했다. 스트림에서 앞 64 KiB와 뒤 64 KiB만 읽도록 수정했다. | `scripts/inspect_sample_schema.py`; 원본 수정·전처리는 없었음 |
+| 2026-08-14 22:44 (KST) | Stage 0 | 1인 팀 기준으로 범위·환경·구조·보안·자동 검증 증거를 재판정하고 체크리스트의 Stage 0 Gate를 완료 처리했다. | `MVP 단계별 구현 체크리스트.md`, `reports/stage0/verification.md` |
+| 2026-08-14 22:44 (KST) | Stage 1 | 1~9번 원본의 출처, 파일명, 경계 표본 기간, 크기, 형식, 인코딩, 변수 수와 원본·가공 폴더 분리를 기록했다. 원본 ZIP과 CSV 전체 행 수는 미확인으로 남겼다. | `data/raw/README.md` |
+| 2026-08-14 22:44 (KST) | Stage 2 | 점포 2025년 영문 헤더, 데이터별 키, 기간 차이, 자치구·상권배후지 집계 단위, 결측·중복·이상치·공간·결합 검증 방법을 포함한 실행계획을 작성했다. | `reports/stage2/quality_validation_plan.md`; 실행·전처리 미수행 |
+| 2026-08-14 23:05 (KST) | Stage 2 | 원본 CSV를 20,000행 청크로 순차 검사해 기간·행 수·키·결측·중복·논리값·코드 관계·결합률을 확정했다. 점포 2025년 헤더는 읽기 시점에만 표준화했다. | 매출·점포 기본키 중복 0건, 매출→점포·영역 미매칭 0건, 공통기간 2021Q1~2025Q4; `reports/stage2/` |
+| 2026-08-14 23:05 (KST) | 공간 QA | 영역-상권의 CPG `UTF-8`, CRS EPSG:5181, 상권코드 1,650개, 빈·중복 도형 0건을 확인했다. 유효하지 않은 도형 6건은 삭제하지 않고 검토 대상으로 기록했다. | `reports/stage2/spatial_quality.csv` |
+| 2026-08-14 23:13 (KST) | Stage 3 | 매출을 기준 테이블로 점포와 4~9번 상권 자료를 디스크 기반 left join하고 현재·과거 분기만 사용한 매출·점포 변화 Feature를 생성했다. | `data/processed/stage3_panel.parquet` — 439,141행 × 199열, 기본키 중복·결측 0건 |
+| 2026-08-14 23:17 (KST) | 재현성 검증 | 같은 원본으로 Stage 3 빌드를 두 번 실행해 행 수·열 수·Parquet SHA-256이 동일함을 확인했다. 세 개 상권·업종 표본의 매출·점포·전분기 증감률도 원본과 일치했다. | SHA-256 `88370a02f592c020196613e69a9dc8e642cf3ba14a00003bb6cdd37198f40e07`; `reports/stage3/reproducibility_check.json`, `manual_spot_check.csv` |
+| 2026-08-14 23:19 (KST) | 문서화 | Stage 1~3 상태, QA 결과, Panel 재생성 방법, 데이터 사전, Feature 식과 다음 Stage 전달사항을 문서에 반영했다. | `MVP 단계별 구현 체크리스트.md`, `README.md`, `data/raw/README.md`, `reports/stage3/` |
+| 2026-08-14 23:28 (KST) | 운영 규칙 | Target·데이터 처리·기간 분할·평가 지표·최종 모델 등 결과를 실질적으로 바꾸는 선택이 필요하면 작업을 멈추고 사용자의 명시적 허락을 받은 뒤 재개하도록 세션 공통 규칙을 확정했다. | `AGENTS.md`, `AGENT_MEMORY.md`, `MVP 단계별 구현 체크리스트.md` |
+| 2026-08-14 23:31 (KST) | 검증 원칙 | 필수 Stage Gate와 핵심 수치가 통과하면 비필수 검증 실패만으로 반복하지 않고 한계를 기록한 뒤 다음 단계로 진행하도록 세션 공통 규칙을 추가했다. | `AGENTS.md`, `AGENT_MEMORY.md`, `MVP 단계별 구현 체크리스트.md` |
+| 2026-08-14 23:34 (KST) | Stage 4 | 다음 분기 전년동기 대비 매출증감률 기준 Target 후보 4개와 시간 분할 A·B의 클래스 비율을 계산했다. 최종 Target과 분할은 사용자 선택 전까지 확정하지 않았다. | 비교 가능 329,169행; `src/data/analyze_stage4_candidates.py`, `reports/stage4/` |
+| 2026-08-14 23:47 (KST) | Stage 4 결정 | 단일 분기 악화 대신 향후 두 분기가 모두 전년동기보다 감소하고 두 분기 합산 매출도 기준 이상 감소하는 지속 악화 Target 구조를 채택했다. 4개 expanding-window Fold와 한 분기 Purge, 2025년 잠긴 테스트를 확정했다. | `config/stage4.yaml` |
+| 2026-08-14 23:47 (KST) | Stage 4 분석 | 지속 악화 Target의 5~20% 합산 감소 임계값을 개발기간에서 비교했다. 임계값은 사용자 승인 전까지 확정하지 않았고 머신러닝 학습은 시작하지 않았다. | 전체 생성 가능 302,479행, 개발기간 222,973행; `reports/stage4/persistent_target_report.md` |
+| 2026-08-14 23:49 (KST) | Stage 5 계획 | 특정 모델을 미리 확정하지 않고 여러 후보를 동일 조건으로 비교한 뒤 최종 후보 1개를 선택하고, 선택된 모델에만 Optuna 튜닝을 수행하기로 정했다. | `MVP 단계별 구현 체크리스트.md`; 후보 모델 목록 미정 |
+| 2026-08-14 23:56 (KST) | Stage 4 준비 | 승인된 구조를 기준으로 개발 라벨·4개 Fold·라벨 없는 잠긴 테스트 Feature를 청크 단위로 생성하는 코드를 준비했다. 10% 임계값 확정 문구가 필요해 실행은 보류했고 결과 데이터는 생성하지 않았다. | `src/data/build_stage4_dataset.py`, `config/stage4.yaml`은 임계값 승인 대기 상태 |
+| 2026-08-15 00:06 (KST) | Stage 4 완료 | 사용자가 두 분기 합산 전년동기 대비 10% 감소 기준을 확정해 개발 라벨과 4개 시간순 Fold를 생성했다. 개발 222,973행 중 양성 56,369행(25.28%)이며, 2025 잠긴 테스트 79,506행은 Feature만 저장해 Target 값·통계를 노출하지 않았다. 기본키·공식·Fold 기간·Feature 누수 필수 검증을 1회 통과해 Gate 4를 완료했다. | `data/processed/stage4_development.parquet`, `stage4_fold_membership.parquet`, `stage4_locked_test_features.parquet`, `reports/stage4/stage4_manifest.json` |

@@ -1,0 +1,12 @@
+{
+  "verified_at_kst": "2026-08-14T23:17+09:00",
+  "runs": 2,
+  "same_inputs": true,
+  "row_count_run_1": 439141,
+  "row_count_run_2": 439141,
+  "column_count_run_1": 199,
+  "column_count_run_2": 199,
+  "sha256_run_1": "88370a02f592c020196613e69a9dc8e642cf3ba14a00003bb6cdd37198f40e07",
+  "sha256_run_2": "88370a02f592c020196613e69a9dc8e642cf3ba14a00003bb6cdd37198f40e07",
+  "passed": true
+}

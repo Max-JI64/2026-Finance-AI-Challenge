@@ -32,3 +32,6 @@ rag/index/*
 !rag/index/.gitkeep
 
 *.csv
+!reports/**/*.csv
+*.sqlite
+*.parquet

@@ -1,0 +1,17 @@
+{
+  "created_at_kst": "2026-08-14T23:34+09:00",
+  "status": "candidate_analysis_only",
+  "source": "data\\interim\\stage3_panel.sqlite",
+  "source_table": "core_features",
+  "eligibility": {
+    "next_quarter_pair_rows": 406787,
+    "with_year_ago_rows": 329169,
+    "zero_year_ago_sales_rows": 0,
+    "eligible_rows": 329169,
+    "target_period_min": "20221",
+    "target_period_max": "20254"
+  },
+  "final_target_selected": false,
+  "final_split_selected": false,
+  "model_ready_dataset_created": false
+}
