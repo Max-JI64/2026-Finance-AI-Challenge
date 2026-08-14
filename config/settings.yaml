@@ -1,0 +1,52 @@
+project:
+  name: seoul-small-business-ai-navigator
+  version: 0.1.0
+  random_seed: 42
+  timezone: Asia/Seoul
+
+app:
+  host: 127.0.0.1
+  port: 8000
+  log_level: info
+
+paths:
+  raw_data: data/raw
+  interim_data: data/interim
+  processed_data: data/processed
+  models: models
+  rag_documents: rag/documents
+  rag_metadata: rag/metadata
+  rag_index: rag/index
+  reports: reports
+
+prediction:
+  target_name: next_quarter_sales_environment_deterioration
+  target_unit: commercial_area_and_business_type
+  geography: Seoul
+  risk_score_min: 0
+  risk_score_max: 100
+  # Provisional UI boundaries. Recalibrate against validation distribution.
+  risk_level_thresholds:
+    medium: 40
+    high: 70
+
+finance:
+  # Provisional only. Stage 7 must document and test final formulas/boundaries.
+  burden_level_thresholds:
+    medium: 40
+    high: 70
+
+recommendation:
+  # Provisional weights; Stage 8 must validate and version them.
+  weights:
+    region: 0.20
+    business_type: 0.20
+    business_age: 0.10
+    funding_purpose: 0.20
+    application_period: 0.20
+    risk_type_alignment: 0.10
+
+secrets:
+  openai_api_key_env: OPENAI_API_KEY
+  seoul_open_data_api_key_env: SEOUL_OPEN_DATA_API_KEY
+  public_data_api_key_env: PUBLIC_DATA_API_KEY

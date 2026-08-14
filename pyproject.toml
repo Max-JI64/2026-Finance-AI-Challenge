@@ -1,0 +1,11 @@
+[project]
+name = "seoul-small-business-ai-navigator"
+version = "0.1.0"
+description = "Seoul commercial-area risk, financial burden, and policy-support MVP"
+requires-python = ">=3.13,<3.14"
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+pythonpath = ["."]
+
