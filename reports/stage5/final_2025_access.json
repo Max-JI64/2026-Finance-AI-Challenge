@@ -1,0 +1,15 @@
+{
+  "status": "completed",
+  "started_at_kst": "2026-08-15T18:49:52+09:00",
+  "updated_at_kst": "2026-08-15T18:50:42+09:00",
+  "model": "lightgbm_trial10",
+  "feature_set": "common_baseline",
+  "locked_target_opened": true,
+  "threshold_metrics_computed": false,
+  "rerun_prohibited_after_completion": true,
+  "contract_sha256": "06c8ec9504a0a418e0158e6db348ff24c179e254b4b1833092ffd02e6eb94d54",
+  "target_opened_at_kst": "2026-08-15T18:50:40+09:00",
+  "completed_at_kst": "2026-08-15T18:50:42+09:00",
+  "metrics_file": "reports\\stage5\\final_2025_metrics.json",
+  "manifest_file": "reports\\stage5\\final_2025_manifest.json"
+}

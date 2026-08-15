@@ -4,9 +4,14 @@ status:
   pre_model_eda: completed
   feature_contract: approved
   feature_contract_option: D_common_baseline_plus_tree_ablation
-  base_comparison: not_started_user_hold
-  optuna_candidates: awaiting_user_approval
-  optuna_execution: blocked_until_top3_approval
+  base_comparison: approved_to_run
+  optuna_candidates: approved
+  optuna_execution: completed
+  representative_trials: approved
+  ensemble_execution: completed
+  final_model: completed_lightgbm_trial10_artifact_verified
+  operating_threshold: not_required_for_primary_relative_ranking
+  locked_2025_evaluation: completed_threshold_independent_once
 
 data:
   development: data/processed/stage4_development.parquet
@@ -35,7 +40,7 @@ model_families:
 feature_strategy:
   name: D_common_baseline_plus_tree_ablation
   approved_at_kst: "2026-08-15T12:17+09:00"
-  execution_status: planned_not_started
+  execution_status: optuna_completed
   contract_document: reports/stage45/feature_contract.md
   common_baseline:
     basis: option_A_structural_deduplication
@@ -58,15 +63,15 @@ feature_strategy:
       - resident_population_raw_components
       - worker_population_raw_components
     retention_rule:
-      status: exact_tolerance_requires_user_approval_before_execution
+      status: full_result_review_without_precommitted_numeric_cutoff
       evidence: [mean_average_precision, mean_roc_auc, worst_fold_average_precision, fold_standard_deviation]
-      principle: retain only when co-primary performance and time-fold stability improve without an approved material deterioration
+      principle: run every planned independent ablation, disclose all fixed comparison metrics and baseline deltas, and make no automatic retain/drop decision before holistic user review
   comparison_order:
     - common_baseline_all_models
     - tree_raw_group_ablation
     - rank_eligible_variants_and_select_top_3
   user_hold:
-    stage5_execution_authorized: false
+    stage5_execution_authorized: true
     checkpoint_reuse_authorized: false
 
 preprocessing:
@@ -85,12 +90,26 @@ metrics:
     selection_use: false
   stability: [fold_mean, fold_standard_deviation, worst_fold]
   candidate_ranking:
-    rule: average_of_mean_auprc_rank_and_mean_auroc_rank
-    tie_breakers: [worst_fold_auprc, mean_brier_score, total_fit_seconds]
+    rule: no_automatic_ranking_before_user_review
+    review_dimensions: [mean_average_precision, mean_roc_auc, worst_fold_average_precision, fold_standard_deviation, mean_brier_score, mean_log_loss, total_fit_seconds, inference_seconds]
   final_threshold:
-    metric: f2
+    metric: f2_candidate
     source: tuned_model_oof_predictions
-    status: future_step
+    primary_service_output: relative_percentiles_and_priority_ranking
+    decision_dimensions: [recall, precision, f2, flagged_population_rate, intervention_capacity]
+    rule: do_not_maximize_f2_without_reviewing_how_many_cases_are_flagged
+    status: deferred_optional_for_binary_action_only
+    required_for_primary_service_output: false
+    trigger: only_if_service_adds_binary_inclusion_or_exclusion_action
+  locked_test_without_threshold:
+    recommended_scope: [average_precision_auprc, roc_auc, brier_score, log_loss]
+    exclude: [binary_classification_metrics, threshold_search, threshold_selection]
+    status: completed
+    approved_at_kst: "2026-08-15T18:30+09:00"
+    model_must_remain_frozen_after_result: true
+    completed_at_kst: "2026-08-15T18:50:42+09:00"
+    threshold_search_performed: false
+    binary_metrics_computed: false
 
 screen_budget:
   random_seed: 20260815
@@ -102,7 +121,150 @@ screen_budget:
   max_parallel_cpu_threads: 8
 
 optuna:
-  candidates: top_3_after_base_comparison
+  approval:
+    approved_at_kst: "2026-08-15T15:00+09:00"
+    basis: user_requested_next_work_after_top3_recommendation
+  completion:
+    completed_at_kst: "2026-08-15T17:23+09:00"
+    completed_trials: 60
+    completed_fold_fits: 240
+    failed_trials: 0
+    locked_test_opened: false
+  candidates:
+    - model: lightgbm
+      feature_set: common_baseline
+    - model: xgboost
+      feature_set: tree_plus_transaction_count_raw_components
+    - model: catboost
+      feature_set: tree_plus_worker_population_raw_components
   trials_per_model: 20
-  execute_only_after_user_approval: true
+  folds_per_trial: 4
+  maximum_model_fits: 240
+  objective:
+    type: multi_objective
+    directions: [maximize, maximize]
+    metrics: [mean_average_precision, mean_roc_auc]
+    scalar_weighting: false
+  sampler:
+    name: tpe
+    multivariate: true
+    random_seed: 20260815
+  storage: reports/stage5/optuna_studies.db
+  resumption: enabled
+  pruning: disabled_multi_objective_not_supported
+  execute_only_after_user_approval: false
   tuned_ensemble_afterward: [soft_voting, stacking]
+
+oof_ensemble:
+  approval:
+    approved_at_kst: "2026-08-15T17:30+09:00"
+    basis: user_approved_recommended_trials_and_three_model_ensemble_comparison
+  selected_trials:
+    - model: lightgbm
+      feature_set: common_baseline
+      trial_number: 10
+    - model: xgboost
+      feature_set: tree_plus_transaction_count_raw_components
+      trial_number: 16
+    - model: catboost
+      feature_set: tree_plus_worker_population_raw_components
+      trial_number: 18
+  individual_models: [lightgbm, xgboost, catboost]
+  soft_voting:
+    weights: equal
+    probability_formula: mean_of_three_selected_model_probabilities
+  stacking:
+    meta_model: logistic_regression_l2
+    meta_features: selected_model_probabilities_only
+    outer_evaluation: fixed_stage4_four_folds
+    inner_validation_periods_per_outer_fold: 3
+    inner_purge_quarters: 1
+    inner_rule: train_target_end_at_least_two_quarters_before_inner_validation_target_end
+  final_model_selection: prohibited_until_full_oof_result_user_review
+  locked_test_access: forbidden
+  execution:
+    mode: user_terminal
+    console_progress: true
+    file_log: reports/stage5/ensemble_run.log
+    progress_file: reports/stage5/ensemble_progress.json
+    checkpoints: reports/stage5/ensemble_checkpoints
+    resumable: true
+  completion:
+    completed_at_kst: "2026-08-15T18:06+09:00"
+    completed_steps: 52
+    completed_model_fits: 48
+    completed_outer_fold_ensemble_steps: 4
+    failed_steps: 0
+    locked_test_opened: false
+    final_model_status: selected_lightgbm_trial10_before_locked_test
+    threshold_status: not_selected
+  service_selection_policy:
+    project_priority: working_ai_financial_service_mvp_over_small_metric_gain
+    prediction_role: prioritize_area_industry_risk_groups_not_perfect_binary_classification
+    reviewed_finalists: [soft_voting_equal, lightgbm_trial10]
+    performance_first_recommendation: soft_voting_equal
+    simplicity_maintainability_preference: lightgbm_trial10
+    current_final_choice: lightgbm_trial10
+    feature_set: common_baseline
+    feature_count: 197
+    selection_reason: working_service_operability_and_maintenance_outweigh_soft_voting_small_oof_gain
+    frozen_before_locked_2025: true
+    switching_after_locked_2025: prohibited
+    selection_deadline: before_any_locked_2025_evaluation
+    locked_2025_role: one_time_generalization_audit_only_not_model_selection
+
+final_2025_evaluation:
+  status: completed_threshold_independent_once
+  completed_at_kst: "2026-08-15T18:50:42+09:00"
+  model: lightgbm_trial10
+  feature_set: common_baseline
+  feature_count: 197
+  refit_target_end_period: [20222, 20243]
+  refit_rows: 202918
+  locked_test_target_end_period: [20251, 20254]
+  locked_test_rows: 79506
+  locked_target_opened: true
+  rerun_prohibited: true
+  operating_threshold: null
+  threshold_search_performed: false
+  binary_metrics_computed: false
+  metrics:
+    average_precision: 0.6256952583286859
+    roc_auc: 0.7918213302386358
+    brier_score: 0.16417684015602654
+    log_loss: 0.49582902221563196
+  verification:
+    saved_metrics_recomputed: true
+    saved_model_reloaded: true
+    prediction_rows_match_locked_features: true
+    duplicate_prediction_row_ids: 0
+    probabilities_finite_and_bounded: true
+    output_sha256_matches_manifest: true
+  manifest: reports/stage5/final_2025_manifest.json
+  report: reports/stage5/final_2025_report.md
+  model_artifact: reports/stage5/artifacts/stage5_lightgbm_trial10.joblib
+
+stage6_service_output:
+  model_role: relative_risk_ranking_not_absolute_failure_probability
+  primary_outputs: [relative_risk_percentile, top_share_display, priority_rank]
+  raw_model_score_use: internal_ranking_and_audit_only
+  probability_claim: prohibited
+  binary_risk_safe_label: prohibited_without_separate_user_approved_policy
+  comparison_population:
+    status: approved
+    approved_at_kst: "2026-08-15T19:10+09:00"
+    policy_version: v1
+    primary: same_quarter_same_industry_across_areas
+    secondary: same_quarter_all_area_industry_rows
+    display: both_percentiles_with_primary_same_industry
+    changeable_without_model_refit: true
+    change_requirements: [new_policy_version, regenerated_reference_distribution, api_ui_regression_tests]
+  operating_threshold:
+    required_now: false
+    status: deferred_until_binary_service_action_exists
+  frozen_model_v1_contract:
+    target_definition: immutable
+    feature_set: immutable
+    model_params: immutable
+    locked_2025_result: immutable
+    change_requires: [new_model_version, chronological_validation, new_independent_test]

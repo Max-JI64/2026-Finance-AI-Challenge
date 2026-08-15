@@ -1,0 +1,14 @@
+{
+  "status": "completed",
+  "started_at_kst": "2026-08-15T17:46:04+09:00",
+  "updated_at_kst": "2026-08-15T18:06:54+09:00",
+  "planned_steps": 52,
+  "completed_steps": 52,
+  "progress_percent": 100.0,
+  "new_model_fits_this_run": 48,
+  "planned_model_fit_steps": 48,
+  "current": "모든 OOF·Ensemble 결과 저장 완료",
+  "error": null,
+  "locked_test_opened": false,
+  "log_file": "reports\\stage5\\ensemble_run.log"
+}

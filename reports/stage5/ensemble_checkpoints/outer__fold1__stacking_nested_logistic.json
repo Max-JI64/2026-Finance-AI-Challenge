@@ -1,0 +1,51 @@
+{
+  "status": "completed",
+  "created_at_kst": "2026-08-15T17:50:09+09:00",
+  "run_id": "stacking_nested_logistic",
+  "model": "stacking",
+  "feature_set_id": "three_selected_trial_probabilities",
+  "feature_set_sha256": null,
+  "params_sha256": null,
+  "split_kind": "outer",
+  "outer_fold": 1,
+  "validation_period": null,
+  "train_rows": 122011,
+  "validation_rows": 20265,
+  "fit_seconds": 0.07852169999387115,
+  "predict_seconds": 0.004943899984937161,
+  "metrics": {
+    "average_precision": 0.6144495947638419,
+    "roc_auc": 0.8056212505430274,
+    "log_loss": 0.4744963814963663,
+    "brier_score": 0.15457294218122852,
+    "threshold": 0.5,
+    "precision": 0.6667676461678279,
+    "recall": 0.38818342151675483,
+    "f1": 0.49069223052056626,
+    "f2": 0.4235787691004965,
+    "mcc": 0.38027209382534166,
+    "balanced_accuracy": 0.6564075723548145,
+    "accuracy": 0.7745373797187268,
+    "predicted_positive_rate": 0.16289168517147792,
+    "tn": 13495,
+    "fp": 1100,
+    "fn": 3469,
+    "tp": 2201
+  },
+  "detail": {
+    "meta_model": "logistic_regression_l2",
+    "inner_validation_periods": [
+      20231,
+      20232,
+      20233
+    ],
+    "inner_oof_rows": 60925,
+    "coefficients": [
+      3.1059197667573333,
+      0.7271588222136707,
+      0.9692183173842569
+    ],
+    "intercept": -2.425122046980022
+  },
+  "locked_test_opened": false
+}

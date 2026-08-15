@@ -5,7 +5,7 @@
 
 ## Project snapshot
 
-- Last updated: 2026-08-15T12:24+09:00
+- Last updated: 2026-08-15T19:15+09:00
 - Purpose: Build a working MVP that predicts Seoul commercial-district sales-environment risk, diagnoses a small business's financial burden, and recommends policy support with official-document-grounded RAG explanations.
 - Important paths: `프로젝트 계획서.md` is the main MVP plan; `MVP 단계별 구현 체크리스트.md` is the execution and completion-gate document; `대회개요.md` contains the competition overview.
 
@@ -76,16 +76,16 @@
 
 - `decision:stage45-modeling-eda-plan`
   - Created: 2026-08-15T00:39+09:00
-  - Updated: 2026-08-15T12:19+09:00
+  - Updated: 2026-08-15T14:59+09:00
   - Status: active
-  - Content: Stage 4.5 plot-free EDA is complete on 122,011 Fold 1 Train rows from target-end 2022Q2-2023Q3, covering 199 originals and 134 derived candidates; 2024 Validation Target and locked 2025 were not accessed. The user approved D, so Gate 4.5 is complete and Stage 5 remains deliberately unstarted.
+  - Content: Stage 4.5 plot-free EDA is complete on 122,011 Fold 1 Train rows from target-end 2022Q2-2023Q3, covering 199 originals and 134 derived candidates; 2024 Validation Target and locked 2025 were not accessed. Gate 4.5 passed and approved option D was subsequently executed in Stage 5.
   - Evidence: `reports/stage45/`, `src/analysis/run_stage45_eda.py`, `src/features/build_stage45_features.py`, and `MVP 단계별 구현 체크리스트.md`.
 
 - `decision:stage45-feature-contract-d`
   - Created: 2026-08-15T12:17+09:00
-  - Updated: 2026-08-15T12:19+09:00
+  - Updated: 2026-08-15T13:10+09:00
   - Status: active
-  - Content: Use option D: compare all real models first on the A-style common baseline; add 10 log1p Features only to regularized Logistic models; then test five raw-detail groups independently on all five tree models without automatic accumulation. Never reintroduce remove-class fields, and approve the exact AUPRC/AUROC/fold-stability tolerance before Stage 5 execution.
+  - Content: Option D was implemented with an A-style common baseline, linear-only log1p Features, and five independent tree raw-detail Ablations. The user rejected precommitted numeric retention cutoffs: disclose every fixed metric and baseline delta first, then make a holistic user-approved choice without automatic ranking.
   - Evidence: User approval, `reports/stage45/feature_contract.md`, `config/stage5.yaml`, and Stage 5 in `MVP 단계별 구현 체크리스트.md`.
 
 - `decision:ml-observation-unit`
@@ -94,6 +94,62 @@
   - Status: active
   - Content: One ML observation and Target is one reference quarter x official Seoul commercial-area code x service-industry code; it represents the aggregate sales environment of all stores in that area-industry cell, not one store and not the whole commercial area across industries.
   - Evidence: `reports/stage2/quality_validation_plan.md`, `src/data/build_stage3_panel.py`, `src/data/build_stage4_dataset.py`, and `reports/stage4/target_definition.md`.
+
+- `decision:stage5-full-comparison-result`
+  - Created: 2026-08-15T14:59+09:00
+  - Updated: 2026-08-15T17:25+09:00
+  - Status: active
+  - Content: Completed all 34 untuned model-Feature variants over four fixed chronological Folds (136 successful runs, zero failures) without locked-2025 access or automatic ranking. The user subsequently approved LightGBM common, XGBoost plus transaction raw components, and CatBoost plus worker raw components as the three Optuna candidates.
+  - Evidence: `reports/stage5/full_comparison.md`, `full_model_feature_summary.csv`, `full_manifest.json`, and `checkpoints_v2/`.
+
+- `decision:stage5-optuna-result`
+  - Created: 2026-08-15T17:25+09:00
+  - Updated: 2026-08-15T17:43+09:00
+  - Status: active
+  - Content: Completed 20 multi-objective Optuna Trials per approved candidate over the same four chronological Folds: 60 Trials and 240 Fits, zero failures, with no locked-2025 access. The user approved the mean-performance representatives LightGBM 10 (AP 0.6436, AUC 0.8104), XGBoost 16 (0.6421, 0.8100), and CatBoost 18 (0.6364, 0.8057) for the next OOF ensemble comparison.
+  - Evidence: `reports/stage5/optuna_report.md`, `optuna_trials.csv`, `optuna_pareto_trials.csv`, and `optuna_manifest.json`.
+
+- `decision:stage5-oof-ensemble-run-plan`
+  - Created: 2026-08-15T17:43+09:00
+  - Updated: 2026-08-15T18:10+09:00
+  - Status: active
+  - Content: Compare the three approved representative models, fixed equal-weight Soft Voting, and leakage-safe nested OOF L2-Logistic Stacking over the four fixed Outer Folds. The user completed all 48 model Fits plus four ensemble steps in PowerShell with no failure, final selection, or locked-2025 access.
+  - Evidence: `src/models/run_stage5_oof_ensemble.py`, `scripts/run_stage5_oof_ensemble.ps1`, `reports/stage5/oof_ensemble_runbook.md`, and `config/stage5.yaml`.
+
+- `decision:stage5-oof-ensemble-result`
+  - Created: 2026-08-15T18:10+09:00
+  - Updated: 2026-08-15T18:29+09:00
+  - Status: active
+  - Content: Equal-weight Soft Voting was the performance-first recommendation: mean Fold AP 0.6456, mean AUC 0.8111, overall OOF AP 0.6474, worst-Fold AP 0.6147, Brier 0.1562, and Log Loss 0.4742. Its overall OOF AP/AUC gains over LightGBM 10 were only 0.0020/0.0007; the later service-first decision selected LightGBM.
+  - Evidence: `reports/stage5/selected_oof_report.md`, `selected_oof_summary.csv`, `selected_oof_fold_metrics.csv`, `selected_oof_industry_metrics.csv`, and `selected_oof_manifest.json`.
+
+- `decision:stage5-service-first-policy`
+  - Created: 2026-08-15T18:21+09:00
+  - Updated: 2026-08-15T18:29+09:00
+  - Status: active
+  - Content: The user selected LightGBM Trial 10 with the 197-feature common baseline as the final model before locked 2025. A single deployable and maintainable model better serves the working AI financial-service MVP than Soft Voting's small OOF gain; locked 2025 is a one-time audit and cannot be used to switch models.
+  - Evidence: User direction, `대회개요.md`, `프로젝트 계획서.md`, `MVP 단계별 구현 체크리스트.md`, and `config/stage5.yaml`.
+
+- `decision:stage5-threshold-service-policy`
+  - Created: 2026-08-15T18:21+09:00
+  - Updated: 2026-08-15T19:08+09:00
+  - Status: active
+  - Content: The primary service output is relative ranking, so no binary operating threshold is required now. Consider a threshold or fixed Top-k only if the service later adds an actual inclusion/exclusion action; use pre-2025 OOF plus intervention capacity and explicit user approval, never locked-2025 labels.
+  - Evidence: User proposal, `reports/stage5/selected_oof_predictions.parquet`, `MVP 단계별 구현 체크리스트.md`, and `config/stage5.yaml`.
+
+- `decision:stage5-final-2025-result`
+  - Created: 2026-08-15T18:57+09:00
+  - Updated: 2026-08-15T18:57+09:00
+  - Status: active
+  - Content: The one-time locked-2025 audit refit LightGBM Trial 10 on 202,918 rows and evaluated 79,506 rows: AP 0.625695, AUC 0.791821, Brier 0.164177, and Log Loss 0.495829. The model remains suitable for area-industry risk prioritization, not automatic decisions or individual-store failure probability; no threshold metrics were computed.
+  - Evidence: `reports/stage5/final_2025_report.md`, `final_2025_manifest.json`, `final_2025_metrics.json`, `final_2025_predictions.parquet`, and `artifacts/stage5_lightgbm_trial10.joblib`.
+
+- `decision:stage6-relative-ranking-output`
+  - Created: 2026-08-15T19:08+09:00
+  - Updated: 2026-08-15T19:15+09:00
+  - Status: active
+  - Content: Treat final LightGBM as a relative area-industry risk-ranking model, not an absolute store-failure probability or safe/risky classifier. Ranking policy v1 uses same-quarter same-industry Seoul areas as the primary Percentile and all same-quarter Seoul area-industry rows as the secondary Percentile; output both plus top-share, rank, and explanations.
+  - Evidence: User direction, `MVP 단계별 구현 체크리스트.md`, `프로젝트 계획서.md`, and `config/stage5.yaml`.
 
 ## Working conventions
 
@@ -157,20 +213,20 @@
 
 - `issue:stage5-preprocessing-memory`
   - Created: 2026-08-15T00:32+09:00
-  - Updated: 2026-08-15T12:19+09:00
-  - Status: open
+  - Updated: 2026-08-15T14:59+09:00
+  - Status: resolved
   - Symptom: Two pre-training attempts stopped before any real model fit because pandas numeric conversion and scikit-learn median imputation created large temporary arrays; a later run reached only the Dummy Fold 1 checkpoint before the user paused it.
   - Cause: Full-width 199-column preprocessing produced avoidable float64/int64 copies despite the compressed development Parquet being only 162.3 MiB in memory.
-  - Fix: `run_stage5_base_comparison.py` uses Arrow float32/category loading and columnwise train-only preprocessing; before Stage 5 execution it must implement D's common baseline and bounded tree-ablation Feature sets without fragmented copies. The execution guard currently prevents any run while this remains unimplemented and user-held.
-  - Evidence: `src/models/run_stage5_base_comparison.py`, `src/features/build_stage45_features.py`, `reports/stage45/feature_contract.md`, and invalid `reports/stage5/checkpoints/dummy_prior__fold1.*`.
+  - Fix: Implemented deterministic common/linear/tree-ablation Feature sets, union preprocessing with float32/category loading, per-set sparse slicing, and isolated `checkpoints_v2`; actual execution completed all 136 Fold runs without a memory failure.
+  - Evidence: `src/models/run_stage5_base_comparison.py`, `src/features/build_stage5_feature_sets.py`, `reports/stage5/feature_sets.json`, and `reports/stage5/checkpoints_v2/`.
 
 ## Current handoff
 
 - `handoff:current`
-  - Updated: 2026-08-15T12:24+09:00
-  - Current state: Gate 4.5 passed with user-approved option D. The current quarter x commercial-area x service-industry Target remains unchanged; finer spatial or store-level Targets are not supported by the current aggregated labels, and no Stage 5 work was run.
-  - Next step: Only after a new user request, approve the exact feature-group retention tolerance, implement and verify machine-readable Feature-set construction for D, then explicitly authorize the Stage 5 base comparison.
-  - Blockers: Stage 5 is held by user instruction and the exact AUPRC/AUROC/fold-stability tolerance is intentionally pending; the old Dummy checkpoint remains invalid and Optuna/final-model choices remain undecided.
+  - Updated: 2026-08-15T19:15+09:00
+  - Current state: Stage 5 Gate passed and ranking policy v1 is approved: same-industry Percentile is primary and Seoul-wide area-industry Percentile secondary. Stage 6 onward is aligned across prediction, financial profile, recommendation, API, UI, QA, and final acceptance; no binary threshold is required.
+  - Next step: Implement Stage 6 saved-pipeline scoring, generate versioned reference distributions for both approved comparison groups, and return both Percentiles, top-share values, ranks, and explanations.
+  - Blockers: None for Stage 6 implementation within policy v1. Policy fields may change with service needs without retraining, but Target, features, model v1, and locked-2025 evidence require a new model version and independent test if changed.
 
 ## Session log
 
@@ -201,5 +257,12 @@
   - Focus: Verify the ML observation unit and assess whether a finer Target would be valid and efficient.
   - Updated keys: `decision:ml-observation-unit`, `handoff:current`
   - Summary: Confirmed that the current unit is the finest defensible supervised Target in the nine aggregated datasets; finer grids or stores would require new matching outcome labels, so the recommendation is to retain the current external-risk model and differentiate individual businesses in the separate financial-diagnosis layer. No design change or model run occurred.
+
+- `session:20260815-1229`
+  - Started: 2026-08-15T12:29+09:00
+  - Last activity: 2026-08-15T19:15+09:00
+  - Focus: Complete Stage 5 evaluation and align final model/threshold decisions with the competition's working-service MVP objective.
+  - Updated keys: `decision:stage45-modeling-eda-plan`, `decision:stage45-feature-contract-d`, `decision:stage5-full-comparison-result`, `decision:stage5-optuna-result`, `decision:stage5-oof-ensemble-run-plan`, `decision:stage5-oof-ensemble-result`, `decision:stage5-service-first-policy`, `decision:stage5-threshold-service-policy`, `decision:stage5-final-2025-result`, `decision:stage6-relative-ranking-output`, `issue:stage5-preprocessing-memory`, `handoff:current`
+  - Summary: Completed and documented Stage 5, approved the dual-comparison ranking policy, and revised every Stage 6+ contract to use same-industry primary and Seoul-wide secondary Percentiles. Operational display/ranking policy is versioned and changeable; model v1 and final-test evidence remain fixed.
 
 ## Session archive

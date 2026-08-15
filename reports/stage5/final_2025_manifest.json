@@ -1,0 +1,49 @@
+{
+  "created_at_kst": "2026-08-15T18:50:42+09:00",
+  "status": "completed_threshold_independent_once",
+  "contract_sha256": "06c8ec9504a0a418e0158e6db348ff24c179e254b4b1833092ffd02e6eb94d54",
+  "final_model_frozen_before_test": true,
+  "model_switch_after_test_prohibited": true,
+  "model": "lightgbm_trial10",
+  "feature_set": "common_baseline",
+  "feature_count": 197,
+  "refit_rows": 202918,
+  "locked_test_rows": 79506,
+  "approved_metrics": [
+    "average_precision",
+    "roc_auc",
+    "brier_score",
+    "log_loss"
+  ],
+  "threshold_search_performed": false,
+  "binary_metrics_computed": false,
+  "operating_threshold": null,
+  "timing_seconds": {
+    "transform": 3.947991400025785,
+    "fit": 30.996306299988646,
+    "predict": 0.6602511999954004,
+    "total": 50.48336539999582
+  },
+  "outputs": {
+    "metrics": "reports\\stage5\\final_2025_metrics.json",
+    "predictions": "reports\\stage5\\final_2025_predictions.parquet",
+    "report": "reports\\stage5\\final_2025_report.md",
+    "model": "reports\\stage5\\artifacts\\stage5_lightgbm_trial10.joblib",
+    "model_metadata": "reports\\stage5\\artifacts\\stage5_lightgbm_trial10_metadata.json",
+    "log": "reports\\stage5\\final_2025_run.log"
+  },
+  "sha256": {
+    "metrics": "61e4548720c667458f56d8c6b7b1714b7f3f3419e79755bf36cfd95a0fb0113c",
+    "predictions": "9adfb885da505105eed62b72e271dee2b7f4d31e75afc65b36ac88524735b125",
+    "report": "80f8fcb472f7dbb6d9a87d7ce046f5b00f8aa5e90b8477d044e9007fddfb61e1",
+    "model": "0c87f8a568700ed72614f9b3732fc38f5e39678695d9cd188275e4f1638e9736",
+    "model_metadata": "f608da99c5f02eb6ac92ef1c637a0d5d4f05cd55c6ac362161ff01dc4910794b"
+  },
+  "verification": {
+    "saved_metrics_recomputed": true,
+    "saved_model_reloaded": true,
+    "prediction_rows_match_locked_features": true,
+    "duplicate_prediction_row_ids": 0,
+    "probabilities_finite_and_bounded": true
+  }
+}

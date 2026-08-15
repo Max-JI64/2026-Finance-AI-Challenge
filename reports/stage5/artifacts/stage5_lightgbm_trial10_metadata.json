@@ -1,0 +1,35 @@
+{
+  "created_at_kst": "2026-08-15T18:50:42+09:00",
+  "model": "lightgbm",
+  "trial_number": 10,
+  "params": {
+    "colsample_bytree": 0.6026482713142864,
+    "learning_rate": 0.016068088781281856,
+    "max_bin": 255,
+    "max_depth": 8,
+    "min_child_samples": 85,
+    "n_estimators": 550,
+    "num_leaves": 111,
+    "reg_alpha": 6.954308878755984e-08,
+    "reg_lambda": 0.05902360548322474,
+    "subsample": 0.6934225025508511
+  },
+  "params_sha256": "1750a05cca705ff76c1c6edac785902f9b6b9e2d3890fa0dd37e032b6ad5823b",
+  "feature_set": "common_baseline",
+  "feature_count": 197,
+  "feature_set_sha256": "8d22662ae4d31627551013a45e7f0d005fe623d99cb28d038c4bc6f125f090b6",
+  "preprocessed_feature_count": 2677,
+  "refit_rows": 202918,
+  "refit_target_end_period": [
+    20222,
+    20243
+  ],
+  "operating_threshold": null,
+  "locked_2025_metrics": [
+    "average_precision",
+    "roc_auc",
+    "brier_score",
+    "log_loss"
+  ],
+  "binary_threshold_metrics_computed": false
+}

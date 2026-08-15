@@ -1,0 +1,43 @@
+{
+  "status": "completed",
+  "created_at_kst": "2026-08-15T18:00:44+09:00",
+  "run_id": "soft_voting_equal",
+  "model": "soft_voting",
+  "feature_set_id": "three_selected_trial_probabilities",
+  "feature_set_sha256": null,
+  "params_sha256": null,
+  "split_kind": "outer",
+  "outer_fold": 3,
+  "validation_period": null,
+  "train_rows": 162557,
+  "validation_rows": 20152,
+  "fit_seconds": 0.0,
+  "predict_seconds": 0.002191699983086437,
+  "metrics": {
+    "average_precision": 0.6629015328659984,
+    "roc_auc": 0.808093050432002,
+    "log_loss": 0.4889453984909544,
+    "brier_score": 0.16197681033431424,
+    "threshold": 0.5,
+    "precision": 0.6836585365853659,
+    "recall": 0.4376951905059338,
+    "f1": 0.5337014470677837,
+    "f2": 0.47163144433974963,
+    "mcc": 0.397128703436705,
+    "balanced_accuracy": 0.6716770977260539,
+    "accuracy": 0.7569472012703454,
+    "predicted_positive_rate": 0.203453751488686,
+    "tn": 12451,
+    "fp": 1297,
+    "fn": 3601,
+    "tp": 2803
+  },
+  "detail": {
+    "weights": [
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333
+    ]
+  },
+  "locked_test_opened": false
+}

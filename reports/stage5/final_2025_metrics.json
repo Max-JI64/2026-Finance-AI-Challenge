@@ -1,0 +1,21 @@
+{
+  "created_at_kst": "2026-08-15T18:50:42+09:00",
+  "model": "lightgbm_trial10",
+  "feature_set": "common_baseline",
+  "refit_target_end_period": [
+    20222,
+    20243
+  ],
+  "locked_test_target_end_period": [
+    20251,
+    20254
+  ],
+  "metrics": {
+    "average_precision": 0.6256952583286859,
+    "roc_auc": 0.7918213302386358,
+    "brier_score": 0.16417684015602654,
+    "log_loss": 0.49582902221563196
+  },
+  "threshold_metrics_computed": false,
+  "operating_threshold": null
+}

@@ -1,0 +1,40 @@
+{
+  "created_at_kst": "2026-08-15T18:06:54+09:00",
+  "status": "completed",
+  "selected_trials": [
+    {
+      "model": "lightgbm",
+      "feature_set": "common_baseline",
+      "trial_number": 10,
+      "params_sha256": "1750a05cca705ff76c1c6edac785902f9b6b9e2d3890fa0dd37e032b6ad5823b"
+    },
+    {
+      "model": "xgboost",
+      "feature_set": "tree_plus_transaction_count_raw_components",
+      "trial_number": 16,
+      "params_sha256": "8857e9af5925a8e3457026ed5c725644083137e25ef3e960134800a1f74ed0d1"
+    },
+    {
+      "model": "catboost",
+      "feature_set": "tree_plus_worker_population_raw_components",
+      "trial_number": 18,
+      "params_sha256": "68a2aec085f3490da1241a3e6c34c4347ef30222cdae6549655848be69748837"
+    }
+  ],
+  "outer_folds": 4,
+  "nested_inner_periods_per_outer_fold": 3,
+  "completed_model_fits_or_valid_checkpoints": 48,
+  "completed_ensemble_steps": 4,
+  "automatic_final_model_selection": false,
+  "final_threshold_selected": false,
+  "locked_test_opened": false,
+  "outputs": {
+    "predictions": "reports\\stage5\\selected_oof_predictions.parquet",
+    "fold_metrics": "reports\\stage5\\selected_oof_fold_metrics.csv",
+    "summary": "reports\\stage5\\selected_oof_summary.csv",
+    "industry_metrics": "reports\\stage5\\selected_oof_industry_metrics.csv",
+    "report": "reports\\stage5\\selected_oof_report.md",
+    "log": "reports\\stage5\\ensemble_run.log",
+    "progress": "reports\\stage5\\ensemble_progress.json"
+  }
+}

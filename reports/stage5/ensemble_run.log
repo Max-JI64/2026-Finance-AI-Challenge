@@ -1,0 +1,166 @@
+2026-08-15 17:46:04 | INFO | ========================================================================
+2026-08-15 17:46:04 | INFO | RUN START | 3 selected Trials | 4 Outer Folds | 48 model Fits | 4 ensemble steps
+2026-08-15 17:46:04 | INFO | Progress file: D:\대회\2026 금융 AI Challenge\reports\stage5\ensemble_progress.json
+2026-08-15 17:46:04 | INFO | Log file: D:\대회\2026 금융 AI Challenge\reports\stage5\ensemble_run.log
+2026-08-15 17:46:04 | INFO | Locked 2025 test: FORBIDDEN / NOT OPENED
+2026-08-15 17:46:04 | INFO | START step=1/52 (0.0%) | Outer Fold 1 | lightgbm__trial10
+2026-08-15 17:46:25 | INFO | METRIC | Outer Fold 1 | lightgbm__trial10 | AP=0.61203 AUC=0.80508 Brier=0.15388 fit=19.1s
+2026-08-15 17:46:25 | INFO | DONE step=1/52 (1.9%) | Outer Fold 1 | lightgbm__trial10
+2026-08-15 17:46:25 | INFO | START step=2/52 (1.9%) | Outer Fold 1 | xgboost__trial16
+2026-08-15 17:47:02 | INFO | METRIC | Outer Fold 1 | xgboost__trial16 | AP=0.61164 AUC=0.80452 Brier=0.15403 fit=34.4s
+2026-08-15 17:47:02 | INFO | DONE step=2/52 (3.8%) | Outer Fold 1 | xgboost__trial16
+2026-08-15 17:47:02 | INFO | START step=3/52 (3.8%) | Outer Fold 1 | catboost__trial18
+2026-08-15 17:47:23 | INFO | METRIC | Outer Fold 1 | catboost__trial18 | AP=0.60124 AUC=0.79850 Brier=0.15574 fit=21.0s
+2026-08-15 17:47:23 | INFO | DONE step=3/52 (5.8%) | Outer Fold 1 | catboost__trial18
+2026-08-15 17:47:23 | INFO | START step=4/52 (5.8%) | Outer Fold 1 / Inner 20231 | lightgbm__trial10
+2026-08-15 17:47:32 | INFO | METRIC | Outer Fold 1 / Inner 20231 | lightgbm__trial10 | AP=0.50540 AUC=0.82338 Brier=0.12266 fit=7.3s
+2026-08-15 17:47:32 | INFO | DONE step=4/52 (7.7%) | Outer Fold 1 / Inner 20231 | lightgbm__trial10
+2026-08-15 17:47:32 | INFO | START step=5/52 (7.7%) | Outer Fold 1 / Inner 20231 | xgboost__trial16
+2026-08-15 17:47:51 | INFO | METRIC | Outer Fold 1 / Inner 20231 | xgboost__trial16 | AP=0.50139 AUC=0.82116 Brier=0.12384 fit=18.3s
+2026-08-15 17:47:51 | INFO | DONE step=5/52 (9.6%) | Outer Fold 1 / Inner 20231 | xgboost__trial16
+2026-08-15 17:47:51 | INFO | START step=6/52 (9.6%) | Outer Fold 1 / Inner 20231 | catboost__trial18
+2026-08-15 17:48:08 | INFO | METRIC | Outer Fold 1 / Inner 20231 | catboost__trial18 | AP=0.49565 AUC=0.81595 Brier=0.12493 fit=16.3s
+2026-08-15 17:48:08 | INFO | DONE step=6/52 (11.5%) | Outer Fold 1 / Inner 20231 | catboost__trial18
+2026-08-15 17:48:08 | INFO | START step=7/52 (11.5%) | Outer Fold 1 / Inner 20232 | lightgbm__trial10
+2026-08-15 17:48:19 | INFO | METRIC | Outer Fold 1 / Inner 20232 | lightgbm__trial10 | AP=0.52424 AUC=0.82148 Brier=0.12359 fit=9.9s
+2026-08-15 17:48:19 | INFO | DONE step=7/52 (13.5%) | Outer Fold 1 / Inner 20232 | lightgbm__trial10
+2026-08-15 17:48:19 | INFO | START step=8/52 (13.5%) | Outer Fold 1 / Inner 20232 | xgboost__trial16
+2026-08-15 17:48:47 | INFO | METRIC | Outer Fold 1 / Inner 20232 | xgboost__trial16 | AP=0.52603 AUC=0.82198 Brier=0.12377 fit=25.5s
+2026-08-15 17:48:47 | INFO | DONE step=8/52 (15.4%) | Outer Fold 1 / Inner 20232 | xgboost__trial16
+2026-08-15 17:48:47 | INFO | START step=9/52 (15.4%) | Outer Fold 1 / Inner 20232 | catboost__trial18
+2026-08-15 17:49:05 | INFO | METRIC | Outer Fold 1 / Inner 20232 | catboost__trial18 | AP=0.51973 AUC=0.81744 Brier=0.12496 fit=17.7s
+2026-08-15 17:49:05 | INFO | DONE step=9/52 (17.3%) | Outer Fold 1 / Inner 20232 | catboost__trial18
+2026-08-15 17:49:05 | INFO | START step=10/52 (17.3%) | Outer Fold 1 / Inner 20233 | lightgbm__trial10
+2026-08-15 17:49:17 | INFO | METRIC | Outer Fold 1 / Inner 20233 | lightgbm__trial10 | AP=0.50737 AUC=0.74828 Brier=0.17126 fit=10.6s
+2026-08-15 17:49:17 | INFO | DONE step=10/52 (19.2%) | Outer Fold 1 / Inner 20233 | lightgbm__trial10
+2026-08-15 17:49:17 | INFO | START step=11/52 (19.2%) | Outer Fold 1 / Inner 20233 | xgboost__trial16
+2026-08-15 17:49:48 | INFO | METRIC | Outer Fold 1 / Inner 20233 | xgboost__trial16 | AP=0.50340 AUC=0.74708 Brier=0.17211 fit=28.9s
+2026-08-15 17:49:48 | INFO | DONE step=11/52 (21.2%) | Outer Fold 1 / Inner 20233 | xgboost__trial16
+2026-08-15 17:49:48 | INFO | START step=12/52 (21.2%) | Outer Fold 1 / Inner 20233 | catboost__trial18
+2026-08-15 17:50:08 | INFO | METRIC | Outer Fold 1 / Inner 20233 | catboost__trial18 | AP=0.49760 AUC=0.74072 Brier=0.17422 fit=19.5s
+2026-08-15 17:50:08 | INFO | DONE step=12/52 (23.1%) | Outer Fold 1 / Inner 20233 | catboost__trial18
+2026-08-15 17:50:08 | INFO | START step=13/52 (23.1%) | Outer Fold 1 | Soft Voting + nested Stacking
+2026-08-15 17:50:09 | INFO | METRIC | Outer Fold 1 | soft_voting_equal | AP=0.61467 AUC=0.80543 Brier=0.15366
+2026-08-15 17:50:09 | INFO | METRIC | Outer Fold 1 | stacking_nested_logistic | AP=0.61445 AUC=0.80562 Brier=0.15457 meta_fit=0.08s
+2026-08-15 17:50:09 | INFO | DONE step=13/52 (25.0%) | Outer Fold 1 | Soft Voting + nested Stacking
+2026-08-15 17:50:09 | INFO | START step=14/52 (25.0%) | Outer Fold 2 | lightgbm__trial10
+2026-08-15 17:50:31 | INFO | METRIC | Outer Fold 2 | lightgbm__trial10 | AP=0.62982 AUC=0.81328 Brier=0.15270 fit=18.9s
+2026-08-15 17:50:31 | INFO | DONE step=14/52 (26.9%) | Outer Fold 2 | lightgbm__trial10
+2026-08-15 17:50:31 | INFO | START step=15/52 (26.9%) | Outer Fold 2 | xgboost__trial16
+2026-08-15 17:51:19 | INFO | METRIC | Outer Fold 2 | xgboost__trial16 | AP=0.62792 AUC=0.81383 Brier=0.15288 fit=44.9s
+2026-08-15 17:51:19 | INFO | DONE step=15/52 (28.8%) | Outer Fold 2 | xgboost__trial16
+2026-08-15 17:51:19 | INFO | START step=16/52 (28.8%) | Outer Fold 2 | catboost__trial18
+2026-08-15 17:51:47 | INFO | METRIC | Outer Fold 2 | catboost__trial18 | AP=0.62759 AUC=0.81120 Brier=0.15284 fit=27.0s
+2026-08-15 17:51:47 | INFO | DONE step=16/52 (30.8%) | Outer Fold 2 | catboost__trial18
+2026-08-15 17:51:47 | INFO | START step=17/52 (30.8%) | Outer Fold 2 / Inner 20232 | lightgbm__trial10
+2026-08-15 17:51:59 | INFO | METRIC | Outer Fold 2 / Inner 20232 | lightgbm__trial10 | AP=0.52424 AUC=0.82148 Brier=0.12359 fit=10.5s
+2026-08-15 17:52:00 | INFO | DONE step=17/52 (32.7%) | Outer Fold 2 / Inner 20232 | lightgbm__trial10
+2026-08-15 17:52:00 | INFO | START step=18/52 (32.7%) | Outer Fold 2 / Inner 20232 | xgboost__trial16
+2026-08-15 17:52:27 | INFO | METRIC | Outer Fold 2 / Inner 20232 | xgboost__trial16 | AP=0.52603 AUC=0.82198 Brier=0.12377 fit=25.6s
+2026-08-15 17:52:27 | INFO | DONE step=18/52 (34.6%) | Outer Fold 2 / Inner 20232 | xgboost__trial16
+2026-08-15 17:52:27 | INFO | START step=19/52 (34.6%) | Outer Fold 2 / Inner 20232 | catboost__trial18
+2026-08-15 17:52:46 | INFO | METRIC | Outer Fold 2 / Inner 20232 | catboost__trial18 | AP=0.51973 AUC=0.81744 Brier=0.12496 fit=18.1s
+2026-08-15 17:52:46 | INFO | DONE step=19/52 (36.5%) | Outer Fold 2 / Inner 20232 | catboost__trial18
+2026-08-15 17:52:46 | INFO | START step=20/52 (36.5%) | Outer Fold 2 / Inner 20233 | lightgbm__trial10
+2026-08-15 17:52:58 | INFO | METRIC | Outer Fold 2 / Inner 20233 | lightgbm__trial10 | AP=0.50737 AUC=0.74828 Brier=0.17126 fit=10.7s
+2026-08-15 17:52:59 | INFO | DONE step=20/52 (38.5%) | Outer Fold 2 / Inner 20233 | lightgbm__trial10
+2026-08-15 17:52:59 | INFO | START step=21/52 (38.5%) | Outer Fold 2 / Inner 20233 | xgboost__trial16
+2026-08-15 17:53:30 | INFO | METRIC | Outer Fold 2 / Inner 20233 | xgboost__trial16 | AP=0.50340 AUC=0.74708 Brier=0.17211 fit=29.9s
+2026-08-15 17:53:30 | INFO | DONE step=21/52 (40.4%) | Outer Fold 2 / Inner 20233 | xgboost__trial16
+2026-08-15 17:53:30 | INFO | START step=22/52 (40.4%) | Outer Fold 2 / Inner 20233 | catboost__trial18
+2026-08-15 17:53:51 | INFO | METRIC | Outer Fold 2 / Inner 20233 | catboost__trial18 | AP=0.49760 AUC=0.74072 Brier=0.17422 fit=19.9s
+2026-08-15 17:53:51 | INFO | DONE step=22/52 (42.3%) | Outer Fold 2 / Inner 20233 | catboost__trial18
+2026-08-15 17:53:51 | INFO | START step=23/52 (42.3%) | Outer Fold 2 / Inner 20234 | lightgbm__trial10
+2026-08-15 17:54:07 | INFO | METRIC | Outer Fold 2 / Inner 20234 | lightgbm__trial10 | AP=0.60535 AUC=0.81381 Brier=0.15095 fit=14.1s
+2026-08-15 17:54:07 | INFO | DONE step=23/52 (44.2%) | Outer Fold 2 / Inner 20234 | lightgbm__trial10
+2026-08-15 17:54:07 | INFO | START step=24/52 (44.2%) | Outer Fold 2 / Inner 20234 | xgboost__trial16
+2026-08-15 17:54:45 | INFO | METRIC | Outer Fold 2 / Inner 20234 | xgboost__trial16 | AP=0.60455 AUC=0.81254 Brier=0.15149 fit=35.1s
+2026-08-15 17:54:45 | INFO | DONE step=24/52 (46.2%) | Outer Fold 2 / Inner 20234 | xgboost__trial16
+2026-08-15 17:54:45 | INFO | START step=25/52 (46.2%) | Outer Fold 2 / Inner 20234 | catboost__trial18
+2026-08-15 17:55:07 | INFO | METRIC | Outer Fold 2 / Inner 20234 | catboost__trial18 | AP=0.59529 AUC=0.80603 Brier=0.15389 fit=21.4s
+2026-08-15 17:55:07 | INFO | DONE step=25/52 (48.1%) | Outer Fold 2 / Inner 20234 | catboost__trial18
+2026-08-15 17:55:07 | INFO | START step=26/52 (48.1%) | Outer Fold 2 | Soft Voting + nested Stacking
+2026-08-15 17:55:07 | INFO | METRIC | Outer Fold 2 | soft_voting_equal | AP=0.63277 AUC=0.81519 Brier=0.15199
+2026-08-15 17:55:07 | INFO | METRIC | Outer Fold 2 | stacking_nested_logistic | AP=0.63199 AUC=0.81494 Brier=0.15263 meta_fit=0.04s
+2026-08-15 17:55:07 | INFO | DONE step=26/52 (50.0%) | Outer Fold 2 | Soft Voting + nested Stacking
+2026-08-15 17:55:07 | INFO | START step=27/52 (50.0%) | Outer Fold 3 | lightgbm__trial10
+2026-08-15 17:55:42 | INFO | METRIC | Outer Fold 3 | lightgbm__trial10 | AP=0.66240 AUC=0.80814 Brier=0.16202 fit=31.8s
+2026-08-15 17:55:42 | INFO | DONE step=27/52 (51.9%) | Outer Fold 3 | lightgbm__trial10
+2026-08-15 17:55:42 | INFO | START step=28/52 (51.9%) | Outer Fold 3 | xgboost__trial16
+2026-08-15 17:56:36 | INFO | METRIC | Outer Fold 3 | xgboost__trial16 | AP=0.65998 AUC=0.80694 Brier=0.16260 fit=50.1s
+2026-08-15 17:56:36 | INFO | DONE step=28/52 (53.8%) | Outer Fold 3 | xgboost__trial16
+2026-08-15 17:56:36 | INFO | START step=29/52 (53.8%) | Outer Fold 3 | catboost__trial18
+2026-08-15 17:57:02 | INFO | METRIC | Outer Fold 3 | catboost__trial18 | AP=0.65068 AUC=0.80164 Brier=0.16391 fit=25.6s
+2026-08-15 17:57:02 | INFO | DONE step=29/52 (55.8%) | Outer Fold 3 | catboost__trial18
+2026-08-15 17:57:02 | INFO | START step=30/52 (55.8%) | Outer Fold 3 / Inner 20233 | lightgbm__trial10
+2026-08-15 17:57:14 | INFO | METRIC | Outer Fold 3 / Inner 20233 | lightgbm__trial10 | AP=0.50737 AUC=0.74828 Brier=0.17126 fit=10.5s
+2026-08-15 17:57:14 | INFO | DONE step=30/52 (57.7%) | Outer Fold 3 / Inner 20233 | lightgbm__trial10
+2026-08-15 17:57:14 | INFO | START step=31/52 (57.7%) | Outer Fold 3 / Inner 20233 | xgboost__trial16
+2026-08-15 17:57:45 | INFO | METRIC | Outer Fold 3 / Inner 20233 | xgboost__trial16 | AP=0.50340 AUC=0.74708 Brier=0.17211 fit=29.1s
+2026-08-15 17:57:45 | INFO | DONE step=31/52 (59.6%) | Outer Fold 3 / Inner 20233 | xgboost__trial16
+2026-08-15 17:57:45 | INFO | START step=32/52 (59.6%) | Outer Fold 3 / Inner 20233 | catboost__trial18
+2026-08-15 17:58:06 | INFO | METRIC | Outer Fold 3 / Inner 20233 | catboost__trial18 | AP=0.49760 AUC=0.74072 Brier=0.17422 fit=19.8s
+2026-08-15 17:58:06 | INFO | DONE step=32/52 (61.5%) | Outer Fold 3 / Inner 20233 | catboost__trial18
+2026-08-15 17:58:06 | INFO | START step=33/52 (61.5%) | Outer Fold 3 / Inner 20234 | lightgbm__trial10
+2026-08-15 17:58:22 | INFO | METRIC | Outer Fold 3 / Inner 20234 | lightgbm__trial10 | AP=0.60535 AUC=0.81381 Brier=0.15095 fit=13.7s
+2026-08-15 17:58:22 | INFO | DONE step=33/52 (63.5%) | Outer Fold 3 / Inner 20234 | lightgbm__trial10
+2026-08-15 17:58:22 | INFO | START step=34/52 (63.5%) | Outer Fold 3 / Inner 20234 | xgboost__trial16
+2026-08-15 17:58:59 | INFO | METRIC | Outer Fold 3 / Inner 20234 | xgboost__trial16 | AP=0.60455 AUC=0.81254 Brier=0.15149 fit=34.7s
+2026-08-15 17:58:59 | INFO | DONE step=34/52 (65.4%) | Outer Fold 3 / Inner 20234 | xgboost__trial16
+2026-08-15 17:58:59 | INFO | START step=35/52 (65.4%) | Outer Fold 3 / Inner 20234 | catboost__trial18
+2026-08-15 17:59:21 | INFO | METRIC | Outer Fold 3 / Inner 20234 | catboost__trial18 | AP=0.59529 AUC=0.80603 Brier=0.15389 fit=21.6s
+2026-08-15 17:59:21 | INFO | DONE step=35/52 (67.3%) | Outer Fold 3 / Inner 20234 | catboost__trial18
+2026-08-15 17:59:21 | INFO | START step=36/52 (67.3%) | Outer Fold 3 / Inner 20241 | lightgbm__trial10
+2026-08-15 17:59:39 | INFO | METRIC | Outer Fold 3 / Inner 20241 | lightgbm__trial10 | AP=0.61203 AUC=0.80508 Brier=0.15388 fit=15.8s
+2026-08-15 17:59:39 | INFO | DONE step=36/52 (69.2%) | Outer Fold 3 / Inner 20241 | lightgbm__trial10
+2026-08-15 17:59:39 | INFO | START step=37/52 (69.2%) | Outer Fold 3 / Inner 20241 | xgboost__trial16
+2026-08-15 18:00:20 | INFO | METRIC | Outer Fold 3 / Inner 20241 | xgboost__trial16 | AP=0.61164 AUC=0.80452 Brier=0.15403 fit=38.3s
+2026-08-15 18:00:20 | INFO | DONE step=37/52 (71.2%) | Outer Fold 3 / Inner 20241 | xgboost__trial16
+2026-08-15 18:00:20 | INFO | START step=38/52 (71.2%) | Outer Fold 3 / Inner 20241 | catboost__trial18
+2026-08-15 18:00:44 | INFO | METRIC | Outer Fold 3 / Inner 20241 | catboost__trial18 | AP=0.60124 AUC=0.79850 Brier=0.15574 fit=23.1s
+2026-08-15 18:00:44 | INFO | DONE step=38/52 (73.1%) | Outer Fold 3 / Inner 20241 | catboost__trial18
+2026-08-15 18:00:44 | INFO | START step=39/52 (73.1%) | Outer Fold 3 | Soft Voting + nested Stacking
+2026-08-15 18:00:44 | INFO | METRIC | Outer Fold 3 | soft_voting_equal | AP=0.66290 AUC=0.80809 Brier=0.16198
+2026-08-15 18:00:45 | INFO | METRIC | Outer Fold 3 | stacking_nested_logistic | AP=0.66357 AUC=0.80862 Brier=0.16163 meta_fit=0.03s
+2026-08-15 18:00:45 | INFO | DONE step=39/52 (75.0%) | Outer Fold 3 | Soft Voting + nested Stacking
+2026-08-15 18:00:45 | INFO | START step=40/52 (75.0%) | Outer Fold 4 | lightgbm__trial10
+2026-08-15 18:01:12 | INFO | METRIC | Outer Fold 4 | lightgbm__trial10 | AP=0.67019 AUC=0.81524 Brier=0.15726 fit=24.1s
+2026-08-15 18:01:12 | INFO | DONE step=40/52 (76.9%) | Outer Fold 4 | lightgbm__trial10
+2026-08-15 18:01:12 | INFO | START step=41/52 (76.9%) | Outer Fold 4 | xgboost__trial16
+2026-08-15 18:02:09 | INFO | METRIC | Outer Fold 4 | xgboost__trial16 | AP=0.66867 AUC=0.81452 Brier=0.15757 fit=53.3s
+2026-08-15 18:02:09 | INFO | DONE step=41/52 (78.8%) | Outer Fold 4 | xgboost__trial16
+2026-08-15 18:02:09 | INFO | START step=42/52 (78.8%) | Outer Fold 4 | catboost__trial18
+2026-08-15 18:02:37 | INFO | METRIC | Outer Fold 4 | catboost__trial18 | AP=0.66610 AUC=0.81147 Brier=0.15835 fit=27.3s
+2026-08-15 18:02:37 | INFO | DONE step=42/52 (80.8%) | Outer Fold 4 | catboost__trial18
+2026-08-15 18:02:37 | INFO | START step=43/52 (80.8%) | Outer Fold 4 / Inner 20234 | lightgbm__trial10
+2026-08-15 18:02:53 | INFO | METRIC | Outer Fold 4 / Inner 20234 | lightgbm__trial10 | AP=0.60535 AUC=0.81381 Brier=0.15095 fit=13.5s
+2026-08-15 18:02:53 | INFO | DONE step=43/52 (82.7%) | Outer Fold 4 / Inner 20234 | lightgbm__trial10
+2026-08-15 18:02:53 | INFO | START step=44/52 (82.7%) | Outer Fold 4 / Inner 20234 | xgboost__trial16
+2026-08-15 18:03:30 | INFO | METRIC | Outer Fold 4 / Inner 20234 | xgboost__trial16 | AP=0.60455 AUC=0.81254 Brier=0.15149 fit=34.3s
+2026-08-15 18:03:30 | INFO | DONE step=44/52 (84.6%) | Outer Fold 4 / Inner 20234 | xgboost__trial16
+2026-08-15 18:03:30 | INFO | START step=45/52 (84.6%) | Outer Fold 4 / Inner 20234 | catboost__trial18
+2026-08-15 18:03:52 | INFO | METRIC | Outer Fold 4 / Inner 20234 | catboost__trial18 | AP=0.59529 AUC=0.80603 Brier=0.15389 fit=22.1s
+2026-08-15 18:03:52 | INFO | DONE step=45/52 (86.5%) | Outer Fold 4 / Inner 20234 | catboost__trial18
+2026-08-15 18:03:52 | INFO | START step=46/52 (86.5%) | Outer Fold 4 / Inner 20241 | lightgbm__trial10
+2026-08-15 18:04:11 | INFO | METRIC | Outer Fold 4 / Inner 20241 | lightgbm__trial10 | AP=0.61203 AUC=0.80508 Brier=0.15388 fit=15.9s
+2026-08-15 18:04:11 | INFO | DONE step=46/52 (88.5%) | Outer Fold 4 / Inner 20241 | lightgbm__trial10
+2026-08-15 18:04:11 | INFO | START step=47/52 (88.5%) | Outer Fold 4 / Inner 20241 | xgboost__trial16
+2026-08-15 18:04:52 | INFO | METRIC | Outer Fold 4 / Inner 20241 | xgboost__trial16 | AP=0.61164 AUC=0.80452 Brier=0.15403 fit=38.3s
+2026-08-15 18:04:52 | INFO | DONE step=47/52 (90.4%) | Outer Fold 4 / Inner 20241 | xgboost__trial16
+2026-08-15 18:04:52 | INFO | START step=48/52 (90.4%) | Outer Fold 4 / Inner 20241 | catboost__trial18
+2026-08-15 18:05:15 | INFO | METRIC | Outer Fold 4 / Inner 20241 | catboost__trial18 | AP=0.60124 AUC=0.79850 Brier=0.15574 fit=22.6s
+2026-08-15 18:05:15 | INFO | DONE step=48/52 (92.3%) | Outer Fold 4 / Inner 20241 | catboost__trial18
+2026-08-15 18:05:15 | INFO | START step=49/52 (92.3%) | Outer Fold 4 / Inner 20242 | lightgbm__trial10
+2026-08-15 18:05:36 | INFO | METRIC | Outer Fold 4 / Inner 20242 | lightgbm__trial10 | AP=0.62982 AUC=0.81328 Brier=0.15270 fit=18.5s
+2026-08-15 18:05:37 | INFO | DONE step=49/52 (94.2%) | Outer Fold 4 / Inner 20242 | lightgbm__trial10
+2026-08-15 18:05:37 | INFO | START step=50/52 (94.2%) | Outer Fold 4 / Inner 20242 | xgboost__trial16
+2026-08-15 18:06:23 | INFO | METRIC | Outer Fold 4 / Inner 20242 | xgboost__trial16 | AP=0.62792 AUC=0.81383 Brier=0.15288 fit=44.0s
+2026-08-15 18:06:23 | INFO | DONE step=50/52 (96.2%) | Outer Fold 4 / Inner 20242 | xgboost__trial16
+2026-08-15 18:06:23 | INFO | START step=51/52 (96.2%) | Outer Fold 4 / Inner 20242 | catboost__trial18
+2026-08-15 18:06:49 | INFO | METRIC | Outer Fold 4 / Inner 20242 | catboost__trial18 | AP=0.62759 AUC=0.81120 Brier=0.15284 fit=25.1s
+2026-08-15 18:06:49 | INFO | DONE step=51/52 (98.1%) | Outer Fold 4 / Inner 20242 | catboost__trial18
+2026-08-15 18:06:49 | INFO | START step=52/52 (98.1%) | Outer Fold 4 | Soft Voting + nested Stacking
+2026-08-15 18:06:49 | INFO | METRIC | Outer Fold 4 | soft_voting_equal | AP=0.67203 AUC=0.81568 Brier=0.15704
+2026-08-15 18:06:50 | INFO | METRIC | Outer Fold 4 | stacking_nested_logistic | AP=0.67188 AUC=0.81586 Brier=0.15749 meta_fit=0.03s
+2026-08-15 18:06:50 | INFO | DONE step=52/52 (100.0%) | Outer Fold 4 | Soft Voting + nested Stacking
+2026-08-15 18:06:54 | INFO | RUN COMPLETE | results=D:\대회\2026 금융 AI Challenge\reports\stage5\selected_oof_report.md

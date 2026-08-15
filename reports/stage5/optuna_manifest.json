@@ -1,0 +1,40 @@
+{
+  "created_at_kst": "2026-08-15T17:23+09:00",
+  "status": "completed",
+  "candidates": [
+    {
+      "model": "lightgbm",
+      "feature_set": "common_baseline"
+    },
+    {
+      "model": "xgboost",
+      "feature_set": "tree_plus_transaction_count_raw_components"
+    },
+    {
+      "model": "catboost",
+      "feature_set": "tree_plus_worker_population_raw_components"
+    }
+  ],
+  "trials_per_model": 20,
+  "folds_per_trial": 4,
+  "maximum_model_fits": 240,
+  "completed_trial_counts": {
+    "stage5__lightgbm__common_baseline__v1": 20,
+    "stage5__xgboost__tree_plus_transaction_count_raw_components__v1": 20,
+    "stage5__catboost__tree_plus_worker_population_raw_components__v1": 20
+  },
+  "objective": [
+    "mean_average_precision",
+    "mean_roc_auc"
+  ],
+  "scalar_weighting_performed": false,
+  "automatic_representative_trial_selection": false,
+  "automatic_final_model_selection": false,
+  "locked_test_opened": false,
+  "outputs": {
+    "all_trials": "reports\\stage5\\optuna_trials.csv",
+    "pareto_trials": "reports\\stage5\\optuna_pareto_trials.csv",
+    "report": "reports\\stage5\\optuna_report.md",
+    "study_storage": "reports\\stage5\\optuna_studies.db"
+  }
+}
