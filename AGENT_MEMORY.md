@@ -5,7 +5,7 @@
 
 ## Project snapshot
 
-- Last updated: 2026-08-15T19:15+09:00
+- Last updated: 2026-08-15T20:19+09:00
 - Purpose: Build a working MVP that predicts Seoul commercial-district sales-environment risk, diagnoses a small business's financial burden, and recommends policy support with official-document-grounded RAG explanations.
 - Important paths: `프로젝트 계획서.md` is the main MVP plan; `MVP 단계별 구현 체크리스트.md` is the execution and completion-gate document; `대회개요.md` contains the competition overview.
 
@@ -146,10 +146,38 @@
 
 - `decision:stage6-relative-ranking-output`
   - Created: 2026-08-15T19:08+09:00
-  - Updated: 2026-08-15T19:15+09:00
+  - Updated: 2026-08-15T20:08+09:00
   - Status: active
-  - Content: Treat final LightGBM as a relative area-industry risk-ranking model, not an absolute store-failure probability or safe/risky classifier. Ranking policy v1 uses same-quarter same-industry Seoul areas as the primary Percentile and all same-quarter Seoul area-industry rows as the secondary Percentile; output both plus top-share, rank, and explanations.
-  - Evidence: User direction, `MVP 단계별 구현 체크리스트.md`, `프로젝트 계획서.md`, and `config/stage5.yaml`.
+  - Content: Stage 6 is implemented on the 2025Q4 reference distribution of 21,333 area-industry rows. Policy v1 returns same-industry and Seoul-wide Percentiles, top shares, competition ranks, and TreeSHAP directions without exposing the internal score, a binary label, or an operating threshold.
+  - Evidence: `config/stage6.yaml`, `src/models/stage6_risk_service.py`, `reports/stage6/stage6_manifest.json`, `reports/stage6/verification.md`, and `tests/test_stage6_risk_service.py`.
+
+- `decision:recommendation-role-boundary`
+  - Created: 2026-08-15T19:32+09:00
+  - Updated: 2026-08-15T19:32+09:00
+  - Status: active
+  - Content: ML is the core engine for risk discovery and intervention urgency, official rules exclusively determine policy eligibility, the Recommendation Engine ranks eligible policies using user need, financial burden, policy-purpose fit and ML urgency, and RAG/LLM only explains official evidence. ML urgency is important for officially relevant stabilization or recovery policies but never changes eligibility or claims approval probability; exact weights and bands are deferred until policy metadata and evaluation cases exist.
+  - Evidence: User approval, `프로젝트 계획서.md` sections 4, 24, 33, 34, 38, and 41, and Stage 8 in `MVP 단계별 구현 체크리스트.md`.
+
+- `decision:competitive-positioning`
+  - Created: 2026-08-15T20:14+09:00
+  - Updated: 2026-08-15T20:32+09:00
+  - Status: active
+  - Content: Do not claim novelty from commercial-district analysis, store diagnosis, AI sales forecasting, policy matching, proactive risk alerts, or one-stop recovery routing. The 2026 MSS Small Business Crisis AlertTalk already detects high-risk, delinquent, and closed borrowers and links diagnosis, debt counseling, and recovery support. A defensible service distinction must therefore expose the financial consequence of each intervention, not merely detect risk or list programs; do not claim a market first without a formal prior-art search.
+  - Evidence: Public web research on 2026-08-15 against official Seoul, MSS, public-data, KB, and KCD sources; no reviewed public source showed a Korean official-policy cash-flow intervention simulator, but absence was not proven.
+
+- `proposal:policy-intervention-digital-twin`
+  - Created: 2026-08-15T20:32+09:00
+  - Updated: 2026-08-15T20:47+09:00
+  - Status: documented
+  - Content: The comprehensive redesign blueprint recommends a policy-intervention simulator that compares no action, cost reduction, grants or vouchers, interest support or refinancing, new borrowing, and mixed plans through deterministic 13-week and 6-month cash-flow scenarios. It retires the planned opaque finance score and policy-fit ranking, prioritizes official policy terms and personal cash-flow inputs, freezes Stage 0-6 as evidence and a baseline, and develops a new multi-horizon quantile sales-environment challenger because the current binary rank does not supply shock magnitude. The challenger replaces Stage 6 only after time-based error, interval coverage, industry stability, service utility, and a new independent audit Gate pass.
+  - Evidence: User requested the full keep, rebuild, replace, and data-timing plan in `프로젝트 차별화 구상.md`; the 1,648-line document was created and structurally checked, while the current project plan and implementation remain unchanged until the next authorized rewrite.
+
+- `decision:stage7-finance-burden-policy-v1`
+  - Created: 2026-08-15T20:19+09:00
+  - Updated: 2026-08-15T20:19+09:00
+  - Status: active
+  - Content: The user approved the documented Stage 7 heuristic index: rent/labor/repayment/debt-stock weights 20/20/35/25 with component caps at 30%/50%/20%/100%, display bands below 40/40-69.99/70+ as low/caution/high, zero-sales unavailable handling, optional-field exclusion, and no composite risk type yet.
+  - Evidence: User approval and `프로젝트 계획서.md`, section 22 `승인된 금융부담 정책 v1`; documentation only, not implemented.
 
 ## Working conventions
 
@@ -223,12 +251,19 @@
 ## Current handoff
 
 - `handoff:current`
-  - Updated: 2026-08-15T19:15+09:00
-  - Current state: Stage 5 Gate passed and ranking policy v1 is approved: same-industry Percentile is primary and Seoul-wide area-industry Percentile secondary. Stage 6 onward is aligned across prediction, financial profile, recommendation, API, UI, QA, and final acceptance; no binary threshold is required.
-  - Next step: Implement Stage 6 saved-pipeline scoring, generate versioned reference distributions for both approved comparison groups, and return both Percentiles, top-share values, ranks, and explanations.
-  - Blockers: None for Stage 6 implementation within policy v1. Policy fields may change with service needs without retraining, but Target, features, model v1, and locked-2025 evidence require a new model version and independent test if changed.
+  - Updated: 2026-08-15T20:47+09:00
+  - Current state: Stage 6 and the existing plan remain intact, but `프로젝트 차별화 구상.md` now contains the complete recommended redesign: policy-intervention cash-flow simulation, a keep/freeze/rebuild/retire matrix, new policy and personal-finance data timing, a quantile-model challenger, R0-R8 implementation stages, validation Gates, and submission wording. No data collection, Target regeneration, model training, plan rewrite, or checklist rewrite was performed in this turn.
+  - Next step: When the user requests the plan change, rewrite `프로젝트 계획서.md` around the approved redesign while preserving the executed Stage 0-6 record, then separately realign `MVP 단계별 구현 체크리스트.md`. Before executing R1 or R4, obtain the exact approvals for the 8-12 policy scope, personal cash-flow input contract, Target v2 definition, time split, metrics, and new independent audit period.
+  - Blockers: The current plan still authorizes Stage 7 finance-burden v1, while the redesign recommends retiring it; implementation must not start until the plan rewrite explicitly resolves that conflict.
 
 ## Session log
+
+- `session:20260815-2014`
+  - Started: 2026-08-15T20:14+09:00
+  - Last activity: 2026-08-15T20:47+09:00
+  - Focus: Research competitive differentiation and produce a complete clean-slate-capable redesign blueprint without protecting sunk costs.
+  - Updated keys: `decision:competitive-positioning`, `proposal:policy-intervention-digital-twin`, `handoff:current`
+  - Summary: Confirmed that proactive risk alerts and generic AI bookkeeping overlap current services, then wrote `프로젝트 차별화 구상.md` as a full redesign source document. It recommends deterministic policy cash-flow impact comparison, retires the opaque finance score, freezes Stage 0-6 as baseline evidence, rebuilds a quantile external-scenario model only if it passes a head-to-head Gate, specifies when each new dataset is needed, and defines R0-R8 execution and verification; the current plan, checklist, data, and implementation were not changed.
 
 - `session:20260814-1952`
   - Started: 2026-08-14T19:52+09:00
@@ -260,9 +295,16 @@
 
 - `session:20260815-1229`
   - Started: 2026-08-15T12:29+09:00
-  - Last activity: 2026-08-15T19:15+09:00
+  - Last activity: 2026-08-15T19:32+09:00
   - Focus: Complete Stage 5 evaluation and align final model/threshold decisions with the competition's working-service MVP objective.
-  - Updated keys: `decision:stage45-modeling-eda-plan`, `decision:stage45-feature-contract-d`, `decision:stage5-full-comparison-result`, `decision:stage5-optuna-result`, `decision:stage5-oof-ensemble-run-plan`, `decision:stage5-oof-ensemble-result`, `decision:stage5-service-first-policy`, `decision:stage5-threshold-service-policy`, `decision:stage5-final-2025-result`, `decision:stage6-relative-ranking-output`, `issue:stage5-preprocessing-memory`, `handoff:current`
-  - Summary: Completed and documented Stage 5, approved the dual-comparison ranking policy, and revised every Stage 6+ contract to use same-industry primary and Seoul-wide secondary Percentiles. Operational display/ranking policy is versioned and changeable; model v1 and final-test evidence remain fixed.
+  - Updated keys: `decision:stage45-modeling-eda-plan`, `decision:stage45-feature-contract-d`, `decision:stage5-full-comparison-result`, `decision:stage5-optuna-result`, `decision:stage5-oof-ensemble-run-plan`, `decision:stage5-oof-ensemble-result`, `decision:stage5-service-first-policy`, `decision:stage5-threshold-service-policy`, `decision:stage5-final-2025-result`, `decision:stage6-relative-ranking-output`, `decision:recommendation-role-boundary`, `issue:stage5-preprocessing-memory`, `handoff:current`
+  - Summary: Completed and documented Stage 5, approved dual relative-risk comparisons, and fixed the service role boundary: ML drives risk discovery and urgency, official rules drive eligibility, the deterministic engine ranks eligible policies, and RAG only explains. The plan and Stage 8 checklist now remove arbitrary preset weights and defer them until policy data and evaluation cases exist.
+
+- `session:20260815-1956`
+  - Started: 2026-08-15T19:56+09:00
+  - Last activity: 2026-08-15T20:19+09:00
+  - Focus: Complete Stage 6, then prepare the mandatory user decision contract for Stage 7 financial-burden scoring.
+  - Updated keys: `decision:stage6-relative-ranking-output`, `decision:stage7-finance-burden-policy-v1`, `handoff:current`
+  - Summary: Stage 6 passed with all 27 tests; the user approved finance-burden policy v1 and requested documentation only, so the exact formula, bands, edge cases, example result, and non-DSR limitations were added to the plan without implementation.
 
 ## Session archive

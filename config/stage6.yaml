@@ -1,0 +1,40 @@
+status: implemented
+
+service_ranking_policy:
+  version: v1
+  model_role: relative_area_industry_risk_ranking
+  probability_claim: prohibited
+  binary_label: prohibited
+  reference_quarter: "20254"
+  prediction_horizon: next_two_quarters_persistent_sales_environment_deterioration
+  primary_comparison_group: same_quarter_same_industry_across_seoul_areas
+  secondary_comparison_group: same_quarter_all_seoul_area_industry_rows
+
+ranking:
+  higher_model_score_means: higher_relative_priority
+  tie_method: competition_min_rank
+  percentile_formula: 100 * (population_size - priority_rank) / population_size
+  top_share_formula: 100 - percentile
+  display_decimals: 2
+
+artifacts:
+  model: reports/stage5/artifacts/stage5_lightgbm_trial10.joblib
+  model_metadata: reports/stage5/artifacts/stage5_lightgbm_trial10_metadata.json
+  source_panel: data/processed/stage3_panel.parquet
+  stage4_manifest: reports/stage4/stage4_manifest.json
+  reference_features: data/processed/stage6_reference_features.parquet
+  area_catalog: reports/stage6/area_catalog.csv
+  industry_catalog: reports/stage6/industry_catalog.csv
+  feature_importance: reports/stage6/global_feature_importance.csv
+  manifest: reports/stage6/stage6_manifest.json
+
+explanation:
+  maximum_factors_per_direction: 3
+  method: lightgbm_tree_shap_contributions
+  comparison_value: same_quarter_same_industry_median_or_mode
+  exclude_identifier_features: true
+
+messages:
+  limitation: 개별 점포의 폐업확률이 아니라 같은 기준분기의 두 비교집단 안에서 본 상권·업종 매출환경 상대 순위입니다.
+  causality: 주요 요인은 모델 점수에 기여한 연관 요인이며 원인·결과 관계를 뜻하지 않습니다.
+
