@@ -5,7 +5,7 @@
 
 ## Project snapshot
 
-- Last updated: 2026-08-15T00:06+09:00
+- Last updated: 2026-08-15T12:24+09:00
 - Purpose: Build a working MVP that predicts Seoul commercial-district sales-environment risk, diagnoses a small business's financial burden, and recommends policy support with official-document-grounded RAG explanations.
 - Important paths: `프로젝트 계획서.md` is the main MVP plan; `MVP 단계별 구현 체크리스트.md` is the execution and completion-gate document; `대회개요.md` contains the competition overview.
 
@@ -62,10 +62,38 @@
 
 - `decision:stage5-model-selection-workflow`
   - Created: 2026-08-14T23:49+09:00
-  - Updated: 2026-08-14T23:49+09:00
+  - Updated: 2026-08-15T00:12+09:00
   - Status: active
-  - Content: Do not preselect LightGBM or any final model. After Stage 4 is fixed, compare multiple untuned candidate models with Logistic Regression and a simple baseline under the same four folds, select one final tuning candidate, then run Optuna only for that selected model.
+  - Content: Do not preselect a final model. Compare a broad untuned set spanning simple, L2/L1/Elastic-Net logistic, bagging, and boosting families under the same four folds; select the top three candidates, run Optuna only on those three, then consider OOF-based voting or stacking.
   - Evidence: User instruction and Stage 5 in `MVP 단계별 구현 체크리스트.md`.
+
+- `decision:stage5-comparison-contract`
+  - Created: 2026-08-15T00:32+09:00
+  - Updated: 2026-08-15T00:32+09:00
+  - Status: active
+  - Content: The approved base screen covers Dummy, L2/L1/Elastic-Net Logistic, Random Forest, Extra Trees, LightGBM, XGBoost, and CatBoost. AUROC and AUPRC/AP are co-primary; probability quality and fold stability are secondary, while F2 is reserved for OOF operating-threshold selection after tuning.
+  - Evidence: User approval and `config/stage5.yaml`.
+
+- `decision:stage45-modeling-eda-plan`
+  - Created: 2026-08-15T00:39+09:00
+  - Updated: 2026-08-15T12:19+09:00
+  - Status: active
+  - Content: Stage 4.5 plot-free EDA is complete on 122,011 Fold 1 Train rows from target-end 2022Q2-2023Q3, covering 199 originals and 134 derived candidates; 2024 Validation Target and locked 2025 were not accessed. The user approved D, so Gate 4.5 is complete and Stage 5 remains deliberately unstarted.
+  - Evidence: `reports/stage45/`, `src/analysis/run_stage45_eda.py`, `src/features/build_stage45_features.py`, and `MVP 단계별 구현 체크리스트.md`.
+
+- `decision:stage45-feature-contract-d`
+  - Created: 2026-08-15T12:17+09:00
+  - Updated: 2026-08-15T12:19+09:00
+  - Status: active
+  - Content: Use option D: compare all real models first on the A-style common baseline; add 10 log1p Features only to regularized Logistic models; then test five raw-detail groups independently on all five tree models without automatic accumulation. Never reintroduce remove-class fields, and approve the exact AUPRC/AUROC/fold-stability tolerance before Stage 5 execution.
+  - Evidence: User approval, `reports/stage45/feature_contract.md`, `config/stage5.yaml`, and Stage 5 in `MVP 단계별 구현 체크리스트.md`.
+
+- `decision:ml-observation-unit`
+  - Created: 2026-08-15T12:22+09:00
+  - Updated: 2026-08-15T12:22+09:00
+  - Status: active
+  - Content: One ML observation and Target is one reference quarter x official Seoul commercial-area code x service-industry code; it represents the aggregate sales environment of all stores in that area-industry cell, not one store and not the whole commercial area across industries.
+  - Evidence: `reports/stage2/quality_validation_plan.md`, `src/data/build_stage3_panel.py`, `src/data/build_stage4_dataset.py`, and `reports/stage4/target_definition.md`.
 
 ## Working conventions
 
@@ -127,13 +155,22 @@
   - Fix: Preserve both raw schemas and apply a verified 14-column English-to-Korean mapping only while reading the 2025 file during Stage 2-3 processing.
   - Evidence: `reports/stage2/schema_mapping.md`, `src/data/run_stage2_quality.py`, and `src/data/build_stage3_panel.py`.
 
+- `issue:stage5-preprocessing-memory`
+  - Created: 2026-08-15T00:32+09:00
+  - Updated: 2026-08-15T12:19+09:00
+  - Status: open
+  - Symptom: Two pre-training attempts stopped before any real model fit because pandas numeric conversion and scikit-learn median imputation created large temporary arrays; a later run reached only the Dummy Fold 1 checkpoint before the user paused it.
+  - Cause: Full-width 199-column preprocessing produced avoidable float64/int64 copies despite the compressed development Parquet being only 162.3 MiB in memory.
+  - Fix: `run_stage5_base_comparison.py` uses Arrow float32/category loading and columnwise train-only preprocessing; before Stage 5 execution it must implement D's common baseline and bounded tree-ablation Feature sets without fragmented copies. The execution guard currently prevents any run while this remains unimplemented and user-held.
+  - Evidence: `src/models/run_stage5_base_comparison.py`, `src/features/build_stage45_features.py`, `reports/stage45/feature_contract.md`, and invalid `reports/stage5/checkpoints/dummy_prior__fold1.*`.
+
 ## Current handoff
 
 - `handoff:current`
-  - Updated: 2026-08-15T00:06+09:00
-  - Current state: Stage 4 Gate is complete with a fixed 10% persistent-decline Target, 222,973 labeled development rows, 690,307 four-fold membership rows, and 79,506 label-free locked-test Feature rows. Mandatory checks passed once; locked 2025 Target values and statistics remain unmaterialized.
-  - Next step: Propose the Stage 5 untuned candidate-model list and evaluation metrics for user approval, then fit preprocessing inside each of the same four chronological folds and compare candidates before any Optuna tuning.
-  - Blockers: Stage 5 candidate models, evaluation metric priority, and final tuning candidate are not selected; no machine-learning model has been trained.
+  - Updated: 2026-08-15T12:24+09:00
+  - Current state: Gate 4.5 passed with user-approved option D. The current quarter x commercial-area x service-industry Target remains unchanged; finer spatial or store-level Targets are not supported by the current aggregated labels, and no Stage 5 work was run.
+  - Next step: Only after a new user request, approve the exact feature-group retention tolerance, implement and verify machine-readable Feature-set construction for D, then explicitly authorize the Stage 5 base comparison.
+  - Blockers: Stage 5 is held by user instruction and the exact AUPRC/AUROC/fold-stability tolerance is intentionally pending; the old Dummy checkpoint remains invalid and Optuna/final-model choices remain undecided.
 
 ## Session log
 
@@ -146,9 +183,23 @@
 
 - `session:20260814-2034`
   - Started: 2026-08-14T20:34+09:00
-  - Last activity: 2026-08-15T00:06+09:00
+  - Last activity: 2026-08-15T00:39+09:00
   - Focus: Complete Stages 0-3 from project setup through chunk-based raw QA and a reproducible panel build.
-  - Updated keys: `decision:stage0-stack`, `decision:solo-team-validation`, `decision:stage3-panel-contract`, `decision:stage4-persistent-target-structure`, `decision:stage4-cv-design`, `decision:stage5-model-selection-workflow`, `convention:user-owned-data-acquisition`, `convention:bounded-raw-inspection`, `convention:chronological-project-log`, `convention:mandatory-user-decision`, `convention:proportional-verification`, `issue:bounded-reader-full-file-call`, `issue:store-2025-header-language`, `handoff:current`
-  - Summary: Completed Stages 2-4, fixed the persistent two-quarter decline threshold at 10%, created and verified development/Fold/locked-test Feature artifacts without exposing locked labels, and left Stage 5 model and metric choices undecided.
+  - Updated keys: `decision:stage0-stack`, `decision:solo-team-validation`, `decision:stage3-panel-contract`, `decision:stage4-persistent-target-structure`, `decision:stage4-cv-design`, `decision:stage45-modeling-eda-plan`, `decision:stage5-model-selection-workflow`, `decision:stage5-comparison-contract`, `convention:user-owned-data-acquisition`, `convention:bounded-raw-inspection`, `convention:chronological-project-log`, `convention:mandatory-user-decision`, `convention:proportional-verification`, `issue:bounded-reader-full-file-call`, `issue:store-2025-header-language`, `issue:stage5-preprocessing-memory`, `handoff:current`
+  - Summary: Completed Stages 2-4, then inserted a detailed plot-free Stage 4.5 plan for modeling EDA, derived Features, and Feature-contract approval; no analysis was run, Stage 5 remains blocked, and the new session should begin from this plan.
+
+- `session:20260815-1106`
+  - Started: 2026-08-15T11:06+09:00
+  - Last activity: 2026-08-15T12:19+09:00
+  - Focus: Execute Stage 4.5 plot-free modeling EDA, leakage-safe derived Features, and a user-reviewable Feature contract.
+  - Updated keys: `decision:stage45-modeling-eda-plan`, `decision:stage45-feature-contract-d`, `issue:stage5-preprocessing-memory`, `handoff:current`
+  - Summary: Completed the plot-free Stage 4.5 analysis, then recorded the user's D approval across the contract, manifest, config, checklist, and execution guard; Gate 4.5 passed while Stage 5 remained unstarted and blocked pending a future request and exact Ablation tolerance approval.
+
+- `session:20260815-1221`
+  - Started: 2026-08-15T12:21+09:00
+  - Last activity: 2026-08-15T12:24+09:00
+  - Focus: Verify the ML observation unit and assess whether a finer Target would be valid and efficient.
+  - Updated keys: `decision:ml-observation-unit`, `handoff:current`
+  - Summary: Confirmed that the current unit is the finest defensible supervised Target in the nine aggregated datasets; finer grids or stores would require new matching outcome labels, so the recommendation is to retain the current external-risk model and differentiate individual businesses in the separate financial-diagnosis layer. No design change or model run occurred.
 
 ## Session archive

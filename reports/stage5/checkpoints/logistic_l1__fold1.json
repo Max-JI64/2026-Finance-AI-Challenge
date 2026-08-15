@@ -1,0 +1,8 @@
+{
+  "status": "failed",
+  "model": "logistic_l1",
+  "fold": 1,
+  "fit_seconds": 341.53998140001204,
+  "error_type": "OSError",
+  "error": "[Errno 22] Invalid argument"
+}

@@ -1,0 +1,108 @@
+status:
+  candidate_models: approved
+  metric_policy: approved
+  pre_model_eda: completed
+  feature_contract: approved
+  feature_contract_option: D_common_baseline_plus_tree_ablation
+  base_comparison: not_started_user_hold
+  optuna_candidates: awaiting_user_approval
+  optuna_execution: blocked_until_top3_approval
+
+data:
+  development: data/processed/stage4_development.parquet
+  fold_membership: data/processed/stage4_fold_membership.parquet
+  feature_manifest: reports/stage4/stage4_manifest.json
+  target: target_persistent_decline
+  locked_test_access: forbidden_during_model_selection
+
+candidate_models:
+  - dummy_prior
+  - logistic_l2
+  - logistic_l1
+  - logistic_elasticnet
+  - random_forest
+  - extra_trees
+  - lightgbm
+  - xgboost
+  - catboost
+
+model_families:
+  simple: [dummy_prior]
+  linear: [logistic_l2, logistic_l1, logistic_elasticnet]
+  bagging: [random_forest, extra_trees]
+  boosting: [lightgbm, xgboost, catboost]
+
+feature_strategy:
+  name: D_common_baseline_plus_tree_ablation
+  approved_at_kst: "2026-08-15T12:17+09:00"
+  execution_status: planned_not_started
+  contract_document: reports/stage45/feature_contract.md
+  common_baseline:
+    basis: option_A_structural_deduplication
+    applies_to: [logistic_l2, logistic_l1, logistic_elasticnet, random_forest, extra_trees, lightgbm, xgboost, catboost]
+    original_rule: keep rows marked keep in the Stage 4.5 contract
+    derived_rule: add nonconstant rows marked add and common in the Stage 4.5 contract
+  linear_extension:
+    applies_to: [logistic_l2, logistic_l1, logistic_elasticnet]
+    rule: add the 10 rows marked linear_only in the Stage 4.5 contract
+  tree_ablation:
+    applies_to: [random_forest, extra_trees, lightgbm, xgboost, catboost]
+    baseline_first: true
+    add_one_group_at_a_time: true
+    automatic_group_accumulation: false
+    eligible_rule: only original rows marked replace; never reintroduce remove rows
+    groups:
+      - sales_amount_raw_components
+      - transaction_count_raw_components
+      - floating_population_raw_components
+      - resident_population_raw_components
+      - worker_population_raw_components
+    retention_rule:
+      status: exact_tolerance_requires_user_approval_before_execution
+      evidence: [mean_average_precision, mean_roc_auc, worst_fold_average_precision, fold_standard_deviation]
+      principle: retain only when co-primary performance and time-fold stability improve without an approved material deterioration
+  comparison_order:
+    - common_baseline_all_models
+    - tree_raw_group_ablation
+    - rank_eligible_variants_and_select_top_3
+  user_hold:
+    stage5_execution_authorized: false
+    checkpoint_reuse_authorized: false
+
+preprocessing:
+  fit_scope: each_fold_training_partition_only
+  numeric: columnwise_median_imputation_and_scale_only_standardization
+  categorical_general: constant_imputation_and_one_hot_unknown_ignore
+  categorical_catboost: native_string_categories_with_missing_token
+  class_weight: null
+
+metrics:
+  co_primary: [average_precision_auprc, roc_auc]
+  probability_quality: [log_loss, brier_score]
+  threshold_reference:
+    threshold: 0.5
+    metrics: [precision, recall, f1, f2, mcc, balanced_accuracy, confusion_matrix, predicted_positive_rate]
+    selection_use: false
+  stability: [fold_mean, fold_standard_deviation, worst_fold]
+  candidate_ranking:
+    rule: average_of_mean_auprc_rank_and_mean_auroc_rank
+    tie_breakers: [worst_fold_auprc, mean_brier_score, total_fit_seconds]
+  final_threshold:
+    metric: f2
+    source: tuned_model_oof_predictions
+    status: future_step
+
+screen_budget:
+  random_seed: 20260815
+  logistic_max_iter: 200
+  bagging_trees: 150
+  bagging_max_depth: 18
+  bagging_min_samples_leaf: 10
+  boosting_iterations: 300
+  max_parallel_cpu_threads: 8
+
+optuna:
+  candidates: top_3_after_base_comparison
+  trials_per_model: 20
+  execute_only_after_user_approval: true
+  tuned_ensemble_afterward: [soft_voting, stacking]

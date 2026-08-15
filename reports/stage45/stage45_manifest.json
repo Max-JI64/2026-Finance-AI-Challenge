@@ -1,0 +1,54 @@
+{
+  "created_at_kst": "2026-08-15T11:42+09:00",
+  "status": "gate45_completed_feature_contract_d_approved",
+  "feature_contract_approved_at_kst": "2026-08-15T12:17+09:00",
+  "stage5_execution_started": false,
+  "discovery": {
+    "fold": 1,
+    "partition": "train",
+    "target_end_start": "20222",
+    "target_end_end": "20233",
+    "row_count": 122011,
+    "positive_rows": 26692,
+    "positive_rate": 0.2187671603380023,
+    "original_feature_count": 199
+  },
+  "outputs": [
+    "eda_summary.md",
+    "feature_profile.csv",
+    "feature_relationships.csv",
+    "numeric_target_relationships.csv",
+    "categorical_target_relationships.csv",
+    "drift_summary.csv",
+    "derived_feature_definitions.md",
+    "feature_contract.md"
+  ],
+  "analysis": {
+    "profiled_feature_count": 333,
+    "derived_feature_count": 134,
+    "numeric_target_rows": 317,
+    "categorical_target_rows": 5710,
+    "relationship_rows": 1326,
+    "drift_rows": 1998,
+    "correlation_sample_rows": 20000
+  },
+  "contract": {
+    "approved_option": "D_common_baseline_plus_tree_ablation",
+    "original_feature_count": 199,
+    "proposed_original_keep_count": 83,
+    "proposed_original_remove_or_replace_count": 116,
+    "proposed_derived_add_count": 127,
+    "proposed_derived_remove_count": 7,
+    "linear_only_log_count": 10,
+    "approval_status": "approved_2026-08-15T12:17+09:00"
+  },
+  "guards": {
+    "validation_target_accessed": false,
+    "locked_test_path_accessed": false,
+    "plot_files_created": 0,
+    "target_guided_period": [
+      "20222",
+      "20233"
+    ]
+  }
+}
