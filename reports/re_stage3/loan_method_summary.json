@@ -1,0 +1,20 @@
+{
+  "equal_principal": {
+    "payment_count": 12,
+    "principal_total": 1200000,
+    "interest_total": 78000,
+    "closing_principal": 0
+  },
+  "equal_payment": {
+    "payment_count": 12,
+    "principal_total": 1200000,
+    "interest_total": 79423,
+    "closing_principal": 0
+  },
+  "bullet": {
+    "payment_count": 12,
+    "principal_total": 1200000,
+    "interest_total": 144000,
+    "closing_principal": 0
+  }
+}

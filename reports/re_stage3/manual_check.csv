@@ -1,0 +1,27 @@
+﻿check,expected,actual,passed
+recent_revenue_half_up_average,6000000,6000000,True
+month1_operating_inflow,6000000,6000000,True
+month1_fixed_cost,3000000,3000000,True
+month1_variable_cost,1200000,1200000,True
+month1_tax_utility,300000,300000,True
+month1_combined_debt_payment,500000,500000,True
+month1_ending_cash,11000000,11000000,True
+month6_ending_cash,16000000,16000000,True
+week13_ending_cash,13000000,13000000,True
+all_13_week_closing_cash,"[15000000, 15000000, 13500000, 11000000, 16000000, 16000000, 15700000, 12500000, 11000000, 17000000, 16700000, 15500000, 13000000]","[15000000, 15000000, 13500000, 11000000, 16000000, 16000000, 15700000, 12500000, 11000000, 17000000, 16700000, 15500000, 13000000]",True
+all_6_month_closing_cash,"[11000000, 12000000, 13000000, 14000000, 15000000, 16000000]","[11000000, 12000000, 13000000, 14000000, 15000000, 16000000]",True
+week_month_overlap,13000000,13000000,True
+deterministic_result,True,True,True
+equal_principal_payment_count,12,12,True
+equal_principal_principal_total,1200000,1200000,True
+equal_principal_closing_principal,0,0,True
+equal_payment_payment_count,12,12,True
+equal_payment_principal_total,1200000,1200000,True
+equal_payment_closing_principal,0,0,True
+bullet_payment_count,12,12,True
+bullet_principal_total,1200000,1200000,True
+bullet_closing_principal,0,0,True
+detailed_csv_event_rows,14,14,True
+detailed_csv_loan_rows,1,1,True
+detailed_debt_split,True,True,True
+unit_warning_detected,True,True,True

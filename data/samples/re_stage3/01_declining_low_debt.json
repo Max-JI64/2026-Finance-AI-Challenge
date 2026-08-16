@@ -1,0 +1,21 @@
+{
+  "reference_date": "2026-09-01",
+  "opening_cash": 10000000,
+  "safe_cash_threshold": 2000000,
+  "monthly_revenue": null,
+  "recent_monthly_revenues": [6500000, 6300000, 6100000, 5900000, 5700000, 5500000],
+  "revenue_receipt_day": 5,
+  "monthly_rent": 1000000,
+  "rent_payment_day": 1,
+  "monthly_labor_cost": 2000000,
+  "labor_payment_day": 25,
+  "monthly_variable_cost": null,
+  "variable_cost_rate_percent": 20,
+  "variable_cost_payment_day": 20,
+  "other_fixed_costs": [
+    {"name": "공과금", "amount": 300000, "payment_day": 15, "expense_type": "utility"}
+  ],
+  "total_loan_balance": 12000000,
+  "monthly_debt_payment": 500000,
+  "debt_payment_day": 28
+}

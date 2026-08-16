@@ -1,0 +1,51 @@
+project:
+  stage: RE Stage 3
+  status: complete
+  engine_version: re3-v1
+  started_at: "2026-08-16"
+  completed_at: "2026-08-16"
+  gate: passed
+
+input_contract:
+  modes:
+    - simple
+    - detailed_csv
+  currency_unit: KRW_won
+  safe_cash_threshold_required: true
+  negative_input_amounts_allowed: false
+  negative_calculated_cash_allowed: true
+  simple_debt_payment_is_principal_plus_interest: true
+  detailed_interest_accrual: monthly_no_daily_proration
+  event_rounding: ROUND_HALF_UP_to_won
+  missing_receipt_or_payment_date: error
+  persistent_personal_data_storage: false
+
+horizons:
+  weekly:
+    periods: 13
+    days_per_period: 7
+    total_days: 91
+  monthly:
+    periods: 6
+    boundary: reference_date_anniversary
+
+paths:
+  templates: data/templates/re_stage3
+  samples: data/samples/re_stage3
+  reports: reports/re_stage3
+
+guard:
+  allowed_dependencies:
+    - python_standard_library
+    - pydantic
+  prohibited_dependencies:
+    - external_data
+    - policy_engine
+    - machine_learning_model
+    - rag
+    - llm
+  prohibited_fields:
+    - resident_registration_number
+    - account_number
+    - credit_score
+    - business_registration_number_required

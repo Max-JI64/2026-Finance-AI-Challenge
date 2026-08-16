@@ -5,9 +5,9 @@
 
 ## Project snapshot
 
-- Last updated: 2026-08-16T00:25+09:00
+- Last updated: 2026-08-16T09:57+09:00
 - Purpose: Build a working Seoul small-business policy-impact simulator that combines area-industry sales-environment scenarios, deterministic 13-week and 6-month cash flow, official policy eligibility and financial terms, intervention comparison, and evidence-grounded AI explanations.
-- Important paths: `프로젝트 계획서.md` is the main MVP plan; `MVP 단계별 구현 체크리스트.md` is the execution and completion-gate document; `reports/re_stage1/` contains the service contract and six portfolio comparison; `reports/re_stage2/` contains A+C selection, API accessibility, structured QA, verification, and downstream review; `data/processed_re/policy/re_stage2/` contains the reviewed policy Metadata, Rules, Events, versions, source Manifest, and pre-index chunks; `config/re_stage2.yaml` and `src/guards/re_stage2_guard.py` preserve the completed RE2 boundary; `data/raw_re/향후 데이터 다운로드 가이드.md` is the acquisition guide.
+- Important paths: `프로젝트 계획서.md` is the main MVP plan; `MVP 단계별 구현 체크리스트.md` is the execution and completion-gate document; `reports/re_stage1/` and `reports/re_stage2/` preserve the service and 10-policy contracts; `src/cashflow/`, `config/re_stage3.yaml`, `data/templates/re_stage3/`, `data/samples/re_stage3/`, and `reports/re_stage3/` contain the completed deterministic cash-flow engine, contracts, synthetic evidence, and Gate RE3 review; `data/raw_re/향후 데이터 다운로드 가이드.md` is the acquisition guide.
 
 ## Durable decisions
 
@@ -20,10 +20,10 @@
 
 - `decision:implementation-checklist`
   - Created: 2026-08-14T20:21+09:00
-  - Updated: 2026-08-16T00:08+09:00
+  - Updated: 2026-08-16T09:57+09:00
   - Status: active
-  - Content: The implementation checklist mirrors completed Stage 0-6 and RE Stage 1-2 plus pending RE Stage 3-9. It records the A+C 10-policy knowledge base and requires a downstream-impact review plus necessary plan/config/test updates before every next Stage starts.
-  - Evidence: `MVP 단계별 구현 체크리스트.md`, 2,143 lines, 426 completed and 794 open checkboxes; all nine RE Gates contain an end-stage feedback item.
+  - Content: The implementation checklist mirrors completed Stage 0-6 and RE Stage 1-3 plus pending RE Stage 4-9. It records the A+C 10-policy knowledge base and completed `re3-v1` baseline cash-flow engine, and requires a downstream-impact review plus necessary plan/config/test updates before every next Stage starts.
+  - Evidence: `MVP 단계별 구현 체크리스트.md` and Gate evidence under `reports/re_stage1/`, `reports/re_stage2/`, and `reports/re_stage3/`.
 
 - `decision:policy-source-hierarchy`
   - Created: 2026-08-15T21:23+09:00
@@ -41,10 +41,10 @@
 
 - `decision:re-stage3-input-calculation-contract`
   - Created: 2026-08-16T00:25+09:00
-  - Updated: 2026-08-16T00:25+09:00
+  - Updated: 2026-08-16T09:57+09:00
   - Status: active
-  - Content: RE3 is authorized but implementation is paused until a new user request. Support simple input and detailed CSV; do not clip calculated cash below zero; treat simple monthly debt payment as total principal-plus-interest outflow; calculate three repayment methods only for detailed loans; use monthly interest without daily accrual; round each event to won; require user-set safe cash and actual receipt/payment dates without inventing defaults.
-  - Evidence: User approval on 2026-08-16, `프로젝트 계획서.md`, and RE Stage 3 in `MVP 단계별 구현 체크리스트.md`.
+  - Content: Gate RE3 passed with engine `re3-v1`. It supports simple input and detailed CSV; preserves negative calculated cash; treats simple monthly debt payment as combined principal-plus-interest outflow; calculates equal-principal, equal-payment, and bullet schedules only for detailed loans; uses monthly interest without daily accrual and won-level half-up rounding; and requires user-set safe cash plus actual receipt/payment dates without defaults.
+  - Evidence: `src/cashflow/`, `config/re_stage3.yaml`, `reports/re_stage3/verification.md`, `reports/re_stage3/manifest.json`, and `tests/test_re_stage3_cashflow.py`; hand checks 26/26 and full tests 52 passed.
 
 - `decision:pre-re1-policy-qa`
   - Created: 2026-08-15T23:18+09:00
@@ -319,12 +319,19 @@
 ## Current handoff
 
 - `handoff:current`
-  - Updated: 2026-08-16T00:25+09:00
-  - Current state: Gate RE2 passed and the RE3 input/calculation contract is approved, but the user explicitly paused implementation. External source-link research is allowed; every download and project raw-data load remains user-owned.
-  - Next step: Wait for the user's separate RE3 restart request, then build the policy-independent deterministic 13-week and 6-month engine using only local code and synthetic test cases. If a later Stage requires external data, first report the need and exact official links, then wait for user download and loading confirmation.
-  - Blockers: No design blocker remains for RE3, but implementation must not start until the user asks. RAG indexing remains blocked until RE6, and Target v2/model v2 remain blocked until the RE5 decision Gate.
+  - Updated: 2026-08-16T09:57+09:00
+  - Current state: Gates RE1-RE3 have passed. `re3-v1` deterministically produces 13-week and 6-month baseline cash flow from simple or detailed inputs without policy, ML, RAG, LLM, or external data; hand checks 26/26 and all 52 project tests passed.
+  - Next step: Begin RE Stage 4 by mapping the approved RE2 policy financial metadata into dated RE3-compatible inflow, cost-reduction, contribution, principal, interest, fee, and guarantee-fee events; stop before any unapproved policy assumption that changes financial meaning.
+  - Blockers: No RE3 blocker remains. RE4 may expose missing official dates or terms that must stay `미확인` or require an explicit user assumption; external downloads remain user-owned, RAG indexing remains blocked until RE6, and Target/model v2 remain blocked until the RE5 decision Gate.
 
 ## Session log
+
+- `session:20260816-0943`
+  - Started: 2026-08-16T09:43+09:00
+  - Last activity: 2026-08-16T09:57+09:00
+  - Focus: Implement and verify the approved RE Stage 3 personal baseline cash-flow contract.
+  - Updated keys: `decision:implementation-checklist`, `decision:re-stage3-input-calculation-contract`, `handoff:current`
+  - Summary: Completed `re3-v1` simple and detailed inputs, 13-week and 6-month cash flow, three detailed loan methods, validation, templates, five synthetic cases, hand checks 26/26, and all 52 project tests; Gate RE3 passed with no downstream Target, data, model, metric, policy, or schedule change.
 
 - `session:20260816-0018`
   - Started: 2026-08-16T00:18+09:00

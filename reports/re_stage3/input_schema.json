@@ -1,0 +1,391 @@
+{
+  "simple": {
+    "$defs": {
+      "ExpenseType": {
+        "enum": [
+          "rent",
+          "labor",
+          "purchase",
+          "tax",
+          "utility",
+          "social_insurance",
+          "vehicle_fuel",
+          "equipment",
+          "repair",
+          "other"
+        ],
+        "title": "ExpenseType",
+        "type": "string"
+      },
+      "OtherFixedCost": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "amount": {
+            "minimum": 0,
+            "title": "Amount",
+            "type": "integer"
+          },
+          "payment_day": {
+            "maximum": 31,
+            "minimum": 1,
+            "title": "Payment Day",
+            "type": "integer"
+          },
+          "expense_type": {
+            "$ref": "#/$defs/ExpenseType",
+            "default": "other"
+          }
+        },
+        "required": [
+          "name",
+          "amount",
+          "payment_day"
+        ],
+        "title": "OtherFixedCost",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "reference_date": {
+        "format": "date",
+        "title": "Reference Date",
+        "type": "string"
+      },
+      "opening_cash": {
+        "minimum": 0,
+        "title": "Opening Cash",
+        "type": "integer"
+      },
+      "safe_cash_threshold": {
+        "minimum": 0,
+        "title": "Safe Cash Threshold",
+        "type": "integer"
+      },
+      "monthly_revenue": {
+        "anyOf": [
+          {
+            "minimum": 0,
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Monthly Revenue"
+      },
+      "recent_monthly_revenues": {
+        "anyOf": [
+          {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Recent Monthly Revenues"
+      },
+      "revenue_receipt_day": {
+        "maximum": 31,
+        "minimum": 1,
+        "title": "Revenue Receipt Day",
+        "type": "integer"
+      },
+      "monthly_rent": {
+        "minimum": 0,
+        "title": "Monthly Rent",
+        "type": "integer"
+      },
+      "rent_payment_day": {
+        "maximum": 31,
+        "minimum": 1,
+        "title": "Rent Payment Day",
+        "type": "integer"
+      },
+      "monthly_labor_cost": {
+        "minimum": 0,
+        "title": "Monthly Labor Cost",
+        "type": "integer"
+      },
+      "labor_payment_day": {
+        "maximum": 31,
+        "minimum": 1,
+        "title": "Labor Payment Day",
+        "type": "integer"
+      },
+      "monthly_variable_cost": {
+        "anyOf": [
+          {
+            "minimum": 0,
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Monthly Variable Cost"
+      },
+      "variable_cost_rate_percent": {
+        "anyOf": [
+          {
+            "maximum": 100,
+            "minimum": 0,
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Variable Cost Rate Percent"
+      },
+      "variable_cost_payment_day": {
+        "maximum": 31,
+        "minimum": 1,
+        "title": "Variable Cost Payment Day",
+        "type": "integer"
+      },
+      "other_fixed_costs": {
+        "items": {
+          "$ref": "#/$defs/OtherFixedCost"
+        },
+        "title": "Other Fixed Costs",
+        "type": "array"
+      },
+      "total_loan_balance": {
+        "minimum": 0,
+        "title": "Total Loan Balance",
+        "type": "integer"
+      },
+      "monthly_debt_payment": {
+        "minimum": 0,
+        "title": "Monthly Debt Payment",
+        "type": "integer"
+      },
+      "debt_payment_day": {
+        "maximum": 31,
+        "minimum": 1,
+        "title": "Debt Payment Day",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "reference_date",
+      "opening_cash",
+      "safe_cash_threshold",
+      "revenue_receipt_day",
+      "monthly_rent",
+      "rent_payment_day",
+      "monthly_labor_cost",
+      "labor_payment_day",
+      "variable_cost_payment_day",
+      "total_loan_balance",
+      "monthly_debt_payment",
+      "debt_payment_day"
+    ],
+    "title": "SimpleCashflowInput",
+    "type": "object"
+  },
+  "detailed": {
+    "$defs": {
+      "CashEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "event_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Event Id",
+            "type": "string"
+          },
+          "event_date": {
+            "format": "date",
+            "title": "Event Date",
+            "type": "string"
+          },
+          "event_type": {
+            "$ref": "#/$defs/EventType"
+          },
+          "amount": {
+            "minimum": 0,
+            "title": "Amount",
+            "type": "integer"
+          },
+          "expense_type": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ExpenseType"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "description": {
+            "default": "",
+            "maxLength": 300,
+            "title": "Description",
+            "type": "string"
+          },
+          "source": {
+            "default": "user",
+            "maxLength": 100,
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "event_id",
+          "event_date",
+          "event_type",
+          "amount"
+        ],
+        "title": "CashEvent",
+        "type": "object"
+      },
+      "EventType": {
+        "enum": [
+          "historical_revenue",
+          "operating_inflow",
+          "accounts_receivable",
+          "fixed_cost",
+          "variable_cost",
+          "tax_utility",
+          "accounts_payable",
+          "one_time_expense"
+        ],
+        "title": "EventType",
+        "type": "string"
+      },
+      "ExpenseType": {
+        "enum": [
+          "rent",
+          "labor",
+          "purchase",
+          "tax",
+          "utility",
+          "social_insurance",
+          "vehicle_fuel",
+          "equipment",
+          "repair",
+          "other"
+        ],
+        "title": "ExpenseType",
+        "type": "string"
+      },
+      "LoanInput": {
+        "additionalProperties": false,
+        "properties": {
+          "loan_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Loan Id",
+            "type": "string"
+          },
+          "principal": {
+            "exclusiveMinimum": 0,
+            "title": "Principal",
+            "type": "integer"
+          },
+          "annual_interest_rate_percent": {
+            "maximum": 100,
+            "minimum": 0,
+            "title": "Annual Interest Rate Percent",
+            "type": "number"
+          },
+          "repayment_method": {
+            "$ref": "#/$defs/RepaymentMethod"
+          },
+          "payment_day": {
+            "maximum": 31,
+            "minimum": 1,
+            "title": "Payment Day",
+            "type": "integer"
+          },
+          "maturity_date": {
+            "format": "date",
+            "title": "Maturity Date",
+            "type": "string"
+          },
+          "grace_months": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Grace Months",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "loan_id",
+          "principal",
+          "annual_interest_rate_percent",
+          "repayment_method",
+          "payment_day",
+          "maturity_date"
+        ],
+        "title": "LoanInput",
+        "type": "object"
+      },
+      "RepaymentMethod": {
+        "enum": [
+          "equal_principal",
+          "equal_payment",
+          "bullet"
+        ],
+        "title": "RepaymentMethod",
+        "type": "string"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "reference_date": {
+        "format": "date",
+        "title": "Reference Date",
+        "type": "string"
+      },
+      "opening_cash": {
+        "minimum": 0,
+        "title": "Opening Cash",
+        "type": "integer"
+      },
+      "safe_cash_threshold": {
+        "minimum": 0,
+        "title": "Safe Cash Threshold",
+        "type": "integer"
+      },
+      "events": {
+        "items": {
+          "$ref": "#/$defs/CashEvent"
+        },
+        "title": "Events",
+        "type": "array"
+      },
+      "loans": {
+        "items": {
+          "$ref": "#/$defs/LoanInput"
+        },
+        "title": "Loans",
+        "type": "array"
+      }
+    },
+    "required": [
+      "reference_date",
+      "opening_cash",
+      "safe_cash_threshold",
+      "events"
+    ],
+    "title": "DetailedCashflowInput",
+    "type": "object"
+  }
+}

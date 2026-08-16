@@ -1,0 +1,21 @@
+{
+  "reference_date": "2026-09-01",
+  "opening_cash": 1000000,
+  "safe_cash_threshold": 2000000,
+  "monthly_revenue": 3500000,
+  "recent_monthly_revenues": null,
+  "revenue_receipt_day": 20,
+  "monthly_rent": 1500000,
+  "rent_payment_day": 1,
+  "monthly_labor_cost": 2200000,
+  "labor_payment_day": 10,
+  "monthly_variable_cost": 900000,
+  "variable_cost_rate_percent": null,
+  "variable_cost_payment_day": 15,
+  "other_fixed_costs": [
+    {"name": "차량연료비", "amount": 250000, "payment_day": 8, "expense_type": "vehicle_fuel"}
+  ],
+  "total_loan_balance": 30000000,
+  "monthly_debt_payment": 900000,
+  "debt_payment_day": 5
+}

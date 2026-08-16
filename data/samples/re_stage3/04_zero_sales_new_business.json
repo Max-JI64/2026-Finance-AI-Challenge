@@ -1,0 +1,19 @@
+{
+  "reference_date": "2026-09-01",
+  "opening_cash": 5000000,
+  "safe_cash_threshold": 1000000,
+  "monthly_revenue": 0,
+  "recent_monthly_revenues": null,
+  "revenue_receipt_day": 5,
+  "monthly_rent": 800000,
+  "rent_payment_day": 1,
+  "monthly_labor_cost": 0,
+  "labor_payment_day": 25,
+  "monthly_variable_cost": 0,
+  "variable_cost_rate_percent": null,
+  "variable_cost_payment_day": 20,
+  "other_fixed_costs": [],
+  "total_loan_balance": 0,
+  "monthly_debt_payment": 0,
+  "debt_payment_day": 28
+}

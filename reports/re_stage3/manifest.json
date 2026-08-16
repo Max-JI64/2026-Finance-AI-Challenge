@@ -1,0 +1,75 @@
+{
+  "stage": "RE Stage 3",
+  "status": "completed",
+  "engine_version": "re3-v1",
+  "verification_date": "2026-08-16",
+  "external_data_used": false,
+  "policy_ml_rag_used": false,
+  "check_count": 26,
+  "passed_count": 26,
+  "deterministic": true,
+  "weekly_periods": 13,
+  "monthly_periods": 6,
+  "files": [
+    {
+      "path": "src/cashflow/schemas.py",
+      "bytes": 8289,
+      "sha256": "7672ce7c2bfb8aa0dc4fd2084489746abf87761613ea0dbf677987035e2288d4"
+    },
+    {
+      "path": "src/cashflow/loans.py",
+      "bytes": 5150,
+      "sha256": "2a210a47e42dc39cc6ec199fd69abe26c8c355a7c3829d85c440029e3a690432"
+    },
+    {
+      "path": "src/cashflow/engine.py",
+      "bytes": 17876,
+      "sha256": "f33f77c46fee9fe0ed8be94ba198d3acf8d70f6159e7a0cea8439e94e5628aa1"
+    },
+    {
+      "path": "src/cashflow/csv_io.py",
+      "bytes": 3911,
+      "sha256": "9a7a0c8e1250d2e87bf4e483488ebd78ecc6e520ae7d353ae99e038dc273297b"
+    },
+    {
+      "path": "data/samples/re_stage3/01_declining_low_debt.json",
+      "bytes": 669,
+      "sha256": "08c0848a8061bb8199638757009edf3b037bee2bcf159d307107135670379be9"
+    },
+    {
+      "path": "data/templates/re_stage3/cashflow_events.csv",
+      "bytes": 1179,
+      "sha256": "2ff4a68d969d68c6f8eb9a33d824aa23891df819de0d3806fdb88fa59b4b0970"
+    },
+    {
+      "path": "data/templates/re_stage3/loans.csv",
+      "bytes": 158,
+      "sha256": "6bf9beb845e4f8c6ccebb3ffddda8605b525cc87f9d13a4d8b13a5755aadfa4f"
+    },
+    {
+      "path": "reports/re_stage3/input_schema.json",
+      "bytes": 9513,
+      "sha256": "9559c04c9a111547edc2241424be38e272d76d9fc5fdb8d62c843ef9ed6bc1f7"
+    },
+    {
+      "path": "reports/re_stage3/simple_sample_result.json",
+      "bytes": 11222,
+      "sha256": "00e187a20e7813b870e9693b837985eca9dca564b4ad638c96d00c25dff5dac1"
+    },
+    {
+      "path": "reports/re_stage3/detailed_sample_result.json",
+      "bytes": 18280,
+      "sha256": "4343330b6a2f076dcff41a368000a465201b00043b8108454d5a67c37ba160da"
+    },
+    {
+      "path": "reports/re_stage3/loan_method_summary.json",
+      "bytes": 436,
+      "sha256": "2d286b023f4e3d7cf261af40afa01b2902c01c78a5638d7eae9502db43f6e9c2"
+    },
+    {
+      "path": "reports/re_stage3/manual_check.csv",
+      "bytes": 1496,
+      "sha256": "7fe1d478f9a7b406343022c097d5447476d3151ddf2b81e090b11edbaf9aa714"
+    }
+  ]
+}
