@@ -1,0 +1,392 @@
+{
+  "$defs": {
+    "RepresentativeAgeBand": {
+      "enum": [
+        "40세 미만",
+        "40~49세",
+        "50세 이상",
+        "모름"
+      ],
+      "title": "RepresentativeAgeBand",
+      "type": "string"
+    },
+    "TriState": {
+      "enum": [
+        "yes",
+        "no",
+        "unknown"
+      ],
+      "title": "TriState",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Session-only policy facts. The caller must not persist the raw model.",
+  "properties": {
+    "region": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Region"
+    },
+    "industry_code": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Industry Code"
+    },
+    "industry_section": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Industry Section"
+    },
+    "business_scale": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Business Scale"
+    },
+    "opening_date": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Opening Date"
+    },
+    "business_age_months": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Business Age Months"
+    },
+    "representative_age_band": {
+      "$ref": "#/$defs/RepresentativeAgeBand",
+      "default": "모름"
+    },
+    "sales_2024": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Sales 2024"
+    },
+    "sales_2025": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Sales 2025"
+    },
+    "sales_2025_h1": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Sales 2025 H1"
+    },
+    "sales_2025_h2": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Sales 2025 H2"
+    },
+    "annual_sales_2025": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Annual Sales 2025"
+    },
+    "employee_count": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Employee Count"
+    },
+    "closure_planned_date": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Closure Planned Date"
+    },
+    "loan_origination_date": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Loan Origination Date"
+    },
+    "existing_interest_rate_percent": {
+      "anyOf": [
+        {
+          "maximum": 100,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Existing Interest Rate Percent"
+    },
+    "multiple_business_count": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Multiple Business Count"
+    },
+    "rented_exclusive_place": {
+      "$ref": "#/$defs/TriState",
+      "default": "unknown"
+    },
+    "self_owned_place": {
+      "$ref": "#/$defs/TriState",
+      "default": "unknown"
+    },
+    "is_operating": {
+      "$ref": "#/$defs/TriState",
+      "default": "unknown"
+    },
+    "sales_decreased": {
+      "$ref": "#/$defs/TriState",
+      "default": "unknown"
+    },
+    "disaster_document": {
+      "$ref": "#/$defs/TriState",
+      "default": "unknown"
+    },
+    "tax_paid": {
+      "$ref": "#/$defs/TriState",
+      "default": "unknown"
+    },
+    "fund_restricted_industry": {
+      "$ref": "#/$defs/TriState",
+      "default": "unknown"
+    },
+    "policy_loan_restricted_industry": {
+      "$ref": "#/$defs/TriState",
+      "default": "unknown"
+    },
+    "prior_crisis_support": {
+      "$ref": "#/$defs/TriState",
+      "default": "unknown"
+    },
+    "prior_closure_support": {
+      "$ref": "#/$defs/TriState",
+      "default": "unknown"
+    },
+    "prior_digital_support": {
+      "$ref": "#/$defs/TriState",
+      "default": "unknown"
+    },
+    "subfund_selected": {
+      "$ref": "#/$defs/TriState",
+      "default": "unknown"
+    },
+    "zero_market_operation": {
+      "$ref": "#/$defs/TriState",
+      "default": "unknown"
+    },
+    "eligible_business_registration": {
+      "$ref": "#/$defs/TriState",
+      "default": "unknown"
+    },
+    "shared_office_only": {
+      "$ref": "#/$defs/TriState",
+      "default": "unknown"
+    },
+    "consignment_only": {
+      "$ref": "#/$defs/TriState",
+      "default": "unknown"
+    },
+    "duplicate_public_support": {
+      "$ref": "#/$defs/TriState",
+      "default": "unknown"
+    },
+    "safety_product_business": {
+      "$ref": "#/$defs/TriState",
+      "default": "unknown"
+    },
+    "recovery_completed": {
+      "$ref": "#/$defs/TriState",
+      "default": "unknown"
+    },
+    "foundation_debt_repaid": {
+      "$ref": "#/$defs/TriState",
+      "default": "unknown"
+    },
+    "restarted_business": {
+      "$ref": "#/$defs/TriState",
+      "default": "unknown"
+    },
+    "ncb_839_or_below": {
+      "$ref": "#/$defs/TriState",
+      "default": "unknown"
+    },
+    "ncb_919_or_below": {
+      "$ref": "#/$defs/TriState",
+      "default": "unknown"
+    },
+    "maturity_extension_difficulty": {
+      "$ref": "#/$defs/TriState",
+      "default": "unknown"
+    },
+    "common_loan_restriction": {
+      "$ref": "#/$defs/TriState",
+      "default": "unknown"
+    },
+    "restart_education_completed": {
+      "$ref": "#/$defs/TriState",
+      "default": "unknown"
+    },
+    "restart_education_within_one_year": {
+      "$ref": "#/$defs/TriState",
+      "default": "unknown"
+    },
+    "restart_education_hours": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Restart Education Hours"
+    },
+    "restart_initial_stage": {
+      "$ref": "#/$defs/TriState",
+      "default": "unknown"
+    },
+    "debt_adjustment_compliant": {
+      "$ref": "#/$defs/TriState",
+      "default": "unknown"
+    },
+    "recovery_program_selected": {
+      "$ref": "#/$defs/TriState",
+      "default": "unknown"
+    },
+    "restart_business_age_months": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Restart Business Age Months"
+    },
+    "growth_condition_met": {
+      "$ref": "#/$defs/TriState",
+      "default": "unknown"
+    },
+    "direct_loan_repayment_good": {
+      "$ref": "#/$defs/TriState",
+      "default": "unknown"
+    }
+  },
+  "title": "SessionEligibilityProfile",
+  "type": "object"
+}

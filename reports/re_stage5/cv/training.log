@@ -1,0 +1,765 @@
+2026-08-16 17:59:28,622 | RE5 TRAIN | 개발자료 읽기 | D:\대회\2026 금융 AI Challenge\data\processed_re\model\re_stage5\development.parquet
+2026-08-16 18:05:37,091 | RE5 TRAIN | 개발자료 읽기 | D:\대회\2026 금융 AI Challenge\data\processed_re\model\re_stage5\development.parquet
+2026-08-16 18:05:37,878 | RE5 TRAIN | [1/72] START | target=target_a_next_quarter_yoy fold=1 validation=20241 model=seasonal_naive train=166041 validation_rows=20600
+2026-08-16 18:08:49,027 | RE5 TRAIN | 개발자료 읽기 | D:\대회\2026 금융 AI Challenge\data\processed_re\model\re_stage5\development.parquet
+2026-08-16 18:08:49,750 | RE5 TRAIN | [1/72] START | target=target_a_next_quarter_yoy fold=1 validation=20241 model=seasonal_naive train=166041 validation_rows=20600
+2026-08-16 18:08:49,863 | RE5 TRAIN | [1/72 1.4%] DONE | MAE=1.371667 coverage=0.8367 crossing_raw=0.0000 elapsed=0.0s ETA≈0.0min
+2026-08-16 18:08:49,864 | RE5 TRAIN | 요청된 신규 task 1개 완료 후 안전 중단 | 다음 실행에서 checkpoint 이후 재개
+2026-08-16 18:10:50,082 | RE5 TRAIN | 개발자료 읽기 | D:\대회\2026 금융 AI Challenge\data\processed_re\model\re_stage5\development.parquet
+2026-08-16 18:10:50,383 | RE5 TRAIN | [1/72] SKIP 완료 checkpoint | target=target_a_next_quarter_yoy fold=1 model=seasonal_naive
+2026-08-16 18:10:50,789 | RE5 TRAIN | [2/72] START | target=target_a_next_quarter_yoy fold=1 validation=20241 model=industry_median train=166041 validation_rows=20600
+2026-08-16 18:10:50,909 | RE5 TRAIN | [2/72 2.8%] DONE | MAE=1.219574 coverage=0.8140 crossing_raw=0.0000 elapsed=0.1s ETA≈0.1min
+2026-08-16 18:10:50,910 | RE5 TRAIN | [3/72] START | target=target_a_next_quarter_yoy fold=1 validation=20241 model=regularized_linear train=166041 validation_rows=20600
+2026-08-16 18:10:50,910 | RE5 TRAIN |     Train-only 전처리 시작 | approved features=197
+2026-08-16 18:10:53,759 | RE5 TRAIN |     Train-only 전처리 완료 | matrix=(166041, 2677)
+2026-08-16 18:10:53,759 | RE5 TRAIN |     regularized_linear quantile 0.1 시작
+2026-08-16 18:10:54,076 | RE5 TRAIN | linear q=0.1 epoch=1/12
+2026-08-16 18:10:54,392 | RE5 TRAIN | linear q=0.1 epoch=2/12
+2026-08-16 18:10:54,666 | RE5 TRAIN | linear q=0.1 epoch=3/12
+2026-08-16 18:10:54,933 | RE5 TRAIN | linear q=0.1 epoch=4/12
+2026-08-16 18:10:55,196 | RE5 TRAIN | linear q=0.1 epoch=5/12
+2026-08-16 18:10:55,461 | RE5 TRAIN | linear q=0.1 epoch=6/12
+2026-08-16 18:10:55,720 | RE5 TRAIN | linear q=0.1 epoch=7/12
+2026-08-16 18:10:55,979 | RE5 TRAIN | linear q=0.1 epoch=8/12
+2026-08-16 18:10:56,240 | RE5 TRAIN | linear q=0.1 epoch=9/12
+2026-08-16 18:10:56,505 | RE5 TRAIN | linear q=0.1 epoch=10/12
+2026-08-16 18:10:56,831 | RE5 TRAIN | linear q=0.1 epoch=11/12
+2026-08-16 18:10:57,121 | RE5 TRAIN | linear q=0.1 epoch=12/12
+2026-08-16 18:10:57,131 | RE5 TRAIN |     regularized_linear quantile 0.5 시작
+2026-08-16 18:10:57,392 | RE5 TRAIN | linear q=0.5 epoch=1/12
+2026-08-16 18:10:57,686 | RE5 TRAIN | linear q=0.5 epoch=2/12
+2026-08-16 18:10:57,950 | RE5 TRAIN | linear q=0.5 epoch=3/12
+2026-08-16 18:10:58,251 | RE5 TRAIN | linear q=0.5 epoch=4/12
+2026-08-16 18:10:58,522 | RE5 TRAIN | linear q=0.5 epoch=5/12
+2026-08-16 18:10:58,790 | RE5 TRAIN | linear q=0.5 epoch=6/12
+2026-08-16 18:10:59,049 | RE5 TRAIN | linear q=0.5 epoch=7/12
+2026-08-16 18:10:59,313 | RE5 TRAIN | linear q=0.5 epoch=8/12
+2026-08-16 18:10:59,574 | RE5 TRAIN | linear q=0.5 epoch=9/12
+2026-08-16 18:10:59,840 | RE5 TRAIN | linear q=0.5 epoch=10/12
+2026-08-16 18:11:00,104 | RE5 TRAIN | linear q=0.5 epoch=11/12
+2026-08-16 18:11:00,371 | RE5 TRAIN | linear q=0.5 epoch=12/12
+2026-08-16 18:11:00,382 | RE5 TRAIN |     regularized_linear quantile 0.9 시작
+2026-08-16 18:11:00,652 | RE5 TRAIN | linear q=0.9 epoch=1/12
+2026-08-16 18:11:00,919 | RE5 TRAIN | linear q=0.9 epoch=2/12
+2026-08-16 18:11:01,182 | RE5 TRAIN | linear q=0.9 epoch=3/12
+2026-08-16 18:11:01,451 | RE5 TRAIN | linear q=0.9 epoch=4/12
+2026-08-16 18:11:01,711 | RE5 TRAIN | linear q=0.9 epoch=5/12
+2026-08-16 18:11:01,980 | RE5 TRAIN | linear q=0.9 epoch=6/12
+2026-08-16 18:11:02,266 | RE5 TRAIN | linear q=0.9 epoch=7/12
+2026-08-16 18:11:02,529 | RE5 TRAIN | linear q=0.9 epoch=8/12
+2026-08-16 18:11:02,791 | RE5 TRAIN | linear q=0.9 epoch=9/12
+2026-08-16 18:11:03,056 | RE5 TRAIN | linear q=0.9 epoch=10/12
+2026-08-16 18:11:03,318 | RE5 TRAIN | linear q=0.9 epoch=11/12
+2026-08-16 18:11:03,580 | RE5 TRAIN | linear q=0.9 epoch=12/12
+2026-08-16 18:11:03,696 | RE5 TRAIN | [3/72 4.2%] DONE | MAE=1.960871 coverage=0.9946 crossing_raw=1.0000 elapsed=12.7s ETA≈4.9min
+2026-08-16 18:11:03,697 | RE5 TRAIN | [4/72] START | target=target_a_next_quarter_yoy fold=1 validation=20241 model=lightgbm train=166041 validation_rows=20600
+2026-08-16 18:11:03,698 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 18:11:03,991 | RE5 TRAIN |     lightgbm quantile 0.1 시작
+2026-08-16 18:11:15,101 | RE5 TRAIN |     lightgbm quantile 0.5 시작
+2026-08-16 18:11:27,541 | RE5 TRAIN |     lightgbm quantile 0.9 시작
+2026-08-16 18:11:41,652 | RE5 TRAIN | [4/72 5.6%] DONE | MAE=1.094115 coverage=0.7848 crossing_raw=0.0034 elapsed=37.9s ETA≈14.4min
+2026-08-16 18:11:41,653 | RE5 TRAIN | [5/72] START | target=target_a_next_quarter_yoy fold=1 validation=20241 model=catboost train=166041 validation_rows=20600
+2026-08-16 18:11:41,655 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 18:11:42,981 | RE5 TRAIN |     catboost MultiQuantile 0.1,0.5,0.9 시작
+2026-08-16 18:13:57,528 | RE5 TRAIN | [5/72 6.9%] DONE | MAE=1.143351 coverage=0.8634 crossing_raw=0.0000 elapsed=135.8s ETA≈41.6min
+2026-08-16 18:13:57,530 | RE5 TRAIN | [6/72] START | target=target_a_next_quarter_yoy fold=1 validation=20241 model=xgboost train=166041 validation_rows=20600
+2026-08-16 18:13:57,532 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 18:13:57,533 | RE5 TRAIN |     xgboost quantile 0.1 시작
+2026-08-16 18:15:44,154 | RE5 TRAIN |     xgboost quantile 0.5 시작
+2026-08-16 18:17:35,070 | RE5 TRAIN |     xgboost quantile 0.9 시작
+2026-08-16 18:19:32,774 | RE5 TRAIN | [6/72 8.3%] DONE | MAE=1.090766 coverage=0.7818 crossing_raw=0.0076 elapsed=335.2s ETA≈95.6min
+2026-08-16 18:19:33,499 | RE5 TRAIN | [7/72] START | target=target_a_next_quarter_yoy fold=2 validation=20242 model=seasonal_naive train=186686 validation_rows=20500
+2026-08-16 18:19:33,603 | RE5 TRAIN | [7/72 9.7%] DONE | MAE=1.315670 coverage=0.8495 crossing_raw=0.0000 elapsed=0.0s ETA≈80.7min
+2026-08-16 18:19:33,603 | RE5 TRAIN | [8/72] START | target=target_a_next_quarter_yoy fold=2 validation=20242 model=industry_median train=186686 validation_rows=20500
+2026-08-16 18:19:33,770 | RE5 TRAIN | [8/72 11.1%] DONE | MAE=0.808341 coverage=0.8033 crossing_raw=0.0000 elapsed=0.1s ETA≈69.6min
+2026-08-16 18:19:33,771 | RE5 TRAIN | [9/72] START | target=target_a_next_quarter_yoy fold=2 validation=20242 model=regularized_linear train=186686 validation_rows=20500
+2026-08-16 18:19:33,773 | RE5 TRAIN |     Train-only 전처리 시작 | approved features=197
+2026-08-16 18:19:37,727 | RE5 TRAIN |     Train-only 전처리 완료 | matrix=(186686, 2680)
+2026-08-16 18:19:37,727 | RE5 TRAIN |     regularized_linear quantile 0.1 시작
+2026-08-16 18:19:38,102 | RE5 TRAIN | linear q=0.1 epoch=1/12
+2026-08-16 18:19:38,439 | RE5 TRAIN | linear q=0.1 epoch=2/12
+2026-08-16 18:19:38,761 | RE5 TRAIN | linear q=0.1 epoch=3/12
+2026-08-16 18:19:39,137 | RE5 TRAIN | linear q=0.1 epoch=4/12
+2026-08-16 18:19:39,469 | RE5 TRAIN | linear q=0.1 epoch=5/12
+2026-08-16 18:19:39,794 | RE5 TRAIN | linear q=0.1 epoch=6/12
+2026-08-16 18:19:40,173 | RE5 TRAIN | linear q=0.1 epoch=7/12
+2026-08-16 18:19:40,517 | RE5 TRAIN | linear q=0.1 epoch=8/12
+2026-08-16 18:19:40,970 | RE5 TRAIN | linear q=0.1 epoch=9/12
+2026-08-16 18:19:41,367 | RE5 TRAIN | linear q=0.1 epoch=10/12
+2026-08-16 18:19:41,865 | RE5 TRAIN | linear q=0.1 epoch=11/12
+2026-08-16 18:19:42,212 | RE5 TRAIN | linear q=0.1 epoch=12/12
+2026-08-16 18:19:42,224 | RE5 TRAIN |     regularized_linear quantile 0.5 시작
+2026-08-16 18:19:42,609 | RE5 TRAIN | linear q=0.5 epoch=1/12
+2026-08-16 18:19:42,936 | RE5 TRAIN | linear q=0.5 epoch=2/12
+2026-08-16 18:19:43,361 | RE5 TRAIN | linear q=0.5 epoch=3/12
+2026-08-16 18:19:43,831 | RE5 TRAIN | linear q=0.5 epoch=4/12
+2026-08-16 18:19:44,309 | RE5 TRAIN | linear q=0.5 epoch=5/12
+2026-08-16 18:19:44,633 | RE5 TRAIN | linear q=0.5 epoch=6/12
+2026-08-16 18:19:45,082 | RE5 TRAIN | linear q=0.5 epoch=7/12
+2026-08-16 18:19:45,680 | RE5 TRAIN | linear q=0.5 epoch=8/12
+2026-08-16 18:19:46,127 | RE5 TRAIN | linear q=0.5 epoch=9/12
+2026-08-16 18:19:46,468 | RE5 TRAIN | linear q=0.5 epoch=10/12
+2026-08-16 18:19:46,916 | RE5 TRAIN | linear q=0.5 epoch=11/12
+2026-08-16 18:19:47,269 | RE5 TRAIN | linear q=0.5 epoch=12/12
+2026-08-16 18:19:47,279 | RE5 TRAIN |     regularized_linear quantile 0.9 시작
+2026-08-16 18:19:47,614 | RE5 TRAIN | linear q=0.9 epoch=1/12
+2026-08-16 18:19:47,960 | RE5 TRAIN | linear q=0.9 epoch=2/12
+2026-08-16 18:19:48,274 | RE5 TRAIN | linear q=0.9 epoch=3/12
+2026-08-16 18:19:48,645 | RE5 TRAIN | linear q=0.9 epoch=4/12
+2026-08-16 18:19:49,010 | RE5 TRAIN | linear q=0.9 epoch=5/12
+2026-08-16 18:19:49,346 | RE5 TRAIN | linear q=0.9 epoch=6/12
+2026-08-16 18:19:49,858 | RE5 TRAIN | linear q=0.9 epoch=7/12
+2026-08-16 18:19:50,345 | RE5 TRAIN | linear q=0.9 epoch=8/12
+2026-08-16 18:19:50,841 | RE5 TRAIN | linear q=0.9 epoch=9/12
+2026-08-16 18:19:51,243 | RE5 TRAIN | linear q=0.9 epoch=10/12
+2026-08-16 18:19:51,603 | RE5 TRAIN | linear q=0.9 epoch=11/12
+2026-08-16 18:19:51,964 | RE5 TRAIN | linear q=0.9 epoch=12/12
+2026-08-16 18:19:52,040 | RE5 TRAIN | [9/72 12.5%] DONE | MAE=113.608844 coverage=0.9790 crossing_raw=1.0000 elapsed=18.2s ETA≈63.0min
+2026-08-16 18:19:52,041 | RE5 TRAIN | [10/72] START | target=target_a_next_quarter_yoy fold=2 validation=20242 model=lightgbm train=186686 validation_rows=20500
+2026-08-16 18:19:52,042 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 18:19:52,042 | RE5 TRAIN |     lightgbm quantile 0.1 시작
+2026-08-16 18:20:07,363 | RE5 TRAIN |     lightgbm quantile 0.5 시작
+2026-08-16 18:20:23,549 | RE5 TRAIN |     lightgbm quantile 0.9 시작
+2026-08-16 18:20:41,546 | RE5 TRAIN | [10/72 13.9%] DONE | MAE=0.683270 coverage=0.7762 crossing_raw=0.0037 elapsed=49.4s ETA≈60.9min
+2026-08-16 18:20:41,546 | RE5 TRAIN | [11/72] START | target=target_a_next_quarter_yoy fold=2 validation=20242 model=catboost train=186686 validation_rows=20500
+2026-08-16 18:20:41,548 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 18:20:41,548 | RE5 TRAIN |     catboost MultiQuantile 0.1,0.5,0.9 시작
+2026-08-16 18:23:58,482 | RE5 TRAIN | [11/72 15.3%] DONE | MAE=0.695146 coverage=0.7942 crossing_raw=0.0011 elapsed=196.9s ETA≈72.7min
+2026-08-16 18:23:58,483 | RE5 TRAIN | [12/72] START | target=target_a_next_quarter_yoy fold=2 validation=20242 model=xgboost train=186686 validation_rows=20500
+2026-08-16 18:23:58,486 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 18:23:58,486 | RE5 TRAIN |     xgboost quantile 0.1 시작
+2026-08-16 18:26:23,971 | RE5 TRAIN |     xgboost quantile 0.5 시작
+2026-08-16 18:28:35,643 | RE5 TRAIN |     xgboost quantile 0.9 시작
+2026-08-16 18:30:41,466 | RE5 TRAIN | [12/72 16.7%] DONE | MAE=0.680809 coverage=0.7647 crossing_raw=0.0088 elapsed=402.9s ETA≈99.1min
+2026-08-16 18:30:42,629 | RE5 TRAIN | [13/72] START | target=target_a_next_quarter_yoy fold=3 validation=20243 model=seasonal_naive train=207286 validation_rows=20431
+2026-08-16 18:30:42,754 | RE5 TRAIN | [13/72 18.1%] DONE | MAE=1.041635 coverage=0.8362 crossing_raw=0.0000 elapsed=0.0s ETA≈90.0min
+2026-08-16 18:30:42,755 | RE5 TRAIN | [14/72] START | target=target_a_next_quarter_yoy fold=3 validation=20243 model=industry_median train=207286 validation_rows=20431
+2026-08-16 18:30:42,942 | RE5 TRAIN | [14/72 19.4%] DONE | MAE=0.704766 coverage=0.8148 crossing_raw=0.0000 elapsed=0.1s ETA≈82.1min
+2026-08-16 18:30:42,943 | RE5 TRAIN | [15/72] START | target=target_a_next_quarter_yoy fold=3 validation=20243 model=regularized_linear train=207286 validation_rows=20431
+2026-08-16 18:30:42,944 | RE5 TRAIN |     Train-only 전처리 시작 | approved features=197
+2026-08-16 18:30:47,905 | RE5 TRAIN |     Train-only 전처리 완료 | matrix=(207286, 2680)
+2026-08-16 18:30:47,906 | RE5 TRAIN |     regularized_linear quantile 0.1 시작
+2026-08-16 18:30:48,512 | RE5 TRAIN | linear q=0.1 epoch=1/12
+2026-08-16 18:30:49,141 | RE5 TRAIN | linear q=0.1 epoch=2/12
+2026-08-16 18:30:49,654 | RE5 TRAIN | linear q=0.1 epoch=3/12
+2026-08-16 18:30:50,222 | RE5 TRAIN | linear q=0.1 epoch=4/12
+2026-08-16 18:30:50,692 | RE5 TRAIN | linear q=0.1 epoch=5/12
+2026-08-16 18:30:51,318 | RE5 TRAIN | linear q=0.1 epoch=6/12
+2026-08-16 18:30:51,747 | RE5 TRAIN | linear q=0.1 epoch=7/12
+2026-08-16 18:30:52,193 | RE5 TRAIN | linear q=0.1 epoch=8/12
+2026-08-16 18:30:52,651 | RE5 TRAIN | linear q=0.1 epoch=9/12
+2026-08-16 18:30:53,125 | RE5 TRAIN | linear q=0.1 epoch=10/12
+2026-08-16 18:30:53,616 | RE5 TRAIN | linear q=0.1 epoch=11/12
+2026-08-16 18:30:54,049 | RE5 TRAIN | linear q=0.1 epoch=12/12
+2026-08-16 18:30:54,062 | RE5 TRAIN |     regularized_linear quantile 0.5 시작
+2026-08-16 18:30:54,504 | RE5 TRAIN | linear q=0.5 epoch=1/12
+2026-08-16 18:30:54,916 | RE5 TRAIN | linear q=0.5 epoch=2/12
+2026-08-16 18:30:55,411 | RE5 TRAIN | linear q=0.5 epoch=3/12
+2026-08-16 18:30:55,923 | RE5 TRAIN | linear q=0.5 epoch=4/12
+2026-08-16 18:30:56,491 | RE5 TRAIN | linear q=0.5 epoch=5/12
+2026-08-16 18:30:57,017 | RE5 TRAIN | linear q=0.5 epoch=6/12
+2026-08-16 18:30:57,440 | RE5 TRAIN | linear q=0.5 epoch=7/12
+2026-08-16 18:30:57,868 | RE5 TRAIN | linear q=0.5 epoch=8/12
+2026-08-16 18:30:58,373 | RE5 TRAIN | linear q=0.5 epoch=9/12
+2026-08-16 18:30:58,845 | RE5 TRAIN | linear q=0.5 epoch=10/12
+2026-08-16 18:30:59,282 | RE5 TRAIN | linear q=0.5 epoch=11/12
+2026-08-16 18:30:59,697 | RE5 TRAIN | linear q=0.5 epoch=12/12
+2026-08-16 18:30:59,708 | RE5 TRAIN |     regularized_linear quantile 0.9 시작
+2026-08-16 18:31:00,175 | RE5 TRAIN | linear q=0.9 epoch=1/12
+2026-08-16 18:31:00,615 | RE5 TRAIN | linear q=0.9 epoch=2/12
+2026-08-16 18:31:01,075 | RE5 TRAIN | linear q=0.9 epoch=3/12
+2026-08-16 18:31:01,711 | RE5 TRAIN | linear q=0.9 epoch=4/12
+2026-08-16 18:31:02,137 | RE5 TRAIN | linear q=0.9 epoch=5/12
+2026-08-16 18:31:02,569 | RE5 TRAIN | linear q=0.9 epoch=6/12
+2026-08-16 18:31:02,977 | RE5 TRAIN | linear q=0.9 epoch=7/12
+2026-08-16 18:31:03,402 | RE5 TRAIN | linear q=0.9 epoch=8/12
+2026-08-16 18:31:03,801 | RE5 TRAIN | linear q=0.9 epoch=9/12
+2026-08-16 18:31:04,220 | RE5 TRAIN | linear q=0.9 epoch=10/12
+2026-08-16 18:31:04,643 | RE5 TRAIN | linear q=0.9 epoch=11/12
+2026-08-16 18:31:05,160 | RE5 TRAIN | linear q=0.9 epoch=12/12
+2026-08-16 18:31:05,263 | RE5 TRAIN | [15/72 20.8%] DONE | MAE=0.912040 coverage=0.9038 crossing_raw=0.9782 elapsed=22.2s ETA≈76.7min
+2026-08-16 18:31:05,264 | RE5 TRAIN | [16/72] START | target=target_a_next_quarter_yoy fold=3 validation=20243 model=lightgbm train=207286 validation_rows=20431
+2026-08-16 18:31:05,266 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 18:31:05,266 | RE5 TRAIN |     lightgbm quantile 0.1 시작
+2026-08-16 18:31:21,596 | RE5 TRAIN |     lightgbm quantile 0.5 시작
+2026-08-16 18:31:39,033 | RE5 TRAIN |     lightgbm quantile 0.9 시작
+2026-08-16 18:31:55,337 | RE5 TRAIN | [16/72 22.2%] DONE | MAE=0.601275 coverage=0.7747 crossing_raw=0.0041 elapsed=50.0s ETA≈73.6min
+2026-08-16 18:31:55,339 | RE5 TRAIN | [17/72] START | target=target_a_next_quarter_yoy fold=3 validation=20243 model=catboost train=207286 validation_rows=20431
+2026-08-16 18:31:55,341 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 18:31:55,341 | RE5 TRAIN |     catboost MultiQuantile 0.1,0.5,0.9 시작
+2026-08-16 18:35:10,952 | RE5 TRAIN | [17/72 23.6%] DONE | MAE=0.617557 coverage=0.7983 crossing_raw=0.0004 elapsed=195.5s ETA≈78.6min
+2026-08-16 18:35:10,953 | RE5 TRAIN | [18/72] START | target=target_a_next_quarter_yoy fold=3 validation=20243 model=xgboost train=207286 validation_rows=20431
+2026-08-16 18:35:10,954 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 18:35:10,955 | RE5 TRAIN |     xgboost quantile 0.1 시작
+2026-08-16 18:37:20,216 | RE5 TRAIN |     xgboost quantile 0.5 시작
+2026-08-16 18:39:25,980 | RE5 TRAIN |     xgboost quantile 0.9 시작
+2026-08-16 18:41:32,580 | RE5 TRAIN | [18/72 25.0%] DONE | MAE=0.598205 coverage=0.7643 crossing_raw=0.0085 elapsed=381.6s ETA≈91.9min
+2026-08-16 18:41:33,652 | RE5 TRAIN | [19/72] START | target=target_a_next_quarter_yoy fold=4 validation=20244 model=seasonal_naive train=227786 validation_rows=20324
+2026-08-16 18:41:33,781 | RE5 TRAIN | [19/72 26.4%] DONE | MAE=0.860845 coverage=0.8459 crossing_raw=0.0000 elapsed=0.0s ETA≈85.5min
+2026-08-16 18:41:33,782 | RE5 TRAIN | [20/72] START | target=target_a_next_quarter_yoy fold=4 validation=20244 model=industry_median train=227786 validation_rows=20324
+2026-08-16 18:41:33,984 | RE5 TRAIN | [20/72 27.8%] DONE | MAE=0.738798 coverage=0.8082 crossing_raw=0.0000 elapsed=0.1s ETA≈79.7min
+2026-08-16 18:41:33,985 | RE5 TRAIN | [21/72] START | target=target_a_next_quarter_yoy fold=4 validation=20244 model=regularized_linear train=227786 validation_rows=20324
+2026-08-16 18:41:33,986 | RE5 TRAIN |     Train-only 전처리 시작 | approved features=197
+2026-08-16 18:41:39,217 | RE5 TRAIN |     Train-only 전처리 완료 | matrix=(227786, 2681)
+2026-08-16 18:41:39,218 | RE5 TRAIN |     regularized_linear quantile 0.1 시작
+2026-08-16 18:41:39,852 | RE5 TRAIN | linear q=0.1 epoch=1/12
+2026-08-16 18:41:40,398 | RE5 TRAIN | linear q=0.1 epoch=2/12
+2026-08-16 18:41:40,856 | RE5 TRAIN | linear q=0.1 epoch=3/12
+2026-08-16 18:41:41,289 | RE5 TRAIN | linear q=0.1 epoch=4/12
+2026-08-16 18:41:41,731 | RE5 TRAIN | linear q=0.1 epoch=5/12
+2026-08-16 18:41:42,321 | RE5 TRAIN | linear q=0.1 epoch=6/12
+2026-08-16 18:41:42,796 | RE5 TRAIN | linear q=0.1 epoch=7/12
+2026-08-16 18:41:43,297 | RE5 TRAIN | linear q=0.1 epoch=8/12
+2026-08-16 18:41:43,745 | RE5 TRAIN | linear q=0.1 epoch=9/12
+2026-08-16 18:41:44,209 | RE5 TRAIN | linear q=0.1 epoch=10/12
+2026-08-16 18:41:44,648 | RE5 TRAIN | linear q=0.1 epoch=11/12
+2026-08-16 18:41:45,138 | RE5 TRAIN | linear q=0.1 epoch=12/12
+2026-08-16 18:41:45,154 | RE5 TRAIN |     regularized_linear quantile 0.5 시작
+2026-08-16 18:41:45,616 | RE5 TRAIN | linear q=0.5 epoch=1/12
+2026-08-16 18:41:46,051 | RE5 TRAIN | linear q=0.5 epoch=2/12
+2026-08-16 18:41:46,515 | RE5 TRAIN | linear q=0.5 epoch=3/12
+2026-08-16 18:41:47,002 | RE5 TRAIN | linear q=0.5 epoch=4/12
+2026-08-16 18:41:47,634 | RE5 TRAIN | linear q=0.5 epoch=5/12
+2026-08-16 18:41:48,168 | RE5 TRAIN | linear q=0.5 epoch=6/12
+2026-08-16 18:41:48,684 | RE5 TRAIN | linear q=0.5 epoch=7/12
+2026-08-16 18:41:49,131 | RE5 TRAIN | linear q=0.5 epoch=8/12
+2026-08-16 18:41:49,590 | RE5 TRAIN | linear q=0.5 epoch=9/12
+2026-08-16 18:41:50,077 | RE5 TRAIN | linear q=0.5 epoch=10/12
+2026-08-16 18:41:50,618 | RE5 TRAIN | linear q=0.5 epoch=11/12
+2026-08-16 18:41:51,106 | RE5 TRAIN | linear q=0.5 epoch=12/12
+2026-08-16 18:41:51,117 | RE5 TRAIN |     regularized_linear quantile 0.9 시작
+2026-08-16 18:41:51,654 | RE5 TRAIN | linear q=0.9 epoch=1/12
+2026-08-16 18:41:52,098 | RE5 TRAIN | linear q=0.9 epoch=2/12
+2026-08-16 18:41:52,668 | RE5 TRAIN | linear q=0.9 epoch=3/12
+2026-08-16 18:41:53,182 | RE5 TRAIN | linear q=0.9 epoch=4/12
+2026-08-16 18:41:53,658 | RE5 TRAIN | linear q=0.9 epoch=5/12
+2026-08-16 18:41:54,118 | RE5 TRAIN | linear q=0.9 epoch=6/12
+2026-08-16 18:41:54,602 | RE5 TRAIN | linear q=0.9 epoch=7/12
+2026-08-16 18:41:55,075 | RE5 TRAIN | linear q=0.9 epoch=8/12
+2026-08-16 18:41:55,542 | RE5 TRAIN | linear q=0.9 epoch=9/12
+2026-08-16 18:41:55,997 | RE5 TRAIN | linear q=0.9 epoch=10/12
+2026-08-16 18:41:56,507 | RE5 TRAIN | linear q=0.9 epoch=11/12
+2026-08-16 18:41:57,007 | RE5 TRAIN | linear q=0.9 epoch=12/12
+2026-08-16 18:41:57,102 | RE5 TRAIN | [21/72 29.2%] DONE | MAE=191.860059 coverage=0.1146 crossing_raw=1.0000 elapsed=23.1s ETA≈75.4min
+2026-08-16 18:41:57,102 | RE5 TRAIN | [22/72] START | target=target_a_next_quarter_yoy fold=4 validation=20244 model=lightgbm train=227786 validation_rows=20324
+2026-08-16 18:41:57,104 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 18:41:57,104 | RE5 TRAIN |     lightgbm quantile 0.1 시작
+2026-08-16 18:42:13,242 | RE5 TRAIN |     lightgbm quantile 0.5 시작
+2026-08-16 18:42:30,298 | RE5 TRAIN |     lightgbm quantile 0.9 시작
+2026-08-16 18:42:46,805 | RE5 TRAIN | [22/72 30.6%] DONE | MAE=0.621589 coverage=0.7756 crossing_raw=0.0037 elapsed=49.6s ETA≈72.4min
+2026-08-16 18:42:46,806 | RE5 TRAIN | [23/72] START | target=target_a_next_quarter_yoy fold=4 validation=20244 model=catboost train=227786 validation_rows=20324
+2026-08-16 18:42:46,808 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 18:42:46,808 | RE5 TRAIN |     catboost MultiQuantile 0.1,0.5,0.9 시작
+2026-08-16 18:46:11,430 | RE5 TRAIN | [23/72 31.9%] DONE | MAE=0.624312 coverage=0.7924 crossing_raw=0.0010 elapsed=204.5s ETA≈75.1min
+2026-08-16 18:46:11,431 | RE5 TRAIN | [24/72] START | target=target_a_next_quarter_yoy fold=4 validation=20244 model=xgboost train=227786 validation_rows=20324
+2026-08-16 18:46:11,434 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 18:46:11,435 | RE5 TRAIN |     xgboost quantile 0.1 시작
+2026-08-16 18:48:21,688 | RE5 TRAIN |     xgboost quantile 0.5 시작
+2026-08-16 18:50:33,089 | RE5 TRAIN |     xgboost quantile 0.9 시작
+2026-08-16 18:52:43,938 | RE5 TRAIN | [24/72 33.3%] DONE | MAE=0.615255 coverage=0.7648 crossing_raw=0.0081 elapsed=392.4s ETA≈83.6min
+2026-08-16 18:52:44,742 | RE5 TRAIN | [25/72] START | target=target_b_next_two_quarters_yoy fold=1 validation=20241 model=seasonal_naive train=162557 validation_rows=20152
+2026-08-16 18:52:44,849 | RE5 TRAIN | [25/72 34.7%] DONE | MAE=0.757421 coverage=0.8325 crossing_raw=0.0000 elapsed=0.0s ETA≈78.6min
+2026-08-16 18:52:44,851 | RE5 TRAIN | [26/72] START | target=target_b_next_two_quarters_yoy fold=1 validation=20241 model=industry_median train=162557 validation_rows=20152
+2026-08-16 18:52:45,031 | RE5 TRAIN | [26/72 36.1%] DONE | MAE=0.514865 coverage=0.8052 crossing_raw=0.0000 elapsed=0.1s ETA≈74.0min
+2026-08-16 18:52:45,033 | RE5 TRAIN | [27/72] START | target=target_b_next_two_quarters_yoy fold=1 validation=20241 model=regularized_linear train=162557 validation_rows=20152
+2026-08-16 18:52:45,034 | RE5 TRAIN |     Train-only 전처리 시작 | approved features=197
+2026-08-16 18:52:48,922 | RE5 TRAIN |     Train-only 전처리 완료 | matrix=(162557, 2675)
+2026-08-16 18:52:48,922 | RE5 TRAIN |     regularized_linear quantile 0.1 시작
+2026-08-16 18:52:49,401 | RE5 TRAIN | linear q=0.1 epoch=1/12
+2026-08-16 18:52:49,783 | RE5 TRAIN | linear q=0.1 epoch=2/12
+2026-08-16 18:52:50,175 | RE5 TRAIN | linear q=0.1 epoch=3/12
+2026-08-16 18:52:50,533 | RE5 TRAIN | linear q=0.1 epoch=4/12
+2026-08-16 18:52:50,869 | RE5 TRAIN | linear q=0.1 epoch=5/12
+2026-08-16 18:52:51,193 | RE5 TRAIN | linear q=0.1 epoch=6/12
+2026-08-16 18:52:51,503 | RE5 TRAIN | linear q=0.1 epoch=7/12
+2026-08-16 18:52:51,841 | RE5 TRAIN | linear q=0.1 epoch=8/12
+2026-08-16 18:52:52,150 | RE5 TRAIN | linear q=0.1 epoch=9/12
+2026-08-16 18:52:52,517 | RE5 TRAIN | linear q=0.1 epoch=10/12
+2026-08-16 18:52:52,896 | RE5 TRAIN | linear q=0.1 epoch=11/12
+2026-08-16 18:52:53,236 | RE5 TRAIN | linear q=0.1 epoch=12/12
+2026-08-16 18:52:53,253 | RE5 TRAIN |     regularized_linear quantile 0.5 시작
+2026-08-16 18:52:53,619 | RE5 TRAIN | linear q=0.5 epoch=1/12
+2026-08-16 18:52:53,937 | RE5 TRAIN | linear q=0.5 epoch=2/12
+2026-08-16 18:52:54,250 | RE5 TRAIN | linear q=0.5 epoch=3/12
+2026-08-16 18:52:54,766 | RE5 TRAIN | linear q=0.5 epoch=4/12
+2026-08-16 18:52:55,150 | RE5 TRAIN | linear q=0.5 epoch=5/12
+2026-08-16 18:52:55,464 | RE5 TRAIN | linear q=0.5 epoch=6/12
+2026-08-16 18:52:55,846 | RE5 TRAIN | linear q=0.5 epoch=7/12
+2026-08-16 18:52:56,176 | RE5 TRAIN | linear q=0.5 epoch=8/12
+2026-08-16 18:52:56,501 | RE5 TRAIN | linear q=0.5 epoch=9/12
+2026-08-16 18:52:56,884 | RE5 TRAIN | linear q=0.5 epoch=10/12
+2026-08-16 18:52:57,194 | RE5 TRAIN | linear q=0.5 epoch=11/12
+2026-08-16 18:52:57,526 | RE5 TRAIN | linear q=0.5 epoch=12/12
+2026-08-16 18:52:57,538 | RE5 TRAIN |     regularized_linear quantile 0.9 시작
+2026-08-16 18:52:57,880 | RE5 TRAIN | linear q=0.9 epoch=1/12
+2026-08-16 18:52:58,214 | RE5 TRAIN | linear q=0.9 epoch=2/12
+2026-08-16 18:52:58,533 | RE5 TRAIN | linear q=0.9 epoch=3/12
+2026-08-16 18:52:58,840 | RE5 TRAIN | linear q=0.9 epoch=4/12
+2026-08-16 18:52:59,151 | RE5 TRAIN | linear q=0.9 epoch=5/12
+2026-08-16 18:52:59,498 | RE5 TRAIN | linear q=0.9 epoch=6/12
+2026-08-16 18:52:59,818 | RE5 TRAIN | linear q=0.9 epoch=7/12
+2026-08-16 18:53:00,293 | RE5 TRAIN | linear q=0.9 epoch=8/12
+2026-08-16 18:53:00,679 | RE5 TRAIN | linear q=0.9 epoch=9/12
+2026-08-16 18:53:00,988 | RE5 TRAIN | linear q=0.9 epoch=10/12
+2026-08-16 18:53:01,341 | RE5 TRAIN | linear q=0.9 epoch=11/12
+2026-08-16 18:53:01,682 | RE5 TRAIN | linear q=0.9 epoch=12/12
+2026-08-16 18:53:01,770 | RE5 TRAIN | [27/72 37.5%] DONE | MAE=227.285989 coverage=0.1086 crossing_raw=1.0000 elapsed=16.7s ETA≈70.1min
+2026-08-16 18:53:01,771 | RE5 TRAIN | [28/72] START | target=target_b_next_two_quarters_yoy fold=1 validation=20241 model=lightgbm train=162557 validation_rows=20152
+2026-08-16 18:53:01,773 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 18:53:01,773 | RE5 TRAIN |     lightgbm quantile 0.1 시작
+2026-08-16 18:53:14,132 | RE5 TRAIN |     lightgbm quantile 0.5 시작
+2026-08-16 18:53:27,126 | RE5 TRAIN |     lightgbm quantile 0.9 시작
+2026-08-16 18:53:39,576 | RE5 TRAIN | [28/72 38.9%] DONE | MAE=0.421329 coverage=0.7813 crossing_raw=0.0032 elapsed=37.7s ETA≈67.1min
+2026-08-16 18:53:39,578 | RE5 TRAIN | [29/72] START | target=target_b_next_two_quarters_yoy fold=1 validation=20241 model=catboost train=162557 validation_rows=20152
+2026-08-16 18:53:39,579 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 18:53:39,580 | RE5 TRAIN |     catboost MultiQuantile 0.1,0.5,0.9 시작
+2026-08-16 18:56:18,781 | RE5 TRAIN | [29/72 40.3%] DONE | MAE=0.428258 coverage=0.7932 crossing_raw=0.0008 elapsed=159.1s ETA≈67.3min
+2026-08-16 18:56:18,783 | RE5 TRAIN | [30/72] START | target=target_b_next_two_quarters_yoy fold=1 validation=20241 model=xgboost train=162557 validation_rows=20152
+2026-08-16 18:56:18,786 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 18:56:18,786 | RE5 TRAIN |     xgboost quantile 0.1 시작
+2026-08-16 18:58:19,248 | RE5 TRAIN |     xgboost quantile 0.5 시작
+2026-08-16 19:00:19,575 | RE5 TRAIN |     xgboost quantile 0.9 시작
+2026-08-16 19:02:19,575 | RE5 TRAIN | [30/72 41.7%] DONE | MAE=0.422282 coverage=0.7656 crossing_raw=0.0057 elapsed=360.7s ETA≈71.9min
+2026-08-16 19:02:20,219 | RE5 TRAIN | [31/72] START | target=target_b_next_two_quarters_yoy fold=2 validation=20242 model=seasonal_naive train=182766 validation_rows=20055
+2026-08-16 19:02:20,328 | RE5 TRAIN | [31/72 43.1%] DONE | MAE=1.189132 coverage=0.8409 crossing_raw=0.0000 elapsed=0.0s ETA≈68.0min
+2026-08-16 19:02:20,330 | RE5 TRAIN | [32/72] START | target=target_b_next_two_quarters_yoy fold=2 validation=20242 model=industry_median train=182766 validation_rows=20055
+2026-08-16 19:02:20,511 | RE5 TRAIN | [32/72 44.4%] DONE | MAE=0.363444 coverage=0.8055 crossing_raw=0.0000 elapsed=0.1s ETA≈64.2min
+2026-08-16 19:02:20,511 | RE5 TRAIN | [33/72] START | target=target_b_next_two_quarters_yoy fold=2 validation=20242 model=regularized_linear train=182766 validation_rows=20055
+2026-08-16 19:02:20,513 | RE5 TRAIN |     Train-only 전처리 시작 | approved features=197
+2026-08-16 19:02:25,025 | RE5 TRAIN |     Train-only 전처리 완료 | matrix=(182766, 2677)
+2026-08-16 19:02:25,026 | RE5 TRAIN |     regularized_linear quantile 0.1 시작
+2026-08-16 19:02:25,485 | RE5 TRAIN | linear q=0.1 epoch=1/12
+2026-08-16 19:02:25,866 | RE5 TRAIN | linear q=0.1 epoch=2/12
+2026-08-16 19:02:26,245 | RE5 TRAIN | linear q=0.1 epoch=3/12
+2026-08-16 19:02:26,606 | RE5 TRAIN | linear q=0.1 epoch=4/12
+2026-08-16 19:02:27,037 | RE5 TRAIN | linear q=0.1 epoch=5/12
+2026-08-16 19:02:27,437 | RE5 TRAIN | linear q=0.1 epoch=6/12
+2026-08-16 19:02:27,839 | RE5 TRAIN | linear q=0.1 epoch=7/12
+2026-08-16 19:02:28,318 | RE5 TRAIN | linear q=0.1 epoch=8/12
+2026-08-16 19:02:28,764 | RE5 TRAIN | linear q=0.1 epoch=9/12
+2026-08-16 19:02:29,145 | RE5 TRAIN | linear q=0.1 epoch=10/12
+2026-08-16 19:02:29,513 | RE5 TRAIN | linear q=0.1 epoch=11/12
+2026-08-16 19:02:29,908 | RE5 TRAIN | linear q=0.1 epoch=12/12
+2026-08-16 19:02:29,921 | RE5 TRAIN |     regularized_linear quantile 0.5 시작
+2026-08-16 19:02:30,373 | RE5 TRAIN | linear q=0.5 epoch=1/12
+2026-08-16 19:02:30,846 | RE5 TRAIN | linear q=0.5 epoch=2/12
+2026-08-16 19:02:31,240 | RE5 TRAIN | linear q=0.5 epoch=3/12
+2026-08-16 19:02:31,642 | RE5 TRAIN | linear q=0.5 epoch=4/12
+2026-08-16 19:02:31,988 | RE5 TRAIN | linear q=0.5 epoch=5/12
+2026-08-16 19:02:32,507 | RE5 TRAIN | linear q=0.5 epoch=6/12
+2026-08-16 19:02:32,902 | RE5 TRAIN | linear q=0.5 epoch=7/12
+2026-08-16 19:02:33,282 | RE5 TRAIN | linear q=0.5 epoch=8/12
+2026-08-16 19:02:33,655 | RE5 TRAIN | linear q=0.5 epoch=9/12
+2026-08-16 19:02:34,014 | RE5 TRAIN | linear q=0.5 epoch=10/12
+2026-08-16 19:02:34,389 | RE5 TRAIN | linear q=0.5 epoch=11/12
+2026-08-16 19:02:34,735 | RE5 TRAIN | linear q=0.5 epoch=12/12
+2026-08-16 19:02:34,749 | RE5 TRAIN |     regularized_linear quantile 0.9 시작
+2026-08-16 19:02:35,099 | RE5 TRAIN | linear q=0.9 epoch=1/12
+2026-08-16 19:02:35,474 | RE5 TRAIN | linear q=0.9 epoch=2/12
+2026-08-16 19:02:35,845 | RE5 TRAIN | linear q=0.9 epoch=3/12
+2026-08-16 19:02:36,233 | RE5 TRAIN | linear q=0.9 epoch=4/12
+2026-08-16 19:02:36,589 | RE5 TRAIN | linear q=0.9 epoch=5/12
+2026-08-16 19:02:36,947 | RE5 TRAIN | linear q=0.9 epoch=6/12
+2026-08-16 19:02:37,333 | RE5 TRAIN | linear q=0.9 epoch=7/12
+2026-08-16 19:02:37,767 | RE5 TRAIN | linear q=0.9 epoch=8/12
+2026-08-16 19:02:38,124 | RE5 TRAIN | linear q=0.9 epoch=9/12
+2026-08-16 19:02:38,507 | RE5 TRAIN | linear q=0.9 epoch=10/12
+2026-08-16 19:02:38,879 | RE5 TRAIN | linear q=0.9 epoch=11/12
+2026-08-16 19:02:39,265 | RE5 TRAIN | linear q=0.9 epoch=12/12
+2026-08-16 19:02:39,383 | RE5 TRAIN | [33/72 45.8%] DONE | MAE=6.436202 coverage=1.0000 crossing_raw=1.0000 elapsed=18.8s ETA≈61.1min
+2026-08-16 19:02:39,384 | RE5 TRAIN | [34/72] START | target=target_b_next_two_quarters_yoy fold=2 validation=20242 model=lightgbm train=182766 validation_rows=20055
+2026-08-16 19:02:39,386 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 19:02:39,386 | RE5 TRAIN |     lightgbm quantile 0.1 시작
+2026-08-16 19:02:52,779 | RE5 TRAIN |     lightgbm quantile 0.5 시작
+2026-08-16 19:03:07,226 | RE5 TRAIN |     lightgbm quantile 0.9 시작
+2026-08-16 19:03:21,642 | RE5 TRAIN | [34/72 47.2%] DONE | MAE=0.278326 coverage=0.7794 crossing_raw=0.0024 elapsed=42.2s ETA≈58.6min
+2026-08-16 19:03:21,644 | RE5 TRAIN | [35/72] START | target=target_b_next_two_quarters_yoy fold=2 validation=20242 model=catboost train=182766 validation_rows=20055
+2026-08-16 19:03:21,645 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 19:03:21,646 | RE5 TRAIN |     catboost MultiQuantile 0.1,0.5,0.9 시작
+2026-08-16 19:06:15,957 | RE5 TRAIN | [35/72 48.6%] DONE | MAE=0.284422 coverage=0.7864 crossing_raw=0.0009 elapsed=174.2s ETA≈58.5min
+2026-08-16 19:06:15,958 | RE5 TRAIN | [36/72] START | target=target_b_next_two_quarters_yoy fold=2 validation=20242 model=xgboost train=182766 validation_rows=20055
+2026-08-16 19:06:15,960 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 19:06:15,960 | RE5 TRAIN |     xgboost quantile 0.1 시작
+2026-08-16 19:08:16,314 | RE5 TRAIN |     xgboost quantile 0.5 시작
+2026-08-16 19:10:20,293 | RE5 TRAIN |     xgboost quantile 0.9 시작
+2026-08-16 19:12:25,616 | RE5 TRAIN | [36/72 50.0%] DONE | MAE=0.276861 coverage=0.7634 crossing_raw=0.0049 elapsed=369.6s ETA≈61.5min
+2026-08-16 19:12:26,263 | RE5 TRAIN | [37/72] START | target=target_b_next_two_quarters_yoy fold=3 validation=20243 model=seasonal_naive train=202918 validation_rows=19952
+2026-08-16 19:12:26,372 | RE5 TRAIN | [37/72 51.4%] DONE | MAE=0.783433 coverage=0.8378 crossing_raw=0.0000 elapsed=0.0s ETA≈58.1min
+2026-08-16 19:12:26,373 | RE5 TRAIN | [38/72] START | target=target_b_next_two_quarters_yoy fold=3 validation=20243 model=industry_median train=202918 validation_rows=19952
+2026-08-16 19:12:26,558 | RE5 TRAIN | [38/72 52.8%] DONE | MAE=0.395468 coverage=0.8059 crossing_raw=0.0000 elapsed=0.1s ETA≈55.0min
+2026-08-16 19:12:26,559 | RE5 TRAIN | [39/72] START | target=target_b_next_two_quarters_yoy fold=3 validation=20243 model=regularized_linear train=202918 validation_rows=19952
+2026-08-16 19:12:26,561 | RE5 TRAIN |     Train-only 전처리 시작 | approved features=197
+2026-08-16 19:12:30,868 | RE5 TRAIN |     Train-only 전처리 완료 | matrix=(202918, 2677)
+2026-08-16 19:12:30,868 | RE5 TRAIN |     regularized_linear quantile 0.1 시작
+2026-08-16 19:12:31,466 | RE5 TRAIN | linear q=0.1 epoch=1/12
+2026-08-16 19:12:31,884 | RE5 TRAIN | linear q=0.1 epoch=2/12
+2026-08-16 19:12:32,357 | RE5 TRAIN | linear q=0.1 epoch=3/12
+2026-08-16 19:12:32,798 | RE5 TRAIN | linear q=0.1 epoch=4/12
+2026-08-16 19:12:33,229 | RE5 TRAIN | linear q=0.1 epoch=5/12
+2026-08-16 19:12:33,652 | RE5 TRAIN | linear q=0.1 epoch=6/12
+2026-08-16 19:12:34,107 | RE5 TRAIN | linear q=0.1 epoch=7/12
+2026-08-16 19:12:34,537 | RE5 TRAIN | linear q=0.1 epoch=8/12
+2026-08-16 19:12:34,956 | RE5 TRAIN | linear q=0.1 epoch=9/12
+2026-08-16 19:12:35,364 | RE5 TRAIN | linear q=0.1 epoch=10/12
+2026-08-16 19:12:35,780 | RE5 TRAIN | linear q=0.1 epoch=11/12
+2026-08-16 19:12:36,282 | RE5 TRAIN | linear q=0.1 epoch=12/12
+2026-08-16 19:12:36,297 | RE5 TRAIN |     regularized_linear quantile 0.5 시작
+2026-08-16 19:12:36,714 | RE5 TRAIN | linear q=0.5 epoch=1/12
+2026-08-16 19:12:37,098 | RE5 TRAIN | linear q=0.5 epoch=2/12
+2026-08-16 19:12:37,561 | RE5 TRAIN | linear q=0.5 epoch=3/12
+2026-08-16 19:12:37,965 | RE5 TRAIN | linear q=0.5 epoch=4/12
+2026-08-16 19:12:38,374 | RE5 TRAIN | linear q=0.5 epoch=5/12
+2026-08-16 19:12:38,781 | RE5 TRAIN | linear q=0.5 epoch=6/12
+2026-08-16 19:12:39,262 | RE5 TRAIN | linear q=0.5 epoch=7/12
+2026-08-16 19:12:39,671 | RE5 TRAIN | linear q=0.5 epoch=8/12
+2026-08-16 19:12:40,074 | RE5 TRAIN | linear q=0.5 epoch=9/12
+2026-08-16 19:12:40,475 | RE5 TRAIN | linear q=0.5 epoch=10/12
+2026-08-16 19:12:40,864 | RE5 TRAIN | linear q=0.5 epoch=11/12
+2026-08-16 19:12:41,392 | RE5 TRAIN | linear q=0.5 epoch=12/12
+2026-08-16 19:12:41,405 | RE5 TRAIN |     regularized_linear quantile 0.9 시작
+2026-08-16 19:12:41,888 | RE5 TRAIN | linear q=0.9 epoch=1/12
+2026-08-16 19:12:42,356 | RE5 TRAIN | linear q=0.9 epoch=2/12
+2026-08-16 19:12:42,757 | RE5 TRAIN | linear q=0.9 epoch=3/12
+2026-08-16 19:12:43,174 | RE5 TRAIN | linear q=0.9 epoch=4/12
+2026-08-16 19:12:43,592 | RE5 TRAIN | linear q=0.9 epoch=5/12
+2026-08-16 19:12:44,005 | RE5 TRAIN | linear q=0.9 epoch=6/12
+2026-08-16 19:12:44,437 | RE5 TRAIN | linear q=0.9 epoch=7/12
+2026-08-16 19:12:44,845 | RE5 TRAIN | linear q=0.9 epoch=8/12
+2026-08-16 19:12:45,282 | RE5 TRAIN | linear q=0.9 epoch=9/12
+2026-08-16 19:12:45,677 | RE5 TRAIN | linear q=0.9 epoch=10/12
+2026-08-16 19:12:46,081 | RE5 TRAIN | linear q=0.9 epoch=11/12
+2026-08-16 19:12:46,620 | RE5 TRAIN | linear q=0.9 epoch=12/12
+2026-08-16 19:12:46,744 | RE5 TRAIN | [39/72 54.2%] DONE | MAE=4.655053 coverage=0.9998 crossing_raw=1.0000 elapsed=20.1s ETA≈52.3min
+2026-08-16 19:12:46,745 | RE5 TRAIN | [40/72] START | target=target_b_next_two_quarters_yoy fold=3 validation=20243 model=lightgbm train=202918 validation_rows=19952
+2026-08-16 19:12:46,746 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 19:12:46,747 | RE5 TRAIN |     lightgbm quantile 0.1 시작
+2026-08-16 19:13:02,290 | RE5 TRAIN |     lightgbm quantile 0.5 시작
+2026-08-16 19:13:18,404 | RE5 TRAIN |     lightgbm quantile 0.9 시작
+2026-08-16 19:13:33,484 | RE5 TRAIN | [40/72 55.6%] DONE | MAE=0.317406 coverage=0.7760 crossing_raw=0.0029 elapsed=46.7s ETA≈50.1min
+2026-08-16 19:13:33,484 | RE5 TRAIN | [41/72] START | target=target_b_next_two_quarters_yoy fold=3 validation=20243 model=catboost train=202918 validation_rows=19952
+2026-08-16 19:13:33,486 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 19:13:33,486 | RE5 TRAIN |     catboost MultiQuantile 0.1,0.5,0.9 시작
+2026-08-16 19:16:31,232 | RE5 TRAIN | [41/72 56.9%] DONE | MAE=0.322189 coverage=0.7838 crossing_raw=0.0013 elapsed=177.7s ETA≈49.6min
+2026-08-16 19:16:31,233 | RE5 TRAIN | [42/72] START | target=target_b_next_two_quarters_yoy fold=3 validation=20243 model=xgboost train=202918 validation_rows=19952
+2026-08-16 19:16:31,234 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 19:16:31,234 | RE5 TRAIN |     xgboost quantile 0.1 시작
+2026-08-16 19:18:23,246 | RE5 TRAIN |     xgboost quantile 0.5 시작
+2026-08-16 19:20:20,023 | RE5 TRAIN |     xgboost quantile 0.9 시작
+2026-08-16 19:22:16,848 | RE5 TRAIN | [42/72 58.3%] DONE | MAE=0.316411 coverage=0.7593 crossing_raw=0.0059 elapsed=345.5s ETA≈50.9min
+2026-08-16 19:22:17,452 | RE5 TRAIN | [43/72] START | target=target_b_next_two_quarters_yoy fold=4 validation=20244 model=seasonal_naive train=222973 validation_rows=19944
+2026-08-16 19:22:17,539 | RE5 TRAIN | [43/72 59.7%] DONE | MAE=0.624331 coverage=0.8466 crossing_raw=0.0000 elapsed=0.0s ETA≈48.1min
+2026-08-16 19:22:17,540 | RE5 TRAIN | [44/72] START | target=target_b_next_two_quarters_yoy fold=4 validation=20244 model=industry_median train=222973 validation_rows=19944
+2026-08-16 19:22:17,691 | RE5 TRAIN | [44/72 61.1%] DONE | MAE=0.444843 coverage=0.8066 crossing_raw=0.0000 elapsed=0.1s ETA≈45.4min
+2026-08-16 19:22:17,691 | RE5 TRAIN | [45/72] START | target=target_b_next_two_quarters_yoy fold=4 validation=20244 model=regularized_linear train=222973 validation_rows=19944
+2026-08-16 19:22:17,692 | RE5 TRAIN |     Train-only 전처리 시작 | approved features=197
+2026-08-16 19:22:21,619 | RE5 TRAIN |     Train-only 전처리 완료 | matrix=(222973, 2678)
+2026-08-16 19:22:21,620 | RE5 TRAIN |     regularized_linear quantile 0.1 시작
+2026-08-16 19:22:22,118 | RE5 TRAIN | linear q=0.1 epoch=1/12
+2026-08-16 19:22:22,534 | RE5 TRAIN | linear q=0.1 epoch=2/12
+2026-08-16 19:22:22,906 | RE5 TRAIN | linear q=0.1 epoch=3/12
+2026-08-16 19:22:23,268 | RE5 TRAIN | linear q=0.1 epoch=4/12
+2026-08-16 19:22:23,689 | RE5 TRAIN | linear q=0.1 epoch=5/12
+2026-08-16 19:22:24,042 | RE5 TRAIN | linear q=0.1 epoch=6/12
+2026-08-16 19:22:24,412 | RE5 TRAIN | linear q=0.1 epoch=7/12
+2026-08-16 19:22:24,780 | RE5 TRAIN | linear q=0.1 epoch=8/12
+2026-08-16 19:22:25,189 | RE5 TRAIN | linear q=0.1 epoch=9/12
+2026-08-16 19:22:25,565 | RE5 TRAIN | linear q=0.1 epoch=10/12
+2026-08-16 19:22:25,937 | RE5 TRAIN | linear q=0.1 epoch=11/12
+2026-08-16 19:22:26,305 | RE5 TRAIN | linear q=0.1 epoch=12/12
+2026-08-16 19:22:26,318 | RE5 TRAIN |     regularized_linear quantile 0.5 시작
+2026-08-16 19:22:26,691 | RE5 TRAIN | linear q=0.5 epoch=1/12
+2026-08-16 19:22:27,062 | RE5 TRAIN | linear q=0.5 epoch=2/12
+2026-08-16 19:22:27,441 | RE5 TRAIN | linear q=0.5 epoch=3/12
+2026-08-16 19:22:27,805 | RE5 TRAIN | linear q=0.5 epoch=4/12
+2026-08-16 19:22:28,181 | RE5 TRAIN | linear q=0.5 epoch=5/12
+2026-08-16 19:22:28,570 | RE5 TRAIN | linear q=0.5 epoch=6/12
+2026-08-16 19:22:28,969 | RE5 TRAIN | linear q=0.5 epoch=7/12
+2026-08-16 19:22:29,332 | RE5 TRAIN | linear q=0.5 epoch=8/12
+2026-08-16 19:22:29,720 | RE5 TRAIN | linear q=0.5 epoch=9/12
+2026-08-16 19:22:30,085 | RE5 TRAIN | linear q=0.5 epoch=10/12
+2026-08-16 19:22:30,496 | RE5 TRAIN | linear q=0.5 epoch=11/12
+2026-08-16 19:22:30,893 | RE5 TRAIN | linear q=0.5 epoch=12/12
+2026-08-16 19:22:30,904 | RE5 TRAIN |     regularized_linear quantile 0.9 시작
+2026-08-16 19:22:31,301 | RE5 TRAIN | linear q=0.9 epoch=1/12
+2026-08-16 19:22:31,694 | RE5 TRAIN | linear q=0.9 epoch=2/12
+2026-08-16 19:22:32,068 | RE5 TRAIN | linear q=0.9 epoch=3/12
+2026-08-16 19:22:32,516 | RE5 TRAIN | linear q=0.9 epoch=4/12
+2026-08-16 19:22:32,891 | RE5 TRAIN | linear q=0.9 epoch=5/12
+2026-08-16 19:22:33,279 | RE5 TRAIN | linear q=0.9 epoch=6/12
+2026-08-16 19:22:33,661 | RE5 TRAIN | linear q=0.9 epoch=7/12
+2026-08-16 19:22:34,155 | RE5 TRAIN | linear q=0.9 epoch=8/12
+2026-08-16 19:22:34,531 | RE5 TRAIN | linear q=0.9 epoch=9/12
+2026-08-16 19:22:34,929 | RE5 TRAIN | linear q=0.9 epoch=10/12
+2026-08-16 19:22:35,299 | RE5 TRAIN | linear q=0.9 epoch=11/12
+2026-08-16 19:22:35,679 | RE5 TRAIN | linear q=0.9 epoch=12/12
+2026-08-16 19:22:35,752 | RE5 TRAIN | [45/72 62.5%] DONE | MAE=197.192205 coverage=0.9998 crossing_raw=1.0000 elapsed=18.0s ETA≈43.0min
+2026-08-16 19:22:35,753 | RE5 TRAIN | [46/72] START | target=target_b_next_two_quarters_yoy fold=4 validation=20244 model=lightgbm train=222973 validation_rows=19944
+2026-08-16 19:22:35,754 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 19:22:35,754 | RE5 TRAIN |     lightgbm quantile 0.1 시작
+2026-08-16 19:22:49,855 | RE5 TRAIN |     lightgbm quantile 0.5 시작
+2026-08-16 19:23:04,800 | RE5 TRAIN |     lightgbm quantile 0.9 시작
+2026-08-16 19:23:19,224 | RE5 TRAIN | [46/72 63.9%] DONE | MAE=0.359041 coverage=0.7820 crossing_raw=0.0027 elapsed=43.4s ETA≈40.9min
+2026-08-16 19:23:19,225 | RE5 TRAIN | [47/72] START | target=target_b_next_two_quarters_yoy fold=4 validation=20244 model=catboost train=222973 validation_rows=19944
+2026-08-16 19:23:19,227 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 19:23:19,228 | RE5 TRAIN |     catboost MultiQuantile 0.1,0.5,0.9 시작
+2026-08-16 19:26:21,402 | RE5 TRAIN | [47/72 65.3%] DONE | MAE=0.365805 coverage=0.8008 crossing_raw=0.0012 elapsed=182.1s ETA≈40.1min
+2026-08-16 19:26:21,403 | RE5 TRAIN | [48/72] START | target=target_b_next_two_quarters_yoy fold=4 validation=20244 model=xgboost train=222973 validation_rows=19944
+2026-08-16 19:26:21,404 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 19:26:21,404 | RE5 TRAIN |     xgboost quantile 0.1 시작
+2026-08-16 19:28:17,214 | RE5 TRAIN |     xgboost quantile 0.5 시작
+2026-08-16 19:30:19,674 | RE5 TRAIN |     xgboost quantile 0.9 시작
+2026-08-16 19:32:20,284 | RE5 TRAIN | [48/72 66.7%] DONE | MAE=0.358238 coverage=0.7723 crossing_raw=0.0043 elapsed=358.8s ETA≈40.7min
+2026-08-16 19:32:20,726 | RE5 TRAIN | [49/72] START | target=target_aux_min_next_two_quarters_yoy fold=1 validation=20241 model=seasonal_naive train=162557 validation_rows=20152
+2026-08-16 19:32:20,820 | RE5 TRAIN | [49/72 68.1%] DONE | MAE=0.712144 coverage=0.8282 crossing_raw=0.0000 elapsed=0.0s ETA≈38.2min
+2026-08-16 19:32:20,820 | RE5 TRAIN | [50/72] START | target=target_aux_min_next_two_quarters_yoy fold=1 validation=20241 model=industry_median train=162557 validation_rows=20152
+2026-08-16 19:32:20,939 | RE5 TRAIN | [50/72 69.4%] DONE | MAE=0.421398 coverage=0.8153 crossing_raw=0.0000 elapsed=0.1s ETA≈35.8min
+2026-08-16 19:32:20,939 | RE5 TRAIN | [51/72] START | target=target_aux_min_next_two_quarters_yoy fold=1 validation=20241 model=regularized_linear train=162557 validation_rows=20152
+2026-08-16 19:32:20,941 | RE5 TRAIN |     Train-only 전처리 시작 | approved features=197
+2026-08-16 19:32:23,878 | RE5 TRAIN |     Train-only 전처리 완료 | matrix=(162557, 2675)
+2026-08-16 19:32:23,878 | RE5 TRAIN |     regularized_linear quantile 0.1 시작
+2026-08-16 19:32:24,186 | RE5 TRAIN | linear q=0.1 epoch=1/12
+2026-08-16 19:32:24,527 | RE5 TRAIN | linear q=0.1 epoch=2/12
+2026-08-16 19:32:24,801 | RE5 TRAIN | linear q=0.1 epoch=3/12
+2026-08-16 19:32:25,063 | RE5 TRAIN | linear q=0.1 epoch=4/12
+2026-08-16 19:32:25,333 | RE5 TRAIN | linear q=0.1 epoch=5/12
+2026-08-16 19:32:25,597 | RE5 TRAIN | linear q=0.1 epoch=6/12
+2026-08-16 19:32:25,864 | RE5 TRAIN | linear q=0.1 epoch=7/12
+2026-08-16 19:32:26,134 | RE5 TRAIN | linear q=0.1 epoch=8/12
+2026-08-16 19:32:26,401 | RE5 TRAIN | linear q=0.1 epoch=9/12
+2026-08-16 19:32:26,701 | RE5 TRAIN | linear q=0.1 epoch=10/12
+2026-08-16 19:32:26,969 | RE5 TRAIN | linear q=0.1 epoch=11/12
+2026-08-16 19:32:27,240 | RE5 TRAIN | linear q=0.1 epoch=12/12
+2026-08-16 19:32:27,251 | RE5 TRAIN |     regularized_linear quantile 0.5 시작
+2026-08-16 19:32:27,534 | RE5 TRAIN | linear q=0.5 epoch=1/12
+2026-08-16 19:32:27,813 | RE5 TRAIN | linear q=0.5 epoch=2/12
+2026-08-16 19:32:28,073 | RE5 TRAIN | linear q=0.5 epoch=3/12
+2026-08-16 19:32:28,331 | RE5 TRAIN | linear q=0.5 epoch=4/12
+2026-08-16 19:32:28,604 | RE5 TRAIN | linear q=0.5 epoch=5/12
+2026-08-16 19:32:28,873 | RE5 TRAIN | linear q=0.5 epoch=6/12
+2026-08-16 19:32:29,159 | RE5 TRAIN | linear q=0.5 epoch=7/12
+2026-08-16 19:32:29,449 | RE5 TRAIN | linear q=0.5 epoch=8/12
+2026-08-16 19:32:29,767 | RE5 TRAIN | linear q=0.5 epoch=9/12
+2026-08-16 19:32:30,033 | RE5 TRAIN | linear q=0.5 epoch=10/12
+2026-08-16 19:32:30,302 | RE5 TRAIN | linear q=0.5 epoch=11/12
+2026-08-16 19:32:30,571 | RE5 TRAIN | linear q=0.5 epoch=12/12
+2026-08-16 19:32:30,582 | RE5 TRAIN |     regularized_linear quantile 0.9 시작
+2026-08-16 19:32:30,893 | RE5 TRAIN | linear q=0.9 epoch=1/12
+2026-08-16 19:32:31,202 | RE5 TRAIN | linear q=0.9 epoch=2/12
+2026-08-16 19:32:31,470 | RE5 TRAIN | linear q=0.9 epoch=3/12
+2026-08-16 19:32:31,753 | RE5 TRAIN | linear q=0.9 epoch=4/12
+2026-08-16 19:32:32,016 | RE5 TRAIN | linear q=0.9 epoch=5/12
+2026-08-16 19:32:32,321 | RE5 TRAIN | linear q=0.9 epoch=6/12
+2026-08-16 19:32:32,600 | RE5 TRAIN | linear q=0.9 epoch=7/12
+2026-08-16 19:32:32,880 | RE5 TRAIN | linear q=0.9 epoch=8/12
+2026-08-16 19:32:33,139 | RE5 TRAIN | linear q=0.9 epoch=9/12
+2026-08-16 19:32:33,405 | RE5 TRAIN | linear q=0.9 epoch=10/12
+2026-08-16 19:32:33,664 | RE5 TRAIN | linear q=0.9 epoch=11/12
+2026-08-16 19:32:33,942 | RE5 TRAIN | linear q=0.9 epoch=12/12
+2026-08-16 19:32:34,043 | RE5 TRAIN | [51/72 70.8%] DONE | MAE=0.651830 coverage=0.9858 crossing_raw=0.0000 elapsed=13.0s ETA≈33.6min
+2026-08-16 19:32:34,044 | RE5 TRAIN | [52/72] START | target=target_aux_min_next_two_quarters_yoy fold=1 validation=20241 model=lightgbm train=162557 validation_rows=20152
+2026-08-16 19:32:34,045 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 19:32:34,046 | RE5 TRAIN |     lightgbm quantile 0.1 시작
+2026-08-16 19:32:45,067 | RE5 TRAIN |     lightgbm quantile 0.5 시작
+2026-08-16 19:32:56,505 | RE5 TRAIN |     lightgbm quantile 0.9 시작
+2026-08-16 19:33:07,607 | RE5 TRAIN | [52/72 72.2%] DONE | MAE=0.357129 coverage=0.7758 crossing_raw=0.0028 elapsed=33.5s ETA≈31.6min
+2026-08-16 19:33:07,608 | RE5 TRAIN | [53/72] START | target=target_aux_min_next_two_quarters_yoy fold=1 validation=20241 model=catboost train=162557 validation_rows=20152
+2026-08-16 19:33:07,609 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 19:33:07,609 | RE5 TRAIN |     catboost MultiQuantile 0.1,0.5,0.9 시작
+2026-08-16 19:35:34,385 | RE5 TRAIN | [53/72 73.6%] DONE | MAE=0.361896 coverage=0.7870 crossing_raw=0.0013 elapsed=146.7s ETA≈30.3min
+2026-08-16 19:35:34,385 | RE5 TRAIN | [54/72] START | target=target_aux_min_next_two_quarters_yoy fold=1 validation=20241 model=xgboost train=162557 validation_rows=20152
+2026-08-16 19:35:34,386 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 19:35:34,387 | RE5 TRAIN |     xgboost quantile 0.1 시작
+2026-08-16 19:37:22,635 | RE5 TRAIN |     xgboost quantile 0.5 시작
+2026-08-16 19:39:12,319 | RE5 TRAIN |     xgboost quantile 0.9 시작
+2026-08-16 19:41:03,636 | RE5 TRAIN | [54/72 75.0%] DONE | MAE=0.356708 coverage=0.7681 crossing_raw=0.0044 elapsed=329.2s ETA≈30.0min
+2026-08-16 19:41:04,156 | RE5 TRAIN | [55/72] START | target=target_aux_min_next_two_quarters_yoy fold=2 validation=20242 model=seasonal_naive train=182766 validation_rows=20055
+2026-08-16 19:41:04,234 | RE5 TRAIN | [55/72 76.4%] DONE | MAE=1.164081 coverage=0.8413 crossing_raw=0.0000 elapsed=0.0s ETA≈27.8min
+2026-08-16 19:41:04,235 | RE5 TRAIN | [56/72] START | target=target_aux_min_next_two_quarters_yoy fold=2 validation=20242 model=industry_median train=182766 validation_rows=20055
+2026-08-16 19:41:04,356 | RE5 TRAIN | [56/72 77.8%] DONE | MAE=0.287261 coverage=0.8181 crossing_raw=0.0000 elapsed=0.1s ETA≈25.7min
+2026-08-16 19:41:04,357 | RE5 TRAIN | [57/72] START | target=target_aux_min_next_two_quarters_yoy fold=2 validation=20242 model=regularized_linear train=182766 validation_rows=20055
+2026-08-16 19:41:04,358 | RE5 TRAIN |     Train-only 전처리 시작 | approved features=197
+2026-08-16 19:41:07,825 | RE5 TRAIN |     Train-only 전처리 완료 | matrix=(182766, 2677)
+2026-08-16 19:41:07,825 | RE5 TRAIN |     regularized_linear quantile 0.1 시작
+2026-08-16 19:41:08,241 | RE5 TRAIN | linear q=0.1 epoch=1/12
+2026-08-16 19:41:08,543 | RE5 TRAIN | linear q=0.1 epoch=2/12
+2026-08-16 19:41:08,846 | RE5 TRAIN | linear q=0.1 epoch=3/12
+2026-08-16 19:41:09,149 | RE5 TRAIN | linear q=0.1 epoch=4/12
+2026-08-16 19:41:09,468 | RE5 TRAIN | linear q=0.1 epoch=5/12
+2026-08-16 19:41:09,769 | RE5 TRAIN | linear q=0.1 epoch=6/12
+2026-08-16 19:41:10,068 | RE5 TRAIN | linear q=0.1 epoch=7/12
+2026-08-16 19:41:10,374 | RE5 TRAIN | linear q=0.1 epoch=8/12
+2026-08-16 19:41:10,672 | RE5 TRAIN | linear q=0.1 epoch=9/12
+2026-08-16 19:41:11,021 | RE5 TRAIN | linear q=0.1 epoch=10/12
+2026-08-16 19:41:11,331 | RE5 TRAIN | linear q=0.1 epoch=11/12
+2026-08-16 19:41:11,629 | RE5 TRAIN | linear q=0.1 epoch=12/12
+2026-08-16 19:41:11,638 | RE5 TRAIN |     regularized_linear quantile 0.5 시작
+2026-08-16 19:41:11,963 | RE5 TRAIN | linear q=0.5 epoch=1/12
+2026-08-16 19:41:12,302 | RE5 TRAIN | linear q=0.5 epoch=2/12
+2026-08-16 19:41:12,596 | RE5 TRAIN | linear q=0.5 epoch=3/12
+2026-08-16 19:41:12,899 | RE5 TRAIN | linear q=0.5 epoch=4/12
+2026-08-16 19:41:13,208 | RE5 TRAIN | linear q=0.5 epoch=5/12
+2026-08-16 19:41:13,522 | RE5 TRAIN | linear q=0.5 epoch=6/12
+2026-08-16 19:41:13,824 | RE5 TRAIN | linear q=0.5 epoch=7/12
+2026-08-16 19:41:14,122 | RE5 TRAIN | linear q=0.5 epoch=8/12
+2026-08-16 19:41:14,426 | RE5 TRAIN | linear q=0.5 epoch=9/12
+2026-08-16 19:41:14,730 | RE5 TRAIN | linear q=0.5 epoch=10/12
+2026-08-16 19:41:15,040 | RE5 TRAIN | linear q=0.5 epoch=11/12
+2026-08-16 19:41:15,362 | RE5 TRAIN | linear q=0.5 epoch=12/12
+2026-08-16 19:41:15,372 | RE5 TRAIN |     regularized_linear quantile 0.9 시작
+2026-08-16 19:41:15,689 | RE5 TRAIN | linear q=0.9 epoch=1/12
+2026-08-16 19:41:16,012 | RE5 TRAIN | linear q=0.9 epoch=2/12
+2026-08-16 19:41:16,343 | RE5 TRAIN | linear q=0.9 epoch=3/12
+2026-08-16 19:41:16,640 | RE5 TRAIN | linear q=0.9 epoch=4/12
+2026-08-16 19:41:16,947 | RE5 TRAIN | linear q=0.9 epoch=5/12
+2026-08-16 19:41:17,347 | RE5 TRAIN | linear q=0.9 epoch=6/12
+2026-08-16 19:41:17,641 | RE5 TRAIN | linear q=0.9 epoch=7/12
+2026-08-16 19:41:17,948 | RE5 TRAIN | linear q=0.9 epoch=8/12
+2026-08-16 19:41:18,256 | RE5 TRAIN | linear q=0.9 epoch=9/12
+2026-08-16 19:41:18,573 | RE5 TRAIN | linear q=0.9 epoch=10/12
+2026-08-16 19:41:18,873 | RE5 TRAIN | linear q=0.9 epoch=11/12
+2026-08-16 19:41:19,196 | RE5 TRAIN | linear q=0.9 epoch=12/12
+2026-08-16 19:41:19,281 | RE5 TRAIN | [57/72 79.2%] DONE | MAE=54.655613 coverage=0.0027 crossing_raw=1.0000 elapsed=14.9s ETA≈23.8min
+2026-08-16 19:41:19,282 | RE5 TRAIN | [58/72] START | target=target_aux_min_next_two_quarters_yoy fold=2 validation=20242 model=lightgbm train=182766 validation_rows=20055
+2026-08-16 19:41:19,283 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 19:41:19,283 | RE5 TRAIN |     lightgbm quantile 0.1 시작
+2026-08-16 19:41:31,264 | RE5 TRAIN |     lightgbm quantile 0.5 시작
+2026-08-16 19:41:44,095 | RE5 TRAIN |     lightgbm quantile 0.9 시작
+2026-08-16 19:41:56,816 | RE5 TRAIN | [58/72 80.6%] DONE | MAE=0.224604 coverage=0.7879 crossing_raw=0.0030 elapsed=37.5s ETA≈21.9min
+2026-08-16 19:41:56,817 | RE5 TRAIN | [59/72] START | target=target_aux_min_next_two_quarters_yoy fold=2 validation=20242 model=catboost train=182766 validation_rows=20055
+2026-08-16 19:41:56,819 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 19:41:56,820 | RE5 TRAIN |     catboost MultiQuantile 0.1,0.5,0.9 시작
+2026-08-16 19:44:31,981 | RE5 TRAIN | [59/72 81.9%] DONE | MAE=0.228048 coverage=0.7974 crossing_raw=0.0024 elapsed=155.1s ETA≈20.6min
+2026-08-16 19:44:31,981 | RE5 TRAIN | [60/72] START | target=target_aux_min_next_two_quarters_yoy fold=2 validation=20242 model=xgboost train=182766 validation_rows=20055
+2026-08-16 19:44:31,982 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 19:44:31,982 | RE5 TRAIN |     xgboost quantile 0.1 시작
+2026-08-16 19:46:23,830 | RE5 TRAIN |     xgboost quantile 0.5 시작
+2026-08-16 19:48:18,130 | RE5 TRAIN |     xgboost quantile 0.9 시작
+2026-08-16 19:50:14,339 | RE5 TRAIN | [60/72 83.3%] DONE | MAE=0.224130 coverage=0.7734 crossing_raw=0.0045 elapsed=342.3s ETA≈19.8min
+2026-08-16 19:50:15,019 | RE5 TRAIN | [61/72] START | target=target_aux_min_next_two_quarters_yoy fold=3 validation=20243 model=seasonal_naive train=202918 validation_rows=19952
+2026-08-16 19:50:15,097 | RE5 TRAIN | [61/72 84.7%] DONE | MAE=0.757467 coverage=0.8323 crossing_raw=0.0000 elapsed=0.0s ETA≈17.9min
+2026-08-16 19:50:15,098 | RE5 TRAIN | [62/72] START | target=target_aux_min_next_two_quarters_yoy fold=3 validation=20243 model=industry_median train=202918 validation_rows=19952
+2026-08-16 19:50:15,201 | RE5 TRAIN | [62/72 86.1%] DONE | MAE=0.319592 coverage=0.8176 crossing_raw=0.0000 elapsed=0.1s ETA≈16.0min
+2026-08-16 19:50:15,202 | RE5 TRAIN | [63/72] START | target=target_aux_min_next_two_quarters_yoy fold=3 validation=20243 model=regularized_linear train=202918 validation_rows=19952
+2026-08-16 19:50:15,203 | RE5 TRAIN |     Train-only 전처리 시작 | approved features=197
+2026-08-16 19:50:20,067 | RE5 TRAIN |     Train-only 전처리 완료 | matrix=(202918, 2677)
+2026-08-16 19:50:20,068 | RE5 TRAIN |     regularized_linear quantile 0.1 시작
+2026-08-16 19:50:20,663 | RE5 TRAIN | linear q=0.1 epoch=1/12
+2026-08-16 19:50:21,338 | RE5 TRAIN | linear q=0.1 epoch=2/12
+2026-08-16 19:50:21,816 | RE5 TRAIN | linear q=0.1 epoch=3/12
+2026-08-16 19:50:22,185 | RE5 TRAIN | linear q=0.1 epoch=4/12
+2026-08-16 19:50:22,605 | RE5 TRAIN | linear q=0.1 epoch=5/12
+2026-08-16 19:50:23,116 | RE5 TRAIN | linear q=0.1 epoch=6/12
+2026-08-16 19:50:23,621 | RE5 TRAIN | linear q=0.1 epoch=7/12
+2026-08-16 19:50:23,979 | RE5 TRAIN | linear q=0.1 epoch=8/12
+2026-08-16 19:50:24,404 | RE5 TRAIN | linear q=0.1 epoch=9/12
+2026-08-16 19:50:24,832 | RE5 TRAIN | linear q=0.1 epoch=10/12
+2026-08-16 19:50:25,366 | RE5 TRAIN | linear q=0.1 epoch=11/12
+2026-08-16 19:50:25,968 | RE5 TRAIN | linear q=0.1 epoch=12/12
+2026-08-16 19:50:25,979 | RE5 TRAIN |     regularized_linear quantile 0.5 시작
+2026-08-16 19:50:26,437 | RE5 TRAIN | linear q=0.5 epoch=1/12
+2026-08-16 19:50:26,948 | RE5 TRAIN | linear q=0.5 epoch=2/12
+2026-08-16 19:50:27,349 | RE5 TRAIN | linear q=0.5 epoch=3/12
+2026-08-16 19:50:27,755 | RE5 TRAIN | linear q=0.5 epoch=4/12
+2026-08-16 19:50:28,174 | RE5 TRAIN | linear q=0.5 epoch=5/12
+2026-08-16 19:50:28,739 | RE5 TRAIN | linear q=0.5 epoch=6/12
+2026-08-16 19:50:29,182 | RE5 TRAIN | linear q=0.5 epoch=7/12
+2026-08-16 19:50:29,532 | RE5 TRAIN | linear q=0.5 epoch=8/12
+2026-08-16 19:50:29,869 | RE5 TRAIN | linear q=0.5 epoch=9/12
+2026-08-16 19:50:30,273 | RE5 TRAIN | linear q=0.5 epoch=10/12
+2026-08-16 19:50:30,625 | RE5 TRAIN | linear q=0.5 epoch=11/12
+2026-08-16 19:50:30,957 | RE5 TRAIN | linear q=0.5 epoch=12/12
+2026-08-16 19:50:30,968 | RE5 TRAIN |     regularized_linear quantile 0.9 시작
+2026-08-16 19:50:31,300 | RE5 TRAIN | linear q=0.9 epoch=1/12
+2026-08-16 19:50:31,771 | RE5 TRAIN | linear q=0.9 epoch=2/12
+2026-08-16 19:50:32,153 | RE5 TRAIN | linear q=0.9 epoch=3/12
+2026-08-16 19:50:32,542 | RE5 TRAIN | linear q=0.9 epoch=4/12
+2026-08-16 19:50:33,008 | RE5 TRAIN | linear q=0.9 epoch=5/12
+2026-08-16 19:50:33,561 | RE5 TRAIN | linear q=0.9 epoch=6/12
+2026-08-16 19:50:34,003 | RE5 TRAIN | linear q=0.9 epoch=7/12
+2026-08-16 19:50:34,338 | RE5 TRAIN | linear q=0.9 epoch=8/12
+2026-08-16 19:50:34,680 | RE5 TRAIN | linear q=0.9 epoch=9/12
+2026-08-16 19:50:35,004 | RE5 TRAIN | linear q=0.9 epoch=10/12
+2026-08-16 19:50:35,366 | RE5 TRAIN | linear q=0.9 epoch=11/12
+2026-08-16 19:50:35,742 | RE5 TRAIN | linear q=0.9 epoch=12/12
+2026-08-16 19:50:35,828 | RE5 TRAIN | [63/72 87.5%] DONE | MAE=5.313542 coverage=0.0032 crossing_raw=1.0000 elapsed=20.6s ETA≈14.2min
+2026-08-16 19:50:35,829 | RE5 TRAIN | [64/72] START | target=target_aux_min_next_two_quarters_yoy fold=3 validation=20243 model=lightgbm train=202918 validation_rows=19952
+2026-08-16 19:50:35,830 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 19:50:35,830 | RE5 TRAIN |     lightgbm quantile 0.1 시작
+2026-08-16 19:50:51,958 | RE5 TRAIN |     lightgbm quantile 0.5 시작
+2026-08-16 19:51:08,305 | RE5 TRAIN |     lightgbm quantile 0.9 시작
+2026-08-16 19:51:23,182 | RE5 TRAIN | [64/72 88.9%] DONE | MAE=0.261279 coverage=0.7663 crossing_raw=0.0032 elapsed=47.3s ETA≈12.5min
+2026-08-16 19:51:23,184 | RE5 TRAIN | [65/72] START | target=target_aux_min_next_two_quarters_yoy fold=3 validation=20243 model=catboost train=202918 validation_rows=19952
+2026-08-16 19:51:23,186 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 19:51:23,186 | RE5 TRAIN |     catboost MultiQuantile 0.1,0.5,0.9 시작
+2026-08-16 19:54:17,845 | RE5 TRAIN | [65/72 90.3%] DONE | MAE=0.264722 coverage=0.7788 crossing_raw=0.0013 elapsed=174.6s ETA≈11.1min
+2026-08-16 19:54:17,846 | RE5 TRAIN | [66/72] START | target=target_aux_min_next_two_quarters_yoy fold=3 validation=20243 model=xgboost train=202918 validation_rows=19952
+2026-08-16 19:54:17,847 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 19:54:17,848 | RE5 TRAIN |     xgboost quantile 0.1 시작
+2026-08-16 19:56:14,045 | RE5 TRAIN |     xgboost quantile 0.5 시작
+2026-08-16 19:58:13,281 | RE5 TRAIN |     xgboost quantile 0.9 시작
+2026-08-16 20:00:10,471 | RE5 TRAIN | [66/72 91.7%] DONE | MAE=0.260296 coverage=0.7584 crossing_raw=0.0039 elapsed=352.6s ETA≈9.9min
+2026-08-16 20:00:11,116 | RE5 TRAIN | [67/72] START | target=target_aux_min_next_two_quarters_yoy fold=4 validation=20244 model=seasonal_naive train=222973 validation_rows=19944
+2026-08-16 20:00:11,219 | RE5 TRAIN | [67/72 93.1%] DONE | MAE=0.570676 coverage=0.8476 crossing_raw=0.0000 elapsed=0.0s ETA≈8.1min
+2026-08-16 20:00:11,219 | RE5 TRAIN | [68/72] START | target=target_aux_min_next_two_quarters_yoy fold=4 validation=20244 model=industry_median train=222973 validation_rows=19944
+2026-08-16 20:00:11,399 | RE5 TRAIN | [68/72 94.4%] DONE | MAE=0.352429 coverage=0.8210 crossing_raw=0.0000 elapsed=0.1s ETA≈6.4min
+2026-08-16 20:00:11,400 | RE5 TRAIN | [69/72] START | target=target_aux_min_next_two_quarters_yoy fold=4 validation=20244 model=regularized_linear train=222973 validation_rows=19944
+2026-08-16 20:00:11,401 | RE5 TRAIN |     Train-only 전처리 시작 | approved features=197
+2026-08-16 20:00:15,281 | RE5 TRAIN |     Train-only 전처리 완료 | matrix=(222973, 2678)
+2026-08-16 20:00:15,281 | RE5 TRAIN |     regularized_linear quantile 0.1 시작
+2026-08-16 20:00:15,827 | RE5 TRAIN | linear q=0.1 epoch=1/12
+2026-08-16 20:00:16,338 | RE5 TRAIN | linear q=0.1 epoch=2/12
+2026-08-16 20:00:16,720 | RE5 TRAIN | linear q=0.1 epoch=3/12
+2026-08-16 20:00:17,106 | RE5 TRAIN | linear q=0.1 epoch=4/12
+2026-08-16 20:00:17,521 | RE5 TRAIN | linear q=0.1 epoch=5/12
+2026-08-16 20:00:17,911 | RE5 TRAIN | linear q=0.1 epoch=6/12
+2026-08-16 20:00:18,300 | RE5 TRAIN | linear q=0.1 epoch=7/12
+2026-08-16 20:00:18,746 | RE5 TRAIN | linear q=0.1 epoch=8/12
+2026-08-16 20:00:19,137 | RE5 TRAIN | linear q=0.1 epoch=9/12
+2026-08-16 20:00:19,516 | RE5 TRAIN | linear q=0.1 epoch=10/12
+2026-08-16 20:00:19,901 | RE5 TRAIN | linear q=0.1 epoch=11/12
+2026-08-16 20:00:20,353 | RE5 TRAIN | linear q=0.1 epoch=12/12
+2026-08-16 20:00:20,363 | RE5 TRAIN |     regularized_linear quantile 0.5 시작
+2026-08-16 20:00:20,744 | RE5 TRAIN | linear q=0.5 epoch=1/12
+2026-08-16 20:00:21,134 | RE5 TRAIN | linear q=0.5 epoch=2/12
+2026-08-16 20:00:21,515 | RE5 TRAIN | linear q=0.5 epoch=3/12
+2026-08-16 20:00:21,915 | RE5 TRAIN | linear q=0.5 epoch=4/12
+2026-08-16 20:00:22,358 | RE5 TRAIN | linear q=0.5 epoch=5/12
+2026-08-16 20:00:22,744 | RE5 TRAIN | linear q=0.5 epoch=6/12
+2026-08-16 20:00:23,167 | RE5 TRAIN | linear q=0.5 epoch=7/12
+2026-08-16 20:00:23,564 | RE5 TRAIN | linear q=0.5 epoch=8/12
+2026-08-16 20:00:23,932 | RE5 TRAIN | linear q=0.5 epoch=9/12
+2026-08-16 20:00:24,315 | RE5 TRAIN | linear q=0.5 epoch=10/12
+2026-08-16 20:00:24,700 | RE5 TRAIN | linear q=0.5 epoch=11/12
+2026-08-16 20:00:25,091 | RE5 TRAIN | linear q=0.5 epoch=12/12
+2026-08-16 20:00:25,101 | RE5 TRAIN |     regularized_linear quantile 0.9 시작
+2026-08-16 20:00:25,509 | RE5 TRAIN | linear q=0.9 epoch=1/12
+2026-08-16 20:00:25,874 | RE5 TRAIN | linear q=0.9 epoch=2/12
+2026-08-16 20:00:26,262 | RE5 TRAIN | linear q=0.9 epoch=3/12
+2026-08-16 20:00:26,663 | RE5 TRAIN | linear q=0.9 epoch=4/12
+2026-08-16 20:00:27,060 | RE5 TRAIN | linear q=0.9 epoch=5/12
+2026-08-16 20:00:27,426 | RE5 TRAIN | linear q=0.9 epoch=6/12
+2026-08-16 20:00:27,793 | RE5 TRAIN | linear q=0.9 epoch=7/12
+2026-08-16 20:00:28,249 | RE5 TRAIN | linear q=0.9 epoch=8/12
+2026-08-16 20:00:28,616 | RE5 TRAIN | linear q=0.9 epoch=9/12
+2026-08-16 20:00:28,981 | RE5 TRAIN | linear q=0.9 epoch=10/12
+2026-08-16 20:00:29,368 | RE5 TRAIN | linear q=0.9 epoch=11/12
+2026-08-16 20:00:29,734 | RE5 TRAIN | linear q=0.9 epoch=12/12
+2026-08-16 20:00:29,815 | RE5 TRAIN | [69/72 95.8%] DONE | MAE=192.118276 coverage=0.9998 crossing_raw=0.0000 elapsed=18.4s ETA≈4.8min
+2026-08-16 20:00:29,825 | RE5 TRAIN | [70/72] START | target=target_aux_min_next_two_quarters_yoy fold=4 validation=20244 model=lightgbm train=222973 validation_rows=19944
+2026-08-16 20:00:29,827 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 20:00:29,827 | RE5 TRAIN |     lightgbm quantile 0.1 시작
+2026-08-16 20:00:43,805 | RE5 TRAIN |     lightgbm quantile 0.5 시작
+2026-08-16 20:00:58,952 | RE5 TRAIN |     lightgbm quantile 0.9 시작
+2026-08-16 20:01:13,949 | RE5 TRAIN | [70/72 97.2%] DONE | MAE=0.283573 coverage=0.7951 crossing_raw=0.0026 elapsed=44.0s ETA≈3.1min
+2026-08-16 20:01:13,950 | RE5 TRAIN | [71/72] START | target=target_aux_min_next_two_quarters_yoy fold=4 validation=20244 model=catboost train=222973 validation_rows=19944
+2026-08-16 20:01:13,951 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 20:01:13,952 | RE5 TRAIN |     catboost MultiQuantile 0.1,0.5,0.9 시작
+2026-08-16 20:04:18,762 | RE5 TRAIN | [71/72 98.6%] DONE | MAE=0.287708 coverage=0.8160 crossing_raw=0.0016 elapsed=184.7s ETA≈1.6min
+2026-08-16 20:04:18,764 | RE5 TRAIN | [72/72] START | target=target_aux_min_next_two_quarters_yoy fold=4 validation=20244 model=xgboost train=222973 validation_rows=19944
+2026-08-16 20:04:18,766 | RE5 TRAIN |     동일 Target·Fold 전처리 matrix 재사용
+2026-08-16 20:04:18,767 | RE5 TRAIN |     xgboost quantile 0.1 시작
+2026-08-16 20:06:18,409 | RE5 TRAIN |     xgboost quantile 0.5 시작
+2026-08-16 20:08:21,685 | RE5 TRAIN |     xgboost quantile 0.9 시작
+2026-08-16 20:10:23,874 | RE5 TRAIN | [72/72 100.0%] DONE | MAE=0.282558 coverage=0.7845 crossing_raw=0.0042 elapsed=365.0s ETA≈0.0min
+2026-08-16 20:10:23,874 | RE5 TRAIN | 모든 CV task 완료 | 결과 집계 시작
+2026-08-16 20:10:34,767 | RE5 TRAIN | CV 완료 | holdout target=미개방 | 다음 단계=후보 결과 검토 및 사용자 모델 승인

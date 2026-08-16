@@ -1,0 +1,161 @@
+{
+  "$defs": {
+    "EvidenceCitation": {
+      "additionalProperties": false,
+      "properties": {
+        "chunk_id": {
+          "title": "Chunk Id",
+          "type": "string"
+        },
+        "policy_id": {
+          "title": "Policy Id",
+          "type": "string"
+        },
+        "policy_version": {
+          "title": "Policy Version",
+          "type": "string"
+        },
+        "source_url": {
+          "title": "Source Url",
+          "type": "string"
+        },
+        "page_or_section": {
+          "title": "Page Or Section",
+          "type": "string"
+        },
+        "excerpt": {
+          "maxLength": 500,
+          "title": "Excerpt",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chunk_id",
+        "policy_id",
+        "policy_version",
+        "source_url",
+        "page_or_section",
+        "excerpt"
+      ],
+      "title": "EvidenceCitation",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "conclusion": {
+      "title": "Conclusion",
+      "type": "string"
+    },
+    "eligibility_status": {
+      "title": "Eligibility Status",
+      "type": "string"
+    },
+    "availability_status": {
+      "title": "Availability Status",
+      "type": "string"
+    },
+    "used_user_inputs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Used User Inputs",
+      "type": "array"
+    },
+    "applied_conditions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Applied Conditions",
+      "type": "array"
+    },
+    "cashflow_change": {
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": "Cashflow Change",
+      "type": "object"
+    },
+    "debt_interest_change": {
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": "Debt Interest Change",
+      "type": "object"
+    },
+    "unconfirmed_conditions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Unconfirmed Conditions",
+      "type": "array"
+    },
+    "evidence": {
+      "items": {
+        "$ref": "#/$defs/EvidenceCitation"
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "as_of": {
+      "format": "date",
+      "title": "As Of",
+      "type": "string"
+    },
+    "policy_version": {
+      "title": "Policy Version",
+      "type": "string"
+    },
+    "locked_facts_sha256": {
+      "title": "Locked Facts Sha256",
+      "type": "string"
+    },
+    "final_check_notice": {
+      "title": "Final Check Notice",
+      "type": "string"
+    }
+  },
+  "required": [
+    "conclusion",
+    "eligibility_status",
+    "availability_status",
+    "used_user_inputs",
+    "applied_conditions",
+    "cashflow_change",
+    "debt_interest_change",
+    "unconfirmed_conditions",
+    "evidence",
+    "as_of",
+    "policy_version",
+    "locked_facts_sha256",
+    "final_check_notice"
+  ],
+  "title": "SafeExplanation",
+  "type": "object"
+}

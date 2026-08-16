@@ -1,0 +1,14 @@
+{
+  "status": "holdout_completed_model_frozen",
+  "completed_at_kst": "2026-08-16T21:11+09:00",
+  "updated_at_kst": "2026-08-16T21:11+09:00",
+  "selected_model": "lightgbm",
+  "contract_sha256": "490bc577fde291f8b14bf738128c0412c61ba8fa52dce8624d6ceffb369c7e84",
+  "completed_targets": 3,
+  "total_targets": 3,
+  "percent_complete": 100.0,
+  "holdout_target_opened": true,
+  "model_reselection_prohibited": true,
+  "report": "reports\\re_stage5\\holdout\\holdout_report.md",
+  "manifest": "reports\\re_stage5\\holdout\\holdout_manifest.json"
+}

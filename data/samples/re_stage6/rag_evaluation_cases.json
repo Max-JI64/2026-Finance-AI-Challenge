@@ -1,0 +1,65 @@
+[
+  {
+    "case_id": "RAG-01",
+    "policy_id": "POL_SEOUL_FUND_2026",
+    "query": "신청기간 신청방법 문의처",
+    "expected_chunk_ids": [
+      "POL_SEOUL_FUND_2026::chunk::005",
+      "POL_SEOUL_FUND_2026::chunk::006"
+    ]
+  },
+  {
+    "case_id": "RAG-02",
+    "policy_id": "POL_SEOUL_CRISIS_TRACK2_2026H2",
+    "query": "지원대상 매출감소 임차점포",
+    "expected_chunk_ids": ["POL_SEOUL_CRISIS_TRACK2_2026H2::chunk::001"]
+  },
+  {
+    "case_id": "RAG-03",
+    "policy_id": "POL_SEOUL_CLOSURE_2026",
+    "query": "폐업 예정 지원금 지급",
+    "expected_chunk_ids": [
+      "POL_SEOUL_CLOSURE_2026::chunk::002",
+      "POL_SEOUL_CLOSURE_2026::chunk::004"
+    ]
+  },
+  {
+    "case_id": "RAG-04",
+    "policy_id": "POL_SEOUL_DIGITAL_MIDLIFE_2026H2",
+    "query": "지원대상 대표자 나이 개업일",
+    "expected_chunk_ids": [
+      "POL_SEOUL_DIGITAL_MIDLIFE_2026H2::chunk::001",
+      "POL_SEOUL_DIGITAL_MIDLIFE_2026H2::chunk::017"
+    ]
+  },
+  {
+    "case_id": "RAG-05",
+    "policy_id": "POL_SEOUL_ZERO_MARKET_2026_2",
+    "query": "지원금 사후정산 자부담",
+    "expected_chunk_ids": ["POL_SEOUL_ZERO_MARKET_2026_2::chunk::001"]
+  },
+  {
+    "case_id": "RAG-06",
+    "policy_id": "POL_SEMAS_REFINANCE_2026",
+    "query": "대환대출 금리 상환기간",
+    "expected_chunk_ids": [
+      "POL_SEMAS_REFINANCE_2026::chunk::011",
+      "POL_SEMAS_REFINANCE_2026::chunk::012"
+    ]
+  },
+  {
+    "case_id": "RAG-07",
+    "policy_id": "POL_SEMAS_RECHALLENGE_2026",
+    "query": "재창업교육 지원대상",
+    "expected_chunk_ids": ["POL_SEMAS_RECHALLENGE_2026::chunk::013"]
+  },
+  {
+    "case_id": "RAG-08",
+    "policy_id": "POL_SEMAS_STABILITY_VOUCHER_2026",
+    "query": "바우처 사용처 신청대상",
+    "expected_chunk_ids": [
+      "POL_SEMAS_STABILITY_VOUCHER_2026::chunk::002",
+      "POL_SEMAS_STABILITY_VOUCHER_2026::chunk::003"
+    ]
+  }
+]

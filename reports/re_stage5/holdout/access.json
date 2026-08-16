@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "opened_at_kst": "2026-08-16T21:07+09:00",
+  "updated_at_kst": "2026-08-16T21:11+09:00",
+  "target_opened": true,
+  "selected_model": "lightgbm",
+  "contract_sha256": "490bc577fde291f8b14bf738128c0412c61ba8fa52dce8624d6ceffb369c7e84",
+  "feature_period": 20252,
+  "outcome_periods": [
+    20253,
+    20254
+  ],
+  "model_reselection_prohibited": true,
+  "stage6_reactivation_prohibited": true,
+  "completed_at_kst": "2026-08-16T21:11+09:00",
+  "manifest_path": "reports\\re_stage5\\holdout\\holdout_manifest.json",
+  "manifest_sha256": "723d348d937d7cfd7374baa5232e598b1570056531fbf4440102ad9c5ba15061"
+}

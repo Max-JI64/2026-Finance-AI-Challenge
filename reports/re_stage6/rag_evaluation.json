@@ -1,0 +1,133 @@
+{
+  "cases": 8,
+  "hit_at_3": 8,
+  "hit_rate_at_3": 1.0,
+  "mean_reciprocal_rank": 0.7916666666666666,
+  "rows": [
+    {
+      "case_id": "RAG-01",
+      "policy_id": "POL_SEOUL_FUND_2026",
+      "query": "신청기간 신청방법 문의처",
+      "expected_chunk_ids": [
+        "POL_SEOUL_FUND_2026::chunk::005",
+        "POL_SEOUL_FUND_2026::chunk::006"
+      ],
+      "returned_chunk_ids": [
+        "POL_SEOUL_FUND_2026::metadata::001",
+        "POL_SEOUL_FUND_2026::chunk::005",
+        "POL_SEOUL_FUND_2026::chunk::006"
+      ],
+      "first_relevant_rank": 2,
+      "hit_at_3": true
+    },
+    {
+      "case_id": "RAG-02",
+      "policy_id": "POL_SEOUL_CRISIS_TRACK2_2026H2",
+      "query": "지원대상 매출감소 임차점포",
+      "expected_chunk_ids": [
+        "POL_SEOUL_CRISIS_TRACK2_2026H2::chunk::001"
+      ],
+      "returned_chunk_ids": [
+        "POL_SEOUL_CRISIS_TRACK2_2026H2::metadata::001",
+        "POL_SEOUL_CRISIS_TRACK2_2026H2::chunk::001::source::6a94351a",
+        "POL_SEOUL_CRISIS_TRACK2_2026H2::chunk::006"
+      ],
+      "first_relevant_rank": 2,
+      "hit_at_3": true
+    },
+    {
+      "case_id": "RAG-03",
+      "policy_id": "POL_SEOUL_CLOSURE_2026",
+      "query": "폐업 예정 지원금 지급",
+      "expected_chunk_ids": [
+        "POL_SEOUL_CLOSURE_2026::chunk::002",
+        "POL_SEOUL_CLOSURE_2026::chunk::004"
+      ],
+      "returned_chunk_ids": [
+        "POL_SEOUL_CLOSURE_2026::chunk::004",
+        "POL_SEOUL_CLOSURE_2026::chunk::002::source::624957a7",
+        "POL_SEOUL_CLOSURE_2026::chunk::001::source::624957a7"
+      ],
+      "first_relevant_rank": 1,
+      "hit_at_3": true
+    },
+    {
+      "case_id": "RAG-04",
+      "policy_id": "POL_SEOUL_DIGITAL_MIDLIFE_2026H2",
+      "query": "지원대상 대표자 나이 개업일",
+      "expected_chunk_ids": [
+        "POL_SEOUL_DIGITAL_MIDLIFE_2026H2::chunk::001",
+        "POL_SEOUL_DIGITAL_MIDLIFE_2026H2::chunk::017"
+      ],
+      "returned_chunk_ids": [
+        "POL_SEOUL_DIGITAL_MIDLIFE_2026H2::metadata::001",
+        "POL_SEOUL_DIGITAL_MIDLIFE_2026H2::chunk::018",
+        "POL_SEOUL_DIGITAL_MIDLIFE_2026H2::chunk::017"
+      ],
+      "first_relevant_rank": 3,
+      "hit_at_3": true
+    },
+    {
+      "case_id": "RAG-05",
+      "policy_id": "POL_SEOUL_ZERO_MARKET_2026_2",
+      "query": "지원금 사후정산 자부담",
+      "expected_chunk_ids": [
+        "POL_SEOUL_ZERO_MARKET_2026_2::chunk::001"
+      ],
+      "returned_chunk_ids": [
+        "POL_SEOUL_ZERO_MARKET_2026_2::chunk::001::source::e16da001",
+        "POL_SEOUL_ZERO_MARKET_2026_2::chunk::001",
+        "POL_SEOUL_ZERO_MARKET_2026_2::metadata::001"
+      ],
+      "first_relevant_rank": 1,
+      "hit_at_3": true
+    },
+    {
+      "case_id": "RAG-06",
+      "policy_id": "POL_SEMAS_REFINANCE_2026",
+      "query": "대환대출 금리 상환기간",
+      "expected_chunk_ids": [
+        "POL_SEMAS_REFINANCE_2026::chunk::011",
+        "POL_SEMAS_REFINANCE_2026::chunk::012"
+      ],
+      "returned_chunk_ids": [
+        "POL_SEMAS_REFINANCE_2026::chunk::012",
+        "POL_SEMAS_REFINANCE_2026::chunk::002::source::d11a4990",
+        "POL_SEMAS_REFINANCE_2026::chunk::011"
+      ],
+      "first_relevant_rank": 1,
+      "hit_at_3": true
+    },
+    {
+      "case_id": "RAG-07",
+      "policy_id": "POL_SEMAS_RECHALLENGE_2026",
+      "query": "재창업교육 지원대상",
+      "expected_chunk_ids": [
+        "POL_SEMAS_RECHALLENGE_2026::chunk::013"
+      ],
+      "returned_chunk_ids": [
+        "POL_SEMAS_RECHALLENGE_2026::chunk::013",
+        "POL_SEMAS_RECHALLENGE_2026::chunk::003::source::ab3a04a8",
+        "POL_SEMAS_RECHALLENGE_2026::metadata::001"
+      ],
+      "first_relevant_rank": 1,
+      "hit_at_3": true
+    },
+    {
+      "case_id": "RAG-08",
+      "policy_id": "POL_SEMAS_STABILITY_VOUCHER_2026",
+      "query": "바우처 사용처 신청대상",
+      "expected_chunk_ids": [
+        "POL_SEMAS_STABILITY_VOUCHER_2026::chunk::002",
+        "POL_SEMAS_STABILITY_VOUCHER_2026::chunk::003"
+      ],
+      "returned_chunk_ids": [
+        "POL_SEMAS_STABILITY_VOUCHER_2026::chunk::002::source::907b7fa9",
+        "POL_SEMAS_STABILITY_VOUCHER_2026::chunk::003",
+        "POL_SEMAS_STABILITY_VOUCHER_2026::chunk::001"
+      ],
+      "first_relevant_rank": 1,
+      "hit_at_3": true
+    }
+  ]
+}

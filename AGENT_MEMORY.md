@@ -5,25 +5,25 @@
 
 ## Project snapshot
 
-- Last updated: 2026-08-16T11:08+09:00
-- Purpose: Build a working Seoul small-business policy-impact simulator that combines area-industry sales-environment scenarios, deterministic 13-week and 6-month cash flow, official policy eligibility and financial terms, intervention comparison, and evidence-grounded AI explanations.
-- Important paths: `프로젝트 계획서.md` is the main MVP plan; `MVP 단계별 구현 체크리스트.md` is the execution and completion-gate document; `reports/re_stage1/` and `reports/re_stage2/` preserve the service and 10-policy contracts; `src/cashflow/`, `config/re_stage3.yaml`, and `reports/re_stage3/` contain the completed deterministic baseline cash-flow engine; `src/policy/`, `config/re_stage4.yaml`, `data/processed_re/policy/re_stage4/`, and `reports/re_stage4/` contain the completed policy financial-event engine and Gate RE4 evidence; `data/raw_re/향후 데이터 다운로드 가이드.md` is the acquisition guide.
+- Last updated: 2026-08-16T22:37+09:00
+- Purpose: Build a working Seoul small-business policy-finance impact simulator whose hero compares 13-week survival and 6-month debt consequences across no action and representative interventions, using area-industry stress scenarios, schedule-based cash flow, official policy terms, and evidence-grounded AI explanations without causal-effect or personal-sales claims.
+- Important paths: `프로젝트 계획서.md` is the main MVP plan; `MVP 단계별 구현 체크리스트.md` is the execution and completion-gate document; `reports/re_stage1/` and `reports/re_stage2/` preserve the service and 10-policy contracts; `src/cashflow/`, `config/re_stage3.yaml`, and `reports/re_stage3/` contain the completed deterministic baseline cash-flow engine; `src/policy/`, `config/re_stage4.yaml`, `data/processed_re/policy/re_stage4/`, and `reports/re_stage4/` contain the completed policy financial-event engine; `config/re_stage5.yaml`, `src/data/build_re_stage5_baseline.py`, `src/models/run_re_stage5_quantile.py`, `data/processed_re/model/re_stage5/`, and `reports/re_stage5/` contain the prepared RE5 baseline and user-operated CV runner; `data/raw_re/향후 데이터 다운로드 가이드.md` is the acquisition guide.
 
 ## Durable decisions
 
 - `decision:mvp-scope`
   - Created: 2026-08-14T19:55+09:00
-  - Updated: 2026-08-15T23:40+09:00
+  - Updated: 2026-08-16T11:28+09:00
   - Status: active
-  - Content: The MVP targets Seoul small businesses and compares no action, non-debt support, debt relief, new borrowing, and mixed interventions through deterministic 13-week and 6-month cash-flow effects. Area-industry ML supplies aggregate external scenarios, official rules determine eligibility, policy terms become financial events, and RAG/LLM only explains official evidence and trade-offs; individual closure probability, credit scoring, approval probability, account/POS integration, and causal policy impact are excluded.
-  - Evidence: User-approved rewrite of `프로젝트 계획서.md`, completed `reports/re_stage1/service_contract.md`, and `config/re_stage1.yaml`.
+  - Content: The MVP is named `서울 소상공인 정책금융 영향 시뮬레이터` and compares no action, grants, cost reduction, refinancing, policy loans, and mixed interventions through 13-week cash survival plus 6-month debt effects. Aggregate ML outputs are labeled area-environment stress scenarios; personal sales/closure, credit or approval probability, account/POS integration, causal policy impact, and claims of AI optimal recommendation are excluded.
+  - Evidence: User-approved updates to `프로젝트 계획서.md`, `프로젝트 차별화 구상.md`, and `MVP 단계별 구현 체크리스트.md`; the completed RE1 contract/config retain the historical former name and are migrated only in current RE8 API/UI work.
 
 - `decision:implementation-checklist`
   - Created: 2026-08-14T20:21+09:00
-  - Updated: 2026-08-16T10:47+09:00
+  - Updated: 2026-08-16T22:28+09:00
   - Status: active
-  - Content: The implementation checklist mirrors completed Stage 0-6 and RE Stage 1-4 plus pending RE Stage 5-9. It records the A+C 10-policy knowledge base, completed `re3-v1` baseline cash-flow engine, and completed RE4 policy financial-event engine, and requires a downstream-impact review plus necessary plan/config/test updates before every next Stage starts.
-  - Evidence: `MVP 단계별 구현 체크리스트.md` and Gate evidence under `reports/re_stage1/`, `reports/re_stage2/`, `reports/re_stage3/`, and `reports/re_stage4/`.
+  - Content: The checklist mirrors completed Stage 0-6 and RE Stage 1-6, the partially approved RE7 candidate-routing contract, and pending RE Stage 7-9 implementation. It requires the approved categorical-timing quick-mode wrapper, 13-week survival Hero, area-environment stress naming, verified 10-policy depth message, an 8-persona deterministic mock validation, and downstream-impact review before each next Stage.
+  - Evidence: `MVP 단계별 구현 체크리스트.md` and Gate evidence under `reports/re_stage1/` through `reports/re_stage7/`.
 
 - `decision:policy-source-hierarchy`
   - Created: 2026-08-15T21:23+09:00
@@ -41,10 +41,17 @@
 
 - `decision:re-stage3-input-calculation-contract`
   - Created: 2026-08-16T00:25+09:00
-  - Updated: 2026-08-16T09:57+09:00
+  - Updated: 2026-08-16T16:47+09:00
   - Status: active
-  - Content: Gate RE3 passed with engine `re3-v1`. It supports simple input and detailed CSV; preserves negative calculated cash; treats simple monthly debt payment as combined principal-plus-interest outflow; calculates equal-principal, equal-payment, and bullet schedules only for detailed loans; uses monthly interest without daily accrual and won-level half-up rounding; and requires user-set safe cash plus actual receipt/payment dates without defaults.
+  - Content: Gate RE3 passed with `re3-v1`. The approved future quick-mode wrapper accepts sales timing types plus early/mid/late expense and debt timing, maps early=days 1-10, mid=11-20, late=21-month-end, and calls the unchanged engine for conservative, central, and favorable schedules; exact dates override categories. The wrapper and UI band are approved but not implemented, and arbitrary depletion ranges remain forbidden.
   - Evidence: `src/cashflow/`, `config/re_stage3.yaml`, `reports/re_stage3/verification.md`, `reports/re_stage3/manifest.json`, and `tests/test_re_stage3_cashflow.py`; hand checks 26/26 and full tests 52 passed.
+
+- `decision:presentation-and-user-validation`
+  - Created: 2026-08-16T11:28+09:00
+  - Updated: 2026-08-16T16:47+09:00
+  - Status: active
+  - Content: Competition messaging centers the 13-week survival Hero and never claims personal future prediction or optimal recommendation. Because the user cannot recruit real small-business owners, the approved substitute is 8 fixed synthetic personas with frozen inputs and oracle outputs comparing policy-list and simulator screens; pass requires 8/8 expected actions and core values plus zero prohibited claims. It is functional mock validation only, so no synthetic satisfaction, comprehension, quotes, real-usability, or real-policy-effect claims are allowed.
+  - Evidence: `프로젝트 계획서.md` Parts 7-9, `프로젝트 차별화 구상.md` sections 18-20, and RE7-RE9 items in `MVP 단계별 구현 체크리스트.md`.
 
 - `decision:re-stage4-policy-financial-event-engine`
   - Created: 2026-08-16T10:47+09:00
@@ -55,10 +62,24 @@
 
 - `decision:re-stage5-partial-contract`
   - Created: 2026-08-16T11:00+09:00
-  - Updated: 2026-08-16T11:08+09:00
+  - Updated: 2026-08-16T22:21+09:00
   - Status: active
-  - Content: The RE5 contract is fully approved but implementation is explicitly paused until a new user request. It fixes the existing observation unit; YoY Target A/B plus minimum-YoY auxiliary; QoQ as EDA/challenger only; no automatic clipping; 2021Q4-2024Q4 development with 2024Q1-Q4 expanding Validation; one-quarter Purge with 2025Q1 before the 2025Q2 reference holdout; 2025Q3-Q4 holdout outcomes; continuous and quantile metrics; and frozen LightGBM v1 only as a non-training benchmark/Fallback whose AUROC/AUPRC stays in an appendix.
-  - Evidence: `reports/re_stage5/approved_contract.md`, `프로젝트 계획서.md`, and `MVP 단계별 구현 체크리스트.md`; no Target, EDA, Panel, Fold, model, evaluation, external collection, or download was executed.
+  - Content: Gate RE5 passed by explicit user approval. The frozen LightGBM Quantile model is the internal aggregate-scenario generator; screens expose only `하방·기준·회복` and cash-flow effects, while P10/P50/P90, Coverage, Pinball Loss, and Holdout statistics remain internal QA. It never determines eligibility, approval, or policy rank; direct shock input is the fallback, and frozen Stage 6 remains retired.
+  - Evidence: `reports/re_stage5/holdout/verification.md`, `reports/re_stage5/holdout/holdout_manifest.json`, `scripts/verify_re_stage5_holdout.py`, `src/models/re_stage5_artifact.py`, and `config/re_stage5.yaml`; predictions 64,356, duplicate/nonfinite/corrected-crossing errors 0, manifest outputs 7/7 and artifacts 3/3 verified, full tests 73 passed.
+
+- `decision:re-stage6-eligibility-rag-safety`
+  - Created: 2026-08-16T22:21+09:00
+  - Updated: 2026-08-16T22:21+09:00
+  - Status: active
+  - Content: Gate RE6 passed with `re6-v1`. A deterministic engine evaluates 56 reviewed official rules using a session-only profile and separates eligibility from application availability. A no-training BM25 index searches 227 official/reviewed chunks with policy/version/effective-date filters, while `SafeExplanation` fact-locks eligibility, cash-flow, debt, interest, and retrieved evidence so a future LLM cannot create or change financial calculations, eligibility, approval probability, causal effects, or rank.
+  - Evidence: `src/policy/eligibility.py`, `src/rag/policy_index.py`, `src/rag/safe_explanation.py`, `data/processed_re/policy/re_stage6/`, and `reports/re_stage6/`; reviewed eligibility examples 20/20, retrieval Hit@3 8/8, MRR 0.7917, unique official chunks 227/227, RE6 tests 16 and full tests 89 passed, with no model training, external LLM call, or raw session-profile persistence.
+
+- `decision:re-stage7-candidate-routing-partial-contract`
+  - Created: 2026-08-16T22:28+09:00
+  - Updated: 2026-08-16T22:37+09:00
+  - Status: active
+  - Content: The user finalized `re7-contract-v1`: preserve separate eligibility/availability but show only three candidate groups; classify policy pairs as confirmed-compatible, confirmation-required, or prohibited and default-combine only confirmed pairs; map RE5 Target A to 13 weeks and Target B to 6 months at a transparent 100% reference rate with user adjustment/direct override; suggest editable safe cash from the next 28 days of required outflows and require direct input when insufficient. RE8 safety/privacy and RE9 all-policy QA boundaries remain active.
+  - Evidence: `config/re_stage7.yaml`, `reports/re_stage7/approved_contract.md`, `reports/re_stage7/approved_partial_contract.md`, `reports/re_stage6/downstream_impact_review.md`, `프로젝트 계획서.md`, `프로젝트 차별화 구상.md`, and `MVP 단계별 구현 체크리스트.md`. The user explicitly ordered no implementation, so `implementation_authorized=false` and no RE7 code, tests, or data generation started.
 
 - `decision:pre-re1-policy-qa`
   - Created: 2026-08-15T23:18+09:00
@@ -230,10 +251,17 @@
 
 - `proposal:policy-intervention-digital-twin`
   - Created: 2026-08-15T20:32+09:00
-  - Updated: 2026-08-15T21:02+09:00
+  - Updated: 2026-08-16T20:40+09:00
   - Status: active_plan
-  - Content: The policy-impact simulator is now the approved project-plan direction. `프로젝트 계획서.md` preserves completed Stage 0-6 and replaces the old Stage 7 onward plan with RE Stage 1-9: service contract, policy knowledge base, personal cash flow, policy financial events, new data and quantile model, eligibility and RAG, intervention comparison, web integration, and deployment QA. The existing LightGBM and Stage 6 remain frozen baseline and fallback evidence; a new quantile challenger replaces them only after time-based error, coverage, industry stability, service utility, and a new independent audit Gate pass.
+  - Content: The policy-impact simulator is the approved project-plan direction. `프로젝트 계획서.md` preserves completed Stage 0-6 as archived evidence and uses RE Stage 1-9 for the service. The existing binary LightGBM and Stage 6 are removed from service inference and display and will not be retrained; RE5 LightGBM Quantile is the sole service-ML candidate, with user direct shock rates as the non-model fallback.
   - Evidence: User instruction and the rewritten `프로젝트 계획서.md`; no data, Target, model, or application implementation was executed in the rewrite turn.
+
+- `decision:stage6-service-retirement`
+  - Created: 2026-08-16T20:40+09:00
+  - Updated: 2026-08-16T20:40+09:00
+  - Status: approved
+  - Content: Do not run the frozen binary Stage 5 model and RE5 Quantile together. Do not retrain the binary model on newer data because its persistent-decline Target does not supply the continuous shock magnitude required by the cash-flow simulator. Remove Stage 6 inference, badges, relative-risk output, and TreeSHAP from the new service; preserve its files unchanged as audit and reproducibility evidence. Use RE5 Quantile as the only ML output and a user direct shock rate when it is unavailable.
+  - Evidence: User direction, `config/re_stage5.yaml`, `reports/re_stage5/approved_contract.md`, `프로젝트 계획서.md`, `프로젝트 차별화 구상.md`, and `MVP 단계별 구현 체크리스트.md`.
 
 - `decision:stage7-finance-burden-policy-v1`
   - Created: 2026-08-15T20:19+09:00
@@ -285,6 +313,24 @@
 
 ## Known issues and fixes
 
+- `issue:re5-pandas-readonly-array`
+  - Created: 2026-08-16T18:05+09:00
+  - Updated: 2026-08-16T18:10+09:00
+  - Status: resolved
+  - Symptom: The second user CV attempt reached task 1 but failed before checkpoint creation with `ValueError: assignment destination is read-only` while filling the seasonal baseline's missing values.
+  - Cause: Pandas 3 Copy-on-Write returned read-only NumPy views from `to_numpy`, while the seasonal baseline and later numeric preprocessor performed in-place finite/missing-value replacement.
+  - Fix: Request explicit writable copies for every NumPy array mutated by seasonal and Train-only preprocessing; add regression tests, resumable failure-state recording, and a bounded `--max-new-tasks` smoke-run option.
+  - Evidence: `src/models/run_re_stage5_quantile.py` and `tests/test_re_stage5.py`; 70 tests passed and the bounded first task completed with 20,600 prediction rows and a matching checkpoint hash.
+
+- `issue:re5-derived-feature-materialization`
+  - Created: 2026-08-16T17:59+09:00
+  - Updated: 2026-08-16T18:04+09:00
+  - Status: resolved
+  - Symptom: The user's first RE5 CV command stopped before any fit because 117 of the approved 197 common-baseline features were absent from the prepared development Parquet.
+  - Cause: The RE5 preparation script copied Stage 3's 199 original columns but the training contract referenced the Stage 4.5 feature-set manifest, whose 197 selected inputs include derived ratios, shares, densities, persistence, and rolling-sales features.
+  - Fix: Run the existing leakage-safe `build_stage45_features` over the full chronological Panel before splitting RE5 development and holdout files; make prepare, verifier, and DryRun assert that all 197 approved features exist in both schemas.
+  - Evidence: `src/data/build_re_stage5_baseline.py`, `src/models/run_re_stage5_quantile.py`, `scripts/verify_re_stage5.py`, and `reports/re_stage5/manifest.json`; regeneration, hashes, 197-feature schema checks, DryRun, and all 68 tests passed with zero model fits.
+
 - `issue:bounded-reader-full-file-call`
   - Created: 2026-08-14T22:44+09:00
   - Updated: 2026-08-14T22:45+09:00
@@ -333,12 +379,124 @@
 ## Current handoff
 
 - `handoff:current`
-  - Updated: 2026-08-16T11:08+09:00
-  - Current state: Gates RE1-RE4 have passed. `re4-v1` preserves all 30 reviewed policy Events and applies user-specified intervention scenarios to the RE3 baseline with dated cash, cost-reduction, debt, interest, fee, and guarantee-fee effects; hand checks 26/26 and all 64 project tests passed.
-  - Next step: Do not start RE5 until the user explicitly asks to resume. On resumption, begin only with the approved existing-Panel Target QA and Baseline contract; do not collect new external data, and stop for approval if observed Target distributions would require a semantic processing change.
-  - Blockers: No RE5 contract decision remains, but execution is intentionally paused by user instruction. A new independent audit remains unavailable because estimated sales ends at 2025Q4; 2025Q3-Q4 is only an internal temporal holdout, and external downloads remain user-owned.
+  - Updated: 2026-08-16T22:37+09:00
+  - Current state: Gates RE1-RE6 passed and the complete `re7-contract-v1` is approved, including candidate routing, policy-pair compatibility, horizon-specific 100% reference scenario application with user controls, and four-week editable safe-cash suggestion. No RE7 implementation has started.
+  - Next step: Keep RE7 paused until the user explicitly requests implementation; when resumed, implement only against `reports/re_stage7/approved_contract.md` and `config/re_stage7.yaml` without reopening the approved material decisions unless new evidence requires it.
+  - Blockers: No contract blocker remains. Implementation is intentionally unauthorized by the user's current instruction; new-data Ablations, a new independent 2026Q1-Q2 model audit, and real-user usability remain post-MVP or later validation work.
 
 ## Session log
+
+- `session:20260816-2237`
+  - Started: 2026-08-16T22:37+09:00
+  - Last activity: 2026-08-16T22:37+09:00
+  - Focus: Finalize the three remaining RE7 decisions as documentation only and preserve an explicit no-implementation boundary.
+  - Updated keys: `decision:re-stage7-candidate-routing-partial-contract`, `handoff:current`
+  - Summary: Created `re7-contract-v1`, superseded the partial contract as history, and aligned the plan, redesign concept, checklist, RE6 downstream review, config, log, and handoff with confirmed-only default policy combinations, Target A/B horizon mapping at a 100% adjustable reference rate, and a 28-day required-outflow safe-cash suggestion. YAML and diff checks passed; no code, tests, simulations, model runs, or data generation occurred.
+
+- `session:20260816-2233`
+  - Started: 2026-08-16T22:33+09:00
+  - Last activity: 2026-08-16T22:33+09:00
+  - Focus: Explain the three remaining material RE7 choices and provide a concrete recommendation for user approval.
+  - Updated keys: `handoff:current`
+  - Summary: Verified the existing partial contract and RE3 safe-cash boundary, then prepared recommendations for conservative policy-pair compatibility, transparent horizon-specific scenario application with user control, and a user-data-derived four-week editable safe-cash suggestion. No decision, plan, code, model, or data was changed.
+
+- `session:20260816-2228`
+  - Started: 2026-08-16T22:28+09:00
+  - Last activity: 2026-08-16T22:28+09:00
+  - Focus: Apply the user-approved RE7-RE9 usability and safety amendments without starting model training or the RE7 engine.
+  - Updated keys: `decision:implementation-checklist`, `decision:re-stage7-candidate-routing-partial-contract`, `handoff:current`
+  - Summary: Updated the plan, redesign concept, checklist, RE6 downstream review, RE7 partial contract, and new RE7 config with the three visible policy groups, explicit conditional-simulation gate, ranking restrictions, hidden internal retrieval details, separated API status fields, deterministic explanation fallback, privacy constraints, and 20-case all-policy retrieval QA. The three material RE7 comparison rules remain pending and implementation authorization is false; no training or model execution occurred.
+
+- `session:20260816-2224`
+  - Started: 2026-08-16T22:24+09:00
+  - Last activity: 2026-08-16T22:24+09:00
+  - Focus: Turn the RE6 downstream findings into a concrete, user-centered RE7-RE9 plan amendment proposal.
+  - Updated keys: `handoff:current`
+  - Summary: Recommended a three-bucket policy flow, conditional-simulation rules, simplified screen labels, separate API eligibility/availability objects, internal-only Rule/search details, deterministic explanation fallback, session privacy, and bounded 20-case all-policy retrieval QA; no project plan or implementation files were changed pending approval.
+
+- `session:20260816-2223`
+  - Started: 2026-08-16T22:22+09:00
+  - Last activity: 2026-08-16T22:23+09:00
+  - Focus: Review whether actual RE6 results require downstream plan changes before RE7.
+  - Updated keys: `handoff:current`
+  - Summary: Found no Target, model, cash-flow, or financial-event redesign need, but recommended small RE7-RE9 contract edits for separate eligibility/availability handling, conditional-candidate gating, internal-only retrieval details, deterministic explanation fallback, privacy, and bounded broader retrieval/current-status QA before deployment; no implementation or plan file edits were made.
+
+- `session:20260816-2221`
+  - Started: 2026-08-16T21:47+09:00
+  - Last activity: 2026-08-16T22:21+09:00
+  - Focus: Finalize RE5 service approval and implement the complete RE6 official eligibility, retrieval, and safe-explanation layer.
+  - Updated keys: `decision:implementation-checklist`, `decision:re-stage5-partial-contract`, `decision:re-stage6-eligibility-rag-safety`, `handoff:current`
+  - Summary: Passed Gate RE5 with internal-only scenario labels, then completed RE6 across 56 rules, 20 reviewed examples, 227 unique official chunks, eight retrieval cases, two JSON schemas, safety guards, reports, and downstream contracts; all 89 tests passed without model training, external LLM calls, or profile persistence.
+
+- `session:20260816-2146`
+  - Started: 2026-08-16T21:42+09:00
+  - Last activity: 2026-08-16T21:46+09:00
+  - Focus: Separate RE5 internal model-quality diagnostics from the minimal information needed by end users.
+  - Updated keys: `decision:re-stage5-partial-contract`, `handoff:current`
+  - Summary: Confirmed that sub-nominal Holdout Coverage is not a downstream implementation blocker because RE5 only initializes aggregate stress scenarios, and updated the plan, differentiation design, and checklist so screens expose only `하방·기준·회복` plus cash-flow effects while all quantile and Holdout statistics remain internal QA.
+
+- `session:20260816-2124`
+  - Started: 2026-08-16T21:11+09:00
+  - Last activity: 2026-08-16T21:24+09:00
+  - Focus: Verify and interpret the user-completed RE5 LightGBM internal Holdout without training, reselection, or Stage 6 reactivation.
+  - Updated keys: `decision:implementation-checklist`, `decision:re-stage5-partial-contract`, `handoff:current`
+  - Summary: Verified all 64,356 predictions, recomputed metrics, matched seven Manifest outputs and three checkpoints/artifacts, added a compatibility loader for the immutable `__main__`-serialized preprocessor, documented 69.39-71.03% Coverage and CV degradation, and passed all 73 tests; service activation remains a required user decision.
+
+- `session:20260816-2052`
+  - Started: 2026-08-16T20:42+09:00
+  - Last activity: 2026-08-16T20:52+09:00
+  - Focus: Build a user-operated, LightGBM-only one-time RE5 internal holdout evaluator without fitting a model or opening targets in Codex.
+  - Updated keys: `decision:implementation-checklist`, `decision:re-stage5-partial-contract`, `handoff:current`
+  - Summary: Added explicit-confirmation PowerShell/Python runners, access and resume guards, terminal/file iteration logs, target checkpoints, final artifact reload checks, metrics/report manifests, and CV/preparation post-open guards. DryRun reported 3 targets, 9 estimators, 197 features, 12 verified CV checkpoints, and 21,452 holdout rows; RE5 tests 9 and full tests 73 passed with target unopened and no fit.
+
+- `session:20260816-2040`
+  - Started: 2026-08-16T20:40+09:00
+  - Last activity: 2026-08-16T20:40+09:00
+  - Focus: Resolve whether the frozen binary model and RE5 Quantile should run together and whether the binary model should be retrained.
+  - Updated keys: `decision:implementation-checklist`, `proposal:policy-intervention-digital-twin`, `decision:re-stage5-partial-contract`, `decision:stage6-service-retirement`, `handoff:current`
+  - Summary: Chose a single-model service architecture: RE5 LightGBM Quantile only. The binary model and Stage 6 will not be retrained or exposed and are archived for audit/reproducibility; user direct shock rates are the operational fallback. No artifacts were deleted, no model was fit, and the holdout remained unopened.
+
+- `session:20260816-2030`
+  - Started: 2026-08-16T20:30+09:00
+  - Last activity: 2026-08-16T20:30+09:00
+  - Focus: Record the user's RE5 LightGBM choice and clarify whether it replaces the existing Stage 6 model.
+  - Updated keys: `decision:implementation-checklist`, `decision:re-stage5-partial-contract`, `handoff:current`
+  - Summary: Recorded LightGBM Quantile as the approved internal-holdout candidate only. Confirmed that the frozen model is a binary persistent-decline classifier and RE5 is a continuous quantile-regression family using the same source Panel and 197-feature baseline but different labels and eligible rows; Stage 6 role and holdout execution remain pending clarification.
+
+- `session:20260816-2017`
+  - Started: 2026-08-16T20:17+09:00
+  - Last activity: 2026-08-16T20:21+09:00
+  - Focus: Verify the user's completed RE5 development CV and prepare an evidence-based model recommendation without opening the holdout or selecting a model automatically.
+  - Updated keys: `decision:implementation-checklist`, `decision:re-stage5-partial-contract`, `handoff:current`
+  - Summary: Verified all 72 Target-Fold-model tasks and 144 paired checkpoint files with no integrity failures. LightGBM beat both simple baselines on every Fold and has the best overall error-interval-runtime balance; XGBoost's mean-MAE edge is only 0.17-0.51%. Documented the result while leaving LightGBM candidate approval, Stage 6 status, and holdout execution pending explicit user approval.
+
+- `session:20260816-1805`
+  - Started: 2026-08-16T18:05+09:00
+  - Last activity: 2026-08-16T18:10+09:00
+  - Focus: Fix the Pandas read-only-array failure and, with explicit user authorization, run exactly one RE5 CV task before stopping.
+  - Updated keys: `decision:re-stage5-partial-contract`, `issue:re5-pandas-readonly-array`, `handoff:current`
+  - Summary: Added writable array copies, two regression tests, resumable failure status, and a one-task safety limit. All 70 tests passed; task 1/72 completed with MAE 1.371667 and Coverage 0.8367, its 20,600-row checkpoint hash verified, and execution stopped with holdout unopened.
+
+- `session:20260816-1759`
+  - Started: 2026-08-16T17:59+09:00
+  - Last activity: 2026-08-16T18:04+09:00
+  - Focus: Diagnose and fix the user's RE5 pre-fit missing-feature failure without running any model training.
+  - Updated keys: `decision:re-stage5-partial-contract`, `issue:re5-derived-feature-materialization`, `handoff:current`
+  - Summary: Connected the existing leakage-safe Stage 4.5 feature builder to RE5 preparation, regenerated both Parquets, and added direct 197-feature checks to prepare, verify, and DryRun. Hashes and all 68 tests passed; CV remains not started and the same user command can now be rerun.
+
+- `session:20260816-1712`
+  - Started: 2026-08-16T17:12+09:00
+  - Last activity: 2026-08-16T17:18+09:00
+  - Focus: Resume RE5 through leakage-safe baseline preparation and provide user-operated, progress-visible model training without Codex fitting any model.
+  - Updated keys: `decision:implementation-checklist`, `decision:re-stage5-partial-contract`, `handoff:current`
+  - Summary: Built and verified Target v2, Panel v2, 4 chronological Folds, EDA, Feature contract, hashes, and a 72-task resumable CV runner. All 68 tests passed; actual model fits and holdout Target accesses remained zero, so RE5 awaits the user's terminal run and subsequent model approval.
+
+- `session:20260816-1121`
+  - Started: 2026-08-16T11:21+09:00
+  - Last activity: 2026-08-16T16:47+09:00
+  - Focus: Incorporate security/review feedback into product naming, precision boundaries, presentation positioning, Hero design, policy-depth rationale, and user validation.
+  - Updated keys: `decision:mvp-scope`, `decision:implementation-checklist`, `decision:re-stage3-input-calculation-contract`, `decision:presentation-and-user-validation`, `handoff:current`
+  - Summary: Updated the three planning documents and approved future contracts for categorical timing bands over the unchanged engine and a verified declining-cash Hero. Replaced infeasible real-user recruitment with 8 fixed synthetic personas, frozen oracle outputs, 8/8 functional consistency and zero-prohibited-claim Gates, and explicit bans on fabricated satisfaction or real-usability claims; no implementation was run.
 
 - `session:20260816-1100`
   - Started: 2026-08-16T11:00+09:00

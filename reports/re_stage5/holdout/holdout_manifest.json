@@ -1,0 +1,56 @@
+{
+  "status": "holdout_completed_model_frozen",
+  "completed_at_kst": "2026-08-16T21:11+09:00",
+  "contract_sha256": "490bc577fde291f8b14bf738128c0412c61ba8fa52dce8624d6ceffb369c7e84",
+  "cv_contract_sha256": "ee0c67038c6e34a5325e18546e9d16fbef55cbfcd44801dd900ca53f70d42674",
+  "selected_model": "lightgbm",
+  "targets": [
+    "target_a_next_quarter_yoy",
+    "target_b_next_two_quarters_yoy",
+    "target_aux_min_next_two_quarters_yoy"
+  ],
+  "quantiles": [
+    0.1,
+    0.5,
+    0.9
+  ],
+  "feature_period": 20252,
+  "outcome_periods": [
+    20253,
+    20254
+  ],
+  "holdout_rows": 21452,
+  "independent_audit": false,
+  "model_reselection_prohibited": true,
+  "stage6_service_status": "archived_evidence_only",
+  "outputs": {
+    "reports\\re_stage5\\holdout\\holdout_metrics.csv": {
+      "sha256": "19293a1a21215ae69b378ace48d33088df97a7a84ef9caf66dcf7716cb0c61d7",
+      "bytes": 1458
+    },
+    "reports\\re_stage5\\holdout\\holdout_industry_metrics.csv": {
+      "sha256": "e35fb708e58e9a21283e70059aa7f9429d6ff9e80f9b18f1c789cd3a2b7e782d",
+      "bytes": 63503
+    },
+    "reports\\re_stage5\\holdout\\holdout_predictions.parquet": {
+      "sha256": "d45a1ee8ade86be1f7c485e56e69a356680da5e18792163d799b45cbcee5b511",
+      "bytes": 4377714
+    },
+    "reports\\re_stage5\\holdout\\holdout_report.md": {
+      "sha256": "e4b4f5955f2c7d095a4af917b54e68a2185b93f714ec35b4e4282c548d81cedc",
+      "bytes": 1151
+    },
+    "artifacts\\re_stage5_lightgbm_quantile\\target_a_next_quarter_yoy__lightgbm_quantile.joblib": {
+      "sha256": "c8dde476e46d76d97f5c79750bb6609767f4a3c012312159c6f116983a6ec820",
+      "bytes": 2226150
+    },
+    "artifacts\\re_stage5_lightgbm_quantile\\target_aux_min_next_two_quarters_yoy__lightgbm_quantile.joblib": {
+      "sha256": "2bad076dd558ab6c937237a4896c56cf889d8f5299d2150d0f436d384e0b8da3",
+      "bytes": 2222086
+    },
+    "artifacts\\re_stage5_lightgbm_quantile\\target_b_next_two_quarters_yoy__lightgbm_quantile.joblib": {
+      "sha256": "3b992b3bcc6b2c3e200ffd85faba7b0638917bde5f97df45283503ff30b7df8b",
+      "bytes": 2219730
+    }
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "generated_at_kst": "2026-08-16T22:21+09:00",
+  "stage": "RE Stage 6",
+  "status": "complete_verified",
+  "engine_version": "re6-v1",
+  "source_hashes": {
+    "eligibility_rules": "a6136f2d0ead070775dd31d0bbea94f77e78d5d57aad92f7f661a5438424987b",
+    "eligibility_examples": "abc254bd0a4105f48d6d0958b295661bae98cfd4b2f8c0180c25ad50cc7fb561",
+    "policy_metadata": "1ee1533d7356621a74733a359ba8e4a91ecc8cced4201fcd37166afebba29a16",
+    "policy_versions": "8aebc2567bae6b28cebed5e4ec488d28ea6bc68b5b4fa2fb169e751f8c1aa813",
+    "source_manifest": "d018ead6ef446bc379ac0afd7dd8a4e2f2920b479221efdea9e64a044373aa50",
+    "policy_chunks": "aaff8de2f80220dc9a9417213064fa20cd20ae21208846ab6f6de82464706175"
+  },
+  "counts": {
+    "policies": 10,
+    "eligibility_rules": 56,
+    "reviewed_examples": 20,
+    "official_chunks": 227,
+    "retrieval_smoke_cases": 4,
+    "rag_evaluation_cases": 8
+  },
+  "checks": {
+    "reviewed_examples_passed": 20,
+    "retrieval_smoke_passed": 4,
+    "rag_hit_rate_at_3": 1.0,
+    "rag_mean_reciprocal_rank": 0.7916666666666666,
+    "official_source_only": true,
+    "chunk_metadata_complete": true,
+    "model_training_performed": false,
+    "external_llm_called": false,
+    "raw_session_profile_persisted": false
+  },
+  "retrieval_results": [
+    {
+      "policy_id": "POL_SEOUL_FUND_2026",
+      "query": "지원대상 융자 제한업종",
+      "top_chunk_ids": [
+        "POL_SEOUL_FUND_2026::metadata::001",
+        "POL_SEOUL_FUND_2026::chunk::003",
+        "POL_SEOUL_FUND_2026::chunk::009",
+        "POL_SEOUL_FUND_2026::chunk::008",
+        "POL_SEOUL_FUND_2026::chunk::012"
+      ],
+      "hit": true
+    },
+    {
+      "policy_id": "POL_SEOUL_CRISIS_TRACK2_2026H2",
+      "query": "지원대상 매출 감소 임차 점포",
+      "top_chunk_ids": [
+        "POL_SEOUL_CRISIS_TRACK2_2026H2::metadata::001",
+        "POL_SEOUL_CRISIS_TRACK2_2026H2::chunk::001::source::6a94351a",
+        "POL_SEOUL_CRISIS_TRACK2_2026H2::chunk::001",
+        "POL_SEOUL_CRISIS_TRACK2_2026H2::chunk::006",
+        "POL_SEOUL_CRISIS_TRACK2_2026H2::chunk::005"
+      ],
+      "hit": true
+    },
+    {
+      "policy_id": "POL_SEMAS_REFINANCE_2026",
+      "query": "대환대출 금리와 지원대상",
+      "top_chunk_ids": [
+        "POL_SEMAS_REFINANCE_2026::chunk::012",
+        "POL_SEMAS_REFINANCE_2026::chunk::011",
+        "POL_SEMAS_REFINANCE_2026::metadata::001",
+        "POL_SEMAS_REFINANCE_2026::chunk::002::source::d11a4990",
+        "POL_SEMAS_REFINANCE_2026::chunk::007"
+      ],
+      "hit": true
+    },
+    {
+      "policy_id": "POL_SEMAS_STABILITY_VOUCHER_2026",
+      "query": "바우처 사용처와 신청대상",
+      "top_chunk_ids": [
+        "POL_SEMAS_STABILITY_VOUCHER_2026::chunk::003",
+        "POL_SEMAS_STABILITY_VOUCHER_2026::chunk::002::source::907b7fa9",
+        "POL_SEMAS_STABILITY_VOUCHER_2026::chunk::001",
+        "POL_SEMAS_STABILITY_VOUCHER_2026::chunk::004",
+        "POL_SEMAS_STABILITY_VOUCHER_2026::chunk::005"
+      ],
+      "hit": true
+    }
+  ],
+  "outputs": {
+    "data\\processed_re\\policy\\re_stage6\\policy_index.jsonl": {
+      "bytes": 542246,
+      "sha256": "9e6515d405509d46746d143757fd53beb4480615c1beb9a2beb5e93b1c29ce86"
+    },
+    "data\\processed_re\\policy\\re_stage6\\eligibility_example_results.json": {
+      "bytes": 5862,
+      "sha256": "8e3ca6707f3d9d92345c52830df0835028735b4a5f5579c6a440ce36bb26acca"
+    },
+    "reports\\re_stage6\\rag_evaluation.json": {
+      "bytes": 4444,
+      "sha256": "cfe18d1696c0dd2e1998e313d0566233c8d152cd8247d19e17ee84c3a8bc6413"
+    },
+    "reports\\re_stage6\\rag_evaluation.md": {
+      "bytes": 1092,
+      "sha256": "a6afe4dd38b36ef48c030ebd09684400d711c426b803991def87d6e918dbd828"
+    },
+    "data\\processed_re\\policy\\re_stage6\\session_eligibility_profile.schema.json": {
+      "bytes": 8428,
+      "sha256": "2d5221a5d501e4d40a81447eff67f0407e67534d81f8f6c41124cd02d61d22d1"
+    },
+    "data\\processed_re\\policy\\re_stage6\\safe_explanation.schema.json": {
+      "bytes": 3516,
+      "sha256": "9fbec8b24d77c22d69cfa7628182d79cc1b124d02df72059fee31aa016faa685"
+    }
+  }
+}

@@ -1,0 +1,34 @@
+2026-08-16 21:07:59,868 | RE5 HOLDOUT | HOLDOUT TARGET OPENED | model=lightgbm | 이후 동일 계약 재개만 허용
+2026-08-16 21:07:59,869 | RE5 HOLDOUT | 개발자료·Holdout Feature 읽기
+2026-08-16 21:08:00,474 | RE5 HOLDOUT | 2025Q3·Q4 결과로 Holdout Target v2 계산
+2026-08-16 21:08:03,132 | RE5 HOLDOUT | [1/3] START | target=target_a_next_quarter_yoy train=268541 holdout=21452
+2026-08-16 21:08:03,709 | RE5 HOLDOUT |     Train-only 전처리 시작 | features=197
+2026-08-16 21:08:10,254 | RE5 HOLDOUT |     Train-only 전처리 완료 | train_matrix=(268541, 2683) holdout_matrix=(21452, 2683)
+2026-08-16 21:08:10,258 | RE5 HOLDOUT |     [1/3] LightGBM quantile 0.1 학습 시작
+2026-08-16 21:08:28,270 | RE5 HOLDOUT |     [1/3] LightGBM quantile 0.1 완료
+2026-08-16 21:08:28,281 | RE5 HOLDOUT |     [2/3] LightGBM quantile 0.5 학습 시작
+2026-08-16 21:08:46,724 | RE5 HOLDOUT |     [2/3] LightGBM quantile 0.5 완료
+2026-08-16 21:08:46,725 | RE5 HOLDOUT |     [3/3] LightGBM quantile 0.9 학습 시작
+2026-08-16 21:09:04,405 | RE5 HOLDOUT |     [3/3] LightGBM quantile 0.9 완료
+2026-08-16 21:09:05,518 | RE5 HOLDOUT | [1/3] DONE | target=target_a_next_quarter_yoy MAE=0.896258 Coverage=0.6939 elapsed=61.6s
+2026-08-16 21:09:06,207 | RE5 HOLDOUT | [2/3] START | target=target_b_next_two_quarters_yoy train=262869 holdout=21452
+2026-08-16 21:09:06,220 | RE5 HOLDOUT |     Train-only 전처리 시작 | features=197
+2026-08-16 21:09:13,440 | RE5 HOLDOUT |     Train-only 전처리 완료 | train_matrix=(262869, 2679) holdout_matrix=(21452, 2679)
+2026-08-16 21:09:13,441 | RE5 HOLDOUT |     [1/3] LightGBM quantile 0.1 학습 시작
+2026-08-16 21:09:34,747 | RE5 HOLDOUT |     [1/3] LightGBM quantile 0.1 완료
+2026-08-16 21:09:34,748 | RE5 HOLDOUT |     [2/3] LightGBM quantile 0.5 학습 시작
+2026-08-16 21:09:53,271 | RE5 HOLDOUT |     [2/3] LightGBM quantile 0.5 완료
+2026-08-16 21:09:53,271 | RE5 HOLDOUT |     [3/3] LightGBM quantile 0.9 학습 시작
+2026-08-16 21:10:11,603 | RE5 HOLDOUT |     [3/3] LightGBM quantile 0.9 완료
+2026-08-16 21:10:12,855 | RE5 HOLDOUT | [2/3] DONE | target=target_b_next_two_quarters_yoy MAE=0.455367 Coverage=0.7103 elapsed=66.5s
+2026-08-16 21:10:13,642 | RE5 HOLDOUT | [3/3] START | target=target_aux_min_next_two_quarters_yoy train=262869 holdout=21452
+2026-08-16 21:10:13,644 | RE5 HOLDOUT |     Train-only 전처리 시작 | features=197
+2026-08-16 21:10:20,105 | RE5 HOLDOUT |     Train-only 전처리 완료 | train_matrix=(262869, 2679) holdout_matrix=(21452, 2679)
+2026-08-16 21:10:20,106 | RE5 HOLDOUT |     [1/3] LightGBM quantile 0.1 학습 시작
+2026-08-16 21:10:39,880 | RE5 HOLDOUT |     [1/3] LightGBM quantile 0.1 완료
+2026-08-16 21:10:39,881 | RE5 HOLDOUT |     [2/3] LightGBM quantile 0.5 학습 시작
+2026-08-16 21:10:56,902 | RE5 HOLDOUT |     [2/3] LightGBM quantile 0.5 완료
+2026-08-16 21:10:56,902 | RE5 HOLDOUT |     [3/3] LightGBM quantile 0.9 학습 시작
+2026-08-16 21:11:13,532 | RE5 HOLDOUT |     [3/3] LightGBM quantile 0.9 완료
+2026-08-16 21:11:14,603 | RE5 HOLDOUT | [3/3] DONE | target=target_aux_min_next_two_quarters_yoy MAE=0.325032 Coverage=0.7016 elapsed=60.8s
+2026-08-16 21:11:15,156 | RE5 HOLDOUT | HOLDOUT 완료 | targets=3/3 | model=lightgbm 고정 | 모델 재선택 금지

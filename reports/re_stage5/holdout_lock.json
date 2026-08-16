@@ -1,0 +1,13 @@
+{
+  "created_at_kst": "2026-08-16T18:08+09:00",
+  "status": "features_only_target_not_materialized",
+  "feature_period": 20252,
+  "outcome_periods": [
+    20253,
+    20254
+  ],
+  "rows": 21452,
+  "features_sha256": "11cbdac84014eb77f91f7fe6e15d73f1e867ef532fecace0da9aed8d75b3ecbe",
+  "target_opened": false,
+  "independent_audit": false
+}

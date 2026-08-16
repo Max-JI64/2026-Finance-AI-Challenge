@@ -1,0 +1,23 @@
+{
+  "status": "holdout_runner_ready_user_execution_required",
+  "completed_at_kst": "2026-08-16T20:10+09:00",
+  "updated_at_kst": "2026-08-16T20:52+09:00",
+  "contract_sha256": "ee0c67038c6e34a5325e18546e9d16fbef55cbfcd44801dd900ca53f70d42674",
+  "completed_tasks": 72,
+  "total_tasks": 72,
+  "percent_complete": 100.0,
+  "fold_metrics": "reports\\re_stage5\\cv\\fold_metrics.csv",
+  "model_summary": "reports\\re_stage5\\cv\\model_summary.csv",
+  "comparison_report": "reports\\re_stage5\\cv\\comparison.md",
+  "holdout_target_opened": false,
+  "selected_model": "lightgbm",
+  "selected_model_approved": true,
+  "stage6_service_status": "archived_evidence_only",
+  "stage6_retraining": false,
+  "holdout_execution_authorized": true,
+  "holdout_target_opened_by_preparation": false,
+  "holdout_training_executed_by_preparation": false,
+  "holdout_dry_run_passed": true,
+  "holdout_contract_sha256": "490bc577fde291f8b14bf738128c0412c61ba8fa52dce8624d6ceffb369c7e84",
+  "next_required_action": ".\\scripts\\run_re_stage5_holdout.ps1 -ConfirmOpenHoldout"
+}

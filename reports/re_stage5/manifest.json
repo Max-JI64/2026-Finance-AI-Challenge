@@ -1,0 +1,131 @@
+{
+  "created_at_kst": "2026-08-16T18:08+09:00",
+  "contract_version": "re5-v1",
+  "status": "baseline_prepared_training_not_run",
+  "source": {
+    "path": "data\\processed\\stage3_panel.parquet",
+    "rows": 439141,
+    "columns": 199,
+    "sha256": "88370a02f592c020196613e69a9dc8e642cf3ba14a00003bb6cdd37198f40e07"
+  },
+  "features": {
+    "stage3_source_columns": 199,
+    "stage45_derived_definitions": 134,
+    "panel_v2_pre_target_columns": 334,
+    "approved_common_baseline_columns": 197
+  },
+  "rows": {
+    "panel_v2": 439141,
+    "development": 286613,
+    "holdout_features": 21452,
+    "fold_membership": 1146452
+  },
+  "period": {
+    "development_min": 20214,
+    "development_max": 20244,
+    "holdout_feature": 20252,
+    "holdout_target_opened": false
+  },
+  "target_valid_rows": {
+    "target_a_next_quarter_yoy": 268541,
+    "target_b_next_two_quarters_yoy": 262869,
+    "target_aux_min_next_two_quarters_yoy": 262869,
+    "target_challenger_next_quarter_qoq": 278883
+  },
+  "tail_flag_thresholds_development_only": {
+    "target_a_next_quarter_yoy": [
+      -0.9866619524741874,
+      79.41720806845228
+    ],
+    "target_b_next_two_quarters_yoy": [
+      -0.9641536942125347,
+      24.728279452548783
+    ],
+    "target_aux_min_next_two_quarters_yoy": [
+      -0.9909744506787047,
+      13.602292709763644
+    ],
+    "target_challenger_next_quarter_qoq": [
+      -0.9811335087480686,
+      46.62754325392099
+    ]
+  },
+  "leakage_checks": {
+    "source_key_unique": true,
+    "development_max_period_20244": true,
+    "holdout_features_only": true,
+    "holdout_period_20252_only": true,
+    "validation_periods_exact": true,
+    "purge_periods_exact": true,
+    "no_target_clipping": true,
+    "holdout_target_not_opened": true,
+    "approved_197_features_present": true,
+    "derived_features_current_or_past_contract": true
+  },
+  "outputs": {
+    "panel_v2": {
+      "path": "data\\processed_re\\model\\re_stage5\\panel_v2.parquet",
+      "sha256": "ed9481f565d62d321e86f8b567ad98508be77f4723b0cb93b72de1948086595c"
+    },
+    "development": {
+      "path": "data\\processed_re\\model\\re_stage5\\development.parquet",
+      "sha256": "3ab232abbcbb5d271d78bcfecbd345b727b45c14f98e2a48a541bd964e804525"
+    },
+    "holdout_features": {
+      "path": "data\\processed_re\\model\\re_stage5\\holdout_features.parquet",
+      "sha256": "11cbdac84014eb77f91f7fe6e15d73f1e867ef532fecace0da9aed8d75b3ecbe"
+    },
+    "fold_membership": {
+      "path": "data\\processed_re\\model\\re_stage5\\fold_membership.parquet",
+      "sha256": "fa2f78c873f42458b3cc02ec08dd5c812cc6e4c43aa8b76de3582cb6ca876db3"
+    },
+    "target_definition": {
+      "path": "reports\\re_stage5\\target_v2_definition.md",
+      "sha256": "89b7b488ddf6be269062cc7c9b2debfda394471449098d8f4cb688c2a9a46893"
+    },
+    "eda_report": {
+      "path": "reports\\re_stage5\\quantile_eda.md",
+      "sha256": "9faa674ab0a19d0ab6feeaac91717311e6631bb3343b919496a1450449536746"
+    },
+    "period_distribution": {
+      "path": "reports\\re_stage5\\target_distribution_by_period.csv",
+      "sha256": "e583842b65b858a513d7375fdd5a1f7e0879956022cdc9016be91ed1f4ef8cbf"
+    },
+    "industry_distribution": {
+      "path": "reports\\re_stage5\\target_distribution_by_industry.csv",
+      "sha256": "2805d9764125d4f7ab7fe3c3ea293b0312507f12e37f34f70c9794dc9e932a19"
+    },
+    "missingness": {
+      "path": "reports\\re_stage5\\target_missingness.csv",
+      "sha256": "a256adb72243e9634e423cda0227cc2ed8b1887b85bc72a88e85d85a4a6cfae8"
+    },
+    "fold_summary": {
+      "path": "reports\\re_stage5\\fold_summary.csv",
+      "sha256": "b7a23d9ca7d1416fdf14905848973025e71824e9da7ec98f0c6d6f043849d228"
+    },
+    "holdout_lock": {
+      "path": "reports\\re_stage5\\holdout_lock.json",
+      "sha256": "1235a08fccd12c2a01c2e36e6f7f0d7caf8fe756319909bd98e561cf019821e8"
+    },
+    "training_runbook": {
+      "path": "reports\\re_stage5\\training_runbook.md",
+      "sha256": "c2478d33c061c170b31225ec6535a8ee144af464edeb9b103a48e9726b507add"
+    },
+    "feature_contract": {
+      "path": "reports\\re_stage5\\feature_contract_v2.md",
+      "sha256": "e89912aeedfb6682c46c24dc84865100287030b247523dbbe013b550c7c60b75"
+    },
+    "preparation_verification": {
+      "path": "reports\\re_stage5\\preparation_verification.md",
+      "sha256": "f8a09c25889fdced1cab69132d2f0ac7bc8ed83faa1fada5cf2de4db4560ca68"
+    },
+    "downstream_impact_review": {
+      "path": "reports\\re_stage5\\downstream_impact_review.md",
+      "sha256": "b2fa19b449af5d06a53ee74e09c73d9d67350be233eb6c726500ed58707aef37"
+    },
+    "approved_contract": {
+      "path": "reports\\re_stage5\\approved_contract.md",
+      "sha256": "07707a12bfcb729b6d2b087df6d1f7d5a57369cbb67d57b171866f0a2421a24e"
+    }
+  }
+}

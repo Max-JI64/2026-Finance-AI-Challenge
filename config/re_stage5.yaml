@@ -1,0 +1,114 @@
+contract_version: re5-v1
+
+status:
+  contract_approved: true
+  baseline_preparation: ready
+  cv_training_authorized_for_user_only: true
+  selected_model: lightgbm
+  selected_model_approved: true
+  selected_model_scope: internal_holdout_candidate
+  selected_model_approved_at_kst: "2026-08-16T20:30+09:00"
+  holdout_execution_authorized: true
+  holdout_execution_mode: user_only_explicit_confirmation
+  holdout_completed: true
+  holdout_completed_at_kst: "2026-08-16T21:11+09:00"
+  holdout_model_reselection_prohibited: true
+  service_activation_approved: true
+  service_activation_approved_at_kst: "2026-08-16T21:47+09:00"
+  service_activation_status: approved_internal_scenario_generator
+  stage6_final_status_approved: true
+  independent_audit_available: false
+
+data:
+  source_panel: data/processed/stage3_panel.parquet
+  source_manifest: reports/stage3/panel_manifest.json
+  feature_set_manifest: reports/stage5/feature_sets.json
+  feature_set: common_baseline
+  panel_v2: data/processed_re/model/re_stage5/panel_v2.parquet
+  development: data/processed_re/model/re_stage5/development.parquet
+  holdout_features: data/processed_re/model/re_stage5/holdout_features.parquet
+  fold_membership: data/processed_re/model/re_stage5/fold_membership.parquet
+
+observation:
+  key: [기준_년분기_코드, 상권_코드, 서비스_업종_코드]
+  period_column: 기준_년분기_코드
+  sales_column: 당월_매출_금액
+
+targets:
+  primary:
+    - target_a_next_quarter_yoy
+    - target_b_next_two_quarters_yoy
+  auxiliary:
+    - target_aux_min_next_two_quarters_yoy
+  challenger:
+    - target_challenger_next_quarter_qoq
+  clipping: forbidden
+  missing_denominator: keep_null_with_reason
+  missing_future: keep_null_with_reason
+
+time_split:
+  development_periods: [20214, 20221, 20222, 20223, 20224, 20231, 20232, 20233, 20234, 20241, 20242, 20243, 20244]
+  validation_periods: [20241, 20242, 20243, 20244]
+  purge_quarters: 1
+  holdout_purge_period: 20251
+  holdout_feature_period: 20252
+  holdout_outcome_periods: [20253, 20254]
+
+quantiles: [0.1, 0.5, 0.9]
+
+models:
+  candidates:
+    - seasonal_naive
+    - industry_median
+    - regularized_linear
+    - lightgbm
+    - catboost
+    - xgboost
+  random_seed: 20260816
+  max_threads: 8
+  regularized_linear:
+    epochs: 12
+    batch_size: 8192
+    learning_rate: 0.03
+    l2: 0.0001
+  lightgbm:
+    n_estimators: 300
+    learning_rate: 0.04
+    num_leaves: 63
+    max_depth: 8
+    min_child_samples: 80
+    subsample: 0.8
+    colsample_bytree: 0.75
+  catboost:
+    iterations: 300
+    learning_rate: 0.04
+    depth: 8
+    l2_leaf_reg: 3.0
+  xgboost:
+    n_estimators: 300
+    learning_rate: 0.04
+    max_depth: 8
+    min_child_weight: 20
+    subsample: 0.8
+    colsample_bytree: 0.75
+
+evaluation:
+  central: [mae, median_absolute_error, rmse, mean_error]
+  quantile: [pinball_p10, pinball_p50, pinball_p90, attainment_p10, attainment_p50, attainment_p90]
+  interval: [coverage_p10_p90, mean_interval_width, interval_score_80]
+  direction: [spearman, direction_accuracy]
+  structure: [crossing_ratio_raw, crossing_ratio_corrected]
+  frozen_v1_appendix_only: [average_precision, roc_auc]
+
+service_boundary:
+  display_name: 상권환경 스트레스 시나리오
+  individual_store_prediction: prohibited
+  personal_sales_forecast: prohibited
+  causal_effect_claim: prohibited
+  quantile_model_status_before_independent_audit: approved_internal_scenario_generator_with_validation_limit
+  user_facing_scenario_labels: [하방, 기준, 회복]
+  hide_internal_model_metrics_from_user: true
+  frozen_stage6_status: archived_evidence_only
+  frozen_stage6_retraining: prohibited
+  frozen_stage6_service_enabled: false
+  external_model_failure_fallback: user_direct_shock_rate
