@@ -5,25 +5,74 @@
 
 ## Project snapshot
 
-- Last updated: 2026-08-15T20:19+09:00
-- Purpose: Build a working MVP that predicts Seoul commercial-district sales-environment risk, diagnoses a small business's financial burden, and recommends policy support with official-document-grounded RAG explanations.
-- Important paths: `프로젝트 계획서.md` is the main MVP plan; `MVP 단계별 구현 체크리스트.md` is the execution and completion-gate document; `대회개요.md` contains the competition overview.
+- Last updated: 2026-08-16T00:25+09:00
+- Purpose: Build a working Seoul small-business policy-impact simulator that combines area-industry sales-environment scenarios, deterministic 13-week and 6-month cash flow, official policy eligibility and financial terms, intervention comparison, and evidence-grounded AI explanations.
+- Important paths: `프로젝트 계획서.md` is the main MVP plan; `MVP 단계별 구현 체크리스트.md` is the execution and completion-gate document; `reports/re_stage1/` contains the service contract and six portfolio comparison; `reports/re_stage2/` contains A+C selection, API accessibility, structured QA, verification, and downstream review; `data/processed_re/policy/re_stage2/` contains the reviewed policy Metadata, Rules, Events, versions, source Manifest, and pre-index chunks; `config/re_stage2.yaml` and `src/guards/re_stage2_guard.py` preserve the completed RE2 boundary; `data/raw_re/향후 데이터 다운로드 가이드.md` is the acquisition guide.
 
 ## Durable decisions
 
 - `decision:mvp-scope`
   - Created: 2026-08-14T19:55+09:00
-  - Updated: 2026-08-14T19:55+09:00
+  - Updated: 2026-08-15T23:40+09:00
   - Status: active
-  - Content: The MVP targets Seoul small businesses and separates external commercial-district risk from internal financial burden before policy-support ranking and RAG explanation.
-  - Evidence: `프로젝트 계획서.md`, sections 1 through 41.
+  - Content: The MVP targets Seoul small businesses and compares no action, non-debt support, debt relief, new borrowing, and mixed interventions through deterministic 13-week and 6-month cash-flow effects. Area-industry ML supplies aggregate external scenarios, official rules determine eligibility, policy terms become financial events, and RAG/LLM only explains official evidence and trade-offs; individual closure probability, credit scoring, approval probability, account/POS integration, and causal policy impact are excluded.
+  - Evidence: User-approved rewrite of `프로젝트 계획서.md`, completed `reports/re_stage1/service_contract.md`, and `config/re_stage1.yaml`.
 
 - `decision:implementation-checklist`
   - Created: 2026-08-14T20:21+09:00
-  - Updated: 2026-08-14T20:21+09:00
+  - Updated: 2026-08-16T00:08+09:00
   - Status: active
-  - Content: Track implementation with P0 mandatory tasks, P1 quality work, P2 extensions, and evidence-based Gates from data acquisition through deployment; ML and RAG remain mandatory when scope is reduced.
-  - Evidence: `MVP 단계별 구현 체크리스트.md`.
+  - Content: The implementation checklist mirrors completed Stage 0-6 and RE Stage 1-2 plus pending RE Stage 3-9. It records the A+C 10-policy knowledge base and requires a downstream-impact review plus necessary plan/config/test updates before every next Stage starts.
+  - Evidence: `MVP 단계별 구현 체크리스트.md`, 2,143 lines, 426 completed and 794 open checkboxes; all nine RE Gates contain an end-stage feedback item.
+
+- `decision:policy-source-hierarchy`
+  - Created: 2026-08-15T21:23+09:00
+  - Updated: 2026-08-15T22:01+09:00
+  - Status: active
+  - Content: Bizinfo is the broad automated policy-candidate feed. Small Business 24, SEMAS policy-fund pages, and Seoul notices are bounded official verification sources for only the user-approved 8-12 policies: do not crawl every notice and do not submit a real policy application; preserve each selected policy's detail URL, notice and attachments, dates/status, and application URL for service handoff.
+  - Evidence: Official Small Business 24, SEMAS, and Seoul pages checked on 2026-08-15; SEMAS explicitly directs users from overview terms to detailed notices, and the Seoul change notice provides the operative HWP notice and annexes.
+
+- `decision:data-download-catalog`
+  - Created: 2026-08-15T21:39+09:00
+  - Updated: 2026-08-16T00:25+09:00
+  - Status: active
+  - Content: `data/raw_re/향후 데이터 다운로드 가이드.md` is the current links-and-instructions guide. Historically, Codex collected P-01/P-05 and 15 selected-policy files while P-03/P-04 were user-provided. For future needs, Codex must proactively report the reason, timing, exact scope, official links, and target paths; link research is allowed, but the user performs downloads and project raw-data loading before Codex processes local files.
+  - Evidence: `data/raw_re/policy/`, `data/processed_re/policy/re_stage2/source_manifest.csv`, `reports/re_stage2/api_accessibility.md`, and `reports/re_stage2/structured_qa.md`.
+
+- `decision:re-stage3-input-calculation-contract`
+  - Created: 2026-08-16T00:25+09:00
+  - Updated: 2026-08-16T00:25+09:00
+  - Status: active
+  - Content: RE3 is authorized but implementation is paused until a new user request. Support simple input and detailed CSV; do not clip calculated cash below zero; treat simple monthly debt payment as total principal-plus-interest outflow; calculate three repayment methods only for detailed loans; use monthly interest without daily accrual; round each event to won; require user-set safe cash and actual receipt/payment dates without inventing defaults.
+  - Evidence: User approval on 2026-08-16, `프로젝트 계획서.md`, and RE Stage 3 in `MVP 단계별 구현 체크리스트.md`.
+
+- `decision:pre-re1-policy-qa`
+  - Created: 2026-08-15T23:18+09:00
+  - Updated: 2026-08-15T23:18+09:00
+  - Status: superseded
+  - Content: Before RE1 approval, downloaded P-01/P-03/P-04/P-05 policy material may undergo source preservation, inventory, format QA, lossless common-schema conversion, and exact normalized-title grouping only. The verified pool contains 1,005 source records in 827 groups, including 174 multi-source groups. Fuzzy matching, exclusions, ranking, an 8-12-policy representative selection, eligibility Rules, financial Events, and RAG chunks require RE1 and explicit selection-criteria approval.
+  - Evidence: `scripts/qa_integrate_policy_candidates.py`, `reports/pre_re1/policy/QA.md`, `reports/pre_re1/policy/selection_decision_needed.md`, and `data/processed_re/policy/pre_re1/`.
+
+- `decision:re-stage1-contract`
+  - Created: 2026-08-15T23:40+09:00
+  - Updated: 2026-08-15T23:40+09:00
+  - Status: active
+  - Content: RE Stage 1 is complete. The service targets Seoul small businesses, compares 13-week and 6-month no-action and policy-intervention cash flows, uses minimum debt as the default goal, accepts simple input plus CSV, retires the old financial-burden score and simple policy ranking, and freezes Stage 0-6 as a baseline. Its pending portfolio decision was resolved in RE2 by explicit A+C approval.
+  - Evidence: `reports/re_stage1/service_contract.md`, `config/re_stage1.yaml`, `reports/re_stage1/policy_portfolio_comparison.md`, and `reports/re_stage1/verification.md`.
+
+- `decision:re-stage2-policy-knowledge-base`
+  - Created: 2026-08-16T00:08+09:00
+  - Updated: 2026-08-16T00:08+09:00
+  - Status: active
+  - Content: The user approved A+C as the final 10-policy MVP portfolio. RE2 preserves 27 official source records and structures 10 Metadata rows, 56 eligibility Rules, 20 reviewed eligibility examples, 30 financial Events, 11 versions, and 217 pre-index text chunks. Seoul funding is split into 17 sub-events, rechallenge into three types, and any missing amount, date, status, or process stays `미확인`; no RAG index was built.
+  - Evidence: `config/re_stage2.yaml`, `data/processed_re/policy/re_stage2/`, `reports/re_stage2/structured_qa.md`, `reports/re_stage2/verification.md`, and nine passing RE2 tests.
+
+- `convention:stage-result-feedback-loop`
+  - Created: 2026-08-15T23:40+09:00
+  - Updated: 2026-08-15T23:40+09:00
+  - Status: active
+  - Content: After every Stage Gate, compare actual results with assumptions and assess downstream data, Target, Feature, model, metric, policy, service, schedule, and test impacts. Record either no change with evidence or update affected plans/contracts/config/tests, obtain user approval for material meaning or scope changes, and do not start the next Stage until this feedback review is complete.
+  - Evidence: `프로젝트 계획서.md` section 5.2, `MVP 단계별 구현 체크리스트.md` section 1.6 and all Gate RE1-RE9 items, and `reports/re_stage1/service_contract.md`.
 
 - `decision:stage0-stack`
   - Created: 2026-08-14T20:34+09:00
@@ -153,10 +202,10 @@
 
 - `decision:recommendation-role-boundary`
   - Created: 2026-08-15T19:32+09:00
-  - Updated: 2026-08-15T19:32+09:00
+  - Updated: 2026-08-15T21:02+09:00
   - Status: active
-  - Content: ML is the core engine for risk discovery and intervention urgency, official rules exclusively determine policy eligibility, the Recommendation Engine ranks eligible policies using user need, financial burden, policy-purpose fit and ML urgency, and RAG/LLM only explains official evidence. ML urgency is important for officially relevant stabilization or recovery policies but never changes eligibility or claims approval probability; exact weights and bands are deferred until policy metadata and evaluation cases exist.
-  - Evidence: User approval, `프로젝트 계획서.md` sections 4, 24, 33, 34, 38, and 41, and Stage 8 in `MVP 단계별 구현 체크리스트.md`.
+  - Content: ML supplies aggregate area-industry downside, median, and recovery scenarios; official rules exclusively determine eligibility; a deterministic cash-flow engine calculates policy inflows, cost reductions, user contributions, and debt schedules; the decision engine compares outcomes for minimum debt, longest runway, minimum payment, or fastest action without an arbitrary universal score; RAG/LLM only retrieves and explains official evidence and trade-offs and cannot alter calculations, eligibility, or ordering.
+  - Evidence: User-approved `프로젝트 계획서.md` rewrite, especially RE Stages 4 through 7.
 
 - `decision:competitive-positioning`
   - Created: 2026-08-15T20:14+09:00
@@ -167,17 +216,17 @@
 
 - `proposal:policy-intervention-digital-twin`
   - Created: 2026-08-15T20:32+09:00
-  - Updated: 2026-08-15T20:47+09:00
-  - Status: documented
-  - Content: The comprehensive redesign blueprint recommends a policy-intervention simulator that compares no action, cost reduction, grants or vouchers, interest support or refinancing, new borrowing, and mixed plans through deterministic 13-week and 6-month cash-flow scenarios. It retires the planned opaque finance score and policy-fit ranking, prioritizes official policy terms and personal cash-flow inputs, freezes Stage 0-6 as evidence and a baseline, and develops a new multi-horizon quantile sales-environment challenger because the current binary rank does not supply shock magnitude. The challenger replaces Stage 6 only after time-based error, interval coverage, industry stability, service utility, and a new independent audit Gate pass.
-  - Evidence: User requested the full keep, rebuild, replace, and data-timing plan in `프로젝트 차별화 구상.md`; the 1,648-line document was created and structurally checked, while the current project plan and implementation remain unchanged until the next authorized rewrite.
+  - Updated: 2026-08-15T21:02+09:00
+  - Status: active_plan
+  - Content: The policy-impact simulator is now the approved project-plan direction. `프로젝트 계획서.md` preserves completed Stage 0-6 and replaces the old Stage 7 onward plan with RE Stage 1-9: service contract, policy knowledge base, personal cash flow, policy financial events, new data and quantile model, eligibility and RAG, intervention comparison, web integration, and deployment QA. The existing LightGBM and Stage 6 remain frozen baseline and fallback evidence; a new quantile challenger replaces them only after time-based error, coverage, industry stability, service utility, and a new independent audit Gate pass.
+  - Evidence: User instruction and the rewritten `프로젝트 계획서.md`; no data, Target, model, or application implementation was executed in the rewrite turn.
 
 - `decision:stage7-finance-burden-policy-v1`
   - Created: 2026-08-15T20:19+09:00
-  - Updated: 2026-08-15T20:19+09:00
-  - Status: active
-  - Content: The user approved the documented Stage 7 heuristic index: rent/labor/repayment/debt-stock weights 20/20/35/25 with component caps at 30%/50%/20%/100%, display bands below 40/40-69.99/70+ as low/caution/high, zero-sales unavailable handling, optional-field exclusion, and no composite risk type yet.
-  - Evidence: User approval and `프로젝트 계획서.md`, section 22 `승인된 금융부담 정책 v1`; documentation only, not implemented.
+  - Updated: 2026-08-15T21:02+09:00
+  - Status: superseded
+  - Content: The previously approved 20/20/35/25 heuristic finance-burden index and low/caution/high bands were never implemented and are removed from the active plan. Individual ratios may remain as descriptive inputs, but service decisions use dated cash-flow balances, runway, debt service, total obligation, and intervention comparisons instead of a composite score.
+  - Evidence: User-directed replacement of the old Stage 7 onward plan in `프로젝트 계획서.md`; the historical approval remains recorded here and in `LOG.md`.
 
 ## Working conventions
 
@@ -189,9 +238,10 @@
 
 - `convention:user-owned-data-acquisition`
   - Created: 2026-08-14T20:51+09:00
-  - Updated: 2026-08-14T20:51+09:00
+  - Updated: 2026-08-16T00:25+09:00
   - Status: active
-  - Content: The user will download competition data directly; do not browse, download, extract, or audit external datasets unless the user explicitly reverses this instruction.
+  - Content: Codex must tell the user whenever a future Stage needs external data and may search official sites for exact source links. Codex must not call data APIs, crawl, download, save source files, or load them into project raw folders; the user performs download and loading, then confirms completion before Codex processes local files. Broad Stage authorization is not acquisition authorization, and this rule remains until explicitly revoked.
+  - Evidence: User correction on 2026-08-16, root `AGENTS.md`, `프로젝트 계획서.md`, and `MVP 단계별 구현 체크리스트.md`.
 
 - `convention:bounded-raw-inspection`
   - Created: 2026-08-14T22:35+09:00
@@ -248,22 +298,75 @@
   - Fix: Implemented deterministic common/linear/tree-ablation Feature sets, union preprocessing with float32/category loading, per-set sparse slicing, and isolated `checkpoints_v2`; actual execution completed all 136 Fold runs without a memory failure.
   - Evidence: `src/models/run_stage5_base_comparison.py`, `src/features/build_stage5_feature_sets.py`, `reports/stage5/feature_sets.json`, and `reports/stage5/checkpoints_v2/`.
 
+- `issue:bizinfo-mixed-registration-years`
+  - Created: 2026-08-15T22:00+09:00
+  - Updated: 2026-08-15T22:00+09:00
+  - Status: resolved
+  - Symptom: The API advertises a current-year feed but returned 1,521 records registered in 2026 plus 23 from 2025 and one from 2023.
+  - Cause: The provider's unfiltered response contains older registration years even though all 1,545 records were advertised as the available feed.
+  - Fix: Preserve every response page unchanged, derive a separate 2026-only dataset, and run the small-business candidate filter only on that required-year subset.
+  - Evidence: `data/raw_re/policy/bizinfo/2026-08-15/manifest.json`, `current_year_2026_items.csv`, and `small_business_candidates.csv`.
+
+- `issue:sme24-date-filter-semantics`
+  - Created: 2026-08-15T22:19+09:00
+  - Updated: 2026-08-15T22:19+09:00
+  - Status: resolved
+  - Symptom: The 2026 date-range queries returned 523 records registered in 2025 and 2,667 records with no `creatDt`, so treating the result as 2026 registrations would be incorrect.
+  - Cause: In every one of the 8 request windows, all returned records had `updDt` inside the requested dates; observed API behavior applies `strDt/endDt` as an update-date filter.
+  - Fix: Describe the P-05 collection as announcements updated during 2026-01-01 through 2026-08-15, retain older or missing registration dates, and record per-window registration-date and update-date counts in the Manifest.
+  - Evidence: `data/raw_re/policy/sme24/2026-08-15/manifest.json`, `QA.md`, and the 8 raw files under `windows/`.
+
 ## Current handoff
 
 - `handoff:current`
-  - Updated: 2026-08-15T20:47+09:00
-  - Current state: Stage 6 and the existing plan remain intact, but `프로젝트 차별화 구상.md` now contains the complete recommended redesign: policy-intervention cash-flow simulation, a keep/freeze/rebuild/retire matrix, new policy and personal-finance data timing, a quantile-model challenger, R0-R8 implementation stages, validation Gates, and submission wording. No data collection, Target regeneration, model training, plan rewrite, or checklist rewrite was performed in this turn.
-  - Next step: When the user requests the plan change, rewrite `프로젝트 계획서.md` around the approved redesign while preserving the executed Stage 0-6 record, then separately realign `MVP 단계별 구현 체크리스트.md`. Before executing R1 or R4, obtain the exact approvals for the 8-12 policy scope, personal cash-flow input contract, Target v2 definition, time split, metrics, and new independent audit period.
-  - Blockers: The current plan still authorizes Stage 7 finance-burden v1, while the redesign recommends retiring it; implementation must not start until the plan rewrite explicitly resolves that conflict.
+  - Updated: 2026-08-16T00:25+09:00
+  - Current state: Gate RE2 passed and the RE3 input/calculation contract is approved, but the user explicitly paused implementation. External source-link research is allowed; every download and project raw-data load remains user-owned.
+  - Next step: Wait for the user's separate RE3 restart request, then build the policy-independent deterministic 13-week and 6-month engine using only local code and synthetic test cases. If a later Stage requires external data, first report the need and exact official links, then wait for user download and loading confirmation.
+  - Blockers: No design blocker remains for RE3, but implementation must not start until the user asks. RAG indexing remains blocked until RE6, and Target v2/model v2 remain blocked until the RE5 decision Gate.
 
 ## Session log
 
+- `session:20260816-0018`
+  - Started: 2026-08-16T00:18+09:00
+  - Last activity: 2026-08-16T00:25+09:00
+  - Focus: Audit existing downloads, correct the future acquisition boundary, and record RE3 contract approval without implementation.
+  - Updated keys: `decision:data-download-catalog`, `decision:re-stage3-input-calculation-contract`, `convention:user-owned-data-acquisition`, `handoff:current`
+  - Summary: Confirmed historical acquisition roles, allowed Codex to search and report exact official links while keeping download and raw loading user-owned, recorded the eight approved RE3 rules, and left RE3 code and tests completely unstarted until a new user request.
+
+- `session:20260815-2341`
+  - Started: 2026-08-15T23:41+09:00
+  - Last activity: 2026-08-16T00:08+09:00
+  - Focus: Finalize A+C, complete RE Stage 2 official-source collection and policy knowledge-base QA, and apply the mandatory downstream feedback review.
+  - Updated keys: `decision:implementation-checklist`, `decision:data-download-catalog`, `decision:re-stage1-contract`, `decision:re-stage2-policy-knowledge-base`, `handoff:current`
+  - Summary: Completed RE2 with 10 policies, 27 official source records, 56 eligibility Rules, 20 reviewed eligibility examples, 30 financial Events, 11 versions, 217 pre-index chunks, and nine passing tests; updated RE3 expense inputs, RE4 event identity/deduplication, and RE6 session-only eligibility inputs without starting RE3, RAG, Target v2, or model v2.
+
+- `session:20260815-2307`
+  - Started: 2026-08-15T23:07+09:00
+  - Last activity: 2026-08-15T23:40+09:00
+  - Focus: QA and integrate P-01/P-03/P-04/P-05, complete RE Stage 1, compare six provisional policy portfolios, and establish the mandatory end-of-Stage feedback loop.
+  - Updated keys: `decision:mvp-scope`, `decision:implementation-checklist`, `decision:data-download-catalog`, `decision:pre-re1-policy-qa`, `decision:re-stage1-contract`, `convention:stage-result-feedback-loop`, `handoff:current`
+  - Summary: Completed the 1,005-record to 827-group policy integration, generated six provisional portfolios with 62 rows and 25 unique candidates, froze 503 Stage 0-6 files by hash, passed the RE1 guard and eight tests, updated the plan/checklist/guide/log, and changed RE2 to begin only after final policy approval. No new external data, final policy selection, Target, model, Rule, Event, or RAG build occurred.
+
+- `session:20260815-2205`
+  - Started: 2026-08-15T22:05+09:00
+  - Last activity: 2026-08-15T22:58+09:00
+  - Focus: Collect and document P-01 Bizinfo and P-05 SME24 data, including conservative cross-checks, complete variable dictionaries, and verified usage limitations.
+  - Updated keys: `decision:data-download-catalog`, `issue:sme24-date-filter-semantics`, `handoff:current`
+  - Summary: Preserved and verified the SME24 collection and exact Bizinfo crosswalk, then added API-root README files documenting 20 Bizinfo source fields plus 4 candidate fields and 61 SME24 source fields plus 5 candidate and 26 crosswalk fields. Header coverage, core counts, code fences, local links, and trailing whitespace all passed validation.
+
+- `session:20260815-2153`
+  - Started: 2026-08-15T21:53+09:00
+  - Last activity: 2026-08-15T22:00+09:00
+  - Focus: Collect the required Bizinfo current-year announcement feed and produce a bounded small-business candidate dataset with reproducible QA.
+  - Updated keys: `decision:data-download-catalog`, `issue:bizinfo-mixed-registration-years`, `handoff:current`
+  - Summary: Downloaded both advertised API pages without exposing the key, preserved 1,545 raw records, separated 1,521 registrations from 2026, generated 257 discovery-only small-business candidates, and verified response counts, IDs, years, file rows, result codes, and key absence.
+
 - `session:20260815-2014`
   - Started: 2026-08-15T20:14+09:00
-  - Last activity: 2026-08-15T20:47+09:00
-  - Focus: Research competitive differentiation and produce a complete clean-slate-capable redesign blueprint without protecting sunk costs.
-  - Updated keys: `decision:competitive-positioning`, `proposal:policy-intervention-digital-twin`, `handoff:current`
-  - Summary: Confirmed that proactive risk alerts and generic AI bookkeeping overlap current services, then wrote `프로젝트 차별화 구상.md` as a full redesign source document. It recommends deterministic policy cash-flow impact comparison, retires the opaque finance score, freezes Stage 0-6 as baseline evidence, rebuilds a quantile external-scenario model only if it passes a head-to-head Gate, specifies when each new dataset is needed, and defines R0-R8 execution and verification; the current plan, checklist, data, and implementation were not changed.
+  - Last activity: 2026-08-15T22:08+09:00
+  - Focus: Research competitive differentiation, replace the plan and checklist, correct the policy-source hierarchy, and create a verified future-data acquisition catalog while preserving Stage 0-6.
+  - Updated keys: `decision:mvp-scope`, `decision:implementation-checklist`, `decision:policy-source-hierarchy`, `decision:data-download-catalog`, `decision:competitive-positioning`, `decision:recommendation-role-boundary`, `proposal:policy-intervention-digital-twin`, `decision:stage7-finance-burden-policy-v1`, `handoff:current`
+  - Summary: Expanded the plan and checklist, corrected guide links, and clarified the acquisition order: finish P-05 and deduplicate it with P-01 first; P-04 fixed attachments and P-03 shared references can be captured immediately, while P-02 and policy-specific P-03 documents are collected only after approving the 8-12-policy shortlist. No policy application is submitted.
 
 - `session:20260814-1952`
   - Started: 2026-08-14T19:52+09:00

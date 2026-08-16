@@ -1,0 +1,66 @@
+project:
+  stage: RE Stage 2
+  status: complete
+  started_at: "2026-08-15"
+  completed_at: "2026-08-16"
+  gate: passed
+
+portfolio:
+  selected_variant: A+C
+  selection_status: final_user_approved
+  policy_count: 10
+  policy_ids:
+    - POL_SEOUL_FUND_2026
+    - POL_SEOUL_CRISIS_TRACK2_2026H2
+    - POL_SEOUL_CLOSURE_2026
+    - POL_SEOUL_DIGITAL_MIDLIFE_2026H2
+    - POL_SEOUL_ZERO_MARKET_2026_2
+    - POL_SEOUL_SAFETY_TEST_2026H2
+    - POL_SEOUL_RESTART_2026
+    - POL_SEMAS_REFINANCE_2026
+    - POL_SEMAS_RECHALLENGE_2026
+    - POL_SEMAS_STABILITY_VOUCHER_2026
+
+source_contract:
+  official_document_required: true
+  official_application_status_required: true
+  preserve_original: true
+  record_sha256: true
+  unknown_value: 미확인
+  no_inference_for_missing_terms: true
+
+guard:
+  allowed_actions:
+    - finalize_approved_portfolio
+    - collect_selected_policy_documents
+    - extract_selected_policy_documents
+    - structure_policy_metadata
+    - draft_eligibility_rules_from_official_text
+    - structure_financial_metadata
+    - qa_structured_policy_data
+    - review_downstream_impact
+  blocked_until_later_approval:
+    - add_unapproved_policy
+    - delete_source_candidate_pool
+    - infer_missing_official_terms
+    - activate_unverified_policy_rule
+    - activate_unverified_financial_event
+    - create_new_target
+    - train_or_select_model_v2
+    - build_rag_index
+    - deploy_public_service
+
+paths:
+  selected_raw: data/raw_re/policy/selected/2026-08-15
+  selected_processed: data/processed_re/policy/re_stage2
+  reports: reports/re_stage2
+
+outputs:
+  policy_metadata: data/processed_re/policy/re_stage2/policy_metadata.csv
+  eligibility_rules: data/processed_re/policy/re_stage2/eligibility_rules.csv
+  eligibility_examples: data/processed_re/policy/re_stage2/eligibility_examples.csv
+  financial_metadata: data/processed_re/policy/re_stage2/financial_metadata.csv
+  source_manifest: data/processed_re/policy/re_stage2/source_manifest.csv
+  policy_versions: data/processed_re/policy/re_stage2/policy_versions.csv
+  policy_chunks: data/processed_re/policy/re_stage2/policy_chunks.jsonl
+  qa: reports/re_stage2/structured_qa.json

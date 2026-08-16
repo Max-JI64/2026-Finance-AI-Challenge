@@ -1,1467 +1,2158 @@
-# 서울 소상공인 AI 금융 생존 내비게이터
+# 서울 소상공인 정책효과 시뮬레이터
 
-> **MVP 단계별 구현 체크리스트**
+## MVP 단계별 구현 체크리스트
 
-- 기준 문서: [프로젝트 계획서](프로젝트%20계획서.md)
-- 문서 목적: 실제 MVP 개발 과정에서 단계별 작업, 산출물, 검증 결과를 확인하기 위한 실행 문서
-- 최종 목표: **ML 상권환경 상대 위험순위 + 사업체 금융부담 진단 + 정책지원 추천 + 공식자료 기반 RAG 설명이 하나의 배포된 웹서비스에서 동작하는 상태**
-- 진행 원칙: 체크박스는 작업을 시작했을 때가 아니라, 명시된 완료 기준과 증거를 모두 확보했을 때만 완료 처리한다.
+> 문서 상태: Stage 0~6·RE Stage 1~2 완료, A+C 정책 10개 구조화 완료
+> 기준일: 2026-08-16
+> 실행 체계: `Stage 0~6 + RE Stage 1~9`
+> 기준 계획서: `프로젝트 계획서.md`
+> 재설계 근거: `프로젝트 차별화 구상.md`
+> 다음 실행 단계: RE Stage 3 입력·계산 계약 승인 완료, 사용자 재개 요청 전까지 구현 대기
+
+> 데이터 다운로드 기준: [`향후 데이터 다운로드 가이드.md`](./data/raw_re/향후%20데이터%20다운로드%20가이드.md)
+> 수집 역할 고정: 외부 데이터가 필요하면 Codex가 먼저 필요 이유·시점·정확한 범위와 공식 링크를 검색해 안내한다. 다운로드와 프로젝트 원본 폴더 적재는 사용자가 수행하며, Codex는 적재 완료 확인 후 로컬 파일만 전처리·통합·QA·분석한다. 포괄적인 단계 진행 요청은 다운로드·적재 허가가 아니다.
 
 ---
 
-## 1. 이 문서 사용 방법
+## 1. 문서 사용 방법
 
-### 1.1 우선순위
+### 1.1 체크 표기
 
-| 등급 | 의미 | 처리 원칙 |
-| --- | --- | --- |
-| **P0 — 최소 구현 필수** | 이것이 없으면 최종 MVP가 성립하지 않음 | 반드시 구현하고 실제 동작을 검증한다. |
-| **P1 — 품질 보강** | 신뢰도, 설명력, 사용성을 높임 | P0 완료 후 남은 시간에 구현한다. |
-| **P2 — 확장 기능** | 데모 완성도 또는 향후 확장에 유용함 | 제출 안정성을 해치지 않는 범위에서만 진행한다. |
+- `[x]`: 구현·검증·증거 기록까지 완료
+- `[ ]`: 미완료
+- `보류`: 사용자 결정이나 외부조건이 필요해 실행하지 않음
+- `제외`: 승인된 MVP 범위에서 구현하지 않음
+- `동결`: 과거 결과를 수정하지 않고 기준선으로 보존
 
-### 1.2 체크 규칙
+### 1.2 우선순위
 
-- `[ ]` 미완료
-- `[x]` 완료
-- 작업이 끝나면 관련 코드, 데이터, 화면, 로그 또는 보고서 경로를 **완료 증거**에 기록한다.
-- 데이터나 모델이 예상보다 좋지 않아도 결과를 숨기지 않는다. 원인과 현재 한계를 기록하면 단계 검증은 완료될 수 있다.
-- 숫자 기준과 임계값은 데이터 확인 전에 임의로 확정하지 않는다.
-- 모델 성능만으로 완료 처리하지 않는다. 웹 입력부터 결과 출력까지 실제 흐름을 확인한다.
-- Target·임계값·데이터 처리·기간 분할·최종 모델처럼 결과를 실질적으로 바꾸는 사용자 선택이 필요하면 작업을 멈추고 선택지와 권장안을 제시한 뒤 명시적 허락을 받아 재개한다.
-- 사용자 선택이 필요하지 않은 통상 구현은 불필요한 확인을 반복하지 않고 승인된 범위에서 진행한다.
-- 각 Stage는 P0 Gate와 산출물 정확성에 직접 영향을 주는 검증을 우선한다. 필수 조건이 통과하면 비필수 검증 실패만으로 완벽해질 때까지 반복하지 않고, 해당 한계를 기록한 뒤 다음 단계로 진행한다.
-- 동일 검증의 반복은 필수 Gate 실패, 산출물 손상, 핵심 수치 불일치 또는 재현 불가가 있을 때만 수행한다.
+- `P0`: 해당 Gate 통과에 반드시 필요
+- `P1`: 품질과 신뢰성을 위해 권장
+- `P2`: 기본 기능이 완료된 뒤 검토하는 확장
 
-### 1.3 단계별 기록 양식
+### 1.3 필수 기록
 
-각 단계가 끝날 때 아래 항목을 채운다.
+각 단계는 최소 다음을 남긴다.
 
-| 항목 | 기록 |
-| --- | --- |
-| 담당자 |  |
-| 시작일 |  |
-| 완료일 |  |
-| 상태 | 미착수 / 진행 중 / 완료 / 보류 |
-| 완료 증거 | 코드·데이터·보고서·화면 경로 |
-| 남은 문제 |  |
-| 다음 단계 전달사항 |  |
+```text
+담당자
+시작일
+완료일
+상태
+사용한 데이터와 기준일
+실행 명령
+완료 산출물
+검증 결과
+남은 한계
+다음 단계 전달사항
+사용자 승인 기록
+```
+
+### 1.4 사용자 승인 규칙
+
+다음 선택은 실행 전에 멈추고 선택지·영향·권장안을 제시한 뒤 사용자의 명시적 승인을 받는다.
+
+- 서비스 범위 변경
+- 정책 8~12개 최종 선정
+- 개인 입력의 저장·외부 전송
+- Target 정의
+- 데이터 포함·제외
+- 결측·이상치 처리
+- 학습·검증 기간
+- 평가 지표
+- 모델 후보와 최종 모델
+- 기존 Stage 6 유지·교체
+- 대안 비교 목표와 안전현금 기준
+- 외부 배포
+- 되돌리기 어려운 삭제·덮어쓰기
+
+결과 의미를 바꾸지 않는 파일명·함수 분리·테스트 구조 등 통상적인 구현 세부사항은 반복 승인 없이 진행한다.
+
+### 1.5 비례 검증
+
+- 필수 Gate와 결과 정확성에 직접 영향을 주는 항목을 우선한다.
+- 필수 Gate가 통과하면 미관·부가 검증 실패만으로 같은 작업을 반복하지 않는다.
+- 핵심 수치 불일치, 재현 불가, 누수, 손상, 필수 Gate 실패가 있을 때만 재검증한다.
+- 이미 통과한 Stage 0~6 검증은 관련 Artifact를 변경하지 않았다면 반복하지 않는다.
+
+### 1.6 전 단계 공통 종료·환류 규칙
+
+각 Stage는 Gate 검증 직후 반드시 다음 절차를 수행한다.
+
+- 실제 결과와 당초 계획·가정의 차이 확인
+- 후속 Stage의 데이터·Target·Feature·모델·평가지표·정책범위·서비스 출력·일정 영향 확인
+- 수정이 없으면 `후속 단계 수정 없음`과 근거를 보고서·체크리스트·LOG에 기록
+- 수정이 필요하면 다음 Stage 착수 전에 계획서·체크리스트·설정·계약·테스트를 갱신
+- 결과 의미나 범위를 바꾸는 수정은 사용자 승인 후 반영
+- 환류 검토와 필수 수정이 끝나기 전에는 다음 Stage 착수 금지
+
+이 규칙은 Stage 0~6 결과를 다시 사용할 때와 RE Stage 1~9 각각에 동일하게 적용한다. 모든 RE Gate에는 `후속 단계 영향 검토와 필요 수정 완료`를 필수 항목으로 둔다.
 
 ---
 
 ## 2. 최종 MVP 최소 구현선
 
-아래 항목이 모두 완료되어야 **최소 MVP 구현 달성**으로 판단한다.
+### 반드시 구현
 
-- [ ] 사용자가 서울시 상권 또는 사업장 위치와 업종을 입력할 수 있다.
-- [ ] `추정매출-상권`, `점포-상권`, `영역-상권` 원본 데이터를 확보하고 원본을 보존한다.
-- [x] `연도 + 분기 + 상권코드 + 서비스업종코드` 기준의 학습용 Panel Dataset을 생성한다.
-- [x] 향후 2개 분기 상권·업종의 지속적인 매출환경 악화 여부를 나타내는 Target을 생성한다.
-- [x] 시간순 Train/Validation 분할로 Logistic Regression Baseline을 검증한다.
-- [x] LightGBM 또는 XGBoost 중 최소 한 모델을 Baseline과 비교한다.
-- [ ] 선택한 최종 모델이 웹 요청에 대해 상대 위험 Percentile과 우선순위를 반환한다.
-- [ ] 모델 결과와 함께 주요 위험요인을 최소 3개까지 표시한다.
-- [ ] 사용자가 월매출, 임대료, 인건비, 대출잔액, 월상환액을 입력할 수 있다.
-- [ ] 사용자 입력을 이용해 사업체 금융부담 지표와 등급을 계산한다.
-- [ ] 상권환경 상대 위험순위 두 종류와 사업체 금융부담도를 서로 다른 값으로 표시한다.
-- [ ] 사용자 조건에 맞지 않는 정책을 먼저 제외하는 조건 필터가 동작한다.
-- [ ] 남은 정책 후보에 적합도 점수를 부여하고 추천 순위를 반환한다.
-- [ ] RAG가 공식 정책자료를 검색해 추천 이유, 조건, 신청방법을 설명한다.
-- [ ] RAG 답변에 정책명, 제공기관, 공식 URL 또는 근거 문서가 표시된다.
-- [ ] 근거를 찾지 못했을 때 사실을 추측하지 않고 확인 불가 메시지를 반환한다.
-- [ ] 위 기능이 하나의 웹서비스에서 처음부터 끝까지 연결된다.
-- [ ] 실제 배포 URL에서 대표 사용자 시나리오가 정상 동작한다.
-- [ ] 서비스가 대출 승인, 신용평가 또는 확정적 금융판단을 제공하지 않는다는 안내가 표시된다.
+- [ ] 서울 사업장 상권·업종 선택
+- [ ] 간편 개인 현금흐름 입력
+- [ ] 상세 CSV 입력 템플릿
+- [ ] 13주 주별 현금흐름
+- [ ] 6개월 월별 현금흐름
+- [ ] 무대응 시나리오
+- [ ] 하방·기준·회복 매출환경 시나리오 또는 검증된 사용자 충격률 Fallback
+- [x] 공식 정책 10개 구조화
+- [ ] 적격·부적격·추가 확인 필요 자격판정
+- [ ] 보조금·바우처·이차보전·융자·대환·보증의 지원유형 구분
+- [ ] 정책 적용 전후 현금잔액·부채·이자 비교
+- [ ] 최소부채·최장생존·최소상환·빠른실행 목표 중 선택
+- [ ] 공식 근거 RAG
+- [ ] 생성형 AI의 근거·Trade-off 설명
+- [ ] 실제 접근 가능한 웹 URL
+- [ ] 기능명세서와 샘플 검증 절차
+
+### 구현하지 않음
+
+- [x] 개인 점포 폐업확률 제외
+- [x] 개인 부도확률 제외
+- [x] 신용평가 제외
+- [x] 대출 승인확률 제외
+- [x] 실제 대출 실행 제외
+- [x] 정책 신청대행 제외
+- [x] 계좌·카드·POS 자동연동 제외
+- [x] 주민등록번호·계좌번호 수집 제외
+- [x] 정책 수혜 인과효과 예측 제외
+- [x] 전국 모든 정책 완전 수집 제외
 
 ---
 
-## 3. 전체 구현 순서와 통과 Gate
+## 3. 전체 단계와 상태
 
-| 단계 | 핵심 결과 | P0 통과 Gate |
+| 단계 | 상태 | 다음 행동 |
 | --- | --- | --- |
-| 0 | 범위·환경·폴더 구조 확정 | 실행 환경과 최소 구현선이 문서화됨 |
-| 1 | 핵심 원본 데이터 확보 | 필수 3종 원본과 데이터 목록이 존재함 |
-| 2 | 데이터 품질 검증 | 키, 기간, 중복, 결측, 코드 일관성 결과가 기록됨 |
-| 3 | Panel Dataset 구축 | 고객 입력과 연결 가능한 학습 테이블이 생성됨 |
-| 4 | Target·시간 분할 확정 | 미래정보 누수 없는 학습/검증 세트가 생성됨 |
-| 4.5 | 모델링 EDA·파생변수·Feature contract | 변수 관계와 Target 관계가 표로 분석되고 승인된 모델 입력 변수가 고정됨 |
-| 5 | Baseline·후보 모델 학습 | Baseline과 후보 모델 비교표가 존재함 |
-| 6 | 상대 위험 순위·설명 모듈 완성 | 입력 키에 대해 비교집단 내 Percentile·우선순위·주요 요인이 반환됨 |
-| 7 | 금융부담 진단 완성 | 사용자 입력으로 내부 금융부담 결과가 반환됨 |
-| 8 | 정책자료·추천 Engine 완성 | 조건 필터와 추천 Ranking이 동작함 |
-| 9 | RAG 답변 완성 | 공식 근거가 포함된 답변과 실패 처리가 동작함 |
-| 10 | 백엔드 통합 | 하나의 요청으로 전체 분석 결과가 반환됨 |
-| 11 | 웹 화면 완성 | 입력부터 종합 리포트까지 사용자 흐름이 연결됨 |
-| 12 | 배포·최종 QA | 공개 URL과 재현 가능한 데모가 확보됨 |
+| Stage 0 | 완료 | 보존 |
+| Stage 1 | 완료 | 기존 원본 보존 |
+| Stage 2 | 완료 | 기존 QA 보존 |
+| Stage 3 | 완료 | Panel v1 동결 |
+| Stage 4 | 완료 | 이진 Target v1 동결 |
+| Stage 4.5 | 완료 | 분류 EDA·Feature contract 동결 |
+| Stage 5 | 완료 | LightGBM v1·2025 평가 동결 |
+| Stage 6 | 완료 | 상대 위험순위·설명 보존 |
+| RE Stage 1 | 완료 | 서비스 계약·Artifact 동결·Guard·6개 비교안 |
+| RE Stage 2 | 완료 | A+C 10개·자격 Rule 56개·금융 Event 30개 |
+| RE Stage 3 | 다음 단계 | 개인 현금흐름 엔진 |
+| RE Stage 4 | 대기 | 정책 금융 이벤트 |
+| RE Stage 5 | 대기 | Target v2·Quantile 모델 |
+| RE Stage 6 | 대기 | 자격판정·RAG·AI 설명 |
+| RE Stage 7 | 대기 | 개입안 비교 엔진 |
+| RE Stage 8 | 대기 | API·웹 통합 |
+| RE Stage 9 | 대기 | 배포·제출 QA |
 
-### 핵심 의존 관계
+### 의존 관계
 
 ```text
-필수 데이터 확보
-    ↓
-데이터 품질 검증
-    ↓
-Panel Dataset → Target/시간 분할 → 모델링 EDA·파생변수 → ML 모델 → 상대 순위/설명
-                                                               ↓
-사용자 입력 → 금융부담 진단 ────────────────────────────────→ 상대 위험·금융부담 프로필
-                                                               ↓
-정책자료 → 조건 필터 → 추천 Ranking → RAG 설명
-                                                               ↓
-                                                        웹 통합·배포
+Stage 0~6 완료
+      ↓
+RE 1 서비스 계약
+      ├─────────────┐
+      ↓             ↓
+RE 2 정책데이터    RE 3 개인 현금흐름
+      ↓             ↓
+RE 4 정책 금융이벤트
+      ├─────────────┐
+      ↓             ↓
+RE 5 외부모델 v2   RE 6 자격·RAG
+      └──────┬──────┘
+             ↓
+RE 7 대안 비교
+             ↓
+RE 8 API·웹
+             ↓
+RE 9 배포·제출
 ```
 
 ---
 
-## 4. 단계 0 — 범위 확정과 개발 기반 준비
+# Part 1. 완료된 Stage 0~6
 
-### 목표
+## Stage 0 — 범위 확정과 개발 기반 준비
 
-팀이 같은 최소 구현선을 기준으로 개발하고, 데이터·모델·웹 결과를 재현할 수 있는 구조를 만든다.
+### 상태
 
 | 항목 | 기록 |
 | --- | --- |
-| 담당자 | 1인 팀 사용자 / Codex 구현 지원 |
 | 시작일 | 2026-08-14 |
 | 완료일 | 2026-08-14 |
-| 상태 | 완료 |
-| 완료 증거 | `README.md`, `.python-version`, `requirements.txt`, `pyproject.toml`, `.env.example`, `config/settings.yaml`, `reports/stage0/`, `scripts/verify_stage0.ps1`, `app/main.py`, `tests/` |
-| 남은 문제 | Stage 0 범위에서는 없음 |
-| 다음 단계 전달사항 | 사용자가 직접 준비한 원본 데이터만 대상으로 Stage 1 목록을 마감하고, 전처리 전 Stage 2 품질검증 계획을 확정함 |
+| 상태 | 완료·동결 |
+| 기존 Gate | 통과 |
+| 다음 적용 | RE 공통 개발기반으로 재사용 |
 
-### P0 — 최소 구현 필수
+### 완료 체크
 
-- [x] 1인 팀 구성원이 최종 MVP 정의와 포함·제외 범위를 확인한다.
-- [x] ML과 RAG를 모두 최종 제출 범위에 포함한다.
-- [x] 예측 대상이 **개별 점포 폐업확률이 아니라 다음 분기 상권·업종 매출환경 악화 위험**임을 확정한다.
-- [x] 외부 상권환경 상대 위험순위와 내부 금융부담도를 분리해 표시하기로 확정한다.
-- [x] 실제 대출 승인, 신용평가, 부도확률 예측을 구현 범위에서 제외한다.
-- [x] Python 버전과 패키지 설치 방법을 기록한다.
-- [x] 비밀키와 API 키를 코드에 직접 저장하지 않는 방식을 정한다.
-- [x] 원본 데이터, 중간 데이터, 최종 데이터, 모델, RAG 문서, 앱 코드를 분리한다.
-- [x] 난수 시드와 주요 설정값을 설정 파일에서 관리한다.
-- [x] 1인 팀의 표준 Windows Python 환경에서 README 실행 방법과 자동 검증 명령을 확인한다.
+- [x] 1인 팀 사용자와 Codex 지원 구조 확정
+- [x] Python 3.13.1 환경 기록
+- [x] ML과 RAG를 기존 제출 범위에 포함
+- [x] 개별 점포 폐업확률을 예측하지 않는 범위 확정
+- [x] 실제 대출 승인·신용평가·부도확률 제외
+- [x] 비밀키를 코드에 저장하지 않는 방식 확정
+- [x] 원본·중간·가공 데이터 분리
+- [x] 모델·RAG·앱·테스트·보고서 분리
+- [x] 중앙 설정과 난수 시드 관리
+- [x] `/health`와 `/scope` 구현
+- [x] README와 검증 명령 확인
 
-### 권장 폴더 구조
+### 완료 증거
 
-```text
-project/
-├─ data/
-│  ├─ raw/                 # 다운로드한 원본, 수정 금지
-│  ├─ interim/             # 정제·결합 중간 결과
-│  └─ processed/           # 학습 및 서비스용 최종 데이터
-├─ models/                 # 학습된 모델과 전처리 객체
-├─ rag/
-│  ├─ documents/           # 정책 원문 또는 정제 문서
-│  ├─ metadata/            # 정책 조건 구조화 결과
-│  └─ index/               # 검색 인덱스
-├─ src/
-│  ├─ data/                # 수집·검증·전처리
-│  ├─ features/            # Feature 생성
-│  ├─ modeling/            # 학습·평가·예측
-│  ├─ finance/             # 금융부담 진단
-│  ├─ recommendation/      # 조건 필터·추천 Ranking
-│  └─ rag/                 # 검색·답변 생성
-├─ app/                    # 백엔드·프론트엔드
-├─ tests/                  # 핵심 로직 테스트
-├─ reports/                # QA, 성능표, 그림, 데모 기록
-├─ config/                 # 임계값·가중치·경로 설정
-└─ README.md               # 설치·실행·배포 방법
-```
+- [x] `README.md`
+- [x] `.python-version`
+- [x] `requirements.txt`
+- [x] `pyproject.toml`
+- [x] `.env.example`
+- [x] `config/settings.yaml`
+- [x] `src/settings.py`
+- [x] `app/main.py`
+- [x] `reports/stage0/mvp_scope.md`
+- [x] `scripts/verify_stage0.ps1`
+- [x] Stage 0 테스트 `8 passed`
+- [x] 실제 `GET /health` HTTP 200
 
-### 완료 산출물
+### RE 전달사항
 
-- [x] 저장소 기본 구조
-- [x] 실행 환경 파일
-- [x] 설정 파일 예시
-- [x] README 초안
-- [x] MVP 포함·제외 범위표
-
-### Gate 0 통과 기준
-
-- [x] README와 검증 스크립트로 기본 애플리케이션 및 테스트 명령을 재현했다.
-- [x] 1인 팀 구성원이 “무엇을 예측하는가”와 “무엇을 예측하지 않는가”를 범위표와 `/scope` 응답으로 확인했다.
-
-**완료 증거:**
-
-- 구조·환경·보안: `README.md`, `requirements.txt`, `pyproject.toml`, `.env.example`, `.gitignore`
-- 중앙 설정: `config/settings.yaml`, `src/settings.py`
-- 최소 서비스: `app/main.py`의 `/health`, `/scope`
-- 범위표: `reports/stage0/mvp_scope.md`
-- 자동 검증: `scripts/verify_stage0.ps1` → Python 3.13.1, 의존성 Import 성공, `8 passed` (2026-08-14)
-- 실제 HTTP 검증: 임시 Uvicorn 서버의 `GET /health` → HTTP 200, `{"status":"ok","version":"0.1.0"}` (2026-08-14)
-- 최종 판정: 1인 팀 기준 Stage 0 Gate 통과 (2026-08-14)
+- [ ] 기존 경로와 충돌하지 않는 RE 전용 경로 승인
+- [ ] `src/cashflow/`, `src/policy/`, `src/scenario/`, `src/decision/` 후보 검토
+- [ ] `data/raw_re/`, `data/processed_re/`, `reports/re_stage*/` 후보 검토
+- [ ] 기존 Stage 0~6 파일 이동·덮어쓰기 금지 Guard 확인
 
 ---
 
-## 5. 단계 1 — 핵심 데이터 확보와 원본 보존
+## Stage 1 — 서울 상권 원본데이터 확보와 보존
 
-### 목표
-
-ML Panel Dataset 생성에 필요한 필수 데이터를 먼저 확보한다.
+### 상태
 
 | 항목 | 기록 |
 | --- | --- |
-| 담당자 | 1인 팀 사용자 — 직접 수집 / Codex — 원본 목록·품질검증 문서화 |
 | 시작일 | 2026-08-14 |
 | 완료일 | 2026-08-14 |
-| 상태 | 완료 |
-| 완료 증거 | `data/raw/README.md`, `data/raw/`의 1~9번 원본 파일, `reports/stage2/period_coverage.csv`, `reports/stage2/key_quality.csv` |
-| 남은 문제 | 현재 제공본에는 원본 ZIP이 없으므로 향후 재수집 시 ZIP과 해제본을 함께 보존해야 함 |
-| 다음 단계 전달사항 | 확정 행 수와 기간을 기준으로 Stage 2 검증 및 Stage 3 Panel 구축에 사용함 |
+| 상태 | 완료·원본 보존 |
+| 기존 Gate | 통과 |
+| 다음 적용 | Quantile Baseline 후보 데이터 |
 
-### P0 — 반드시 확보
+### 완료 체크
 
-- [x] `추정매출-상권` 데이터를 내려받는다.
-- [x] `점포-상권` 데이터를 내려받는다.
-- [x] `영역-상권` 데이터를 내려받는다.
-- [x] 다운로드 파일을 수정하지 않고 `data/raw/`에 보존한다.
-- [x] 각 파일의 출처, 작업공간 확인일, 대상 기간, 파일명, 크기를 데이터 목록에 기록한다. 실제 다운로드일을 파일 수정시각으로 추정하지 않는다.
-- [x] 현재 제공본에 압축파일이 없음을 확인하고, 향후 받을 경우 원본 ZIP과 해제 결과를 구분하는 규칙을 기록한다.
-- [x] 문자 인코딩, 구분자, 좌표계, 파일 형식을 확인한다.
-- [x] 원본 행 수와 열 수를 기록한다.
+- [x] 추정매출-상권 확보
+- [x] 점포-상권 확보
+- [x] 영역-상권 확보
+- [x] 길단위인구-상권 확보
+- [x] 상권변화지표-상권 확보
+- [x] 상주인구-상권 확보
+- [x] 직장인구-상권 확보
+- [x] 집객시설-상권 확보
+- [x] 아파트-상권 확보
+- [x] `data/raw/` 원본 수정 금지
+- [x] 출처·확인일·기간·파일명·크기 기록
+- [x] 인코딩·구분자·좌표계·형식 확인
+- [x] 현재 제공본의 원본 ZIP 부재 기록
+- [x] 향후 갱신 시 덮어쓰지 않는 규칙 확정
 
-### P1 — 우선 추가
+### 완료 증거
 
-- [x] `길단위인구-상권` 데이터를 확보한다.
-- [x] `상권변화지표-상권` 데이터를 확보한다.
+- [x] `data/raw/README.md`
+- [x] `data/raw/` 1~9번 원본
+- [x] `reports/stage2/period_coverage.csv`
+- [x] `reports/stage2/key_quality.csv`
 
-### P2 — 모델 개선 실험용
+### RE 전달사항
 
-- [x] `상주인구-상권` 데이터를 확보한다.
-- [x] `직장인구-상권` 데이터를 확보한다.
-- [x] `집객시설-상권` 데이터를 확보한다.
-- [x] `아파트-상권` 데이터를 확보한다.
-
-### 수집 원칙
-
-- [x] 데이터 다운로드 링크는 `프로젝트 계획서.md`의 링크 모음을 기준으로 사용한다.
-- [x] 현재 ML 핵심에서 제외한 `소비-상권`을 P0 Feature에 포함하지 않는다.
-- [x] 파일 또는 API 중 실제 수집에 적합한 방식을 선택하고 선택 이유를 기록한다.
-- [x] 데이터 갱신 시 기존 파일을 덮어쓰지 않고 버전 또는 기준일을 구분한다.
-
-### 완료 산출물
-
-- [x] `data_inventory` 문서 또는 테이블
-- [x] 필수 3종 원본 파일
-- [x] 원본 스키마 요약
-- [x] 데이터별 수집·갱신 메모
-
-### Gate 1 통과 기준
-
-- [x] 필수 3종 파일의 헤더와 제한된 표본을 실제로 읽을 수 있다.
-- [x] 각 파일에서 분석에 필요한 기준연도, 기준분기, 상권코드, 업종코드 또는 공간정보를 확인했다.
-- [x] 원본 데이터가 가공 데이터와 분리되어 있다.
-
-**완료 증거:**
-
-- 원본 목록·변수표: `data/raw/README.md`
-- 확인 범위: CSV별 첫 64 KiB, 앞·뒤 각 최대 5행, DBF 헤더와 최대 5개 속성 레코드
-- 수집 확인: 계획서 1~9번 데이터 모두 존재
-- 별도 참고 파일: `상권변화지표-자치구`, `직장인구-상권배후지`
-- 보류: 원본 ZIP 보존 여부와 CSV 전체 행 수는 미확인
+- [ ] 신규 정책 데이터는 기존 상권 원본과 분리
+- [ ] 신규 상가·인허가·날씨 데이터는 RE Stage 5 전에는 대량수집하지 않음
+- [ ] 기존 1~9번 원본 해시·경로 보존
 
 ---
 
-## 6. 단계 2 — 핵심 데이터 품질 검증
+## Stage 2 — 기존 데이터 품질검증
 
-### 목표
-
-데이터를 결합하기 전에 키의 의미, 기간, 중복, 결측, 코드체계 변화를 확인한다.
+### 상태
 
 | 항목 | 기록 |
 | --- | --- |
-| 담당자 | 1인 팀 사용자 / Codex 계획·검증 실행 |
 | 시작일 | 2026-08-14 |
 | 완료일 | 2026-08-14 |
-| 상태 | 완료 |
-| 완료 증거 | `src/data/run_stage2_quality.py`, `reports/stage2/quality_validation_plan.md`, `reports/stage2/qa_summary.md`, `reports/stage2/*.csv` |
-| 남은 문제 | 공간 원본의 유효하지 않은 도형 6건, 일부 상권명 변경, 개·폐업률 100 초과 원본값은 자동 수정하지 않고 검토 대상으로 보존 |
-| 다음 단계 전달사항 | 공통기간 2021Q1~2025Q4, 매출 기준 left join, 원본 결측·극단값 보존 규칙을 Stage 3에 적용함 |
+| 상태 | 완료·QA 보존 |
+| 기존 Gate | 통과 |
+| 사용 기간 | 2021Q1~2025Q4 |
 
-### P0 — 구조 검증
+### 완료 체크
 
-- [x] 각 데이터의 실제 컬럼명을 표준 컬럼명과 매핑한다.
-- [x] 기준연도와 기준분기의 자료형과 값 범위를 확인한다.
-- [x] 상권코드와 상권명의 1:1 또는 변경 관계를 확인한다.
-- [x] 서비스업종코드와 서비스업종명의 1:1 또는 변경 관계를 확인한다.
-- [x] `연도 + 분기 + 상권코드 + 서비스업종코드` 중복 행을 확인한다.
-- [x] 중복이 존재할 경우 집계 단위와 중복 원인을 확인한 뒤 처리 규칙을 기록한다. 실제 기본키 중복은 0건이다.
-- [x] 상권 영역의 좌표계가 EPSG:5181인지 확인한다.
-- [x] 잘못된 도형, 빈 도형, 중복 상권 영역을 확인한다.
+- [x] 실제 컬럼과 표준 컬럼 매핑
+- [x] 연도·분기 자료형과 범위 확인
+- [x] 상권·업종 코드와 명칭 관계 확인
+- [x] 기본키 중복 확인
+- [x] EPSG:5181 좌표계 확인
+- [x] 유효하지 않은 도형 확인
+- [x] 2021~2025 기간 커버리지 확인
+- [x] 상권·업종 신규·소멸 코드 확인
+- [x] 분기 누락률 확인
+- [x] 매출·점포·영역 결합률 확인
+- [x] 결측·음수·극단값·비율 단위 확인
+- [x] 매출 0과 결측 구분
+- [x] 극단값 자동삭제 금지
 
-### P0 — 기간·연결성 검증
+### 핵심 결과
 
-- [x] 2021~2025년 각 연도의 실제 제공 여부를 확인한다.
-- [x] 연도별·분기별 행 수를 집계한다.
-- [x] 연도별 상권코드 수와 신규·소멸 코드를 확인한다.
-- [x] 연도별 업종코드 수와 신규·소멸 코드를 확인한다.
-- [x] 상권×업종별 분기 누락률을 계산한다.
-- [x] 추정매출에는 있으나 점포 데이터에는 없는 키를 확인한다.
-- [x] 점포 데이터에는 있으나 추정매출에는 없는 키를 확인한다.
-- [x] 상권 영역과 연결되지 않는 상권코드를 확인한다.
+- [x] 기본키 중복 0건
+- [x] 매출→영역 미매칭 0건
+- [x] 전체 20분기 누락률 18.1013%
+- [x] 활성기간 내부 누락률 3.4592%
+- [x] 매출·점포 핵심 기본키 결측 0건
+- [x] 유효하지 않은 도형 6건 기록
+- [x] 개·폐업률 100 초과 원본값 자동수정 없이 보존
 
-### P0 — 값 품질 검증
+### 완료 증거
 
-- [x] 매출 관련 핵심 컬럼의 결측률을 계산한다.
-- [x] 점포 수 관련 핵심 컬럼의 결측률을 계산한다.
-- [x] 음수 매출, 음수 점포 수 등 논리적으로 불가능한 값을 확인한다.
-- [x] 매출 0과 결측치를 구분한다.
-- [x] 극단적인 매출증감률과 점포증감률을 확인한다.
-- [x] 폐업률, 개업률 등 비율 변수의 단위와 범위를 확인한다.
-- [x] 금액 단위와 인구 단위를 원본 변수 정의 기준으로 확인한다.
+- [x] `src/data/run_stage2_quality.py`
+- [x] `reports/stage2/quality_validation_plan.md`
+- [x] `reports/stage2/qa_summary.md`
+- [x] `reports/stage2/schema_mapping.md`
+- [x] `reports/stage2/period_coverage.csv`
+- [x] `reports/stage2/key_quality.csv`
+- [x] `reports/stage2/missingness.csv`
+- [x] `reports/stage2/logical_checks.csv`
+- [x] `reports/stage2/join_coverage.csv`
+- [x] `reports/stage2/panel_gap_summary.csv`
+- [x] `reports/stage2/outlier_summary.csv`
+- [x] `reports/stage2/spatial_quality.csv`
+- [x] `reports/stage2/code_coverage.csv`
 
-### 필수 QA 표
+### RE 전달사항
 
-| 검증 항목 | 결과 | 처리 규칙 | 증거 경로 |
-| --- | --- | --- | --- |
-| 상권코드 일관성 | 매출→영역 미매칭 0건, 일부 코드명 변경 관찰 | 코드를 키로 사용하고 이름은 시점별 원값 보존 | `key_quality.csv`, `join_coverage.csv` |
-| 서비스업종코드 일관성 | 매출·점포 코드명 관계와 연도별 신규·소멸 집계 완료 | 코드를 키로 사용하고 이름은 원값 보존 | `key_quality.csv`, `code_coverage.csv` |
-| 상권×업종별 분기 누락률 | 전체 20분기 기준 18.1013%, 조합별 활성기간 내부 3.4592% | 실제 직전분기가 없으면 변화율 결측 | `panel_gap_summary.csv` |
-| 매출 결측치 | 핵심 총매출·총건수 및 기본키 결측 0건 | 0과 결측을 구분하고 삭제하지 않음 | `missingness.csv` |
-| 점포 수 결측치 | 기본키·점포 핵심열 결측 0건 | 원값 보존 | `missingness.csv` |
-| Target 생성 가능 행 수 | 연속 다음 분기가 있는 현재행 406,787건 | Target 값은 Stage 4에서만 생성 | `qa_summary.md` |
-| 업종별 데이터 수 | 분기별 고유 업종 수와 연도별 신규·소멸 집계 완료 | 희소 업종 제거는 모델링 전 별도 판단 | `period_coverage.csv`, `code_coverage.csv` |
-| 상권별 데이터 수 | 분기별 고유 상권 수와 연도별 신규·소멸 집계 완료 | 소멸·신규 코드는 그대로 보존 | `period_coverage.csv`, `code_coverage.csv` |
-| 매출증감률 분포 | 전분기 p01 -0.8119, p99 4.8182; 극단 최대값 관찰 | 자동 제거하지 않고 모델링 전 검토 | `reports/stage3/feature_quality.csv` |
-| Target 클래스 비율 | 미생성 | Stage 4 Target 정의 후 계산 | Stage 4 이관 |
-
-### Gate 2 통과 기준
-
-- [x] 데이터별 기본 키와 집계 단위를 한 문장으로 설명할 수 있다.
-- [x] 결합되지 않는 키의 비율과 처리 방식을 기록했다.
-- [x] 결측과 이상치를 조용히 삭제하지 않고 처리 근거를 남겼다.
-- [x] 이후 단계에서 사용할 수 있는 기간을 2021Q1~2025Q4로 확정했다.
-
-**완료 증거:**
-
-- 실행 코드: `src/data/run_stage2_quality.py`
-- 계획과 종합 결과: `reports/stage2/quality_validation_plan.md`, `reports/stage2/qa_summary.md`
-- 상세 결과: `reports/stage2/schema_mapping.md`, `period_coverage.csv`, `key_quality.csv`, `missingness.csv`, `logical_checks.csv`, `join_coverage.csv`, `panel_gap_summary.csv`, `outlier_summary.csv`, `spatial_quality.csv`, `code_coverage.csv`
-- Gate 2 최종 판정: 통과 (2026-08-14)
+- [ ] 정책 데이터 QA는 RE Stage 2에서 별도 수행
+- [ ] 개인 입력 QA는 RE Stage 3에서 별도 수행
+- [ ] 신규 외부환경 데이터 QA는 RE Stage 5에서 별도 수행
+- [ ] 기존 QA를 새 데이터의 품질 근거로 대신하지 않음
 
 ---
 
-## 7. 단계 3 — 학습용 Panel Dataset 구축
+## Stage 3 — 상권×업종×분기 Panel 구축
 
-### 목표
-
-상권·업종·분기별 한 행을 갖는 재현 가능한 학습 테이블을 만든다.
+### 상태
 
 | 항목 | 기록 |
 | --- | --- |
-| 담당자 | 1인 팀 사용자 / Codex 전처리·검증 실행 |
 | 시작일 | 2026-08-14 |
 | 완료일 | 2026-08-14 |
-| 상태 | Gate 3 완료 — P1 생활인구 변화율과 학습용 결측 처리 객체는 후속 Stage로 이관 |
-| 완료 증거 | `src/data/build_stage3_panel.py`, `data/processed/stage3_panel.parquet`, `reports/stage3/` |
-| 남은 문제 | 보조 데이터 미매칭 플래그와 통계적 극단값을 Stage 4~5에서 처리할지 결정해야 함 |
-| 다음 단계 전달사항 | 439,141행 × 199열, 2021Q1~2025Q4 Panel을 사용해 Stage 4 Target과 시간 분할을 설계함 |
+| 상태 | 완료·Panel v1 동결 |
+| 기존 Gate | 통과 |
+| 결과 | 439,141행 × 199열 |
 
-### P0 — 기준 테이블
+### 완료 체크
 
-- [x] 기본 키를 `기준연도 + 기준분기 + 상권코드 + 서비스업종코드`로 설정한다.
-- [x] 추정매출 데이터를 기준 테이블로 사용할지 명시한다.
-- [x] 점포 데이터를 동일 키로 결합한다.
-- [x] 결합 전후 행 수를 기록한다.
-- [x] JOIN이 1:1인지 검증한다.
-- [x] JOIN으로 행이 예상치 않게 증가하거나 감소하면 원인을 해결한다.
-- [x] 상권명과 서비스업종명은 코드와 함께 보존한다.
+- [x] 기본키 `연도 + 분기 + 상권 + 업종` 확정
+- [x] 추정매출 기준 left join
+- [x] 점포 데이터 동일 키 결합
+- [x] 보조 데이터 분기×상권 결합
+- [x] 결합 전후 행 수 기록
+- [x] 1:1 JOIN 검증
+- [x] 상권명·업종명 보존
+- [x] 현재·과거 Feature만 생성
+- [x] 미래정보 Feature 제외
+- [x] 변화율 분모 0 처리
+- [x] 과거 이력 부족 플래그
+- [x] P0·P1·P2 데이터군 포함
+- [x] 기본키 중복 0건
+- [x] 두 번 실행해 동일 행·열·SHA-256
+- [x] 상권·업종 3개 수작업 대조
 
-### P0 — 기본 Feature
+### 완료 증거
 
-- [x] 현재 분기 매출
-- [x] 전분기 매출증감률
-- [x] 전년 동기 매출증감률
-- [x] 최근 2개 분기 매출변화 또는 추세
-- [x] 최근 4개 분기 매출추세
-- [x] 주말 매출 비중 또는 사용 가능한 매출구조 변수
-- [x] 점포 수
-- [x] 점포 증가율
-- [x] 신규 개업률 또는 개업 수
-- [x] 폐업률 또는 폐업 수
-- [x] 프랜차이즈 비율
-- [x] 연도와 분기
-- [x] 서비스업종과 상권유형 등 범주형 변수
+- [x] `src/data/build_stage3_panel.py`
+- [x] `data/processed/stage3_panel.parquet`
+- [x] `reports/stage3/data_dictionary.csv`
+- [x] `reports/stage3/feature_definitions.md`
+- [x] `reports/stage3/join_row_counts.csv`
+- [x] `reports/stage3/manual_spot_check.csv`
+- [x] `reports/stage3/feature_quality.csv`
+- [x] `reports/stage3/reproducibility_check.json`
+- [x] `reports/stage3/panel_manifest.json`
 
-### P1 — 추가 Feature
+### RE 전달사항
 
-- [ ] 생활인구 규모와 변화율 — 규모는 포함, 변화율은 후속 Feature 선택 단계로 이관
-- [x] 시간대별·연령대별 생활인구 요약
-- [x] 평균 영업기간
-- [x] 폐업 사업체 평균 영업기간
-- [x] 상권변화지표
-
-### P2 — 개선 실험 Feature
-
-- [x] 상주인구
-- [x] 직장인구
-- [x] 집객시설
-- [x] 아파트 관련 지표
-
-### 누수·결측 방지
-
-- [x] 모든 Feature가 예측 시점 이전에 알 수 있는 정보인지 확인한다.
-- [x] 미래 분기 값을 현재 Feature에 포함하지 않는다.
-- [x] Rolling Feature 계산 시 현재·미래 데이터 포함 범위를 명시한다.
-- [x] 변화율 계산의 분모가 0인 경우 처리 규칙을 정한다.
-- [x] 첫 분기처럼 과거 이력이 부족한 행을 별도로 표시한다.
-- [ ] 결측치 처리 객체는 학습 데이터에만 맞추고 검증 데이터에 적용한다. Stage 4 시간 분할 후 구현한다.
-
-### 완료 산출물
-
-- [x] 재실행 가능한 Panel Dataset 생성 코드
-- [x] 최종 Panel Dataset 파일
-- [x] 데이터 사전
-- [x] Feature별 계산식과 시점 정의
-- [x] JOIN 및 행 수 QA 결과
-
-### Gate 3 통과 기준
-
-- [x] 최종 키 중복이 0건이다.
-- [x] 같은 원본으로 코드를 다시 실행했을 때 같은 439,141행·199열·SHA-256을 생성했다.
-- [x] 임의의 상권·업종 3개를 골라 원본과 계산 결과를 수작업 대조표로 확인했다.
-
-**완료 증거:**
-
-- 생성 코드: `src/data/build_stage3_panel.py`
-- 최종 Panel: `data/processed/stage3_panel.parquet` — 439,141행 × 199열, 2021Q1~2025Q4
-- 데이터 사전·Feature 정의: `reports/stage3/data_dictionary.csv`, `reports/stage3/feature_definitions.md`
-- 행 수·수작업 대조·분포: `reports/stage3/join_row_counts.csv`, `manual_spot_check.csv`, `feature_quality.csv`
-- 재현성: `reports/stage3/reproducibility_check.json` — 2회 동일 SHA-256
-- 생성 명세: `reports/stage3/panel_manifest.json`
-- Gate 3 최종 판정: 통과 (2026-08-14)
+- [ ] Panel v1 덮어쓰기 금지
+- [ ] Target v2 승인 후에만 Panel v2 생성
+- [ ] 기존 Feature Baseline과 신규 데이터 Ablation 분리
+- [ ] Panel v2 별도 Manifest·해시 생성
 
 ---
 
-## 8. 단계 4 — Target과 시간순 검증 설계
+## Stage 4 — 이진 지속악화 Target과 시간순 검증
 
-### 목표
-
-향후 2개 분기의 지속적인 매출환경 악화 위험을 재현 가능하게 정의하고 미래정보 누수를 막는다.
+### 상태
 
 | 항목 | 기록 |
 | --- | --- |
-| 담당자 | 1인 팀 사용자 / Codex 후보 분석 |
 | 시작일 | 2026-08-14 |
 | 완료일 | 2026-08-15 |
-| 상태 | Gate 4 완료 — 10% 지속 악화 Target·4개 시간순 Fold·잠긴 테스트 분리 완료 |
-| 완료 증거 | `config/stage4.yaml`, `src/data/build_stage4_dataset.py`, `data/processed/stage4_development.parquet`, `data/processed/stage4_fold_membership.parquet`, `reports/stage4/stage4_manifest.json` |
-| 남은 문제 | 전처리·인코딩의 Fold별 Train-only Fit과 실제 모델 평가는 Stage 5에서 수행하며, 2025 잠긴 테스트 Target은 최종 모델 확정 전까지 생성·열람하지 않음 |
-| 다음 단계 전달사항 | Stage 5 후보 모델 목록을 사용자 승인 후 같은 4개 Fold에서 무튜닝 비교하고, 최종 후보 1개에만 Optuna를 적용함 |
+| 상태 | 완료·모델 v1 전용 동결 |
+| 기존 Gate | 통과 |
+| 개발행 | 222,973 |
+| 양성 | 56,369·25.28% |
 
-### P0 — Target 생성
+### 완료 체크
 
-- [x] 각 행에 향후 1·2분기 매출과 각 분기의 전년 동기 매출을 연결한다.
-- [x] 향후 2개 분기 데이터가 없는 마지막 시점은 학습 Target 생성 대상에서 제외한다.
-- [x] 두 미래 분기와 전년동기 분기가 연속되는지 확인한다.
-- [x] 두 미래 분기가 각각 전년동기보다 감소하고 합산 매출도 기준 이상 감소하는 Target 후보를 비교한다.
-  - [x] 합산 전년동기 대비 -5%~-20% 고정 기준 민감도
-- [x] 후보별 양성 클래스 비율을 계산한다.
-- [x] 업종별·연도별 Target 비율을 확인한다.
-- [x] 최종 임계값의 선택 근거를 기록한다.
-  - 두 미래 분기가 모두 감소해야 한다는 선행 조건으로 일시적·계절적 하락을 거르고, 합산 10% 감소 기준으로 미세 감소를 제외하면서 개발 양성률 25.28%를 유지한다.
-  - 임계값 선택에는 잠긴 2025 Target 통계를 사용하지 않았다.
+- [x] 향후 2개 분기 연결
+- [x] 두 미래 분기 각각 전년동기 대비 감소 조건
+- [x] 두 미래 분기 합산 -10% 이하 조건
+- [x] 개발기간에서 -5%~-20% 민감도 검토
+- [x] Target 선택에 잠긴 2025 통계 미사용
+- [x] 랜덤 분할 금지
+- [x] 2024Q1~Q4 expanding-window 4개 Fold
+- [x] Target 창 겹침 방지 1분기 Purge
+- [x] 2025Q1~Q4 잠긴 테스트 지정
+- [x] Feature·Target 시점 예시 문서화
 
-### P0 — 학습/검증 분할
+### 완료 증거
 
-- [x] 랜덤 Train/Test Split을 사용하지 않는다.
-- [x] 학습 기간과 검증 기간을 시간순으로 구분한다.
-- [ ] 전처리와 인코딩을 학습 세트에만 Fit한다. Stage 5 모델 Pipeline에서 수행한다.
-- [x] 두 분기 Target 창이 학습과 검증에 겹치지 않도록 한 분기 Purge를 적용한다.
-- [x] 2025년을 잠긴 최종 테스트로 지정해 모델 선택 과정에서 사용하지 않는다.
+- [x] `config/stage4.yaml`
+- [x] `src/data/build_stage4_dataset.py`
+- [x] `data/processed/stage4_development.parquet`
+- [x] `data/processed/stage4_fold_membership.parquet`
+- [x] `reports/stage4/target_definition.md`
+- [x] `reports/stage4/stage4_manifest.json`
 
-### P1 — 안정성 검증
+### RE 전달사항
 
-- [ ] 여러 시간 구간을 이용한 Walk-forward 검증을 수행한다.
-- [ ] 업종별 성능 편차를 확인한다.
-- [ ] 상권유형별 성능 편차를 확인한다.
-- [ ] 확률값을 사용할 경우 Calibration 상태를 확인한다.
-
-### Gate 4 통과 기준
-
-- [x] 한 행의 Feature 시점과 Target 시점을 예시로 설명할 수 있다.
-- [x] Target 정의와 클래스 비율이 문서화되어 있다.
-- [x] 학습·검증 분할 코드와 기간이 고정되어 있다.
-
-**최종 Target 정의:** 향후 두 분기가 각각 전년동기보다 감소하고, 두 분기 합산 매출이 전년동기 합계보다 10% 이상 감소한 경우 1
-
-**개발기간 클래스 비율:** 222,973행 중 Target=1은 56,369행(25.28%)
-
-**학습 기간:** Target 종료분기 기준 2022Q2부터 Fold별 확장, 최종 재학습은 2024Q3까지
-
-**검증 기간:** 2024Q1~Q4를 분기별 4개 Fold로 검증, 2025Q1~Q4는 잠긴 최종 테스트
-
-**완료 증거:**
-
-- 후보 분석 코드: `src/data/analyze_stage4_candidates.py`
-- 후보·연도·업종별 통계: `reports/stage4/target_candidate_summary.csv`, `target_candidate_by_year.csv`, `target_candidate_by_industry.csv`
-- 시간 분할 비교: `reports/stage4/time_split_comparison.csv`
-- 사용자 결정 자료: `reports/stage4/candidate_report.md`
-- 승인된 Target 구조·Fold: `config/stage4.yaml`
-- 지속 악화 민감도: `reports/stage4/persistent_target_report.md`, `persistent_target_sensitivity.csv`, `persistent_target_by_fold.csv`
-- 최종 생성 코드: `src/data/build_stage4_dataset.py`
-- 개발 라벨·Fold: `data/processed/stage4_development.parquet`, `data/processed/stage4_fold_membership.parquet`
-- 잠긴 테스트 Feature: `data/processed/stage4_locked_test_features.parquet` — Target 미포함
-- 최종 정의·Gate 검증: `reports/stage4/target_definition.md`, `stage4_manifest.json`, `fold_summary.csv`
-
-- Gate 4 최종 판정: 통과 (2026-08-15)
+- [ ] 이진 Target v1 삭제 금지
+- [ ] 새 현금흐름의 충격 크기에 이진 Target을 직접 사용하지 않음
+- [ ] RE Stage 5에서 연속형 Target v2 별도 승인
+- [ ] 기존 2025 잠긴 테스트를 새 모델 선택에 재사용하지 않음
 
 ---
 
-## 9. 단계 4.5 — 모델링 EDA, 파생변수, Feature contract
+## Stage 4.5 — 분류모델 EDA와 Feature contract
 
-### 목표
-
-모델 학습 전에 기존 변수와 파생변수의 구조를 표 기반으로 분석하고, 변수 간 관계와 Target과의 유의미한 관계를 근거로 최종 모델 입력 Feature를 고정한다.
+### 상태
 
 | 항목 | 기록 |
 | --- | --- |
-| 담당자 | 1인 팀 사용자 / Codex 분석 |
 | 시작일 | 2026-08-15 |
 | 완료일 | 2026-08-15 |
-| 상태 | 완료 — D안 Feature contract 사용자 승인 |
-| 입력 데이터 | `data/processed/stage4_development.parquet`, `stage4_fold_membership.parquet` |
-| 분석 형식 | Markdown·CSV·JSON 표와 수치 요약만 사용 |
-| 금지 사항 | PNG·JPG·SVG·HTML Chart·Notebook Plot 등 모든 플롯 생성 금지, 2025 잠긴 테스트 접근 금지, Feature contract 승인 전 모델 학습 금지 |
-| 다음 단계 전달사항 | D안에 따라 모든 모델의 A형 공통 기준선을 먼저 비교하고, 트리 5종에만 원시 세부변수군을 하나씩 추가하는 Ablation을 계획함. 사용자 요청에 따라 Stage 5는 아직 시작하지 않음 |
+| 상태 | 완료·모델 v1 연구기록 |
+| 기존 Gate | 통과 |
 
-### P0 — 분석 범위와 누수 방지
+### 완료 체크
 
-- [x] 현재 세션에서는 계획만 기록하고 데이터 분석을 실행하지 않는다.
-- [x] 새 세션 시작 시 `AGENT_MEMORY.md`, `config/stage4.yaml`, `config/stage5.yaml`과 이 Stage 계획을 먼저 확인한다.
-- [x] 2025 잠긴 테스트 Feature와 Target은 EDA·Feature 선택·파생변수 결정에 사용하지 않는다.
-- [x] Target과의 관계를 이용한 탐색과 변수 선택은 첫 Fold 학습기간인 Target 종료 2022Q2~2023Q3을 발견용 데이터로 사용한다.
-- [x] 2024Q1~Q4 Validation Target은 EDA 결정에 사용하지 않고 Stage 5 모델 비교까지 보존한다.
-- [x] 대용량 데이터를 화면이나 문서에 전체 출력하지 않고, 필요한 열만 읽어 집계표와 제한된 수치 요약을 만든다.
-- [x] EDA 과정에서 플롯과 이미지 파일을 생성하지 않는다.
-- [x] Target을 사용하는 자동 Feature 선택이나 변환 객체는 모델 학습 시 각 Fold의 Train 파티션 안에서만 Fit한다.
+- [x] Fold 1 Train 122,011행만 사용
+- [x] 원본 199개·파생 134개 분석
+- [x] 분포·상관·Target 관계
+- [x] 다중검정 FDR
+- [x] 기간 안정성과 PSI
+- [x] 중복·공선성·조건수
+- [x] 구조 제거 후 VIF
+- [x] 2024 Validation Target 미사용
+- [x] 잠긴 2025 미사용
+- [x] 테스트 10개 통과
+- [x] D안 Feature contract 승인
+- [x] PCA 미적용
 
-### P0 — 기본 분포와 데이터 구조
+### Feature-set 완료
 
-- [x] 변수별 자료형, 고유값 수, 결측 수·비율, 0 비율, 최소·최대·분위수를 표로 기록한다.
-- [x] 상수·준상수 변수와 사실상 동일한 값을 반복하는 변수를 찾는다.
-- [x] 범주형 변수의 Cardinality, 희소 범주, Train에 없던 범주의 처리 필요성을 기록한다.
-- [x] 분기별 변수 분포 변화는 평균·중앙값·분위수·결측률·PSI 등 수치표로 확인한다.
-- [x] 극단값은 자동 삭제하지 않고 원인, 영향받는 모델군, 변환 후보를 기록한다.
-- [x] 결측 자체가 Target과 관계가 있는지 결측 Indicator별 Target 비율과 Lift로 확인한다.
+- [x] 공통 197개
+- [x] 선형 207개
+- [x] 매출금액 원시군 220개
+- [x] 거래건수 원시군 220개
+- [x] 유동인구 원시군 218개
+- [x] 상주인구 원시군 217개
+- [x] 직장인구 원시군 217개
 
-### P0 — 변수 간 관계 분석
+### 완료 증거
 
-- [x] 숫자형 변수 간 Pearson·Spearman 상관계수를 계산하고 높은 상관 변수군을 표로 정리한다.
-- [x] 총매출과 요일·시간대·성별·연령별 합계처럼 산술적으로 종속되는 합계관계를 확인한다.
-- [x] 코드와 코드명처럼 같은 정보를 중복 표현하는 변수와 일대일 대응 관계를 확인한다.
-- [x] 범주형 변수 간 관계는 교차표, Cramér's V, Mutual Information과 최소 표본 수로 확인한다.
-- [x] 선형 모델 후보 변수는 구조적 중복 제거 후 VIF 또는 조건수로 다중공선성 위험을 확인한다.
-- [x] 상관계수가 높다는 이유만으로 자동 삭제하지 않고 의미·서비스 입력 가능성·해석성을 함께 기록한다.
+- [x] `reports/stage45/feature_contract.md`
+- [x] `reports/stage45/`
+- [x] `src/analysis/run_stage45_eda.py`
+- [x] `src/features/build_stage45_features.py`
+- [x] `tests/test_stage45_features.py`
 
-### P0 — 각 변수와 Target 관계 분석
+### RE 전달사항
 
-- [x] 숫자형 변수마다 Target 0·1의 표본 수, 평균, 중앙값, 분위수 차이를 기록한다.
-- [x] 숫자형 변수의 Point-biserial 상관, 표준화 효과크기, 단변량 AUROC·AUPRC를 계산한다.
-- [x] 숫자형 변수를 Train 기준 분위수 구간으로 나눠 구간별 Target 비율과 증가·감소 방향의 일관성을 확인한다.
-- [x] 필요 시 Mann–Whitney U 등 유의성 검정을 사용하되 p-value만으로 변수를 선택하지 않는다.
-- [x] 범주형 변수마다 범주별 표본 수, Target 비율, 전체 대비 Lift를 기록한다.
-- [x] 범주형 변수와 Target 관계는 Chi-square, Cramér's V, Mutual Information을 함께 확인한다.
-- [x] 다수 변수의 유의성 검정에는 FDR 등 다중검정 보정을 적용한다.
-- [x] 통계적 유의성과 함께 효과크기, 표본 수, 기간 안정성, 업무적 설명 가능성을 판단 근거로 사용한다.
-- [x] Target 관계가 강해도 예측 시점에 알 수 없는 정보이거나 Target 계산을 역으로 드러내는 변수는 제외한다.
-
-### P0 — 파생변수 후보 생성
-
-- [x] `매출금액 / 매출건수`로 평균 객단가 후보를 생성한다.
-- [x] `매출금액 / 점포수`, `매출건수 / 점포수`로 점포당 매출·거래건수 후보를 생성한다.
-- [x] 개업·폐업 점포 수를 전체 또는 유사 업종 점포 수로 나눈 개·폐업 강도 후보를 생성한다.
-- [x] 요일·시간대·성별·연령대 매출과 건수를 각 총계로 나눈 구성비 후보를 생성한다.
-- [x] 유동·상주·직장인구의 구성비와 상호 비율, 점포당 인구 후보를 생성한다.
-- [x] 집객시설·아파트·인구를 상권 면적 또는 점포 수로 나눈 밀도 후보를 생성한다.
-- [x] 최근 2·4분기 매출의 평균·표준편차·최소·최대·변동계수와 현재값 대비 차이 후보를 생성한다.
-- [x] 전분기·전년동기 변화율과 최근 추세가 같은 방향인지 나타내는 지속성 Indicator 후보를 생성한다.
-- [x] 매출·건수·인구·점포처럼 치우친 양수 변수에 `log1p` 후보를 생성해 선형 모델 안정성을 비교한다.
-- [x] 분모가 0인 비율은 무한대로 만들지 않고 결측 처리와 분모 0 Indicator를 함께 생성한다.
-- [x] 모든 Rolling·변화·비교 Feature는 현재 또는 과거 분기만 사용하고 계산 가능 시점을 데이터 사전에 기록한다.
-- [x] 기존 변수와 같은 의미인 파생변수는 중복 생성하지 않는다.
-
-### P0 — 변수 선택과 차원 축소 원칙
-
-- [x] 명백한 상수·완전 중복·산술적 합계 중복은 제거 후보로 분리한다.
-- [x] 고상관 변수군은 업무 의미와 설명 가능성이 가장 높은 대표 변수 중심으로 정리안을 작성한다.
-- [x] Target 기반 관계와 선택 결과가 발견기간 내부의 시계열 하위 구간에서도 일관되는지 확인한다.
-- [x] L1·Elastic-Net 선택과 트리 Feature Importance는 Stage 5 실행 시 해당 Fold Train 내부에서만 계산한다.
-- [x] Feature를 핵심, 파생, 보조 데이터군으로 구분해 이후 Ablation 비교가 가능하게 한다.
-- [x] PCA는 기본 적용하지 않는다. 설명 가능성 손실보다 성능·안정성 개선이 명확할 때만 선형 모델용 선택 실험으로 남긴다.
-- [x] 제거·추가할 변수 목록, 이유, 계산식, 사용 시점이 포함된 Feature contract를 작성한다.
-- [x] Feature contract는 사용자 승인 전까지 확정하거나 Stage 5 학습에 적용하지 않는다.
-
-### 계획된 산출물
-
-- [x] `reports/stage45/eda_summary.md` — 플롯 없는 핵심 결론
-- [x] `reports/stage45/feature_profile.csv` — 변수별 분포·결측·Cardinality
-- [x] `reports/stage45/feature_relationships.csv` — 변수 간 상관·중복·합계관계
-- [x] `reports/stage45/numeric_target_relationships.csv` — 숫자형 변수와 Target 관계
-- [x] `reports/stage45/categorical_target_relationships.csv` — 범주형 변수와 Target 관계
-- [x] `reports/stage45/drift_summary.csv` — 기간별 분포·결측 변화
-- [x] `reports/stage45/derived_feature_definitions.md` — 파생변수 계산식과 시점
-- [x] `reports/stage45/feature_contract.md` — 유지·제거·파생·보조 변수 목록과 근거
-- [x] `src/features/build_stage45_features.py` — 재실행 가능한 파생변수 생성 코드
-- [x] `src/analysis/run_stage45_eda.py` — 플롯을 만들지 않는 EDA 코드
-
-### Gate 4.5 통과 기준
-
-- [x] 변수 간 관계와 각 변수의 Target 관계가 수치표로 설명되어 있다.
-- [x] p-value뿐 아니라 효과크기·표본 수·기간 안정성이 함께 기록되어 있다.
-- [x] 파생변수 계산식과 미래정보 미사용 근거가 문서화되어 있다.
-- [x] 플롯·이미지 산출물이 0개이다.
-- [x] 2025 잠긴 테스트를 사용하지 않았다.
-- [x] 최종 Feature contract를 사용자가 명시적으로 승인했다.
-
-**현재 판정:** D안 Feature contract 사용자 승인 완료 — Gate 4.5 통과
+- [ ] 연속형 Target v2에서 EDA 재수행
+- [ ] 기존 Feature contract를 Quantile 모델에 자동 적용하지 않음
+- [ ] 신규 데이터의 누수·Drift·증분효과 검토
 
 ---
 
-## 10. 단계 5 — Baseline과 후보 모델 학습
+## Stage 5 — 분류모델 비교·튜닝·최종평가
 
-### 목표
-
-단순 모델과 트리 기반 모델을 같은 Target·시간 분할·공통 기준 Feature에서 먼저 비교하고, 트리 원시 세부변수군 Ablation을 별도 비교해 최종 모델을 선택한다.
+### 상태
 
 | 항목 | 기록 |
 | --- | --- |
-| 상태 | **Gate 5 통과** — LightGBM Trial 10 최종 Refit·잠긴 2025 1회 평가·모델 저장·재로딩 검증 완료, 상대 순위형 출력에는 운영 임계값을 사용하지 않음 |
-| Feature 전략 | 승인된 D안: 같은 행·Target·Fold에서 공통 197개를 중심으로 모델군별 열 조합만 바꾸며, 트리 5종은 공통 기준선과 원시 세부변수군 5개를 독립 Ablation |
-| 모델 선택 원칙 | 동일한 4개 시간순 Fold에서 공통 기준선과 모든 트리 Ablation 변형을 먼저 실행하고, 전체 지표를 공개한 뒤 사용자와 종합 판단해 상위 후보 3개를 선택함 |
-| 튜닝 원칙 | 승인된 상위 3개에 후보별 20 Trial×4개 시간순 Fold를 적용하고, 평균 AUPRC·평균 AUROC를 가중합 없이 동시에 최대화함 |
-| 금지 사항 | 후보 비교 전에 특정 모델·Feature군을 확정하거나 사전 숫자 컷으로 자동 탈락시키지 않으며, 기존 불완전 체크포인트를 재사용하지 않음 |
+| 시작일 | 2026-08-15 |
+| 완료일 | 2026-08-15 |
+| 상태 | 완료·LightGBM v1 동결 |
+| 기존 Gate | 통과 |
 
-### 승인된 D안 — Feature 비교 순서
+### 완료 체크
 
-> 여기서 Feature-set은 서로 다른 행·표본·Target 데이터셋이 아니라, 동일한 222,973개 개발 행에 적용하는 **열 조합**이다. 모든 실행은 동일한 Target과 동일한 4개 시간순 Fold를 사용한다.
+- [x] Dummy 1개
+- [x] Logistic Regression 3개
+- [x] Random Forest
+- [x] Extra Trees
+- [x] LightGBM
+- [x] XGBoost
+- [x] CatBoost
+- [x] 34개 변형×4 Fold=136회 무튜닝 비교
+- [x] 상위 3개×20 Trial×4 Fold=240 Fit
+- [x] 대표 모델·Voting·Nested Stacking 52단계
+- [x] 동일 Fold·Target·지표 비교
+- [x] 업종별 성능 확인
+- [x] 전처리 Train-only Fit
 
-#### 공통 Feature와 원시 세부열의 관계
+### OOF 결과
 
-- 공통 기준선 197개에도 유동·상주·직장인구 정보가 포함된다.
-- 상주인구 예시로 `총_상주인구_수`, 총 가구 수, 성별·연령대 **구성비**, 유동·직장인구 대비 비율, 점포당·면적당 상주인구가 공통 기준선에 들어간다.
-- 공통 기준선에서 제외한 것은 성별·연령별·성별×연령별 **원시 인원수**처럼 총계·구성비와 산술적으로 중복되는 세부열이다.
-- 트리 Ablation은 공통 정보를 빼고 다른 데이터를 쓰는 실험이 아니다. 공통 197개에 원시 세부열 한 묶음만 다시 추가해 트리가 그 절대값에서 추가 정보를 얻는지 확인한다.
-- 다섯 원시 변수군은 서로 누적하지 않는다. 예를 들어 `공통+상주`에는 직장·유동 원시 세부열을 함께 추가하지 않는다.
+- [x] LightGBM 전체 OOF AUPRC 0.6454
+- [x] LightGBM 전체 OOF AUROC 0.8108
+- [x] Soft Voting 전체 OOF AUPRC 0.6474
+- [x] Soft Voting 전체 OOF AUROC 0.8115
+- [x] 단순 운영을 우선해 LightGBM Trial 10 최종 선택
+- [x] 운영 임계값 미사용
 
-#### 실제 Feature-set 7개와 적용 모델
+### 잠긴 2025 평가
 
-| Feature-set ID | 열 수 | 추가 내용 | 적용 모델 |
-| --- | ---: | --- | --- |
-| `common_baseline` | 197 | 구조 중복 축소 공통 Feature | 트리 5종의 기준선 |
-| `linear_common_plus_log1p` | 207 | 공통 197개 + 선형 전용 `log1p` 10개 | L2·L1·Elastic-Net Logistic |
-| `tree_plus_sales_amount_raw_components` | 220 | 공통 + 매출금액 원시 세부열 23개 | 트리 5종 |
-| `tree_plus_transaction_count_raw_components` | 220 | 공통 + 거래건수 원시 세부열 23개 | 트리 5종 |
-| `tree_plus_floating_population_raw_components` | 218 | 공통 + 유동인구 원시 세부열 21개 | 트리 5종 |
-| `tree_plus_resident_population_raw_components` | 217 | 공통 + 상주인구 원시 세부열 20개 | 트리 5종 |
-| `tree_plus_worker_population_raw_components` | 217 | 공통 + 직장인구 원시 세부열 20개 | 트리 5종 |
+- [x] 모델·Feature를 평가 전 고정
+- [x] Refit 202,918행
+- [x] 잠긴 테스트 79,506행
+- [x] AUPRC 0.625695
+- [x] AUROC 0.791821
+- [x] Brier 0.164177
+- [x] Log Loss 0.495829
+- [x] 2025 임계값·Precision·Recall·F2 미탐색
+- [x] 저장 예측 재계산
+- [x] 모델 재로딩 재현
+- [x] 핵심 Artifact 해시 검증
+- [x] 재실행 차단
 
-Dummy Prior 1개, Logistic 3개, 트리 5종×6개 Feature-set을 합쳐 총 **34개 모델·Feature-set 변형**을 각 Fold에서 평가한다. 모든 Feature-set을 모든 모델에 무차별 적용하지 않는다. Logistic은 공통 정보에 선형용 로그 변환을 보강하고, 트리 5종은 모두 동일한 6개 트리 Feature-set을 적용한다.
+### 완료 증거
 
-- [x] A형 구조 중복 축소 공통 Feature 197개를 생성하고 열 목록을 저장한다.
-- [x] L2·L1·Elastic-Net Logistic용으로 선형 전용 `log1p` 10개를 추가한 207개 Feature-set을 생성한다.
-- [x] Random Forest, Extra Trees, LightGBM, XGBoost, CatBoost는 공통 기준선으로 먼저 비교한다.
-- [x] 트리 5종용 매출금액, 거래건수, 유동인구, 상주인구, 직장인구 원시 세부변수군 Feature-set을 생성한다.
-- [x] 코드명·상수·완전 중복처럼 `remove`로 확정된 변수는 트리 Ablation에서도 되살리지 않는다.
-- [x] 각 원시 변수군은 공통 기준선에 독립적으로 추가하고 자동 누적하지 않는다.
-- [x] 공통 기준선과 각 Ablation 변형에 Feature-set ID, 열 수, 정확한 열 목록, SHA-256을 저장한다.
-- [x] 원시 변수군을 사전 수치 허용오차로 자동 유지·탈락시키지 않고, 모든 결과의 AUROC·AUPRC·최악 Fold·Fold 표준편차·확률 품질·시간을 함께 본 뒤 종합 판단한다.
+- [x] `reports/stage5/full_comparison.md`
+- [x] `reports/stage5/optuna_report.md`
+- [x] `reports/stage5/selected_oof_report.md`
+- [x] `reports/stage5/final_2025_report.md`
+- [x] `reports/stage5/final_2025_metrics.json`
+- [x] `reports/stage5/final_2025_manifest.json`
+- [x] `reports/stage5/final_2025_predictions.parquet`
+- [x] `artifacts/stage5_lightgbm_trial10.joblib`
+- [x] `artifacts/stage5_lightgbm_trial10_metadata.json`
 
-> 실행 원칙: 계획된 모든 공통 기준선과 독립 Ablation을 먼저 실행한다. 지표 공개 전에는 자동 순위·유지·탈락 결론을 내리지 않고, 기존 불완전 체크포인트는 재사용하지 않는다.
+### RE 전달사항
 
-#### 전체 무튜닝 비교 완료 기록
-
-- 34개 모델·Feature-set 변형을 고정된 4개 시간순 Fold에서 모두 실행해 총 136개 Fold 실행을 완료했다.
-- 실패 Fold는 0개이며, 각 Fold 전처리는 해당 Train 파티션에만 Fit했다.
-- 2025 잠긴 테스트는 열지 않았고 자동 순위·원시 변수군 유지·탈락도 수행하지 않았다.
-- 관찰상 평균 AUPRC 최고값은 LightGBM 공통 기준선의 `0.6344`, 평균 AUROC 최고값은 XGBoost 거래건수 원시열 추가형의 `0.8064`였다. 두 결과만으로 후보나 Feature군을 확정하지 않는다.
-- LightGBM 공통 기준선은 평균 AUPRC `0.6344`, 평균 AUROC `0.8059`, 최악 Fold AUPRC `0.6021`; XGBoost 거래건수 추가형은 각각 `0.6333`, `0.8064`, `0.6002`였다.
-- 모든 34개 결과, 기준선 대비 차이, Brier Score, Log Loss, 시간은 `reports/stage5/full_comparison.md`와 `full_model_feature_summary.csv`에 보존했다.
-- 성능·안정성·확률 품질·복잡도·모델 다양성을 함께 본 상위 3개 권장 근거는 `reports/stage5/candidate_review.md`에 기록했다.
-- 사용자가 다음 작업 진행을 승인해 LightGBM 공통 기준선, XGBoost 거래건수 원시열 추가형, CatBoost 직장인구 원시열 추가형을 튜닝 후보로 확정했다.
-
-#### Optuna 다목적 튜닝 완료 기록
-
-- 튜닝 깊이는 **중간 이상**으로 설정했다. 후보마다 20 Trial을 실행하고 각 Trial을 동일한 4개 시간순 Fold에서 평가해 총 60 Trial, 최대 240회 모델 Fit을 완료했다. 실패 Trial은 0개다.
-- 20 Trial은 기본값 주변만 확인하는 얕은 탐색보다 넓지만, 후보마다 100회 이상 수행하는 장시간 정밀 탐색은 아니다. 개발 단계에서 탐색 폭과 계산비용을 균형 잡은 예산이며, 지금 결과를 근거로 필요할 때만 후속 국소 탐색을 검토한다.
-- Optuna TPE Sampler를 고정 Seed `20260815`로 사용했다. 평균 AUPRC와 평균 AUROC를 별도 목적함수로 동시에 최대화했고 임의의 단일 가중 점수는 만들지 않았다.
-- LightGBM은 트리 수·학습률·리프 수·깊이·최소 자식 표본·행/열 Subsampling·L1/L2 규제·Bin 수의 10개 축을 탐색했다.
-- XGBoost는 트리 수·학습률·깊이·최소 자식 가중치·행/열 Subsampling·Gamma·L1/L2 규제·Bin 수의 10개 축을 탐색했다.
-- CatBoost는 반복 수·깊이·학습률·L2 규제·무작위 강도·Bagging 온도·경계 수·Leaf 추정 반복 수의 8개 축을 탐색했다.
-- 각 Fold의 전처리는 해당 Train 파티션에만 Fit했고, 중단 시 SQLite Study에서 재개하도록 구성했다. 2025 잠긴 테스트는 열지 않았다.
-
-| 모델·Feature-set | 대표 검토 Trial | 평균 AUPRC | 무튜닝 대비 | 평균 AUROC | 무튜닝 대비 | 최악 Fold AUPRC | AP 표준편차 | Brier | Log Loss | 4-Fold Fit |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| LightGBM·공통 197개 | 10 | 0.6436 | +0.0092 | 0.8104 | +0.0045 | 0.6120 | 0.0237 | 0.1565 | 0.4749 | 99.6초 |
-| XGBoost·공통+거래건수 220개 | 16 | 0.6421 | +0.0087 | 0.8100 | +0.0035 | 0.6116 | 0.0232 | 0.1568 | 0.4758 | 196.3초 |
-| CatBoost·공통+직장인구 217개 | 18 | 0.6364 | +0.0451 | 0.8057 | +0.0226 | 0.6012 | 0.0245 | 0.1577 | 0.4789 | 108.8초 |
-
-- 위 세 Trial은 각 모델 내부에서 평균 AUPRC와 평균 AUROC 모두 다른 19개 Trial에 지배되지 않은 유일한 Pareto Trial이다. 이것은 모델 간 최종 순위를 자동 확정한다는 뜻이 아니다.
-- LightGBM Trial 10은 평균 AUPRC·AUROC, 최악 Fold AUPRC, Brier, Log Loss를 함께 볼 때 해당 모델의 가장 균형 잡힌 권장안이다. Trial 2는 AP 표준편차와 시간이 더 작지만 평균·최악 Fold 성능과 확률 품질이 낮다.
-- XGBoost Trial 16도 동일 지표를 함께 볼 때 해당 모델의 권장안이다. Trial 11은 AP 표준편차와 시간이 더 작지만 평균·최악 Fold 성능과 확률 품질이 낮다.
-- CatBoost는 평균 성능과 확률 품질이 가장 좋은 Trial 18과, 최악 Fold AUPRC(`0.6026`)·AP 표준편차(`0.0241`)·시간(`90.8초`)이 더 좋은 Trial 16 사이에 실제 Trade-off가 남는다. 평균 성능 우선 권장안은 Trial 18이지만 OOF Ensemble에 넣을 대표 설정은 사용자 종합 승인 후 확정한다.
-- 모든 60개 Trial의 하이퍼파라미터·Fold별 지표는 `reports/stage5/optuna_trials.csv`, Pareto 결과는 `optuna_pareto_trials.csv`, 전체 설명은 `optuna_report.md`, 재개 가능한 Study는 `optuna_studies.db`에 보존했다.
-
-#### 승인된 OOF·Ensemble 사용자 실행 계획
-
-- 사용자가 평균 성능 우선 권장안인 LightGBM Trial 10, XGBoost Trial 16, CatBoost Trial 18을 대표 설정으로 사용하고 세 개별 모델·Soft Voting·Stacking을 모두 비교하는 흐름을 승인했다.
-- 다음 실행은 Optuna의 20개 Trial을 다시 반복하지 않는다. 선택된 대표 설정만 Outer 4개 Fold에서 다시 학습해 저장 가능한 OOF 확률을 만든다.
-- Soft Voting은 결과를 본 뒤 Weight를 맞추지 않고 세 모델 확률을 사전 고정 동일 가중치로 평균한다.
-- Stacking은 Outer Validation을 meta-model 학습에 재사용하지 않는다. 각 Outer Train 내부의 마지막 3개 Target 종료분기를 Inner Validation으로 두고, Inner Train 종료분기를 Validation보다 최소 2분기 앞에 두어 Purge한 nested OOF 확률로 L2 Logistic meta-model을 학습한다.
-- 전체 실행량은 대표 모델 Outer Fit 12개, Stacking용 Inner Fit 36개, Fold별 Voting·Stacking 생성 4개를 합친 52단계다.
-- 실제 장시간 학습은 사용자가 PowerShell에서 실행한다. 콘솔과 `reports/stage5/ensemble_run.log`에 현재 단계·완료율·Fold·모델·지표·시간이 동시에 표시되고, `ensemble_progress.json`에서 별도 상태 조회가 가능하다.
-- 모델·Fold별 체크포인트를 저장해 중단 후 같은 명령으로 재개한다. 이 OOF 실행 동안 자동 최종 모델·F2 임계값 선택과 2025 잠긴 테스트 접근을 금지했다.
-
-```powershell
-# 실행 전 계약 검증만 수행
-& '.\scripts\run_stage5_oof_ensemble.ps1' -ValidateOnly
-
-# 실제 OOF·Ensemble 실행
-& '.\scripts\run_stage5_oof_ensemble.ps1'
-
-# 별도 터미널에서 현재 완료율 확인
-& '.\scripts\run_stage5_oof_ensemble.ps1' -Status
-
-# 로그 실시간 확인
-Get-Content -Encoding UTF8 -Wait -LiteralPath '.\reports\stage5\ensemble_run.log'
-```
-
-세부 실행·재개·산출물 설명은 `reports/stage5/oof_ensemble_runbook.md`를 따른다.
-
-#### OOF·Ensemble 실행 완료 기록
-
-- 사용자 터미널에서 2026-08-15 17:46~18:06 KST에 52/52단계를 실행했다. 대표 모델 Fit 48개와 Outer Fold별 Voting·Stacking 생성 4개가 모두 완료됐고 실패·오류는 0개다.
-- 56개 JSON과 56개 예측 Parquet 체크포인트를 보존했다. 최종 OOF 예측은 5개 실행마다 80,681행으로 총 403,405행이며 중복 `run_id × stage4_row_id`는 없다.
-- 초기 Inner Train에서 일부 Feature가 전부 결측인 경고는 Train 중앙값을 계산할 수 없을 때 사전 구현된 `0.0` 대체로 처리됐다. Validation 정보는 사용하지 않았고 실행 실패나 누수는 없다.
-
-| 실행 | 평균 Fold AUPRC | 평균 Fold AUROC | 전체 OOF AUPRC | 전체 OOF AUROC | 최악 Fold AUPRC | AP 표준편차 | Brier | Log Loss | 추론 모델 수 |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| LightGBM Trial 10 | 0.6436 | 0.8104 | 0.6454 | 0.8108 | 0.6120 | 0.0237 | 0.1565 | 0.4749 | 1 |
-| XGBoost Trial 16 | 0.6421 | 0.8100 | 0.6439 | 0.8103 | 0.6116 | 0.0232 | 0.1568 | 0.4758 | 1 |
-| CatBoost Trial 18 | 0.6364 | 0.8057 | 0.6384 | 0.8061 | 0.6012 | 0.0245 | 0.1577 | 0.4789 | 1 |
-| 동일 가중 Soft Voting | 0.6456 | 0.8111 | 0.6474 | 0.8115 | 0.6147 | 0.0230 | 0.1562 | 0.4742 | 3 |
-| Nested Logistic Stacking | 0.6455 | 0.8113 | 0.6446 | 0.8104 | 0.6144 | 0.0233 | 0.1566 | 0.4792 | 3 |
-
-- 동일 가중 Soft Voting은 LightGBM보다 평균 Fold AUPRC `+0.0020`, 평균 Fold AUROC `+0.0007`, 최악 Fold AUPRC `+0.0026`이며 Brier·Log Loss·AP 표준편차도 개선됐다.
-- Soft Voting은 네 Fold 모두 LightGBM보다 AUPRC가 높았고 비교 가능한 62개 업종 중 37개에서 더 높았다. 업종별 AUPRC 차이 중앙값은 `+0.0007`이다.
-- Stacking의 평균 Fold AUROC는 `0.8113`으로 가장 높지만 전체 OOF AUPRC·AUROC와 확률 품질은 Soft Voting보다 낮다. 추가 복잡도를 정당화할 명확한 종합 개선은 관찰되지 않았다.
-- **성능 우선 권장안:** 동일 가중 Soft Voting. **단순성·단일 모델 운영 대안:** LightGBM Trial 10. 성능 차이는 작으므로 최종 선택은 사용자 승인 대상이다.
-- F2@0.5는 참고값일 뿐 모델 선택 근거로 쓰지 않는다. 상대 순위형 MVP에는 이진 운영 임계값이 필수가 아니며, 명확한 이진 조치가 추가될 때만 2024 OOF에서 후보 임계값을 별도로 검토한다.
-- `selected_oof_predictions.parquet`, `selected_oof_fold_metrics.csv`, `selected_oof_summary.csv`, `selected_oof_industry_metrics.csv`, `selected_oof_report.md`, `selected_oof_manifest.json`에 전체 결과를 보존했다. 2025 잠긴 테스트는 열지 않았다.
-
-#### 서비스 MVP 중심 최종 선택 원칙
-
-- `대회개요.md`는 본 대회를 단순 예측대회가 아니라 금융 현안을 해결하는 **실제 작동 가능한 AI 웹서비스 MVP**를 기획·구현하는 공모전으로 정의한다. 제출물도 기능명세서와 접근 가능한 웹서비스 URL이며, 모델 성능 수치만으로 순위를 매기는 리더보드 방식이 아니다.
-- 따라서 Stage 5 모델은 완벽한 이진 판별기나 개별 점포 폐업확률 모델이 아니라, `상권 × 업종`의 향후 매출환경 악화 위험점수와 우선순위를 제공하는 의사결정 지원 모듈로 사용한다.
-- **최종 모델은 LightGBM Trial 10·공통 기준선 197개 Feature로 확정한다.** 2024 OOF에서 성능 우선안인 Soft Voting보다 전체 OOF AUPRC는 `0.0020`, 전체 OOF AUROC는 `0.0007` 낮지만, 단일 모델이라 배포·설명·장애 대응·의존성 관리·재학습·유지보수가 단순하다.
-- 이 프로젝트는 마지막 소수점 성능을 겨루는 예측 리더보드가 아니라 실제 작동하는 AI 금융 웹서비스 MVP가 중심이다. 따라서 위의 작은 성능 차이보다 서비스 운영 가능성과 아이디어 구현 완성도를 우선한다는 사용자의 판단에 따라 LightGBM을 선택했다.
-- 이 선택은 2025 잠긴 테스트를 열기 전에 확정했으며, 2025 성능이 기대보다 낮더라도 Soft Voting·XGBoost·CatBoost로 다시 바꾸지 않는다. 2025는 모델 선택 자료가 아니라 LightGBM의 1회 일반화 감사다.
-- 다만 **2025 잠긴 테스트에서 여러 후보를 비교한 뒤 하나를 고를 수는 없다.** 그렇게 하면 2025가 모델 선택용 Validation이 되어 최종 성능을 과대평가한다. 최종 모델·임계값은 2024 OOF와 운영 기준으로 먼저 고정하고, 2025는 선택을 바꾸지 않는 1회 일반화 감사에만 사용한다.
-- 2025까지 본 뒤 모델을 바꾸려면 2025를 Validation으로 재정의하고 별도의 새로운 잠긴 테스트를 확보해야 한다. 현재 데이터·일정에서는 권장하지 않는다.
-
-#### 상대 위험 우선순위와 선택적 임계값 원칙
-
-- 최종 LightGBM은 개별 점포의 절대 폐업확률이나 `위험/안전` 판정 모델이 아니라, 같은 기준 시점의 비교집단 안에서 `상권 × 업종`의 향후 매출환경 악화 위험을 상대적으로 정렬하는 **상대 순위 모델**이다.
-- 서비스의 주 출력은 원시 예측확률이나 이진 판정이 아니라 상대 위험 Percentile, `상위 N%` 표현, 우선지원 순위다. 원시 모델 점수는 정렬 계산과 내부 기록에만 사용하고 보정된 실제 확률처럼 표시하지 않는다.
-- Recall을 더 중요하게 보는 문제이므로 F2는 적절한 임계값 후보 지표다. 하지만 LightGBM OOF에서 F2만 기계적으로 최대화하면 임계값이 약 `0.131`이 되어 전체의 `63.5%`를 위험으로 표시하므로 우선순위 서비스의 선별력이 약해질 수 있다.
-- LightGBM 기준 임계값 `0.20`은 Precision `48.6%`, Recall `82.9%`, 위험표시율 `51.0%`; 임계값 `0.30`은 Precision `55.2%`, Recall `71.1%`, 위험표시율 `38.5%`다. 위험표시율 약 50%는 동전 던지기 정확도를 뜻하지는 않는다. OOF 실제 위험 비율 약 `29.9%`보다 위험군의 실제 위험 비율이 높아 선별력은 있지만, 서비스가 절반을 우선대상으로 지정하면 자원 배분과 사용자 메시지 측면에서 지나치게 넓을 수 있으므로 운영 기준으로 채택하지 않았다.
-- 지원·상담 가능 인원이 제한되면 고정 F2 최대값보다 상위 위험 Percentile 또는 목표 Recall과 위험표시율을 함께 사용한다. 위험표시율 50%나 63.5%를 현재 운영안으로 확정하지 않았으며, 운영 임계값·상위 비율은 Stage 5 이후 서비스 흐름과 실제 개입 가능 규모를 확인한 뒤 정한다.
-- 운영 임계값은 다음 단계의 필수 선행조건이 아니다. 상담 대상 포함/제외처럼 실제 이진 조치가 필요할 때만 `Recall·Precision·F2·선정 비율·개입 가능 규모`를 함께 공개하고 사용자 승인으로 정한다. 그 전에는 F2@0.5나 탐색상 최고 F2를 운영 기준으로 표현하지 않는다.
-
-#### 잠긴 2025 최종 평가 승인 범위
-
-- 사용자는 운영 임계값을 아직 정하지 않은 상태에서 LightGBM Trial 10의 **임계값 비의존 1회 평가**를 승인했다.
-- 평가 지표는 AUPRC·AUROC·Brier Score·Log Loss로 제한한다. Precision·Recall·F2·혼동행렬·위험표시율과 임계값 탐색·선택은 2025에서 수행하지 않는다.
-- 전체 개발기간 Refit은 Target 종료분기 `20222~20243`, 잠긴 테스트는 `20251~20254`를 사용한다. 2025 결과와 관계없이 LightGBM·공통 197개 Feature 선택을 바꾸지 않는다.
-- 실행기 `scripts/run_stage5_final_2025.ps1`과 평가 코드 `src/models/run_stage5_final_2025.py`를 추가했다. 실행은 1회 완료 후 재실행을 차단하며, 모델·전처리·예측·네 지표·검증 Manifest를 저장한다.
-- 사용자 터미널에서 2026-08-15 18:49~18:50 KST에 계약 검증과 최종 실행을 완료했다. `202,918`행으로 Refit하고 잠긴 2025 `79,506`행을 정확히 한 번 평가했으며 재실행은 차단됐다.
-- 최종 성능은 AUPRC `0.625695`, AUROC `0.791821`, Brier Score `0.164177`, Log Loss `0.495829`다. 2024 OOF 대비 각각 `-0.0197`, `-0.0190`, `+0.0077`, `+0.0209`로 소폭 저하됐지만 급격한 붕괴는 관찰되지 않았다.
-- 이 결과는 완전 자동 판별용으로 충분하다는 뜻이 아니다. 그러나 시간 외삽에서도 유의미한 위험 정렬력을 유지하므로, `상권 × 업종` 위험점수와 지원 우선순위를 제공하는 서비스 MVP에는 투입 가능한 수준으로 판단한다. 개별 점포 폐업확률·자동 탈락·대출 승인 판단에는 사용하지 않는다.
-- 저장된 예측에서 네 지표를 재계산했고, 모델 Artifact를 새로 불러 같은 확률을 재현했다. 예측 행은 잠긴 Feature와 일치하고 중복 ID는 0개이며 확률은 모두 유한한 `0~1` 범위다. 다섯 핵심 산출물의 SHA-256도 Manifest와 일치한다.
-- DataFrame 파편화 경고와 LightGBM Feature-name 경고는 성능·정답·Feature 순서 오류가 아니라 각각 처리속도와 이름 메타데이터에 관한 비필수 경고다. 실행 완료, 저장 예측 재검산, 모델 재로딩 검증에 영향이 없었다.
-
-```powershell
-# 잠금 해제 전 계약만 확인
-& '.\scripts\run_stage5_final_2025.ps1' -ValidateOnly
-
-# LightGBM 최종 Refit과 잠긴 2025 1회 평가
-& '.\scripts\run_stage5_final_2025.ps1'
-
-# 실행 상태 확인
-& '.\scripts\run_stage5_final_2025.ps1' -Status
-```
-
-### P0 — 비교 기준
-
-- [x] 다수 클래스로만 예측하는 단순 기준선 성능을 계산한다.
-- [x] Logistic Regression을 Baseline으로 학습한다.
-- [x] 최종 Target 확정 후 비교할 후보 모델 목록을 정한다.
-- [x] 여러 후보 모델을 본격 튜닝 전 동일 조건으로 비교한다.
-- [x] 모든 모델에 같은 학습·검증 기간을 사용한다.
-- [x] 동일한 평가 지표와 Target 정의를 사용한다.
-
-### P0 — 평가 지표
-
-- [x] ROC-AUC
-- [x] PR-AUC
-- [x] Precision
-- [x] Recall
-- [x] F1-score
-- [x] Confusion Matrix
-- [x] 예측 양성 비율
-- [x] 업종별 주요 성능
-
-> 클래스 불균형이 크면 Accuracy만으로 모델을 선택하지 않는다.
-
-### P0 — 모델 선택
-
-- [x] Baseline과 후보 모델의 성능 비교표를 만든다.
-- [x] 성능뿐 아니라 추론 속도, 안정성, 설명가능성을 함께 비교한다.
-- [x] 전체 비교표를 사용자와 종합 검토한 뒤 최종 튜닝 후보 모델 3개와 선택 이유를 기록한다.
-- [x] 선택된 상위 3개 모델에만 Optuna 튜닝을 수행한다.
-- [x] 튜닝된 3개 모델의 개별 성능과 OOF 기반 Voting·Stacking 가능성을 비교한다.
-- [x] 기대한 성능이 나오지 않으면 실패 원인을 기록하고 과도한 성능 표현을 피한다.
-- [x] 모델, Feature 목록, 전처리 객체와 상대 순위형 운영 임계값 미사용(`null`) 상태를 함께 저장한다.
-
-### P1 — 추가 실험
-
-- [ ] 필요하면 LightGBM, XGBoost, CatBoost 등 후보군을 비교하되 목록은 사전에 고정하지 않는다.
-- [ ] 클래스 가중치 또는 샘플 가중치를 비교한다.
-- [ ] 추가 데이터셋을 하나씩 더해 Validation 개선 여부를 확인한다.
-- [ ] 추가 Feature가 성능을 개선하지 않으면 제거한다.
-- [ ] 사용자 테스트에서 필요성이 확인되면 Percentile 기반 표시 구간을 상대 순위 정책 버전으로 관리한다.
-
-### 모델 비교표
-
-| 모델 | 사용 Feature | ROC-AUC | PR-AUC | Precision | Recall | F1 | 비고 |
-| --- | --- | ---: | ---: | ---: | ---: | ---: | --- |
-| Dummy Prior | Target 사전확률 |  |  |  |  |  |  |
-| Logistic Regression L2 | 공통 기준선 + 선형 전용 log1p |  |  |  |  |  |  |
-| Logistic Regression L1 | 공통 기준선 + 선형 전용 log1p |  |  |  |  |  |  |
-| Logistic Regression Elastic-Net | 공통 기준선 + 선형 전용 log1p |  |  |  |  |  |  |
-| Random Forest | 공통 기준선 / 원시 변수군 Ablation |  |  |  |  |  |  |
-| Extra Trees | 공통 기준선 / 원시 변수군 Ablation |  |  |  |  |  |  |
-| LightGBM | 공통 기준선 / 원시 변수군 Ablation |  |  |  |  |  |  |
-| XGBoost | 공통 기준선 / 원시 변수군 Ablation |  |  |  |  |  |  |
-| CatBoost | 공통 기준선 / 원시 변수군 Ablation |  |  |  |  |  |  |
-
-### Gate 5 통과 기준
-
-- [x] 저장한 모델을 새 프로세스에서 다시 불러와 동일한 예측을 재현했다.
-- [x] 모델 비교 결과와 최종 선택 이유가 남아 있다.
-- [x] 최종 모델의 한계와 적용 범위를 설명할 수 있다.
-
-**최종 선택 모델:** LightGBM Trial 10 · `common_baseline` 197개 Feature · 전체 개발기간 Refit 202,918행 · 상대 순위형 운영 임계값 미사용
-
-**완료 증거:** 무튜닝 136회, Optuna 240회, 대표 Trial·nested OOF Ensemble 52단계와 LightGBM 최종 Refit·잠긴 2025 1회 평가를 완료했다. `reports/stage5/full_comparison.md`, `optuna_report.md`, `selected_oof_report.md`, `final_2025_report.md`, `final_2025_metrics.json`, `final_2025_manifest.json`, `final_2025_predictions.parquet`, `artifacts/stage5_lightgbm_trial10.joblib`, `artifacts/stage5_lightgbm_trial10_metadata.json`. Stage 6은 승인된 두 상대 비교집단을 사용하며 이진 운영 임계값은 두지 않는다.
+- [ ] LightGBM v1 삭제·덮어쓰기 금지
+- [ ] Quantile 모델의 Baseline·Fallback으로만 사용
+- [ ] 2025 결과를 새 모델 선택에 사용 금지
+- [ ] 새 독립 감사기간 없으면 모델 v2를 최종 확정하지 않음
 
 ---
 
-## 11. 단계 6 — 상대 위험 순위와 위험요인 설명 모듈
+## Stage 6 — 상대 위험순위와 TreeSHAP 설명
 
-### 목표
+### 상태
 
-웹서비스가 상권·업종 입력에 대해 비교집단 내 상대 위험 Percentile, 우선순위와 주요 요인을 일관된 형식으로 반환하도록 한다. 모델 원시값을 절대 위험확률로 해석하지 않는다.
+| 항목 | 기록 |
+| --- | --- |
+| 시작일 | 2026-08-15 |
+| 완료일 | 2026-08-15 |
+| 상태 | 완료·보조/Fallback 후보 |
+| 기존 Gate | 통과 |
 
-### 승인된 상대 순위 계약과 구현 순서
+### 완료 체크
 
-1. 저장된 전처리·LightGBM Artifact를 불러와 동일 입력에 동일한 연속 점수를 반환한다.
-2. **주 지표:** 같은 기준분기·같은 업종의 서울 상권들을 비교해 업종 내 Percentile과 `상위 N%`를 계산한다.
-3. **보조 지표:** 같은 기준분기 서울 전체 `상권 × 업종` 조합과 비교한 전체 Percentile과 `상위 N%`를 함께 계산한다.
-4. 두 비교집단의 기준 점수 분포·기준분기·계산 버전을 저장하고 두 Percentile과 순위를 함께 반환한다.
-5. Feature Importance와 개별 위험요인을 연결한다.
-6. 실제 상담·지원 대상의 포함/제외가 필요할 때만 운영 임계값 또는 고정 Top-k 규모를 별도 승인한다.
+- [x] 2025Q4 기준분포 생성
+- [x] 21,333개 상권×업종
+- [x] 상권 1,565개
+- [x] 업종 62개
+- [x] 같은 업종 내 주 Percentile
+- [x] 서울 전체 보조 Percentile
+- [x] 상위 비율과 경쟁순위
+- [x] 동점 규칙
+- [x] 원시 모델 점수 비노출
+- [x] 이진 위험·안전 판정 없음
+- [x] TreeSHAP 양·음 요인
+- [x] 현재값과 같은 업종 중앙값
+- [x] 입력 오류와 데이터 부족 처리
+- [x] 별도 프로세스 결정론 검증
+- [x] 기존 Stage 0~5 회귀 포함 `27 passed`
 
-> 따라서 Stage 5 다음 필수 작업은 운영 임계값 선택이 아니라 **상대 순위 출력과 설명 모듈 구현**이다. 임계값은 이진 조치가 확정될 때만 필요한 선택 항목이다.
+### 완료 증거
 
-### 변경 가능한 운영정책과 고정 이력
+- [x] `config/stage6.yaml`
+- [x] `src/models/build_stage6_reference.py`
+- [x] `scripts/build_stage6_reference.ps1`
+- [x] `src/models/stage6_risk_service.py`
+- [x] `data/processed/stage6_reference_features.parquet`
+- [x] `reports/stage6/area_catalog.csv`
+- [x] `reports/stage6/industry_catalog.csv`
+- [x] `reports/stage6/global_feature_importance.csv`
+- [x] `reports/stage6/stage6_manifest.json`
+- [x] `reports/stage6/verification.md`
+- [x] `tests/test_stage6_risk_service.py`
 
-- 비교집단, 주·보조 표시 순서, Percentile 문구, 화면에서 보여줄 Top-k 범위와 선택적 운영 임계값은 서비스 대상·지원역량·사용자 테스트에 따라 변경할 수 있다.
-- 위 항목은 `service_ranking_policy_version`으로 버전 관리한다. 변경 시 기준 점수 분포를 다시 생성하고 API·화면 회귀 테스트를 수행하지만, 같은 모델 점수를 재정렬하는 변경만으로 LightGBM을 재학습할 필요는 없다.
-- 반대로 Target 정의, 197개 Feature, LightGBM Trial 10, 2025 최종 평가 결과는 모델 v1의 고정 이력이다. 이를 바꾸면 모델 v2로 재학습·시간순 검증하고 2025가 아닌 새로운 독립 테스트를 확보해야 한다.
+### RE 전달사항
 
-### P0 — 예측 모듈
-
-- [x] 입력 상권코드와 서비스업종코드의 유효성을 검사한다.
-- [x] 최신 사용 가능 분기의 Feature를 조회한다.
-- [x] 학습 때 사용한 전처리와 동일한 처리를 적용한다.
-- [x] 원시 모델 점수를 절대 확률로 노출하지 않고 같은 업종 내 Percentile과 서울 전체 Percentile로 변환한다.
-- [x] 주 비교집단·보조 비교집단, 기준분기, 기준 점수분포와 `service_ranking_policy_version`을 설정 파일로 관리한다.
-- [x] `상위 N%`와 전체 순위를 반환하며 동점 처리 규칙을 고정한다.
-- [x] 이진 운영 임계값이 없으면 `위험/안전` 판정을 반환하지 않는다.
-- [x] 학습에 없던 업종이나 상권 입력을 안전하게 처리한다.
-- [x] 데이터가 부족하면 임의의 점수를 만들지 않고 안내 메시지를 반환한다.
-
-### P0 — 설명 모듈
-
-- [x] 전체 Feature Importance를 저장한다.
-- [x] 개별 예측의 주요 위험요인을 최소 3개까지 반환한다.
-- [x] 위험을 높인 요인과 낮춘 요인을 구분할 수 있게 한다.
-- [x] 원본 변수명을 사용자 친화적인 표현으로 변환한다.
-- [x] “폐업확률 72%” 또는 “위험도 72%”처럼 절대확률로 오해되는 값을 표시하지 않는다.
-
-### P1 — 설명 품질
-
-- [x] SHAP 등 개별 설명 기법을 적용한다.
-- [x] 위험요인마다 현재 값과 비교 기준을 함께 표시한다.
-- [x] 상관관계를 인과관계로 표현하지 않는 문구를 사용한다.
-
-### 예측 반환 형식 예시
-
-```json
-{
-  "commercial_area": "강서구 OO상권",
-  "business_type": "커피·음료",
-  "primary_relative_risk_percentile": 88,
-  "primary_priority_display": "같은 업종의 서울 상권 중 위험도 상위 12%",
-  "overall_relative_risk_percentile": 82,
-  "overall_priority_display": "서울 전체 상권·업종 조합 중 위험도 상위 18%",
-  "comparison_groups": ["같은 분기·같은 업종의 서울 상권", "같은 분기 서울 전체 상권·업종"],
-  "service_ranking_policy_version": "v1",
-  "reference_quarter": "YYYY-QN",
-  "risk_factors": [
-    "최근 4분기 매출 감소",
-    "동종 점포 증가",
-    "주요 시간대 생활인구 감소"
-  ],
-  "limitations": "개별 점포의 폐업확률이 아니라 두 비교집단 안에서 본 상권·업종 매출환경 상대 순위입니다."
-}
-```
-
-### Gate 6 통과 기준
-
-- [x] 정상 입력, 데이터 부족 입력, 잘못된 입력 테스트가 모두 통과한다.
-- [x] 같은 입력에는 같은 모델 버전과 데이터 기준일에서 같은 결과가 나온다.
-- [x] 결과에 기준 분기, 주·보조 비교집단, 두 Percentile의 의미, 정책 버전과 모델 적용 범위가 표시된다.
-- [x] 원시 모델 점수와 Percentile을 실제 폐업확률로 오해할 표현이 없다.
-
-**완료 증거:** 저장된 LightGBM v1과 동일 전처리로 최신 `20254`의 21,333개 `상권×업종` 기준분포를 생성했다. 주·보조 Percentile, 상위 비율, 경쟁순위 동점 규칙, TreeSHAP 기반 양·음 요인과 비교값, 입력 오류를 구현했고 전체 `27 passed` 및 별도 프로세스 동일 결과 해시를 확인했다. `reports/stage6/verification.md`, `stage6_manifest.json`, `global_feature_importance.csv`, `data/processed/stage6_reference_features.parquet`, `src/models/stage6_risk_service.py`, `tests/test_stage6_risk_service.py`.
+- [ ] 개인 점포 매출·폐업·정책효과로 해석 금지
+- [ ] RE Stage 5 전까지 기본 외부환경 Fallback으로 유지
+- [ ] 새 모델 교체 Gate 전 서비스에서 제거 금지
+- [ ] 새 모델 승인 후 보조표시·Fallback·감사전용 중 선택
 
 ---
 
-## 12. 단계 7 — 사업체 금융부담 진단
+# Part 2. RE Stage 1~9
+
+## RE Stage 1 — 서비스 전환 계약과 Guard
 
 ### 목표
 
-사용자가 직접 입력한 사업체 정보로 내부 금융부담을 계산하고 상권환경 위험과 분리해 보여준다.
+새 서비스의 입력·출력·제외범위와 기존 산출물의 지위를 확정하고, 옛 Stage 7 작업이 실행되지 않도록 한다.
 
-### P0 — 입력 항목
+### 상태 기록
 
-- [ ] 서울시 사업장 위치 또는 상권
-- [ ] 업종
-- [ ] 영업기간
-- [ ] 최근 월평균 매출
+| 항목 | 기록 |
+| --- | --- |
+| 담당자 | 사용자 결정 / Codex 문서·구현 지원 |
+| 시작일 | 2026-08-15 |
+| 완료일 | 2026-08-15 |
+| 상태 | 완료 — Gate RE1 통과, 정책 최종선택은 RE2 착수 전 대기 |
+| 선행조건 | 새 계획서와 체크리스트 승인 |
+
+### P0 — 기존 계획 충돌 해소
+
+- [x] 기존 금융부담지수 0~100점 구현 취소 승인
+- [x] 기존 20/20/35/25 가중치 사용 중단 승인
+- [x] 낮음·주의·높음 등급 사용 중단 승인
+- [x] 단순 정책 적합도 백분율 사용 금지
+- [x] 정책 1·2·3위 단순 Ranking 사용 금지
+- [x] 기존 Stage 7~12 실행 Guard 설정
+- [x] 기존 Stage 0~6 Artifact 503개 SHA-256 동결 목록 생성
+
+### P0 — 새 서비스 계약
+
+- [x] 서비스 명칭 확정
+- [x] 서울 소상공인 대상 유지
+- [x] 정책효과 시뮬레이터 전환 승인
+- [x] 13주 주별 계산범위 승인
+- [x] 6개월 월별 계산범위 승인
+- [x] 무대응 시나리오 필수화
+- [x] 비차입 지원 우선 비교
+- [x] 최소부채 기본 목표 승인
+- [x] 최장생존·최소상환·빠른실행 선택목표 승인
+- [x] 안전현금 기준의 정의 후보 작성 — 사용자 입력 우선, 설명 가능한 기본값은 RE3 승인
+- [x] 정책 범위 8~12개 원칙 승인
+- [x] 간편 입력 + CSV 업로드 원칙 승인
+
+### P0 — 역할 경계
+
+- [x] ML은 상권×업종 집계환경 시나리오만 생성
+- [x] 규칙 엔진은 공식 자격판정
+- [x] 현금흐름 엔진은 금액·날짜·상환 계산
+- [x] 대안 비교 엔진은 사용자 목표별 결과 비교
+- [x] RAG는 공식 근거 검색
+- [x] LLM은 설명만 수행
+- [x] LLM의 계산·자격·순위 변경 금지
+
+### P0 — 개인정보 계약
+
+- [x] 주민등록번호 수집 금지
+- [x] 계좌번호 수집 금지
+- [x] 신용점수 수집 금지
+- [x] 사업자등록번호 필수화 금지
+- [x] 세션 내 계산 우선
+- [x] 명시적 동의 없는 영구저장 금지
+- [x] 원금액 로그 금지
+- [x] 외부 LLM 전송 필드 최소화
+
+### P0 — RE 경로와 버전
+
+- [x] RE 전용 설정 파일 명명규칙
+- [x] RE 보고서 경로
+- [x] RE 원본·가공 데이터 경로
+- [x] 현금흐름 엔진 버전 형식
+- [x] 정책 데이터 버전 형식
+- [x] 모델 v2 버전 형식
+- [x] 기존 파일 덮어쓰기 차단 테스트
+
+### 완료 산출물
+
+- [x] `reports/re_stage1/service_contract.md`
+- [x] `reports/re_stage1/artifact_disposition.csv`
+- [x] `reports/re_stage1/privacy_scope.md`
+- [x] `reports/re_stage1/input_output_contract.md`
+- [x] `config/re_stage1.yaml`
+- [x] `reports/re_stage1/policy_portfolio_comparison.md`
+- [x] `reports/re_stage1/verification.md`
+- [x] 실행 Guard 테스트
+
+### Gate RE1
+
+- [x] 서비스 전환을 사용자가 승인
+- [x] 기존 금융부담점수 구현 취소가 명시됨
+- [x] Stage 0~6 동결 대상 503개가 해시와 함께 기록됨
+- [x] 정책 수·입력범위·기본 목표가 승인됨
+- [x] 미승인 데이터·Target·모델 실행이 차단됨
+- [x] 후속 단계 영향 검토와 필요 수정 완료 — RE2를 `6안 검토 → 최종 승인 → 정책별 원문 수집` 순서로 수정
+
+---
+
+## RE Stage 2 — 소상공인 정책 데이터와 지식베이스
+
+### 목표
+
+소상공인에게 적용 가능한 공식 정책 8~12개의 자격·금액·지급·상환조건을 원문과 연결해 구조화한다.
+
+### 상태 기록
+
+| 항목 | 기록 |
+| --- | --- |
+| 담당자 | 사용자 정책 범위 승인 / Codex 수집·구조화·QA — 완료된 과거 이력이며, 이후 외부 수집은 사용자 전담 |
+| 시작일 | 2026-08-15 |
+| 완료일 | 2026-08-16 |
+| 상태 | 완료 — A+C 10개, Gate RE2 통과 |
+| 선행조건 | Gate RE1 |
+
+### RE1 전 선행수집·QA 기록
+
+사용자가 먼저 확보한 P-01·P-03·P-04·P-05 자료에는 원본 보존과 형식 QA, 공통 스키마 변환, 정확 제목 그룹화까지만 적용했다. 이 작업은 RE Stage 2의 입력을 준비한 것이며, Gate RE1 통과나 RE Stage 2 착수·완료로 간주하지 않는다.
+
+- 선행 통합 결과: 1,005개 소스 레코드 → 827개 정확 제목 후보 그룹
+- 복수 출처 그룹: 174개
+- RE1 비교 결과: 25개 고유 후보로 A·B·C·A+C·A+B·A+B+C 6개 안, 총 62행 생성
+- RE1 당시 보류였던 최종 정책 선정과 Rule·Event 구조화를 RE2에서 완료했다. 퍼지매칭과 후보 삭제는 필요성이 없어 수행하지 않았다.
+- 사전 QA: [`reports/pre_re1/policy/QA.md`](./reports/pre_re1/policy/QA.md)
+- 통합 후보 그룹: [`candidate_groups.csv`](./data/processed_re/policy/pre_re1/candidate_groups.csv)
+- 6개 안 비교: [`policy_portfolio_comparison.md`](./reports/re_stage1/policy_portfolio_comparison.md)
+- 비교 후보 원본표: [`portfolio_candidates.csv`](./data/processed_re/policy/re_stage1/portfolio_candidates.csv)
+
+### RE2 완료 결과
+
+- 최종 선택: `A+C`, 정책 10개
+- 공식 원문 Manifest: 27행
+- 정책 Metadata: 10행
+- 자격 Rule: 56행
+- 자격 정답사례: 20행
+- 금융 Event: 30행
+- 버전 이력: 11행
+- 검색 전처리 Chunk: 217개, 검색 인덱스는 아직 미생성
+- 자동 테스트: `9 passed`
+- 상세 보고서: [`reports/re_stage2/structured_qa.md`](./reports/re_stage2/structured_qa.md)
+
+### 중요 — 기업마당 API의 정확한 역할
+
+`중소벤처기업부_중소기업 지원사업 공고 조회 서비스`는 소상공인 전용 API가 아니다.
+
+공식 설명상 중앙행정기관·지방자치단체·유관기관의 중소기업 지원 공고를 제공하며, `지원대상` 필드와 `소상공인지원·소상공인지원사업공고` 키워드를 포함한다. 따라서 소상공인 공고도 포함될 수 있지만 중소기업·창업·벤처 등 다른 대상 공고도 함께 들어온다.
+
+체크리스트에서의 역할은 다음과 같다.
+
+| 출처 | 역할 | 단독 자격근거 사용 |
+| --- | --- | --- |
+| 기업마당 공고 API | 광역 후보 수집 | 금지 |
+| 소상공인24·소진공 공식 공고 | 소상공인 대상 확인·원문 검증 | 가능 |
+| 서울시 공식 공고 | 서울 지역 정책 원문 검증 | 가능 |
+| 중소벤처24 공고 API | 중기부 유관기관 공고 교차확인 | 단독 사용 금지 |
+| 정책 공식 신청페이지·첨부문서 | 최종 자격·금융조건 근거 | 필수 |
+
+### 공식 출처
+
+- [x] 전체 다운로드 목록·절차: [`향후 데이터 다운로드 가이드.md`](./data/raw_re/향후%20데이터%20다운로드%20가이드.md)
+- [x] 기업마당 API: https://www.data.go.kr/data/15157820/openapi.do
+- [x] 소상공인24: https://www.sbiz24.kr/landing/
+- [x] 소상공인 정책자금 접수·공지: https://ols.semas.or.kr/ols/man/SMAN010M/page.do
+- [x] 소상공인 정책자금 조건 요약: https://ols.semas.or.kr/ols/man/SMAN018M/page.do
+- [x] 정책자금 지원 제외업종: https://ols.semas.or.kr/ols/pfa/SPFA207P/page.do
+- [x] 2026년 서울시 중소기업육성자금: https://news.seoul.go.kr/economy/rearing-funds
+- [x] 2026년 서울시 육성자금 변경공고: https://www.seoul.go.kr/news/news_notice.do?nttNo=457365
+- [x] 서울시 소상공인 종합지원: https://news.seoul.go.kr/economy/small-business-supports
+- [x] 중소벤처24 공고 API: https://www.data.go.kr/data/15113191/openapi.do
+- [x] 선정 정책별 공식 신청페이지·신청경로 또는 전화·이메일 접수경로 기록
+
+### P0 — 다운로드한 정책 데이터의 사용 계약
+
+- [x] 모든 API 응답·공고 원문·첨부문서·신청 페이지를 `data/raw_re/policy/<source>/<수집일>/`에 원본 그대로 보존
+- [x] 원본 URL·공고일·적용기간·수집일·SHA-256을 Manifest에 기록하고 원문에 없는 값은 `미확인` 유지
+- [x] 기업마당 API는 당해 연도 광역 후보 목록과 공식 공고 URL 추출에만 사용
+- [x] 기업마당 API 값을 자격·금리·한도·접수상태의 최종값으로 직접 사용하지 않음
+- [x] 소상공인24·소진공·서울시·공식 수행기관 원문으로 소상공인 적용과 조건 검증
+- [x] 소진공 공고를 정책 Metadata·자격 Rule·금융 Event·검색 전처리 Chunk에 사용
+- [x] 서울시 최초공고와 변경공고를 별도 버전으로 보존하고 최신 변경공고 조건 선택
+- [x] 중소벤처24 API를 공고명·기간·기관·첨부파일 교차검증에만 사용
+- [x] 정책 원문을 `Metadata → Rule → Event → Chunk` 순서로 변환
+- [x] RE4에는 검수된 금융 Event만 전달
+- [x] RE6에는 검수된 자격 Rule과 Chunk만 전달
+- [x] RAG·LLM이 Rule·Event 값을 생성하거나 수정하지 못하도록 Guard 유지
+- [x] RE7에는 정책별 현금흐름 결과와 공식 근거만 전달하도록 계약 유지
+- [x] RE9 데모 직전 접수상태·변경공고 재수집을 필수 후속 작업으로 유지
+
+### P0 — API 접근성 검증
+
+- [x] 기업마당 API 활용신청 후 제공받은 키로 실제 접근 확인
+- [x] 개발계정 승인상태와 응답 성공 확인
+- [x] 실제 Endpoint와 요청 파라미터 확인
+- [x] 실제 JSON 응답 확인
+- [x] 공고ID·등록일·수정일 필드 확인
+- [x] 지원대상 필드 확인
+- [x] 공고 URL과 첨부파일 필드 확인
+- [x] 신청기간·신청방법·문의처 확인
+- [x] 당해연도 범위 확인
+- [x] 호출량 제한이 제공받은 정보에 미기재임을 기록
+- [x] 운영 전 계정·호출한도 재확인이 필요함을 기록
+
+### P0 — 소상공인 후보 필터
+
+- [x] `지원대상`에 소상공인 명시 여부 확인
+- [x] 해시태그·분야의 소상공인 관련 키워드 확인
+- [x] 수행기관과 소진공 여부 확인
+- [x] 서울 지역 적용 여부 확인
+- [x] 업종 제한 확인
+- [x] 매출·상시근로자·업력 조건 확인
+- [x] 소기업에는 적용되지만 소상공인에는 적용되지 않는 공고 분리
+- [x] 창업기업·벤처기업 전용 공고 분리
+- [x] 중소기업 전용 공고를 소상공인 공고로 자동 간주하지 않음
+- [x] 키워드만 일치하고 자격에 소상공인이 없는 공고를 최종 10개에서 제외
+
+### P0 — 공식 원문 검증
+
+- [x] 소상공인24·소진공·중기부·공식 수행기관 원문 존재 확인
+- [x] 서울시 정책은 서울시·서울신용보증재단·공식 수행기관 원문 확인
+- [x] 공고번호와 공고일 확인, 원문에 없는 번호는 `미확인`
+- [x] 신청 시작·종료일 확인
+- [x] 예산 소진형 여부 확인
+- [x] 대상 정의 확인
+- [x] 제외업종 확인
+- [x] 체납·연체·신용조건 확인
+- [x] 지원한도 확인
+- [x] 금리·이차보전율 확인
+- [x] 거치·상환기간 확인
+- [x] 상환방식 확인
+- [x] 자부담 확인
+- [x] 지급·사후환급 방식 확인, 미기재 절차는 `미확인`
+- [x] 중복수혜 제한 확인
+- [x] 문의처와 신청 URL·전화·이메일 경로 확인
+
+### P0 — 정책 8~12개 선정
+
+- [x] 보조금 후보 최소 1개
+- [x] 바우처 후보 최소 1개
+- [x] 이차보전 후보 최소 1개
+- [x] 정책자금 융자 후보 최소 2개
+- [x] 대환·상환부담 완화 후보 최소 1개
+- [x] 보증 후보 최소 1개
+- [x] 서울 지역정책 포함
+- [x] 소진공 전국정책 포함
+- [x] 각 정책의 금융효과 계산 가능성 평가
+- [x] A·B·C·A+C·A+B·A+B+C 비교표 작성
+- [x] 최종 A+C 10개 사용자 승인
+
+### P0 — 정책 Metadata
+
+- [x] `policy_id`
+- [x] `policy_version`
+- [x] `policy_name`
+- [x] `provider`
+- [x] `policy_type`
+- [x] `purpose_tags`
+- [x] `region_scope`
+- [x] `industry_scope`
+- [x] `business_age_rule`
+- [x] `revenue_rule`
+- [x] `employee_rule`
+- [x] `credit_or_delinquency_rule`
+- [x] `application_start`
+- [x] `application_end`
+- [x] `budget_exhaustion_rule`
+- [x] `official_notice_url`
+- [x] `attachment_url`
+- [x] `effective_from`
+- [x] `effective_to`
+- [x] `retrieved_at`
+- [x] `reviewed_at`
+
+### P0 — 금융조건 Metadata
+
+- [x] `support_form`
+- [x] `minimum_amount`
+- [x] `maximum_amount`
+- [x] `support_rate`
+- [x] `interest_rate_rule`
+- [x] `interest_subsidy_rule`
+- [x] `guarantee_fee_rule`
+- [x] `grace_period`
+- [x] `repayment_period`
+- [x] `repayment_method`
+- [x] `matching_fund_rate`
+- [x] `eligible_expense_types`
+- [x] `payment_method`
+- [x] `reimbursement_delay_rule`
+- [x] `combinability_rule`
+- [x] `unquantifiable_conditions`
+
+### P0 — 출처 상태
+
+- [x] 공식 API 확인
+- [x] 공식 공고 확인
+- [x] 공식 첨부문서 확인
+- [x] 사용자 입력 상태값 계약 정의
+- [x] 서비스 가정 상태값 계약 정의
+- [x] `미확인` 사용
+- [x] `해당 없음` 사용
+
+### P0 — 버전·원문 보존
+
+- [x] 원문 URL 기록
+- [x] 원문 파일 또는 내용 식별자 기록
+- [x] SHA-256 기록
+- [x] 수집일 기록
+- [x] 검수일 기록
+- [x] 적용기간 기록
+- [x] 변경공고 별도 버전
+- [x] 종료·현재성 불확실 정책 상태 구분
+- [x] 과거 버전 덮어쓰기 금지
+
+### 검증
+
+- [x] 구조화 값과 원문 수작업 대조
+- [x] 두 명칭이 같은 정책의 버전 구분
+- [x] 예산소진·현재성 불확실 정책을 확정적인 `접수 중`으로 표시하지 않음
+- [x] 지원대상 없는 후보 자동채택 0건
+- [x] 중소기업 전용 공고의 소상공인 오분류 0건
+- [x] 공식 근거 없는 금리·한도·지급일 생성 0건
+- [x] 금융효과 계산 불가조건을 `미확인` 처리
+
+### 완료 산출물
+
+- [x] API 접근성 보고서
+- [x] 전체 후보 공고 목록
+- [x] 소상공인 후보 필터 결과
+- [x] 최종 정책 선정표
+- [x] 원문 Manifest
+- [x] 정책 Metadata
+- [x] 자격 Rule
+- [x] 정책별 자격 정답사례 2개
+- [x] 금융조건 Metadata
+- [x] 구조화 QA 보고서
+- [x] 정책 버전 변경이력
+- [x] 검색 전처리 Chunk — 검색 인덱스는 RE6까지 보류
+
+### Gate RE2
+
+- [x] 기업마당을 소상공인 전용 API로 표현하지 않음
+- [x] 모든 선정 정책이 공식 원문에서 소상공인 적용 확인
+- [x] A+C 정책 10개 사용자 승인
+- [x] 자격·금융조건이 원문과 추적 가능
+- [x] 미확인 값이 추측으로 채워지지 않음
+- [x] 후속 단계 영향 검토와 필요 수정 완료
+
+### RE2 종료 환류
+
+- [x] RE3 상세 입력에 공과금·4대보험·차량연료비 유형과 `expense_type` 추가
+- [x] RE4 공통 계약에 `event_id`와 연결 이벤트 중복방지 추가
+- [x] RE6에 세션 한정 자격 프로필과 신용구간 3상태 입력 추가
+- [x] RE5는 Target·데이터·모델 정의 수정 없음으로 기록
+- [x] 상세 근거: [`downstream_impact_review.md`](./reports/re_stage2/downstream_impact_review.md)
+
+---
+
+## RE Stage 3 — 개인 현금흐름 입력과 기준 엔진
+
+### 목표
+
+ML·정책·RAG 없이도 개인 사업장의 13주·6개월 기준 현금흐름을 결정론적으로 계산한다.
+
+### 상태 기록
+
+| 항목 | 기록 |
+| --- | --- |
+| 담당자 | 사용자 입력 계약 승인 / Codex 구현·검산 |
+| 시작일 | 미정 |
+| 완료일 | 미정 |
+| 상태 | 입력·계산 계약 승인 완료 — 사용자 요청 전까지 구현 미착수 |
+| 선행조건 | Gate RE1 |
+
+### 승인된 구현 계약 — 2026-08-16
+
+- [x] 간편 입력과 상세 CSV를 모두 지원
+- [x] 계산된 현금잔액은 음수 허용, 0원 보정 금지
+- [x] 입력 금액의 음수 거부와 계산 결과의 음수 허용을 분리
+- [x] 간편 입력의 월 대출상환액은 원금·이자 합계 현금유출로 처리
+- [x] 대출별 상세 입력에만 원금균등·원리금균등·만기일시상환 계산 적용
+- [x] 상세 대출 이자는 월 단위 계산, 일할계산 제외
+- [x] 각 금융 이벤트 계산값을 원 단위 반올림
+- [x] 안전현금 기준은 사용자 입력 필수, 미입력 시 임의 기본값 금지
+- [x] 13주 계산의 매출 입금일·비용 지급일 누락 시 임의 날짜 생성 금지 및 입력 오류 반환
+- [x] RE3에는 새 외부 데이터가 필요하지 않으며 로컬 코드·가상 사례만 사용
+- [x] 진행 승인은 받았으나 사용자 재개 요청 전에는 구현하지 않음
+
+### P0 — 간편 입력 계약
+
+- [ ] 기준일
+- [ ] 현재 보유현금
+- [ ] 최근 월평균 매출 또는 월별 매출
 - [ ] 월 임대료
 - [ ] 월 인건비
-- [ ] 사업자대출 잔액
-- [ ] 월 대출상환액
+- [ ] 월 변동비 또는 변동비율
+- [ ] 기타 고정비
+- [ ] 대출잔액
+- [ ] 월 대출상환액 또는 대출별 상세
+- [ ] 모든 금액 원 단위
+- [ ] 기준 기간 표시
 
-### P1 — 선택 입력
+### P1 — 상세 CSV
 
-- [ ] 직원 수
-- [ ] 최근 매출 증감
-- [ ] 추가 자금 필요 여부
-- [ ] 자금 필요 목적
+- [ ] 최근 6~12개월 매출
+- [ ] 매출 입금 예정일
+- [ ] 임대료 지급일
+- [ ] 인건비 지급일
+- [ ] 매입비 지급일
+- [ ] 세금·공과금 일정
+- [ ] 공과금·4대보험·차량연료비 비용 유형
+- [ ] 외상매출금
+- [ ] 외상매입금
+- [ ] 일회성 지출
+- [ ] 일회성 지출 `expense_type`
+- [ ] 대출별 잔액
+- [ ] 대출별 금리
+- [ ] 상환방식
+- [ ] 거치기간
+- [ ] 만기
 
-### P0 — 계산 지표
+### P0 — 입력 검증
 
-- [ ] 임대료 / 매출
-- [ ] 인건비 / 매출
-- [ ] 월 대출상환액 / 매출
-- [ ] 주요 고정비 / 매출
-- [ ] 대출잔액 또는 부채부담 보조지표
-- [ ] 각 지표의 계산식과 예외 처리 규칙
+- [ ] 음수 금액 거부
+- [ ] 문자열 금액 거부
+- [ ] NaN·무한대 거부
+- [ ] 원·만원 단위 혼동 경고
+- [ ] 동일 비용 중복 탐지
+- [ ] 변동비 금액과 비율 중복 금지
+- [ ] 대출잔액 0·상환액 양수 확인
+- [ ] 금리 백분율 단위 확인
+- [ ] 만기·거치기간 논리 확인
+- [ ] 매출 0원에서도 현금계산 가능
+- [ ] 비정상 비율 입력확인 경고
 
-### P0 — 금융부담 점수와 상대 위험 프로필
+### P0 — 계산 엔진
 
-- [ ] 금융부담 점수 또는 등급의 산정 규칙을 문서화한다.
-- [ ] 임계값을 설정 파일로 분리한다.
-- [ ] 월매출 0, 음수 입력, 비정상적으로 큰 값, 빈 값 처리 규칙을 구현한다.
-- [ ] 상권환경의 두 상대 Percentile과 금융부담을 하나의 숫자로 무리하게 합치지 않는다.
-- [ ] 기본 출력은 `업종 내 상대 위험순위 + 서울 전체 상대 위험순위 + 금융부담`의 세 축 프로필로 제공한다.
-- [ ] 안정형·상권악화형·금융부담형·복합위험형은 화면에 꼭 필요할 때만 별도 승인된 구간 규칙으로 생성하며, 원시 모델 점수에 임의 임계값을 적용하지 않는다.
-- [ ] 프로필 또는 유형과 함께 어떤 위험요인·부담지표가 결과를 높였는지 설명한다.
+- [ ] 주별 13주 타임라인
+- [ ] 월별 6개월 타임라인
+- [ ] 기초현금
+- [ ] 영업현금유입
+- [ ] 고정비
+- [ ] 변동비
+- [ ] 세금·공과금
+- [ ] 기존부채 원금
+- [ ] 기존부채 이자
+- [ ] 일회성 지출
+- [ ] 기말현금
+- [ ] 최저 현금잔액
+- [ ] 최초 현금 고갈 시점
+- [ ] 기간 말 현금잔액
 
-### 안전 문구
+### P0 — 대출 상환
 
-- [ ] 입력값 기반의 참고용 진단임을 표시한다.
-- [ ] 실제 신용정보나 은행 내부정보를 사용하지 않음을 표시한다.
-- [ ] 대출 승인 가능성 또는 확정적인 금융판단이 아님을 표시한다.
+- [ ] 원금균등
+- [ ] 원리금균등
+- [ ] 만기일시상환
+- [ ] 거치기간
+- [x] 월 단위 이자 계산·일할계산 제외 승인 — 구현은 미착수
+- [x] 금융 이벤트별 원 단위 반올림 승인 — 구현은 미착수
+- [ ] 잔여원금
+- [ ] 총이자
+- [ ] 월별 상환액
 
-### Gate 7 통과 기준
+### P0 — 개인정보
 
-- [ ] 정상, 경계값, 0, 빈 값, 비정상 입력 테스트가 있다.
-- [ ] 계산 결과를 수작업 계산과 대조한 테스트 사례가 있다.
-- [ ] 외부환경의 두 상대 Percentile과 내부 금융부담이 화면과 API에서 별도 필드로 반환된다.
+- [ ] 주민등록번호 필드 없음
+- [ ] 계좌번호 필드 없음
+- [ ] 신용점수 필드 없음
+- [ ] 세션 내 계산
+- [ ] 원금액 로그 없음
+- [ ] 명시적 동의 없는 DB 저장 없음
+- [ ] 샘플 모드와 실제 입력 분리
 
-**완료 증거:**
+### 대표 가상 사업장
+
+- [ ] 상권 하락·낮은 부채
+- [ ] 안정 상권·높은 상환부담
+- [ ] 상권 하락·현금 부족·기존 부채
+- [ ] 매출 0원
+- [ ] 신규 사업장
+- [ ] 단위 오류
+- [ ] CSV 오류
+
+### 검증
+
+- [ ] 손계산 예제와 주별 결과 일치
+- [ ] 손계산 예제와 월별 결과 일치
+- [ ] 주·월 집계 관계 확인
+- [ ] 지급일 경계 확인
+- [ ] 상환방식별 정답 확인
+- [ ] 거치 종료 직전·직후 확인
+- [ ] 동일 입력 동일 결과
+- [ ] 오류 입력에 수정 필드 반환
+- [ ] 엔진 단독 테스트에서 LLM 호출 없음
+
+### 완료 산출물
+
+- [ ] 입력 스키마
+- [ ] CSV 템플릿
+- [ ] 현금흐름 모듈
+- [ ] 대출 상환표 모듈
+- [ ] 샘플 사업장 JSON
+- [ ] 손계산 정답표
+- [ ] 입력 오류코드
+- [ ] 검증 보고서
+
+### Gate RE3
+
+- [ ] 정책·ML 없이 기준 현금흐름 재현
+- [ ] 손계산 사례 전부 통과
+- [ ] 비용 중복 없음
+- [ ] 민감정보 비저장 확인
+- [ ] 계산식·반올림·날짜 규칙 문서화
+- [ ] 후속 단계 영향 검토와 필요 수정 완료
 
 ---
 
-## 13. 단계 8 — 정책자료 구조화와 추천 Engine
+## RE Stage 4 — 정책 금융 이벤트 엔진
 
 ### 목표
 
-공식 정책자료를 구조화하고, 사용자 조건과 상대 위험·금융부담 프로필에 맞는 후보를 규칙 기반으로 선별·정렬한다.
+공식 정책조건을 현금흐름에 적용할 수 있는 지급·비용감면·자부담·상환 이벤트로 변환한다.
 
-### P0 — 정책자료 최소 범위
+### 상태 기록
 
-- [ ] 서울시 중소기업육성자금의 최신 사용 문서를 확보한다.
-- [ ] 소상공인시장진흥공단 정책자금 자료를 확보한다.
-- [ ] 정책자금 지원 제외업종 기준을 구조화한다.
-- [ ] 기업마당 지원사업 공고 중 MVP 데모에 필요한 범위를 수집한다.
-- [ ] 각 자료의 기준일, 공고일, 신청기간, 공식 URL을 기록한다.
+| 항목 | 기록 |
+| --- | --- |
+| 담당자 | Codex 구현·검산 / 사용자 정책 가정 승인 |
+| 시작일 | 미정 |
+| 완료일 | 미정 |
+| 상태 | 미착수 |
+| 선행조건 | Gate RE2·RE3 |
 
-### P1 — 보조 자료
+### P0 — 공통 이벤트 계약
 
-- [ ] 금융위원회 서민금융상품기본정보를 구조화한다.
-- [ ] 서민금융진흥원 FAQ를 RAG 보조자료로 정제한다.
+- [ ] 정책 ID·버전
+- [ ] 정책 내부 하위상품 `event_id`
+- [ ] 연결 이벤트 `linked_event_id`·중복방지 키
+- [ ] 지원유형
+- [ ] 이벤트 날짜
+- [ ] 현금유입
+- [ ] 비용감면
+- [ ] 자부담
+- [ ] 신규부채 원금
+- [ ] 이자
+- [ ] 보증료·수수료
+- [ ] 공식값·사용자값·가정값 출처
+- [ ] 미확인 조건
+- [ ] 하위상품 미선택 시 대표 한도·평균 금리 생성 금지
 
-### P0 — Metadata
+### P0 — 보조금
+
+- [ ] 지급일 현금유입
+- [ ] 선지급·사후정산
+- [ ] 지원한도
+- [ ] 자부담
+- [ ] 적격 비용
+- [ ] 사용기간
+- [ ] 사후환급 전 선행현금
+
+### P0 — 바우처
+
+- [ ] 현금유입으로 오처리 금지
+- [ ] 적격 비용 감소
+- [ ] 바우처 한도
+- [ ] 자부담률
+- [ ] 사용기한
+- [ ] 잔액 소멸 처리
+
+### P0 — 이차보전
+
+- [ ] 적용 전 이자
+- [ ] 지원기간 이자
+- [ ] 지원 종료 후 이자
+- [ ] 월 이자절감액
+- [ ] 총이자절감액
+
+### P0 — 정책자금 융자
+
+- [ ] 실행일 현금유입
+- [ ] 대출원금
+- [ ] 금리
+- [ ] 거치기간
+- [ ] 상환기간
+- [ ] 상환방식
+- [ ] 보증료·부대비용
+- [ ] 월 원리금
+- [ ] 잔여원금
+- [ ] 총이자
+
+### P0 — 대환·만기 연장
+
+- [ ] 기존 상환일정
+- [ ] 변경 상환일정
+- [ ] 월 상환액 감소
+- [ ] 총기간 증가
+- [ ] 총이자 변화
+- [ ] 수수료
+
+### P0 — 보증
+
+- [ ] 보증 자체 현금유입 금지
+- [ ] 실제 대출조건 없으면 금액효과 미산정
+- [ ] 보증한도·대상 표시
+- [ ] 금융접근 지원으로 분리
+
+### P0 — 조건부 시나리오
+
+- [ ] 승인·지급 가정
+- [ ] 공고상 가장 이른 지급일
+- [ ] 사용자 지정 지급일
+- [ ] 지연 지급
+- [ ] 최대 지원액
+- [ ] 사용자 필요액
+- [ ] 승인되지 않음
+
+### 검증
+
+- [ ] 보조금 손계산
+- [ ] 바우처 손계산
+- [ ] 이차보전 손계산
+- [ ] 정책융자 손계산
+- [ ] 대환 손계산
+- [ ] 사후환급 전 현금부족
+- [ ] 거치 종료
+- [ ] 정책기간 밖 이벤트 차단
+- [ ] 공식값·가정값 혼합 방지
+- [ ] 승인확률 출력 없음
+
+### 완료 산출물
+
+- [ ] 금융 이벤트 스키마
+- [ ] 지원유형별 변환기
+- [ ] 지급·상환 스케줄
+- [ ] 정책효과 테스트
+- [ ] 가정 원장
+- [ ] 검산 보고서
+
+### Gate RE4
+
+- [ ] 선정 정책의 금융 이벤트 재현
+- [ ] 공식조건과 가정값 분리
+- [ ] 대출 현금유입과 미래상환 동시 반영
+- [ ] 미확인 조건 임의 보완 없음
+- [ ] 승인·인과효과로 오해할 출력 없음
+- [ ] 후속 단계 영향 검토와 필요 수정 완료
+
+---
+
+## RE Stage 5 — 신규 외부데이터·Target v2·Quantile 모델
+
+### 목표
+
+상권×업종 집계 매출환경의 하방·기준·회복 범위를 생성하고 기존 Stage 6과 비교한다.
+
+### 상태 기록
+
+| 항목 | 기록 |
+| --- | --- |
+| 담당자 | 사용자 Target·데이터·모델 승인 / Codex 분석·구현 |
+| 시작일 | 미정 |
+| 완료일 | 미정 |
+| 상태 | 미착수 |
+| 선행조건 | Gate RE1, RE3 엔진 사용 가능 |
+
+### 필수 사용자 결정
+
+- [ ] 관측 단위 유지 여부
+- [ ] Target A 정의
+- [ ] Target B 정의
+- [ ] 보조 Target 정의
+- [ ] 분모 0 처리
+- [ ] 극단값 처리
+- [ ] 신규·소멸 조합 처리
+- [ ] 학습기간
+- [ ] Validation Fold
+- [ ] Purge 길이
+- [ ] 평가 지표
+- [ ] 모델 후보
+- [ ] 새 독립 감사기간
+
+### Target v2 후보
+
+- [ ] 다음 1분기 전년동기 대비 매출증감률
+- [ ] 다음 2분기 합산 전년동기 대비 매출증감률
+- [ ] 다음 2분기 중 최저 전년동기 대비 매출증감률
+- [ ] 전분기 대비 Target을 보조로 비교할지 결정
+- [ ] Target별 업종·기간 분포 확인
+- [ ] Target 의미를 현금흐름 입력과 연결하는 규칙 승인
+
+### P0 — 기존 데이터 Baseline
+
+- [ ] Stage 3 Panel v1 읽기
+- [ ] 기존 197개 Feature Baseline 후보 생성
+- [ ] 단순 계절 Baseline
+- [ ] 업종별 Median Baseline
+- [ ] 시간순 Fold
+- [ ] 누수검증
+- [ ] Panel v1 해시 보존
+
+### P0 — 서울 상권 1~9종 재사용 계약
+
+- [ ] S-01 추정매출은 사용자 승인 전 Target v2를 생성하지 않음
+- [ ] S-01은 승인 후 분기×상권×업종 단위에서 다음 1분기 YoY·다음 2분기 합산 YoY·미래 최저 YoY 후보를 각각 생성
+- [ ] S-02 점포는 같은 분기×상권×업종 키로 Left Join하고 점포수·유사업종점포수·개폐업·프랜차이즈 및 과거 변화 후보 생성
+- [ ] S-03 영역은 좌표계·도형 유효성을 검사한 상권 Polygon으로 보존하고 상가·인허가·행사의 Point-in-Polygon에 사용
+- [ ] S-04 길단위인구는 분기×상권 집계 후 해당 상권의 모든 업종행에 Left Join하고 시간대·요일·성별·연령별 변화 후보 생성
+- [ ] S-05 상권변화지표는 분기×상권 Left Join 후 변화유형·운영기간·폐업기간과 과거 변화 후보 생성
+- [ ] S-06 상주인구는 분기×상권 Left Join 후 인구·가구 구성과 과거 변화 후보 생성
+- [ ] S-07 직장인구는 분기×상권 Left Join 후 성별·연령별 직장인구와 과거 변화 후보 생성
+- [ ] S-08 집객시설은 분기×상권 Left Join 후 교통·교육·의료·유통시설 수와 과거 변화 후보 생성
+- [ ] S-09 아파트는 분기×상권 Left Join 후 단지·세대·면적·가격대·평균시가와 과거 변화 후보 생성
+- [ ] S-02~S-09는 예측시점까지 공개된 현재·과거 값만 사용하고 미래정보 Feature 제거
+- [ ] Panel v1을 덮어쓰지 않고 Panel v2·Manifest·해시를 별도 생성
+
+### P1 — 소진공 상가정보 과거 Snapshot·운영 API 분리
+
+- [ ] 과거 분기 Snapshot 파일: https://www.data.go.kr/data/15083033/fileData.do
+- [ ] 상가정보 업종코드: https://www.data.go.kr/data/15067631/fileData.do
+- [ ] 운영 API: https://www.data.go.kr/data/15012005/openapi.do
+- [ ] 활용신청·호출량 확인
+- [ ] 기준시점 확인
+- [ ] 상가업소번호 변경이력 확인
+- [ ] 업종코드 체계 확인
+- [ ] 서울 상권업종과 매핑표 생성
+- [ ] 좌표 품질 확인
+- [ ] 중복 업소 확인
+- [ ] 시간순 사용 가능성 확인
+- [ ] Snapshot 기준일을 분기로 변환
+- [ ] 좌표를 S-03 상권 Polygon에 공간결합
+- [ ] 상가정보 업종코드를 서울 서비스업종 코드로 매핑
+- [ ] 분기×상권×업종별 영업업소수·업소밀도·분기 순증감·업종다양성 후보 생성
+- [ ] 최신 운영 API 응답을 과거분기 Feature로 소급 사용하지 않음
+- [ ] 운영 API는 RE8의 요청시점 최신 주변 업소 Context로 별도 전달
+- [ ] Baseline 대비 단독 Ablation
+
+### P1 — LOCALDATA 인허가 변화
+
+- [ ] 2026년 공공데이터포털 업종별 API 목록·매핑자료: https://www.data.go.kr/bbs/ntc/selectNotice.do?originId=NOTICE_0000000004566
+- [ ] LOCALDATA 전체분·업종별·지역별 CSV: https://www.localdata.go.kr/devcenter/dataDown.do?selectCategoryId=05&selectGroupId=31
+- [ ] 일반음식점 API: https://www.data.go.kr/data/15154916/openapi.do
+- [ ] 휴게음식점 API: https://www.data.go.kr/data/15154921/openapi.do
+- [ ] 미용업 API: https://www.data.go.kr/data/15154918/openapi.do
+- [ ] 세탁업 API: https://www.data.go.kr/data/15154927/openapi.do
+- [ ] 통신판매업 API: https://www.data.go.kr/data/15154963/openapi.do
+- [ ] 전체분과 변화분 구분
+- [ ] 영업상태 코드 확인
+- [ ] 개업일·폐업일 확인
+- [ ] 업종별 커버리지
+- [ ] 중복 변화 이벤트
+- [ ] 서울 상권 공간매핑
+- [ ] 예측시점 이후 이벤트 제거
+- [ ] 인허가일·폐업일·변경일을 분기로 변환
+- [ ] 좌표 우선·주소 보조 방식으로 S-03 상권 Polygon에 결합
+- [ ] 인허가 업종을 서울 서비스업종으로 매핑
+- [ ] 분기×상권×업종별 신규 인허가수·폐업수·순증감·활성업소 추정·최근 폐업증가 후보 생성
+- [ ] 늦은 행정등록과 과거상태 재구성 실패가 만드는 누수 검사
+- [ ] Baseline 대비 단독 Ablation
+
+### P2 — 날씨·공휴일·행사
+
+- [ ] ASOS 브라우저 다운로드: https://data.kma.go.kr/data/grnd/selectAsosRltmList.do?pgmNo=36
+- [ ] ASOS 일자료 API: https://www.data.go.kr/data/15059093/openapi.do
+- [ ] 한국천문연구원 특일·공휴일 API: https://www.data.go.kr/data/15012690/openapi.do
+- [ ] 서울시 문화행사 API: https://data.seoul.go.kr/dataList/OA-15486/A/1/datasetView.do
+- [ ] 출처와 라이선스
+- [ ] 기준시점
+- [ ] ASOS 서울 108 지점 일자료를 분기로 집계하고 같은 분기의 모든 상권행에 Join
+- [ ] ASOS 평균·극한기온·강수량·강수일수·폭염·한파일수·습도·일조 후보 생성
+- [ ] 공휴일 날짜를 분기로 집계하고 주말중복·대체공휴일·연속휴일 계산
+- [ ] 공휴일수·평일공휴일수·최장연휴 후보 생성
+- [ ] 문화행사 기간을 분기에 배분하고 좌표·주소를 S-03 상권 Polygon에 결합
+- [ ] 문화행사 중복을 제거하고 행사수·행사일수·무료행사수·인접행사 노출 후보 생성
+- [ ] 업종별 영향 방향을 사전에 확정값으로 주입하지 않고 검증 결과로 판단
+- [ ] 누수검증
+- [ ] ASOS 단독 Ablation
+- [ ] 공휴일 단독 Ablation
+- [ ] 문화행사 단독 Ablation
+- [ ] 검증된 후보의 결합 Ablation
+
+### P2 — 서울 실시간 도시데이터
+
+- [ ] 공식 API·파일 페이지: https://data.seoul.go.kr/dataList/OA-21285/A/1/datasetView.do
+- [ ] 주요 121개 장소 목록 확인
+- [ ] 장소 영역과 S-03 상권 Polygon 매핑
+- [ ] 과거 데이터 확보 가능성
+- [ ] 수집주기·지연
+- [ ] 비대상 상권 처리
+- [ ] 호출시각·지연·장소 Coverage를 응답 Metadata에 포함
+- [ ] 혼잡·교통·날씨·행사 값을 운영 Context로만 별도 전달
+- [ ] 서울 전체 핵심 Feature로 사용 금지
+- [ ] 제한 지역 실험 표시
+
+### 데이터 Ablation 순서
+
+- [ ] 기존 Panel Baseline
+- [ ] + 상가정보
+- [ ] + 인허가 변화
+- [ ] + ASOS
+- [ ] + 공휴일
+- [ ] + 문화행사
+- [ ] 실시간 도시데이터는 모델 Ablation과 분리한 운영 Context 평가
+- [ ] 각 단계 동일 Fold·Target·지표
+- [ ] 각 단계 성능·최악 Fold·업종별 안정성·Coverage·처리시간 비교
+- [ ] 각 단계의 P10·P50·P90 변화가 13주·6개월 현금흐름에 주는 민감도 비교
+- [ ] 증분효과 없는 데이터 제거
+- [ ] 누수·Coverage 문제 데이터 제거
+
+### 데이터별 최종 전달·제외 확인
+
+- [ ] 정책 원문·API가 RE2에서 Metadata·Rule·Event·RAG Chunk로 변환되어 RE4·RE6·RE7에 전달됨
+- [ ] 사용자 입력이 RE3에서 날짜별 기준 현금흐름으로 변환되어 RE4·RE7에 전달됨
+- [ ] 서울 상권 1~9종이 RE5에서 Panel v2·Target v2 후보로 분리 생성됨
+- [ ] 상가·인허가·날씨·공휴일·행사는 데이터군별 Ablation Panel과 Manifest로 분리됨
+- [ ] 실시간 도시데이터가 RE8 제한지역 운영 Context로만 전달됨
+- [ ] 다운로드 원본과 모델 채택 여부가 별도 상태로 기록됨
+- [ ] QA·누수검증·Ablation·Gate 탈락 데이터는 원본과 검증기록만 보존하고 서비스 계산에서 제외됨
+
+### 모델 후보
+
+- [ ] 계절 단순 Baseline
+- [ ] 업종별 Median Baseline
+- [ ] Regularized Linear Quantile
+- [ ] LightGBM Quantile
+- [ ] CatBoost Quantile 또는 MultiQuantile
+- [ ] 지원 안정성 확인 후 XGBoost Quantile
+- [ ] 후보 목록 사용자 승인 후 학습
+
+### Quantile 출력
+
+- [ ] P10 하방
+- [ ] P50 기준
+- [ ] P90 회복
+- [ ] P10≤P50≤P90 확인
+- [ ] Quantile crossing 처리규칙
+- [ ] 업종별 구간폭 확인
+
+### 평가
+
+- [ ] MAE
+- [ ] Median Absolute Error
+- [ ] P10 Pinball Loss
+- [ ] P50 Pinball Loss
+- [ ] P90 Pinball Loss
+- [ ] P10~P90 Coverage
+- [ ] 평균 구간폭
+- [ ] Fold별 최악값
+- [ ] Fold 표준편차
+- [ ] 업종별 MAE·Pinball·Coverage
+- [ ] 현금 고갈 시점 민감도
+- [ ] 정책 선택 변화 민감도
+
+### 개인 사업장 적용 경계
+
+- [ ] 상권×업종 집계환경 문구
+- [ ] 개별 점포 매출예측 표현 금지
+- [ ] 집계 변화율 100% 적용 시나리오
+- [ ] 사용자 조정 적용률
+- [ ] 사용자 직접 충격률
+- [ ] 적용방법과 가정 기록
+
+### 독립 테스트
+
+- [ ] 기존 2025 잠긴 평가 재사용 금지
+- [ ] 최신 추가분기 존재 여부 확인
+- [ ] 새 독립기간 후보 사용자 승인
+- [ ] 모델 선택 전 독립기간 잠금
+- [ ] 독립기간 미확보 상태 표시
+- [ ] 독립결과를 본 뒤 모델 재선택 금지
+
+### 기존 Stage 6 교체 Gate
+
+- [ ] 단순 Baseline보다 오차 개선
+- [ ] Fold 전반 개선 재현
+- [ ] Coverage 허용
+- [ ] 주요 업종 붕괴 없음
+- [ ] 신규 데이터 증분효과
+- [ ] 현금흐름에 유용한 충격범위
+- [ ] 배포 성능 허용
+- [ ] 새 독립 감사 통과
+- [ ] 유지·병행·교체안 사용자 승인
+
+### 완료 산출물
+
+- [ ] Target v2 정의서
+- [ ] Panel v2
+- [ ] Panel v2 Manifest
+- [ ] Quantile EDA
+- [ ] Feature contract v2
+- [ ] Fold membership
+- [ ] Baseline 비교
+- [ ] 후보 모델 비교
+- [ ] 데이터 Ablation
+- [ ] Quantile 보정
+- [ ] 서비스 민감도 보고서
+- [ ] 모델 v2 Artifact
+- [ ] Model Card
+
+### Gate RE5
+
+- [ ] Target·기간·지표·모델 승인
+- [ ] 누수검증 통과
+- [ ] Baseline·Ablation 완료
+- [ ] 독립검증 상태 정직하게 표시
+- [ ] 기존 Stage 6의 최종 지위 승인
+- [ ] 후속 단계 영향 검토와 필요 수정 완료
+
+---
+
+## RE Stage 6 — 공식 자격판정·RAG·금융 AI 설명
+
+### 목표
+
+공식 조건으로 정책 후보를 판정하고, 공식 근거를 검색해 계산결과와 Trade-off를 설명한다.
+
+### 상태 기록
+
+| 항목 | 기록 |
+| --- | --- |
+| 담당자 | Codex 구현·평가 / 사용자 답변범위 승인 |
+| 시작일 | 미정 |
+| 완료일 | 미정 |
+| 상태 | 미착수 |
+| 선행조건 | Gate RE2·RE4 |
+
+### P0 — 자격상태
+
+- [ ] 적격
+- [ ] 부적격
+- [ ] 추가 확인 필요
+- [ ] 접수기간 종료
+- [ ] 현재성 확인 불가
+- [ ] `적격`이 승인 가능성이 아니라는 문구
+
+### P0 — 자격규칙
+
+- [ ] 지역
+- [ ] 업종
+- [ ] 업력
+- [ ] 매출
+- [ ] 상시근로자
+- [ ] 자금용도
+- [ ] 기존 수혜
+- [ ] 체납
+- [ ] 연체·신용조건
+- [ ] 신청기간
+- [ ] 예산 소진
+- [ ] 확인 불가능 조건
+
+### P0 — 세션 한정 자격 프로필
+
+- [ ] 현금흐름 입력과 자격판정 입력 분리
+- [ ] 소재지·업종·개업일·대표자 연령구간
+- [ ] 2024·2025 및 반기 매출 비교·2025 연매출 구간
+- [ ] 상시근로자수·임차/점포형 여부
+- [ ] 휴폐업 상태·폐업예정일
+- [ ] 세금 완납·재해확인서·기존 지원이력
+- [ ] 재창업·채무조정·성실상환 상태
+- [ ] 기존 대출 실행일·금리·만기연장 애로
+- [ ] 정확한 신용점수 대신 `NCB 839 이하`, `NCB 919 이하`를 `예/아니오/모름`으로 입력
+- [ ] 세션 종료 시 원값 폐기·로그 및 DB 저장 금지
+
+### P0 — RAG 문서
+
+- [ ] 공식 공고 본문
+- [ ] 공식 첨부문서
+- [ ] 공식 신청페이지
+- [ ] 공식 FAQ
+- [ ] 공식 문의처
+- [ ] 민간 블로그를 자격근거에서 제외
+
+### P0 — Chunk Metadata
 
 - [ ] `policy_id`
-- [ ] 정책명
-- [ ] 제공기관
-- [ ] 대상지역
-- [ ] 지원대상
-- [ ] 소상공인 여부
-- [ ] 지원업종
-- [ ] 제외업종
-- [ ] 업력조건
-- [ ] 매출조건
-- [ ] 신용조건
-- [ ] 자금용도
-- [ ] 정책목적 태그(경영안정, 매출회복, 상권활성화, 시설, 교육 등)
-- [ ] 상권환경 상대 위험과 정책목적의 관련 여부
-- [ ] 지원한도
-- [ ] 금리
-- [ ] 신청기간
-- [ ] 공고일과 종료일
-- [ ] 공식 URL
-- [ ] 문서내용
-- [ ] 정보 확인 기준일
-
-### P0 — 조건 필터
-
-- [ ] 서울 지원 가능 여부
-- [ ] 소상공인 지원 여부
-- [ ] 업종 지원 여부
-- [ ] 제외업종 해당 여부
-- [ ] 업력조건 충족 여부
-- [ ] 신청기간 유효 여부
-- [ ] 자금용도 일치 여부
-- [ ] 확정할 수 없는 조건은 `확인 필요`로 구분한다.
-
-### P0 — 추천 Ranking
-
-- [ ] 조건 미충족 정책을 먼저 제외한다.
-- [ ] 공식 자격조건은 ML 점수나 LLM 판단과 분리하며, 확인할 수 없는 자격은 `확인 필요`로 남긴다.
-- [ ] 남은 후보에 사용자 필요·금융부담·정책목적 적합도를 계산한다.
-- [ ] 상대 위험 Percentile은 위험 사업군 발견과 지원·상담 개입 시급성의 핵심 신호로 사용한다.
-- [ ] 경영안정·매출회복·상권활성화처럼 상권환경 위험과 공식 목적이 관련된 적격 정책에서는 ML 개입 시급성을 추천순위에 주요하게 반영한다.
-- [ ] 상권환경 위험과 목적이 무관한 정책에는 ML 점수를 억지로 반영하지 않으며, 정책 자격의 포함·제외나 승인 가능성 판단에는 사용하지 않는다.
-- [ ] 구체적인 Weight·구간은 정책 Metadata와 추천 평가사례를 만든 뒤 확정하고, 코드에 고정하지 않고 버전이 있는 설정 파일로 관리한다.
-- [ ] LLM 없이 결정론적으로 자격 Filter와 추천 Ranking을 계산한다.
-- [ ] 추천마다 점수 구성과 추천 이유를 반환한다.
-- [ ] 동점 처리 규칙을 정한다.
-- [ ] 추천 결과가 0건일 때 대체 안내를 제공한다.
-
-### 추천 결과 최소 형식
-
-| 필드 | 필수 여부 |
-| --- | --- |
-| 추천 순위 | 필수 |
-| 정책명 | 필수 |
-| 제공기관 | 필수 |
-| 적합도 | 필수 |
-| 추천 이유 | 필수 |
-| 충족 조건 | 필수 |
-| 확인 필요 조건 | 필수 |
-| 신청기간 | 필수 |
-| 공식 URL | 필수 |
-
-### Gate 8 통과 기준
-
-- [ ] 명백한 제외업종이 추천되지 않는다.
-- [ ] 신청기간이 지난 정책을 현재 신청 가능으로 표시하지 않는다.
-- [ ] 동일한 사용자 조건에 대해 재현 가능한 추천 순위가 나온다.
-- [ ] LLM 없이도 후보 필터와 기본 Ranking이 동작한다.
-- [ ] ML 상대 위험이 관련 정책의 개입 시급성에는 반영되지만 자격·승인 가능성을 바꾸지 않는다.
-- [ ] 공식 목적이 무관한 정책에는 ML 위험점수가 추천순위를 왜곡하지 않는다.
-
-**완료 증거:**
-
----
-
-## 14. 단계 9 — RAG 검색과 금융 AI 설명
-
-### 목표
-
-추천된 정책의 공식자료를 검색해 추천 이유, 신청조건, 한도, 신청방법을 근거와 함께 설명한다.
-
-### P0 — 문서 처리
-
-- [ ] 정책 원문과 Metadata를 연결한다.
-- [ ] 문서를 정책 단위와 의미 단위로 Chunking한다.
-- [ ] 각 Chunk에 `policy_id`, 기관, 공고일, 종료일, 공식 URL을 포함한다.
-- [ ] 종료되거나 교체된 문서를 구분한다.
-- [ ] 최신 공고와 변경공고의 우선순위를 정한다.
-- [ ] 같은 정책의 중복 문서를 식별한다.
+- [ ] `policy_version`
+- [ ] `source_type`
+- [ ] `source_url`
+- [ ] `page_or_section`
+- [ ] `effective_from`
+- [ ] `effective_to`
+- [ ] `retrieved_at`
+- [ ] `content_hash`
 
 ### P0 — 검색
 
-- [ ] 지역, 소상공인 여부, 업종, 신청기간, 자금용도로 Metadata Filtering을 수행한다.
-- [ ] 필터를 통과한 문서에 Vector Search를 수행한다.
-- [ ] 검색된 문서와 점수를 로그로 확인할 수 있다.
-- [ ] 검색 결과가 추천 Engine의 `policy_id`와 연결된다.
-- [ ] 관련 없는 정책이 검색될 때의 최소 유사도 또는 재정렬 규칙을 둔다.
+- [ ] 정책 ID 필터
+- [ ] 버전 필터
+- [ ] 적용기간 필터
+- [ ] 지원대상 질의
+- [ ] 금리·상환 질의
+- [ ] 지급·환급 질의
+- [ ] 제외조건 질의
+- [ ] 신청방법 질의
+- [ ] 근거 없는 경우 `확인 불가`
 
-### P0 — 답변
+### P0 — LLM 출력
 
-- [ ] 추천 이유를 설명한다.
-- [ ] 확인 가능한 지원조건을 설명한다.
-- [ ] 지원한도와 금리를 문서에서 찾을 수 있을 때만 답한다.
-- [ ] 신청기간과 신청방법을 설명한다.
-- [ ] 지원 제외 조건을 설명한다.
-- [ ] 정책명, 제공기관, 공식 URL 또는 근거 문서를 함께 표시한다.
-- [ ] 문서에 없는 내용을 모델의 기억으로 채우지 않는다.
-- [ ] 자격을 확정할 수 없으면 `신청 가능`이 아니라 `확인 필요`로 답한다.
-- [ ] 검색 결과가 없으면 확인 불가 메시지를 반환한다.
+- [ ] 결론
+- [ ] 사용한 사용자 입력
+- [ ] 적용한 정책조건
+- [ ] 현금흐름 변화
+- [ ] 부채·이자 변화
+- [ ] 미확인 조건
+- [ ] 공식 근거
+- [ ] 기준일
+- [ ] 최종 기관 확인 안내
 
-### P0 — 필수 질문 테스트
+### 금지 기능
 
-- [ ] “왜 이 자금을 추천했어?”
-- [ ] “내가 신청할 수 있어?”
-- [ ] “최대 얼마까지 받을 수 있어?”
-- [ ] “준비해야 할 서류는 뭐야?”
-- [ ] “언제까지 신청해야 해?”
-- [ ] “지원 제외 조건이 있어?”
-- [ ] “어디에서 신청해?”
+- [ ] LLM 산술계산 금지 테스트
+- [ ] LLM 상환표 생성 금지 테스트
+- [ ] LLM 자격조건 생성 금지 테스트
+- [ ] LLM 승인확률 생성 금지 테스트
+- [ ] LLM 정책효과 인과주장 금지 테스트
+- [ ] LLM 순위 변경 금지 테스트
 
-### RAG 평가표
+### 평가세트
 
-| 평가 항목 | 확인 질문 수 | 통과 수 | 실패 사례와 조치 |
-| --- | ---: | ---: | --- |
-| 근거 문서 관련성 |  |  |  |
-| 조건 정확성 |  |  |  |
-| 날짜 정확성 |  |  |  |
-| 공식 URL 표시 |  |  |  |
-| 근거 없는 단정 방지 |  |  |  |
-| 답변 가독성 |  |  |  |
+- [ ] 적격 사례
+- [ ] 부적격 사례
+- [ ] 추가 확인 사례
+- [ ] 접수 종료 사례
+- [ ] 근거 조항 질문
+- [ ] 지급·상환 질문
+- [ ] 원문에 없는 조건 질문
+- [ ] 오래된 정책 질문
 
-### Gate 9 통과 기준
+### 평가
 
-- [ ] 대표 정책별 질문 세트에서 답변 근거를 사람이 대조했다.
-- [ ] 근거 없는 답변과 오래된 문서를 사용하는 실패 테스트가 있다.
-- [ ] 추천 Engine의 조건 판단과 RAG의 자연어 설명이 서로 모순되지 않는다.
+- [ ] 자격 규칙 정답률
+- [ ] 근거 검색 적중률
+- [ ] 인용 정확성
+- [ ] 공식 문서에 없는 조건 생성 0건
+- [ ] 계산값 변경 0건
+- [ ] 기준일·버전 누락 0건
+- [ ] 승인 확정표현 0건
 
-**완료 증거:**
+### 완료 산출물
+
+- [ ] 자격 규칙 엔진
+- [ ] 문서 전처리기
+- [ ] 검색 인덱스
+- [ ] 평가 질문·정답
+- [ ] RAG 평가보고서
+- [ ] LLM 출력 스키마
+- [ ] 안전 테스트
+
+### Gate RE6
+
+- [ ] 자격 정답사례 통과
+- [ ] 공식 근거·기준일·버전 반환
+- [ ] LLM이 계산·자격·순위를 변경하지 않음
+- [ ] 미확인 조건 추측 없음
+- [ ] 후속 단계 영향 검토와 필요 수정 완료
 
 ---
 
-## 15. 단계 10 — 백엔드와 전체 파이프라인 통합
+## RE Stage 7 — 정책 개입안 비교와 의사결정 엔진
 
 ### 목표
 
-사용자 입력 한 번으로 상권환경 상대 순위 두 종류, 금융부담, 상대 위험 프로필, 정책추천과 RAG 설명을 반환한다.
+무대응과 정책 개입안을 같은 현금흐름 기준에서 비교하고 사용자 목표별 대안을 제시한다.
 
-### P0 — API 또는 서비스 함수
+### 상태 기록
 
-- [ ] 사업장 위치 또는 상권 선택 입력
-- [ ] 업종 입력
-- [ ] 사업체 재무정보 입력
-- [ ] 상권·업종 Feature 조회
-- [ ] ML 원시 점수 계산과 업종 내·서울 전체 상대 Percentile 변환
-- [ ] 사업체 금융부담 계산
-- [ ] 상대 위험 두 축과 금융부담 프로필 구성
-- [ ] 정책 조건 필터
-- [ ] 추천 Ranking
-- [ ] RAG 설명 생성
-- [ ] 결과 저장 또는 화면 반환
+| 항목 | 기록 |
+| --- | --- |
+| 담당자 | 사용자 목표 승인 / Codex 구현·검산 |
+| 시작일 | 미정 |
+| 완료일 | 미정 |
+| 상태 | 미착수 |
+| 선행조건 | Gate RE3·RE4·RE6, RE5 결과 또는 Fallback |
 
-### P0 — 오류 처리
+### P0 — 최소 비교안
 
-- [ ] 필수 입력 누락
-- [ ] 숫자 입력 형식 오류
-- [ ] 지원하지 않는 지역
-- [ ] 지원하지 않는 업종
-- [ ] 상권 매핑 실패
-- [ ] 예측용 데이터 부족
-- [ ] 정책 후보 없음
-- [ ] RAG 검색 결과 없음
-- [ ] 외부 API 또는 LLM 호출 실패
-- [ ] 처리시간 초과
+- [ ] 무대응
+- [ ] 비용절감
+- [ ] 보조금 또는 바우처
+- [ ] 이차보전 또는 대환
+- [ ] 신규 운영자금
+- [ ] 비차입 지원 + 최소대출 복합안
 
-### P0 — 버전과 추적성
+### P0 — 비교 지표
 
+- [ ] 13주 말 현금
+- [ ] 6개월 말 현금
+- [ ] 최저 현금
+- [ ] 현금 고갈 시점
+- [ ] 신규 차입액
+- [ ] 월 원리금
+- [ ] 총이자
+- [ ] 총상환의무
+- [ ] 지원금·비용감면
+- [ ] 지급 지연
+- [ ] 신청 마감일
+- [ ] 추가 확인조건 수
+
+### P0 — 사용자 목표
+
+- [ ] 최소부채
+- [ ] 최장생존
+- [ ] 최소상환
+- [ ] 빠른실행
+- [ ] 안전현금 기준 입력 또는 승인 기본값
+- [ ] 목표별 결과 의미 설명
+
+### P0 — 비교규칙
+
+- [ ] 임의 100점 가중합 금지
+- [ ] 신규대출 자동 우선 금지
+- [ ] 비차입 지원 우선 비교
+- [ ] 지배되는 대안 식별
+- [ ] Trade-off 복수 표시
+- [ ] 동시수혜 제한
+- [ ] 중복지원 제한
+- [ ] 승인되지 않음 시나리오
+- [ ] 지급 지연 시나리오
+
+### P1 — 실행계획
+
+- [ ] 지금 확인할 조건
+- [ ] 신청기한
+- [ ] 준비서류
+- [ ] 지급 전 필요한 현금
+- [ ] 정책 실패 시 대안
+- [ ] 대출이 필요한 경우 최소 규모
+- [ ] 공식 문의처
+
+### 검증
+
+- [ ] 최소부채 정답
+- [ ] 최장생존 정답
+- [ ] 최소상환 정답
+- [ ] 빠른실행 정답
+- [ ] 지배되는 대안 처리
+- [ ] 정책조합 중복
+- [ ] 지급지연
+- [ ] 승인실패
+- [ ] 대출 현금유입과 미래상환 동시 표시
+- [ ] 목표 변경 시 결과 재현
+
+### 완료 산출물
+
+- [ ] 시나리오 생성기
+- [ ] 대안 비교표
+- [ ] 목표별 정렬 엔진
+- [ ] Pareto 엔진
+- [ ] 실행계획 생성기
+- [ ] 대표 시나리오 보고서
+
+### Gate RE7
+
+- [ ] 무대응 포함 동일 기준 비교
+- [ ] 목표별 결과 검산
+- [ ] 대출 미래부담 누락 없음
+- [ ] 공식값·사용자값·가정값 구분
+- [ ] 임의 적합도 백분율 없음
+- [ ] 후속 단계 영향 검토와 필요 수정 완료
+
+---
+
+## RE Stage 8 — API·웹 화면·전체 통합
+
+### 목표
+
+심사자가 웹에서 입력부터 현금흐름·정책효과·실행계획까지 완료할 수 있게 한다.
+
+### 상태 기록
+
+| 항목 | 기록 |
+| --- | --- |
+| 담당자 | Codex 구현·테스트 / 사용자 화면 승인 |
+| 시작일 | 미정 |
+| 완료일 | 미정 |
+| 상태 | 미착수 |
+| 선행조건 | Gate RE3·RE4·RE6·RE7 |
+
+### P0 — API 계약
+
+- [ ] Health
+- [ ] 서비스 계약
+- [ ] 상권 목록
+- [ ] 업종 목록
+- [ ] 기준 현금흐름
+- [ ] 외부환경 시나리오
+- [ ] 정책 자격
+- [ ] 정책효과 시뮬레이션
+- [ ] 대안 비교
+- [ ] AI 질의응답
+
+### P0 — 공통 반환
+
+- [ ] 요청 ID
+- [ ] 기준일
+- [ ] 현금흐름 엔진 버전
+- [ ] 정책 데이터 버전
 - [ ] 모델 버전
-- [ ] 학습 데이터 기준 기간
-- [ ] 정책자료 기준일
-- [ ] 상대 순위 정책·기준분포·추천 가중치 버전과 선택적 임계값 버전
-- [ ] 요청별 오류 로그
-- [ ] 사용자에게 노출하면 안 되는 비밀정보 마스킹
+- [ ] 가정 원장
+- [ ] 기준 현금흐름
+- [ ] 외부 시나리오
+- [ ] 자격결과
+- [ ] 개입결과
+- [ ] 비교결과
+- [ ] 실행계획
+- [ ] 공식 근거
+- [ ] 한계
 
-### 통합 반환 구조
+### P0 — 화면 1 서비스 안내
 
-```text
-사용자·사업장 정보
-├─ 상권·업종 정보
-├─ 상권환경 상대 위험순위
-│  ├─ 같은 업종 내 Percentile·상위 N%·순위
-│  ├─ 서울 전체 Percentile·상위 N%·순위
-│  ├─ 비교집단·기준분기·정책 버전
-│  └─ 주요 위험요인
-├─ 사업체 금융부담도
-│  ├─ 점수와 등급
-│  └─ 주요 부담요인
-├─ 상대 위험·금융부담 프로필
-├─ 추천 정책 목록
-│  ├─ 적합도
-│  ├─ 추천 이유
-│  └─ 확인 필요 조건
-└─ RAG 설명과 공식 근거
-```
+- [ ] 서비스가 하는 일
+- [ ] 하지 않는 일
+- [ ] 개인정보 비저장
+- [ ] 샘플 모드
 
-### Gate 10 통과 기준
+### P0 — 화면 2 사업장 선택
 
-- [ ] 고정 샘플이 아닌 실제 입력값으로 전체 파이프라인이 동작한다.
-- [ ] 일부 모듈이 실패해도 전체 서비스가 원인 없이 종료되지 않는다.
-- [ ] 같은 요청의 각 단계 결과를 로그 또는 테스트에서 추적할 수 있다.
+- [ ] 서울 상권
+- [ ] 업종
+- [ ] 주소 자동매핑 또는 직접 선택
+- [ ] 영업기간
 
-**완료 증거:**
+### P0 — 화면 3 재무 입력
+
+- [ ] 간편 입력
+- [ ] CSV 업로드
+- [ ] 단위 안내
+- [ ] 입력 오류 수정
+
+### P0 — 화면 4 기준 현금흐름
+
+- [ ] 13주 그래프
+- [ ] 6개월 그래프
+- [ ] 최저 현금
+- [ ] 현금 고갈 시점
+- [ ] 기존 상환일정
+
+### P0 — 화면 5 외부환경
+
+- [ ] P10·P50·P90 또는 사용자 충격률
+- [ ] 집계모델 한계
+- [ ] 기존 Stage 6 보조표시 여부
+- [ ] 모델 사용 불가 Fallback
+
+### P0 — 화면 6 정책 자격
+
+- [ ] 적격
+- [ ] 부적격
+- [ ] 추가 확인
+- [ ] 접수기간
+- [ ] 공식 근거
+
+### P0 — 화면 7 정책효과 비교
+
+- [ ] 무대응 현금곡선
+- [ ] 개입안 현금곡선
+- [ ] 신규부채
+- [ ] 월상환
+- [ ] 총이자
+- [ ] 지급지연
+- [ ] 목표 선택
+
+### P0 — 화면 8 실행계획·AI
+
+- [ ] 우선 확인조건
+- [ ] 신청기한
+- [ ] 필요서류
+- [ ] 공식 링크
+- [ ] 가정과 한계
+- [ ] 후속 질문
+
+### P0 — 오류와 Fallback
+
+- [ ] 지원하지 않는 상권·업종
+- [ ] 최신 Feature 없음
+- [ ] 정책 접수 종료
+- [ ] 정책조건 미확인
+- [ ] CSV 오류
+- [ ] 단위 오류
+- [ ] 현금흐름 계산 불가
+- [ ] 외부모델 실패 시 사용자 충격률
+- [ ] RAG 실패 시 계산결과·공식링크 유지
+- [ ] LLM 실패 시 구조화 결과 유지
+
+### P0 — 보안·로그
+
+- [ ] 환경변수 비밀키
+- [ ] 민감 입력 로그 제외
+- [ ] 요청 크기 제한
+- [ ] CSV 파일 형식 제한
+- [ ] Prompt Injection 방어
+- [ ] 정책 문서와 사용자 지시 분리
+- [ ] 오류에 내부 경로·키 노출 금지
+
+### 검증
+
+- [ ] End-to-End 정상 흐름
+- [ ] 동일 입력 결정론
+- [ ] API·그래프 숫자 일치
+- [ ] 모바일 핵심 화면
+- [ ] 데스크톱 핵심 화면
+- [ ] 민감정보 로그 미기록
+- [ ] 외부서비스 장애 Fallback
+- [ ] 샘플 모드 재현
+
+### 완료 산출물
+
+- [ ] 통합 API
+- [ ] 웹 프론트엔드
+- [ ] API 명세
+- [ ] 기능명세서 초안
+- [ ] End-to-End 테스트
+- [ ] 화면별 샘플
+- [ ] 버전 Manifest
+
+### Gate RE8
+
+- [ ] 입력부터 실행계획까지 한 흐름으로 완료
+- [ ] 계산·정책·모델·RAG 버전 추적
+- [ ] 핵심 오류·Fallback 동작
+- [ ] 점수·승인확률로 오해할 표현 없음
+- [ ] 민감정보 비저장 확인
+- [ ] 후속 단계 영향 검토와 필요 수정 완료
 
 ---
 
-## 16. 단계 11 — 웹 화면 구현
+## RE Stage 9 — 배포·최종 QA·제출 준비
 
 ### 목표
 
-비전문가인 소상공인이 입력부터 결과 해석까지 혼란 없이 사용할 수 있는 웹 화면을 만든다.
+배포 URL, 기능명세서, 기획서와 실제 구현을 일치시킨다.
 
-### P0 — 입력 화면
+### 상태 기록
 
-- [ ] 서울시 사업장 위치 또는 상권 선택
-- [ ] 업종 선택
-- [ ] 영업기간 입력
-- [ ] 월평균 매출 입력
-- [ ] 월 임대료 입력
-- [ ] 월 인건비 입력
-- [ ] 대출잔액 입력
-- [ ] 월 대출상환액 입력
-- [ ] 입력 단위 표시
-- [ ] 필수값·형식 검증
-- [ ] 개인정보와 실제 계좌정보를 요구하지 않는다는 안내
-
-### P0 — 결과 화면
-
-- [ ] 선택된 상권과 업종
-- [ ] 데이터 기준 분기
-- [ ] 최근 상권 현황
-- [ ] 같은 업종 내 상대 위험 Percentile·상위 N%와 서울 전체 보조 Percentile
-- [ ] 비교집단·기준분기·상대 순위 정책 버전
-- [ ] 주요 위험요인
-- [ ] 사업체 금융부담 점수와 등급
-- [ ] 주요 부담요인
-- [ ] 상대 위험 두 축과 금융부담의 분리 프로필; 승인된 구간 규칙이 있을 때만 종합 유형
-- [ ] 추천 정책 Top 3 또는 사용 가능한 수만큼 표시
-- [ ] 각 추천의 적합도와 추천 이유
-- [ ] 신청기간과 공식 URL
-- [ ] AI 금융비서 질문 입력 또는 미리 정의된 질문 버튼
-- [ ] RAG 답변의 근거 표시
-- [ ] 서비스 한계와 면책 안내
-
-### P1 — 사용성 보강
-
-- [ ] 지도 기반 사업장 선택
-- [ ] 주소 자동 상권 매핑
-- [ ] 차트와 색상을 함께 사용하되 색상만으로 위험을 구분하지 않음
-- [ ] 로딩 상태와 단계별 진행 표시
-- [ ] 모바일 화면 대응
-- [ ] 결과 리포트 저장 또는 출력
-
-### P2 — 확장
-
-- [ ] 주변 동종업체 실제 위치 표시
-- [ ] 사용자별 결과 이력
-- [ ] 정책 즐겨찾기 또는 비교
-
-### Gate 11 통과 기준
-
-- [ ] 처음 보는 사용자가 별도 설명 없이 입력과 결과 확인을 완료한다.
-- [ ] 잘못된 입력에는 수정 방법이 포함된 오류 메시지가 표시된다.
-- [ ] 두 Percentile의 비교집단과 의미, 예측 대상, 절대 폐업확률이 아니라는 한계가 화면에 명시된다.
-- [ ] 추천 결과에서 공식자료로 이동할 수 있다.
-
-**완료 증거:**
-
----
-
-## 17. 단계 12 — 배포, 최종 QA, 제출 준비
-
-### 목표
-
-배포 URL에서 전체 기능을 안정적으로 시연하고 결과를 재현할 수 있게 한다.
+| 항목 | 기록 |
+| --- | --- |
+| 담당자 | 사용자 최종 승인 / Codex 배포·QA 지원 |
+| 시작일 | 미정 |
+| 완료일 | 미정 |
+| 상태 | 미착수 |
+| 선행조건 | Gate RE8 |
 
 ### P0 — 배포
 
-- [ ] 배포 환경을 확정한다.
-- [ ] 비밀키를 배포 환경변수로 설정한다.
-- [ ] 모델, 전처리 객체, 서비스용 데이터, RAG 인덱스를 배포 환경에서 불러온다.
-- [ ] 앱 시작 시 필요한 파일이 없으면 명확한 오류를 표시한다.
-- [ ] 공개 URL에서 앱이 정상 실행된다.
-- [ ] 새 브라우저 세션에서도 접속된다.
+- [ ] 외부 공개 URL
+- [ ] 제출 검증기간 접근
+- [ ] Health Check
+- [ ] 재시작 후 샘플 정상
+- [ ] 환경변수 안전관리
+- [ ] 오류 로그와 개인정보 분리
+- [ ] 의존성 고정
+- [ ] 배포 Runbook
 
 ### P0 — 대표 시나리오
 
-- [ ] 안정형 사례
-- [ ] 상권악화형 사례
-- [ ] 금융부담형 사례
-- [ ] 복합위험형 사례
-- [ ] 정책 후보가 없는 사례
-- [ ] 상권 데이터가 부족한 사례
-- [ ] RAG가 답을 찾지 못하는 사례
+- [ ] 상권 하락·낮은 부채
+- [ ] 안정 상권·높은 상환부담
+- [ ] 상권 하락·현금 부족·기존 부채
+- [ ] 자격은 있지만 효과가 부족한 정책
+- [ ] 추가 확인조건이 있는 정책
+- [ ] 지급 지연
+- [ ] 외부모델 없는 상권·업종
+- [ ] 잘못된 입력
 
-### P0 — 최종 점검
+### P0 — 기능명세서
 
-- [ ] 입력부터 결과까지 End-to-End 테스트
-- [ ] 모델 파일 재로딩 테스트
-- [ ] 정책자료 기준일 확인
-- [ ] 만료 정책 노출 여부 확인
-- [ ] 공식 URL 동작 여부를 제출 직전에 별도 확인
-- [ ] 모바일 또는 작은 화면의 핵심 내용 확인
-- [ ] 첫 화면과 결과 화면의 오탈자 확인
-- [ ] 평균 응답시간 기록
-- [ ] 서버 오류 로그 확인
-- [ ] 개인정보·비밀키 노출 여부 확인
-- [ ] README 실행 절차 재검증
-- [ ] 발표용 데모 입력값과 예상 결과 고정
-- [ ] 데모 실패 시 사용할 화면 캡처 또는 녹화 준비
+- [ ] 실제 구현범위
+- [ ] 주요 기능 목록
+- [ ] 관련 화면
+- [ ] 구현상태
+- [ ] 사용자 이용 흐름
+- [ ] AI 역할
+- [ ] 입력·출력 데이터
+- [ ] 개인정보 처리
+- [ ] 샘플 입력
+- [ ] 예상 결과
+- [ ] 브라우저 제한
+- [ ] MVP 한계
 
-### P0 — 제출 산출물
+### P0 — 최종 QA
+
+- [ ] 외부 URL 접근
+- [ ] 샘플 결과 재현
+- [ ] 공식 링크 유효성
+- [ ] 정책 접수기간·기준일
+- [ ] 금융계산 재검산
+- [ ] 그래프·표·AI 설명 일치
+- [ ] 모델 한계 문구
+- [ ] 승인확률 오해 방지
+- [ ] 민감정보 비저장
+- [ ] 모바일·데스크톱 확인
+- [ ] 제출문서·실제기능 일치
+
+### P0 — 발표자료 근거
+
+- [ ] 기존 서비스와의 차이
+- [ ] 무대응·개입 전후 데모
+- [ ] 신규대출의 현금·부채 동시효과
+- [ ] 최소부채 대응안
+- [ ] 공식 근거·가정 원장
+- [ ] Stage 0~6 기준선 보존 이유
+- [ ] 모델 교체 시 Gate 결과
+- [ ] 모델 미교체 시 한계·Fallback
+- [ ] 개인정보 보호
+- [ ] 확장 가능성
+
+### 완료 산출물
 
 - [ ] 배포 URL
-- [ ] 소스코드 저장소 또는 제출 파일
-- [ ] 설치·실행 README
-- [ ] 데이터 출처와 기준일
-- [ ] 모델 학습·검증 결과
-- [ ] RAG 평가 결과
-- [ ] 대표 사용자 시나리오
-- [ ] 서비스 한계와 향후 개선사항
+- [ ] 기능명세서 PDF
+- [ ] 기획서 최종본
+- [ ] 샘플 입력
+- [ ] 예상 결과표
+- [ ] 배포 Runbook
+- [ ] 최종 QA 보고서
+- [ ] 발표자료용 근거표
 
-### Gate 12 통과 기준
+### Gate RE9
 
-- [ ] 팀원이 아닌 사람이 배포 URL에서 대표 시나리오를 완주했다.
-- [ ] 새로 배포한 버전에서 전체 기능을 다시 확인했다.
-- [ ] 발표용 주장과 실제 구현 결과가 일치한다.
-- [ ] 최종 MVP 최소 구현선의 모든 P0 항목이 완료되어 있다.
-
-**배포 URL:**
-
-**최종 버전:**
-
-**완료 증거:**
+- [ ] 제출기간 외부 접근
+- [ ] 대표 시나리오 전부 통과
+- [ ] 제출문서와 실제 기능 일치
+- [ ] 계산·정책·모델·근거 재현
+- [ ] 미구현·미검증 기능 과장 없음
+- [ ] 종료 결과의 계획·체크리스트·제출문서 최종 환류 완료
 
 ---
 
-## 18. 시간이 부족할 때의 축소 순서
+## 4. 시간이 부족할 때의 축소 순서
 
-### 절대 제거하지 않을 것
+### 절대 제거하지 않음
 
-- [ ] 필수 3종 데이터를 이용한 Panel Dataset
-- [ ] 시간순 검증을 거친 ML 예측
-- [ ] 사용자 입력 기반 금융부담 진단
-- [ ] 규칙 기반 정책 조건 필터와 Ranking
-- [ ] 공식자료 기반 RAG 설명
-- [ ] 배포된 End-to-End 웹 흐름
+- [ ] 기준 현금흐름
+- [ ] 무대응 시나리오
+- [ ] 정책 공식 자격근거
+- [ ] 정책 전후 현금·부채 비교
+- [ ] 공식값·가정값 구분
+- [ ] 개인정보 비저장
+- [ ] 실제 배포 URL
+- [ ] 샘플 검증 절차
 
-### 먼저 축소할 것
+### 먼저 축소
 
-1. 상주인구, 직장인구, 집객시설, 아파트 등 P2 Feature 실험
-2. 여러 트리 모델 비교 — LightGBM 또는 XGBoost 하나만 유지
-3. SHAP 고급 시각화 — 기본 Feature Importance와 주요 요인 설명 유지
-4. 실시간 정책 API — 검증된 최신 정책 Snapshot으로 대체
-5. 지도 기반 주소 선택 — 상권 선택 UI로 우선 연결하되 최종 범위와 차이를 명시
-6. 자유형 대화 UI — 자주 묻는 질문 버튼으로 단순화
-7. 결과 PDF 저장, 사용자 이력, 주변 점포 지도 등 P2 기능
+1. 서울 실시간 도시데이터
+2. 날씨·공휴일·행사
+3. 상가정보·LOCALDATA 추가 Feature
+4. Quantile 후보모델 수
+5. 정책 조합 수
+6. 상세 CSV의 선택필드
+7. 사용자 계정·저장
+8. 고급 지도 시각화
 
-### 축소 시 금지사항
+### 모델 v2가 미완성일 때
 
-- [ ] ML 결과를 고정된 예시 값으로 대체하지 않는다.
-- [ ] 정책 적격성 판단을 LLM에게 전적으로 맡기지 않는다.
-- [ ] RAG 근거 없이 생성한 답변을 공식자료 기반 답변처럼 표시하지 않는다.
-- [ ] 랜덤 분할 성능을 시간순 검증 결과처럼 제시하지 않는다.
-- [ ] 개별 점포 폐업확률 또는 대출 승인확률을 예측한다고 표현하지 않는다.
+- [ ] 기존 Stage 6 상대 위험순위 유지
+- [ ] 사용자 직접 매출충격률 제공
+- [ ] Quantile 모델을 구현된 것으로 표시하지 않음
+- [ ] 현금흐름·정책효과 엔진을 중심 MVP로 유지
+
+### 정책 구조화가 지연될 때
+
+- [ ] 정책 수를 8개까지 축소
+- [ ] 금융효과가 명확한 정책 우선
+- [ ] 미확인 조건 많은 정책 제외
+- [ ] 보조·바우처·이차보전·융자 유형은 유지
 
 ---
 
-## 19. 최종 승인 체크리스트
+## 5. 최종 승인 체크리스트
+
+### 서비스
+
+- [ ] 정책효과 시뮬레이터 정의 유지
+- [ ] 금융부담 100점 미사용
+- [ ] 정책 적합도 백분율 미사용
+- [ ] 무대응 비교 포함
+- [ ] 최소부채 기본 목표
 
 ### 데이터
 
-- [ ] 필수 3종 원본 보존
-- [ ] 데이터 출처·기준일 기록
-- [ ] 키·중복·결측·기간 QA 완료
-- [ ] 재현 가능한 Panel Dataset 생성
+- [ ] 기업마당을 소상공인 전용으로 오표현하지 않음
+- [ ] 선정 정책의 소상공인 대상 원문 확인
+- [ ] 정책 버전·기준일
+- [ ] 개인 입력 최소수집
+- [ ] 신규 데이터 Ablation
 
 ### 모델
 
-- [ ] 미래정보 누수 없는 Target 생성
-- [ ] 시간순 분할
-- [ ] Logistic Regression Baseline
-- [ ] LightGBM 또는 XGBoost 비교
-- [ ] 최종 모델 저장·재로딩
-- [ ] 위험요인 설명
-- [ ] 같은 업종 내 주 Percentile과 서울 전체 보조 Percentile 반환
-- [ ] 상대 순위 정책·기준분포 버전과 절대확률 오해 방지 문구
+- [ ] 상권×업종 집계단위 표시
+- [ ] 개인 점포 예측 표현 금지
+- [ ] 시간순 검증
+- [ ] 새 독립검증 상태 표시
+- [ ] 기존 Stage 6 지위 기록
 
-### 금융진단
+### 금융계산
 
-- [ ] 입력 검증
-- [ ] 계산식 문서화
-- [ ] 상권환경 상대 위험순위 두 종류와 금융부담 분리
-- [ ] 세 축 프로필 반환; 승인된 표시 구간이 있을 때만 종합 유형 생성
+- [ ] 손계산 검산
+- [ ] 지급·상환 일정
+- [ ] 총이자·잔여원금
+- [ ] 지급 지연
+- [ ] 승인되지 않음
 
-### 추천과 RAG
+### 정책·RAG
 
-- [ ] 정책 Metadata 구조화
-- [ ] 제외 조건과 신청기간 필터
-- [ ] 적합도 Ranking
-- [ ] 공식문서 검색
-- [ ] 근거 포함 답변
-- [ ] 확인 불가 처리
+- [ ] 공식 자격근거
+- [ ] 적격·부적격·추가 확인
+- [ ] LLM 계산 금지
+- [ ] 환각 조건 0건
+- [ ] 공식 링크·문의처
 
-### 웹과 제출
+### 개인정보·보안
 
-- [ ] 전체 기능 연결
-- [ ] 공개 URL 배포
-- [ ] 대표 시나리오 검증
-- [ ] 오류·빈 결과 처리
-- [ ] 서비스 한계 안내
-- [ ] README와 결과 문서 정리
+- [ ] 주민등록번호 없음
+- [ ] 계좌번호 없음
+- [ ] 원금액 로그 없음
+- [ ] 무동의 영구저장 없음
+- [ ] 외부 전송 고지
+
+### 웹·제출
+
+- [ ] End-to-End 완료
+- [ ] 외부 URL 접근
+- [ ] 샘플 재현
+- [ ] 기능명세서 일치
+- [ ] 한계·안전문구
 
 ---
 
-## 20. 최종 완료 판정
+## 6. MVP 완료 선언
 
-| 판정 항목 | 결과 | 증거 |
-| --- | --- | --- |
-| P0 체크리스트 전부 완료 | 통과 / 실패 |  |
-| 실제 데이터 기반 ML 예측 | 통과 / 실패 |  |
-| 금융부담 진단 | 통과 / 실패 |  |
-| 정책 추천 Ranking | 통과 / 실패 |  |
-| 공식자료 기반 RAG | 통과 / 실패 |  |
-| 웹 End-to-End 동작 | 통과 / 실패 |  |
-| 배포 URL 외부 접속 | 통과 / 실패 |  |
-| 대표 시나리오 검증 | 통과 / 실패 |  |
-| 한계·면책 안내 | 통과 / 실패 |  |
+다음 조건을 모두 충족할 때만 완료로 선언한다.
 
-### MVP 완료 선언
+- [ ] Stage 0~6 Artifact 보존
+- [ ] Gate RE1~RE9 통과
+- [ ] 정책 8~12개 공식 근거 추적
+- [ ] 13주·6개월 계산 검산
+- [ ] 무대응과 정책안 비교
+- [ ] 대출 미래부담 표시
+- [ ] 개인 폐업·승인확률 오해 없음
+- [ ] 모델 검증상태 정직한 표시
+- [ ] RAG가 계산·자격을 변경하지 않음
+- [ ] 배포 URL 외부 접근
+- [ ] 제출문서와 실제 기능 일치
 
-- [ ] 위 판정 항목이 모두 통과했다.
-- [ ] 미완료 P1·P2 항목이 P0 기능의 정상 동작을 방해하지 않는다.
-- [ ] 발표와 문서의 설명이 실제 구현 범위를 과장하지 않는다.
+완료 선언에는 다음을 함께 기록한다.
 
-**최종 승인자:**
-
-**승인일:**
-
-**최종 메모:**
+```text
+완료일
+배포 URL
+Git Commit
+현금흐름 엔진 버전
+정책 데이터 버전
+외부모델 버전
+대표 시나리오 결과
+남은 한계
+최종 사용자 승인
+```

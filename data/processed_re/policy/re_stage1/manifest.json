@@ -1,0 +1,25 @@
+{
+  "stage": "RE Stage 1",
+  "status": "comparison_complete_final_selection_pending",
+  "source": "data/processed_re/policy/pre_re1/candidate_groups.csv",
+  "source_sha256": "c00bfa50545ee628cd1842f592fcd5b37de77da2225b54a57351ebd62cf9e8ce",
+  "source_group_count": 827,
+  "portfolio_codes": [
+    "A",
+    "B",
+    "C",
+    "A+C",
+    "A+B",
+    "A+B+C"
+  ],
+  "portfolio_row_count": 62,
+  "unique_candidate_count": 25,
+  "selection_status_values": [
+    "비교후보_최종선정대기"
+  ],
+  "prohibited_operations_performed": [],
+  "outputs": {
+    "data/processed_re/policy/re_stage1/portfolio_candidates.csv": "25486a0b81441761697a9e0948b04af95b07fc8e8d436b52a275f57e3f8e744c",
+    "reports/re_stage1/policy_portfolio_comparison.md": "54c7f33c66d025bee8fac616265a02f0a251d0be762b125bd8a721d4ed93c38b"
+  }
+}

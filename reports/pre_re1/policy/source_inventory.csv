@@ -1,0 +1,45 @@
+﻿relative_path,source_family,extension,bytes,sha256,mtime_local
+data/raw_re/policy/bizinfo/2026-08-15/QA.md,bizinfo,.md,613,54a778dae4ff02be9d0859de8b24d6c93c370e3edb39eb8e1993421b8704fcd0,2026-08-15T22:00:34+09:00
+data/raw_re/policy/bizinfo/2026-08-15/all_items.csv,bizinfo,.csv,3135932,fd3aa75f6053ce5d9cbdc139f3f8c07ecf5df25be5024ca9376b76dedfbc7e5f,2026-08-15T22:00:34+09:00
+data/raw_re/policy/bizinfo/2026-08-15/all_items.jsonl,bizinfo,.jsonl,3623637,122ed92ea08924bd5846ed8513dfd2d3397a3faa0c9c14f6958646409c3303e5,2026-08-15T22:00:34+09:00
+data/raw_re/policy/bizinfo/2026-08-15/current_year_2026_items.csv,bizinfo,.csv,3090786,bb531273d3150231ea2f9666936ea17627154aaf53a51ba799951f33a57d7095,2026-08-15T22:00:34+09:00
+data/raw_re/policy/bizinfo/2026-08-15/current_year_2026_items.jsonl,bizinfo,.jsonl,3570947,9699673238f9408e92f5ad349fa0d919244b6fc9549df098cbc63052b94d3830,2026-08-15T22:00:34+09:00
+data/raw_re/policy/bizinfo/2026-08-15/manifest.json,bizinfo,.json,3290,ee5584c998f623d95a8550d52653a1ec109a877f8efd395b3d25bb986105114f,2026-08-15T22:00:34+09:00
+data/raw_re/policy/bizinfo/2026-08-15/pages/page_0001.json,bizinfo,.json,2412985,7b487c714b4803648350099094c1cd838eb09db4bd88338603c0618d809e5bc6,2026-08-15T21:57:14+09:00
+data/raw_re/policy/bizinfo/2026-08-15/pages/page_0002.json,bizinfo,.json,1210944,5cf1bdf44874f488d426ebe8a6038e31f03cb98d4a98d80815f86ae9995cb9d2,2026-08-15T21:57:16+09:00
+data/raw_re/policy/bizinfo/2026-08-15/small_business_candidates.csv,bizinfo,.csv,530565,3a436b1dde334bbc5833175e7c64ccec849552710ba508dcee59e47379cd3067,2026-08-15T22:00:34+09:00
+data/raw_re/policy/bizinfo/2026-08-15/small_business_candidates.jsonl,bizinfo,.jsonl,633974,7d08e135a01ebb5b0042fcdb16eaf81c06661a66da004424601549f91842a759,2026-08-15T22:00:34+09:00
+data/raw_re/policy/bizinfo/API정보.md,bizinfo,.md,3373,65164afdb4ba047465fc2bf8f3292e941c94a094a24eeaa810de20735854f69f,2026-08-15T21:52:45+09:00
+data/raw_re/policy/bizinfo/README.md,bizinfo,.md,9184,9d8ea16cdea68012ec564e1a0bc132a2772a90e055cd9bf4df9ee0122e1ca9ef,2026-08-15T22:58:17+09:00
+data/raw_re/policy/semas/manifest.json,semas,.json,1335,5f7066cfaa7e7c5784a79e552ea66963a09c06dcc62d5d371bd820c76f999acf,2026-08-15T23:15:55+09:00
+data/raw_re/policy/semas/정책자금 한눈에 보기.md,semas,.md,5424,e7e1bdb4366f34a0d8d5e7aa3406db7f2c8f19b0b3477eafd80ee912d90a0351,2026-08-15T23:03:52+09:00
+data/raw_re/policy/semas/정책자금_지원_제외업종.md,semas,.md,4763,277dd1e71325daeddb3fb4b3259a27035265ad686b6b39ff75ee7c93d8a2fb62,2026-08-15T23:04:55+09:00
+data/raw_re/policy/seoul_fund/2026/2026년 중소기업육성자금 융자지원/경영안정자금_융자대상.md,seoul_fund,.md,5485,b282ba2f26c413c0cf7d075043bc2e0d27b6cce23cf4cea841d34b06473d220a,2026-08-15T22:20:55+09:00
+data/raw_re/policy/seoul_fund/2026/2026년 중소기업육성자금 융자지원/시설자금_융자대상.md,seoul_fund,.md,17714,10132849787b559730a0b49745aa01f5aa922d2a56ba9021c4657fa3d4c0f9b5,2026-08-15T22:35:31+09:00
+data/raw_re/policy/seoul_fund/2026/2026년 중소기업육성자금 융자지원/시설자금_지원사업별_융자조건_및_한도.md,seoul_fund,.md,5029,f79854d7121d371838b2b9a412ed94a699fc8f92215cad766f5018b8a3140f55,2026-08-15T22:31:56+09:00
+data/raw_re/policy/seoul_fund/2026/2026년도 서울특별시 중소기업육성자금 융자지원 변경계획 공고/2026년_중소기업육성자금_융자지원_변경계획_공고.md,seoul_fund,.md,22981,f9ff4bb1f840fb468e10240d25084dee7018b31a84895daa812ae313d0856419,2026-08-15T22:43:33+09:00
+data/raw_re/policy/seoul_fund/2026/2026년도 서울특별시 중소기업육성자금 융자지원 변경계획 공고/별표1_경영안정자금_융자대상.md,seoul_fund,.md,5485,b282ba2f26c413c0cf7d075043bc2e0d27b6cce23cf4cea841d34b06473d220a,2026-08-15T22:47:56+09:00
+data/raw_re/policy/seoul_fund/2026/2026년도 서울특별시 중소기업육성자금 융자지원 변경계획 공고/별표2_시설자금_융자대상.md,seoul_fund,.md,17717,563cfa0726625e8331e4672fa0f1d99b5086b4d83cb2ef353d6f3888f0277295,2026-08-15T22:50:17+09:00
+data/raw_re/policy/seoul_fund/2026/2026년도 서울특별시 중소기업육성자금 융자지원 변경계획 공고/별표3_시설자금_지원사업별_융자조건_및_한도.md,seoul_fund,.md,5446,11f768c37d4c00326fa5676073b15818fcee5346c48f36940f8f50f65d1f4c6e,2026-08-15T22:51:59+09:00
+data/raw_re/policy/seoul_fund/2026/manifest.json,seoul_fund,.json,5261,fb6f72cafb80d179b2e7c8449b2ca9ce24c7fc7bc0a595d352f3ab04cd6b79f9,2026-08-15T23:15:55+09:00
+data/raw_re/policy/seoul_fund/2026/소상공인 종합지원 사업/소상공인_종합지원_사업.md,seoul_fund,.md,5006,2fb22ee03b20c0c3f3034440e4cb59c73a9d19361607ed7a0d66624434a8e17d,2026-08-15T22:59:58+09:00
+data/raw_re/policy/sme24/2026-08-15/QA.md,sme24,.md,1297,306d6614327cbc16c1bd08256ca7a0a9a5b5121d1a34a38bea22a274dee74213,2026-08-15T22:18:34+09:00
+data/raw_re/policy/sme24/2026-08-15/all_items.csv,sme24,.csv,20750796,9c99d489a5c264e27155e1bd2bbff6a89b865d890df3afa3b4bf4ee7dc876ca8,2026-08-15T22:18:31+09:00
+data/raw_re/policy/sme24/2026-08-15/all_items.jsonl,sme24,.jsonl,28080760,d8a274c4564f60a048d66b07ac7b6644e4f6819736aead2624b97f91ceff5ca7,2026-08-15T22:18:31+09:00
+data/raw_re/policy/sme24/2026-08-15/bizinfo_candidate_exact_title_crosswalk.csv,sme24,.csv,136893,752880f385dee09121a6d206c0b2289d3916b6417626a59c4fb100018a485559,2026-08-15T22:18:31+09:00
+data/raw_re/policy/sme24/2026-08-15/bizinfo_candidates_without_exact_sme24_match.csv,sme24,.csv,135277,c759b57860a6a3ffd0eb97929f69fff90d33cc748182c780523cb01df241e37f,2026-08-15T22:18:31+09:00
+data/raw_re/policy/sme24/2026-08-15/bizinfo_exact_title_crosswalk.csv,sme24,.csv,909013,2926dd692aef8401d8c04bb83a92d7858351360c1e3bd92548bda4e0f7233a29,2026-08-15T22:18:31+09:00
+data/raw_re/policy/sme24/2026-08-15/manifest.json,sme24,.json,8193,eacd560f24a49d4f2e4dc827d592d875a9950ef60b062c57ec75a683c7f9ac6d,2026-08-15T22:18:34+09:00
+data/raw_re/policy/sme24/2026-08-15/small_business_candidates.csv,sme24,.csv,1610234,906b216d0eaf660c364cf259b0da9fc125dabf8cee792dd69907c590b535f45d,2026-08-15T22:18:31+09:00
+data/raw_re/policy/sme24/2026-08-15/small_business_candidates.jsonl,sme24,.jsonl,2348623,0d7d1f19623ef3caeb3e35173e54f6df7b37de35dc18736fe50ff2e765a87d1b,2026-08-15T22:18:31+09:00
+data/raw_re/policy/sme24/2026-08-15/sme24_small_business_candidates_without_exact_bizinfo_match.csv,sme24,.csv,1286266,2da8d19b942ed7a5aadca21fff9bc2559aa368ee39f51d3e3bb95241fdbc235d,2026-08-15T22:18:31+09:00
+data/raw_re/policy/sme24/2026-08-15/windows/window_20260101_20260131.json,sme24,.json,2897450,21f65d30096c3bda6aaba1ac7a7b53b67bf7459a95926b6f36f249a8f3c63534,2026-08-15T22:12:48+09:00
+data/raw_re/policy/sme24/2026-08-15/windows/window_20260201_20260228.json,sme24,.json,2634852,72d5469c1930c01cc023fc3100bde9a40522a14caf5163a9713e89dc7b52b1aa,2026-08-15T22:12:49+09:00
+data/raw_re/policy/sme24/2026-08-15/windows/window_20260301_20260331.json,sme24,.json,3231140,660ded1b1b144681b6d3a119bb8efda610aeb8ddb74d1a440fd48e2a1c61de38,2026-08-15T22:12:50+09:00
+data/raw_re/policy/sme24/2026-08-15/windows/window_20260401_20260430.json,sme24,.json,271459,5bb8b0d94f45411adcb6b348d2942d85605379e328f7c9a4a95d41522c7048d1,2026-08-15T22:12:50+09:00
+data/raw_re/policy/sme24/2026-08-15/windows/window_20260501_20260531.json,sme24,.json,68904,df492c1764a2b62b2abd6455fc21e620f83b0f959395a0cf0712032af4d01aac,2026-08-15T22:12:51+09:00
+data/raw_re/policy/sme24/2026-08-15/windows/window_20260601_20260630.json,sme24,.json,8953886,670767ef7c77cd37f56a92952c6f2ee9ed80617db8ccdcf726873267ad3e24d0,2026-08-15T22:15:49+09:00
+data/raw_re/policy/sme24/2026-08-15/windows/window_20260701_20260731.json,sme24,.json,7498290,628439485e19f707981535919ba8f68425f1357b43c500faa5fc015f097b2f92,2026-08-15T22:15:51+09:00
+data/raw_re/policy/sme24/2026-08-15/windows/window_20260801_20260815.json,sme24,.json,6784262,dcc6dfbe038ac7bb155ef8cacc868716d4a5ee887530caf9ba73199fc3033e40,2026-08-15T22:16:39+09:00
+data/raw_re/policy/sme24/API정보.md,sme24,.md,11292,f7743801733713f1b2995a20b4ed190b6e78bc2ce0eafb7c031a97dca29042a6,2026-08-15T22:04:48+09:00
+data/raw_re/policy/sme24/README.md,sme24,.md,18637,553fde5ce973fbc284a1d141f4340486d784f89d72a1cc07e38067471b4c283b,2026-08-15T22:58:18+09:00

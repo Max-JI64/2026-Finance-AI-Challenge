@@ -1,0 +1,81 @@
+project:
+  service_name: 서울 소상공인 정책효과 시뮬레이터
+  stage: RE Stage 1
+  status: complete_guard_active
+  approved_at: "2026-08-15"
+
+service_scope:
+  geography: 서울특별시
+  audience: 서울 소재 소상공인
+  policy_count_min: 8
+  policy_count_max: 12
+  horizons:
+    weekly_weeks: 13
+    monthly_months: 6
+  default_goal: 최소부채로 안전현금 회복
+  optional_goals:
+    - 최장생존
+    - 최소상환
+    - 빠른실행
+  input_modes:
+    - 간편 입력
+    - 표준 CSV 업로드
+  baseline_scenario_required: true
+
+portfolio_decision:
+  status: comparison_required_final_selection_pending
+  variants:
+    - A
+    - B
+    - C
+    - A+C
+    - A+B
+    - A+B+C
+  final_selection_requires_user_approval: true
+
+legacy_scope:
+  financial_burden_score_0_100_enabled: false
+  fixed_weights_20_20_35_25_enabled: false
+  low_caution_high_grade_enabled: false
+  policy_fit_percentage_enabled: false
+  simple_policy_ranking_enabled: false
+  old_stage7_to_12_execution_enabled: false
+
+artifact_policy:
+  stage0_to_6: frozen_baseline
+  stage6_role: auxiliary_or_fallback_candidate
+  overwrite_existing_artifacts: false
+
+versions:
+  re_contract: re1_v1
+  cashflow_engine: cashflow_v1
+  policy_data: policy_YYYYMMDD_vN
+  model_v2: external_scenario_v2_N
+
+guard:
+  allowed_actions:
+    - document_contracts
+    - inventory_existing_files
+    - hash_frozen_artifacts
+    - qa_downloaded_policy_data
+    - lossless_common_schema_conversion
+    - exact_title_grouping
+    - build_provisional_portfolio_comparison
+  blocked_until_later_approval:
+    - collect_new_external_data
+    - fuzzy_match_policy_candidates
+    - exclude_policy_candidates
+    - select_final_policy_portfolio
+    - structure_eligibility_rules
+    - structure_financial_events
+    - build_rag_index
+    - create_new_target
+    - train_or_select_model_v2
+    - deploy_public_service
+
+paths:
+  raw_re: data/raw_re
+  processed_re: data/processed_re
+  reports_re: reports/re_stage1
+  frozen_artifact_manifest: reports/re_stage1/artifact_disposition.csv
+  policy_portfolio_candidates: data/processed_re/policy/re_stage1/portfolio_candidates.csv

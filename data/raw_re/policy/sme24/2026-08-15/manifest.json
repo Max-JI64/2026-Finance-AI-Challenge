@@ -1,0 +1,240 @@
+{
+  "source_name": "중소기업기술정보진흥원_중소벤처24 공고정보",
+  "source_role": "P1 cross-check only; not standalone eligibility evidence",
+  "endpoint": "https://portal.smes.go.kr/ione-gw/api/pblanc/list",
+  "collected_at_kst": "2026-08-15T22:16:41+09:00",
+  "collection_date": "2026-08-15",
+  "requested_date_range": {
+    "start": "2026-01-01",
+    "end": "2026-08-15"
+  },
+  "request_parameters_without_token": {
+    "html": "yes"
+  },
+  "access_validation": "success_with_provided_token",
+  "daily_call_limit": null,
+  "daily_call_limit_status": "not specified in the provided API information",
+  "successful_windows": 8,
+  "raw_item_count": 7673,
+  "unique_item_count": 7673,
+  "nonempty_sequence_count": 7673,
+  "duplicate_sequence_count": 0,
+  "registration_year_counts": {
+    "2025": 523,
+    "2026": 4483,
+    "unknown": 2667
+  },
+  "update_year_counts": {
+    "2026": 7673
+  },
+  "query_date_field_observation": "All returned records had updDt inside their request window; strDt/endDt behaves as an update-date filter.",
+  "all_update_dates_inside_request_windows": true,
+  "small_business_candidate_count": 725,
+  "candidate_tier_counts": {
+    "explicit_code": 97,
+    "explicit_text": 628
+  },
+  "candidate_seoul_scope_counts": {
+    "area_unspecified_review": 334,
+    "other_region_or_review": 355,
+    "seoul_explicit": 36
+  },
+  "bizinfo_2026_count": 1521,
+  "bizinfo_small_business_candidate_count": 257,
+  "exact_title_crosswalk_row_count": 1284,
+  "matched_unique_bizinfo_ids": 1244,
+  "matched_unique_sme24_sequences": 1267,
+  "matched_bizinfo_candidate_id_count": 191,
+  "unmatched_bizinfo_candidate_count": 66,
+  "unmatched_sme24_small_business_candidate_count": 544,
+  "match_policy": "NFKC + casefold + remove non-alphanumeric, then exact title match only; no fuzzy matching",
+  "status_notice": "Application status is derived from start/end dates as of range end; it is not an explicit API status field.",
+  "field_nonempty_counts": {
+    "pblancSeq": 7673,
+    "creatDt": 5006,
+    "pblancDtlUrl": 7619,
+    "pblancNm": 7673,
+    "detailBsnsNm": 513,
+    "policyCnts": 7666,
+    "sportMg": 1372,
+    "sportCnts": 2107,
+    "sportTrget": 7666,
+    "reqstRcept": 7503,
+    "sportInsttNm": 7671,
+    "sportInsttCd": 7672,
+    "refrnc": 7668,
+    "refrncUrl": 4,
+    "refrncDept": 1557,
+    "refrncTel": 24,
+    "updDt": 7673,
+    "pblancBgnDt": 6767,
+    "pblancEndDt": 6699,
+    "pblancAttach": 6209,
+    "pblancAttachNm": 1498,
+    "reqstLinkInfo": 4489,
+    "bizType": 7007,
+    "bizTypeCd": 7672,
+    "sportType": 5947,
+    "sportTypeCd": 7672,
+    "lifeCyclDvsn": 0,
+    "lifeCyclDvsnCd": 0,
+    "areaNm": 3481,
+    "areaCd": 3481,
+    "salsAmt": 0,
+    "salsAmtCd": 0,
+    "minSalsAmt": 0,
+    "maxSalsAmt": 0,
+    "ablbiz": 0,
+    "ablbizCd": 0,
+    "minAblbiz": 0,
+    "maxAblbiz": 0,
+    "emplyCnt": 0,
+    "emplyCntCd": 0,
+    "minEmplyCnt": 0,
+    "mixEmplyCnt": 0,
+    "cmpScale": 0,
+    "cmpScaleCd": 0,
+    "needCrtfn": 0,
+    "needCrtfnCd": 0,
+    "cntcInsttNm": 646,
+    "cntcInsttCd": 7672,
+    "induty": 0,
+    "rpsntAge": 0,
+    "minRpsntAge": 0,
+    "maxRpsntAge": 0,
+    "minInrst": 0,
+    "maxInrst": 0,
+    "minSportAmt": 0,
+    "maxSportAmt": 0,
+    "refntnYn": 0,
+    "fntnYn": 0,
+    "fmleRpsntYn": 0,
+    "pblancFileUrl": 4916,
+    "pblancFileNm": 4916
+  },
+  "windows": [
+    {
+      "start_date": "2026-01-01",
+      "end_date": "2026-01-31",
+      "item_count": 765,
+      "result_code": "0",
+      "result_message": "정상적으로 조회 되었습니다.",
+      "creat_date_in_window_count": 450,
+      "update_date_in_window_count": 765,
+      "file": "window_20260101_20260131.json",
+      "sha256": "21f65d30096c3bda6aaba1ac7a7b53b67bf7459a95926b6f36f249a8f3c63534"
+    },
+    {
+      "start_date": "2026-02-01",
+      "end_date": "2026-02-28",
+      "item_count": 686,
+      "result_code": "0",
+      "result_message": "정상적으로 조회 되었습니다.",
+      "creat_date_in_window_count": 251,
+      "update_date_in_window_count": 686,
+      "file": "window_20260201_20260228.json",
+      "sha256": "72d5469c1930c01cc023fc3100bde9a40522a14caf5163a9713e89dc7b52b1aa"
+    },
+    {
+      "start_date": "2026-03-01",
+      "end_date": "2026-03-31",
+      "item_count": 897,
+      "result_code": "0",
+      "result_message": "정상적으로 조회 되었습니다.",
+      "creat_date_in_window_count": 450,
+      "update_date_in_window_count": 897,
+      "file": "window_20260301_20260331.json",
+      "sha256": "660ded1b1b144681b6d3a119bb8efda610aeb8ddb74d1a440fd48e2a1c61de38"
+    },
+    {
+      "start_date": "2026-04-01",
+      "end_date": "2026-04-30",
+      "item_count": 82,
+      "result_code": "0",
+      "result_message": "정상적으로 조회 되었습니다.",
+      "creat_date_in_window_count": 4,
+      "update_date_in_window_count": 82,
+      "file": "window_20260401_20260430.json",
+      "sha256": "5bb8b0d94f45411adcb6b348d2942d85605379e328f7c9a4a95d41522c7048d1"
+    },
+    {
+      "start_date": "2026-05-01",
+      "end_date": "2026-05-31",
+      "item_count": 16,
+      "result_code": "0",
+      "result_message": "정상적으로 조회 되었습니다.",
+      "creat_date_in_window_count": 3,
+      "update_date_in_window_count": 16,
+      "file": "window_20260501_20260531.json",
+      "sha256": "df492c1764a2b62b2abd6455fc21e620f83b0f959395a0cf0712032af4d01aac"
+    },
+    {
+      "start_date": "2026-06-01",
+      "end_date": "2026-06-30",
+      "item_count": 2263,
+      "result_code": "0",
+      "result_message": "정상적으로 조회 되었습니다.",
+      "creat_date_in_window_count": 177,
+      "update_date_in_window_count": 2263,
+      "file": "window_20260601_20260630.json",
+      "sha256": "670767ef7c77cd37f56a92952c6f2ee9ed80617db8ccdcf726873267ad3e24d0"
+    },
+    {
+      "start_date": "2026-07-01",
+      "end_date": "2026-07-31",
+      "item_count": 1221,
+      "result_code": "0",
+      "result_message": "정상적으로 조회 되었습니다.",
+      "creat_date_in_window_count": 9,
+      "update_date_in_window_count": 1221,
+      "file": "window_20260701_20260731.json",
+      "sha256": "628439485e19f707981535919ba8f68425f1357b43c500faa5fc015f097b2f92"
+    },
+    {
+      "start_date": "2026-08-01",
+      "end_date": "2026-08-15",
+      "item_count": 1743,
+      "result_code": "0",
+      "result_message": "정상적으로 조회 되었습니다.",
+      "creat_date_in_window_count": 15,
+      "update_date_in_window_count": 1743,
+      "file": "window_20260801_20260815.json",
+      "sha256": "dcc6dfbe038ac7bb155ef8cacc868716d4a5ee887530caf9ba73199fc3033e40"
+    }
+  ],
+  "derived_files": {
+    "all_items.jsonl": {
+      "sha256": "d8a274c4564f60a048d66b07ac7b6644e4f6819736aead2624b97f91ceff5ca7",
+      "bytes": 28080760
+    },
+    "all_items.csv": {
+      "sha256": "9c99d489a5c264e27155e1bd2bbff6a89b865d890df3afa3b4bf4ee7dc876ca8",
+      "bytes": 20750796
+    },
+    "small_business_candidates.jsonl": {
+      "sha256": "0d7d1f19623ef3caeb3e35173e54f6df7b37de35dc18736fe50ff2e765a87d1b",
+      "bytes": 2348623
+    },
+    "small_business_candidates.csv": {
+      "sha256": "906b216d0eaf660c364cf259b0da9fc125dabf8cee792dd69907c590b535f45d",
+      "bytes": 1610234
+    },
+    "bizinfo_exact_title_crosswalk.csv": {
+      "sha256": "2926dd692aef8401d8c04bb83a92d7858351360c1e3bd92548bda4e0f7233a29",
+      "bytes": 909013
+    },
+    "bizinfo_candidate_exact_title_crosswalk.csv": {
+      "sha256": "752880f385dee09121a6d206c0b2289d3916b6417626a59c4fb100018a485559",
+      "bytes": 136893
+    },
+    "bizinfo_candidates_without_exact_sme24_match.csv": {
+      "sha256": "c759b57860a6a3ffd0eb97929f69fff90d33cc748182c780523cb01df241e37f",
+      "bytes": 135277
+    },
+    "sme24_small_business_candidates_without_exact_bizinfo_match.csv": {
+      "sha256": "2da8d19b942ed7a5aadca21fff9bc2559aa368ee39f51d3e3bb95241fdbc235d",
+      "bytes": 1286266
+    }
+  },
+  "token_stored_in_output": false
+}

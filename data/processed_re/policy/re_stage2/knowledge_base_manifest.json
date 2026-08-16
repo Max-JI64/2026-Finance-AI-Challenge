@@ -1,0 +1,48 @@
+{
+  "generated_at": "2026-08-16T00:12:17+09:00",
+  "stage": "RE Stage 2",
+  "portfolio": "A+C",
+  "qa_result": "pass",
+  "artifacts": {
+    "data/processed_re/policy/re_stage2/eligibility_examples.csv": {
+      "bytes": 7816,
+      "sha256": "abc254bd0a4105f48d6d0958b295661bae98cfd4b2f8c0180c25ad50cc7fb561"
+    },
+    "data/processed_re/policy/re_stage2/eligibility_rules.csv": {
+      "bytes": 9667,
+      "sha256": "a6136f2d0ead070775dd31d0bbea94f77e78d5d57aad92f7f661a5438424987b"
+    },
+    "data/processed_re/policy/re_stage2/financial_metadata.csv": {
+      "bytes": 19528,
+      "sha256": "76b2670e47dba6a144ed118d8b99c37fa60462c76af95e45309cbe557242d979"
+    },
+    "data/processed_re/policy/re_stage2/knowledge_base_manifest.json": {
+      "bytes": 1967,
+      "sha256": "11113468b047591313ddf2b9262f72155abc4ac6d5898866c6278c7558b587d1"
+    },
+    "data/processed_re/policy/re_stage2/policy_chunks.jsonl": {
+      "bytes": 464163,
+      "sha256": "aaff8de2f80220dc9a9417213064fa20cd20ae21208846ab6f6de82464706175"
+    },
+    "data/processed_re/policy/re_stage2/policy_metadata.csv": {
+      "bytes": 10954,
+      "sha256": "1ee1533d7356621a74733a359ba8e4a91ecc8cced4201fcd37166afebba29a16"
+    },
+    "data/processed_re/policy/re_stage2/policy_versions.csv": {
+      "bytes": 3634,
+      "sha256": "8aebc2567bae6b28cebed5e4ec488d28ea6bc68b5b4fa2fb169e751f8c1aa813"
+    },
+    "data/processed_re/policy/re_stage2/selected_policies.csv": {
+      "bytes": 2481,
+      "sha256": "881a8710ee2e629795d24af7ec16c04da4f26242b7c481596b84e975508a88b3"
+    },
+    "data/processed_re/policy/re_stage2/selection_manifest.json": {
+      "bytes": 945,
+      "sha256": "779f887d2085fc68753f38e9d80264dabb613ec4ed4fe20bd75b4fd9ace5eb41"
+    },
+    "data/processed_re/policy/re_stage2/source_manifest.csv": {
+      "bytes": 9505,
+      "sha256": "d018ead6ef446bc379ac0afd7dd8a4e2f2920b479221efdea9e64a044373aa50"
+    }
+  }
+}

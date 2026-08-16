@@ -1,0 +1,63 @@
+{
+  "generated_at_local": "2026-08-15T23:15:56+09:00",
+  "execution_scope": "pre_RE1_QA_and_lossless_candidate_integration_only",
+  "downloaded_source_files_modified": false,
+  "final_policy_selection_performed": false,
+  "fuzzy_matching_performed": false,
+  "candidate_exclusion_performed": false,
+  "verified_counts": {
+    "bizinfo_candidate_csv_rows": 257,
+    "bizinfo_manifest_candidate_count": 257,
+    "sme24_candidate_csv_rows": 725,
+    "sme24_manifest_candidate_count": 725,
+    "existing_exact_crosswalk_rows": 197,
+    "existing_unmatched_bizinfo_rows": 66
+  },
+  "raw_inventory_file_count": 44,
+  "manual_source_file_count": 10,
+  "manual_files_without_embedded_source_url": 8,
+  "manual_files_without_embedded_retrieved_at": 10,
+  "source_record_count": 1005,
+  "source_record_counts": {
+    "P01_BIZINFO": 257,
+    "P03_SEMAS_OVERVIEW": 13,
+    "P04_SEOUL_FUND": 1,
+    "P04_SEOUL_SUPPORT": 9,
+    "P05_SME24": 725
+  },
+  "candidate_group_count": 827,
+  "multi_source_exact_title_group_count": 174,
+  "seoul_version_diff_summary": [
+    {
+      "document": "별표1 경영안정자금 융자대상",
+      "exact_sha256_duplicate": true,
+      "added_lines": 0,
+      "removed_lines": 0,
+      "initial_sha256": "b282ba2f26c413c0cf7d075043bc2e0d27b6cce23cf4cea841d34b06473d220a",
+      "changed_sha256": "b282ba2f26c413c0cf7d075043bc2e0d27b6cce23cf4cea841d34b06473d220a"
+    },
+    {
+      "document": "별표2 시설자금 융자대상",
+      "exact_sha256_duplicate": false,
+      "added_lines": 32,
+      "removed_lines": 34,
+      "initial_sha256": "10132849787b559730a0b49745aa01f5aa922d2a56ba9021c4657fa3d4c0f9b5",
+      "changed_sha256": "563cfa0726625e8331e4672fa0f1d99b5086b4d83cb2ef353d6f3888f0277295"
+    },
+    {
+      "document": "별표3 시설자금 지원사업별 융자조건 및 한도",
+      "exact_sha256_duplicate": false,
+      "added_lines": 29,
+      "removed_lines": 22,
+      "initial_sha256": "f79854d7121d371838b2b9a412ed94a699fc8f92215cad766f5018b8a3140f55",
+      "changed_sha256": "11f768c37d4c00326fa5676073b15818fcee5346c48f36940f8f50f65d1f4c6e"
+    }
+  ],
+  "warnings": [
+    "P-03 and P-04 Markdown files do not all embed source URL and retrieval time; separate manifests preserve provenance without editing raw files.",
+    "P-03 policy-fund overview is not a substitute for each selected policy's detailed notice and attachments.",
+    "P-04 initial and change-notice annexes must be interpreted by official effective date; text differences are not automatically resolved.",
+    "Only NFKC/casefold/alphanumeric exact-title grouping was used; no fuzzy match or semantic merge was applied.",
+    "All groups remain unselected until RE Stage 1 and policy-selection criteria are approved."
+  ]
+}

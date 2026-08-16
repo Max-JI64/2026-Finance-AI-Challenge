@@ -1,0 +1,11 @@
+{
+  "generated_at_local": "2026-08-15T23:15:56+09:00",
+  "script": "scripts/qa_integrate_policy_candidates.py",
+  "scope": "pre_RE1_lossless_integration",
+  "source_record_count": 1005,
+  "candidate_group_count": 827,
+  "source_records_sha256": "a643ca86a8ebbfacb26f562171451990d173abd64c8b2168c328cecb355f4082",
+  "candidate_groups_sha256": "c00bfa50545ee628cd1842f592fcd5b37de77da2225b54a57351ebd62cf9e8ce",
+  "selection_status": "not_started_requires_user_approval",
+  "downloaded_source_files_modified": false
+}

@@ -1,0 +1,101 @@
+{
+  "source_name": "중소벤처기업부_중소기업 지원사업 공고 조회 서비스",
+  "endpoint": "https://apis.data.go.kr/1421000/bizinfo/pblancBsnsService",
+  "collected_at_kst": "2026-08-15T21:57:13+09:00",
+  "collection_date": "2026-08-15",
+  "expected_current_year": 2026,
+  "request_scope": "all advertised response pages preserved; expected-year records separately derived",
+  "request_parameters_without_service_key": {
+    "dataType": "json",
+    "numOfRows": 1000
+  },
+  "access_validation": "success_with_provided_key",
+  "daily_call_limit": null,
+  "daily_call_limit_status": "not specified in the provided API information",
+  "reported_total_count": 1545,
+  "response_page_size": 1000,
+  "pages_saved": 2,
+  "raw_item_count": 1545,
+  "nonempty_id_count": 1545,
+  "unique_nonempty_id_count": 1545,
+  "duplicate_id_count": 0,
+  "registration_year_counts": {
+    "2026": 1521,
+    "2025": 23,
+    "2023": 1
+  },
+  "expected_year_item_count": 1521,
+  "out_of_scope_year_item_count": 24,
+  "all_response_candidate_count": 264,
+  "candidate_count": 257,
+  "candidate_tier_counts": {
+    "explicit_discovery": 8,
+    "explicit_core": 249
+  },
+  "candidate_filter_notice": "Discovery-only filter. Eligibility and financial terms require official notice validation.",
+  "field_nonempty_counts": {
+    "pblancNm": 1545,
+    "pblancUrl": 1545,
+    "pblancId": 1545,
+    "jrsdInsttNm": 1545,
+    "excInsttNm": 1545,
+    "bsnsSumryCn": 1545,
+    "pldirSportRealmLclasCodeNm": 1545,
+    "creatPnttm": 1545,
+    "reqstBeginEndDe": 1545,
+    "updtPnttm": 1545,
+    "trgetNm": 1545,
+    "inqireCo": 1545,
+    "flpthNm": 1111,
+    "fileNm": 1111,
+    "printFlpthNm": 1545,
+    "printFileNm": 1545,
+    "hashtags": 1545,
+    "reqstMthPapersCn": 1544,
+    "refrncNm": 1544,
+    "rceptEngnHmpgUrl": 823
+  },
+  "pages": [
+    {
+      "page_no": 1,
+      "item_count": 1000,
+      "result_code": "00",
+      "reported_total_count": 1545,
+      "sha256": "7b487c714b4803648350099094c1cd838eb09db4bd88338603c0618d809e5bc6"
+    },
+    {
+      "page_no": 2,
+      "item_count": 545,
+      "result_code": "00",
+      "reported_total_count": 1545,
+      "sha256": "5cf1bdf44874f488d426ebe8a6038e31f03cb98d4a98d80815f86ae9995cb9d2"
+    }
+  ],
+  "derived_files": {
+    "all_items.jsonl": {
+      "sha256": "122ed92ea08924bd5846ed8513dfd2d3397a3faa0c9c14f6958646409c3303e5",
+      "bytes": 3623637
+    },
+    "all_items.csv": {
+      "sha256": "fd3aa75f6053ce5d9cbdc139f3f8c07ecf5df25be5024ca9376b76dedfbc7e5f",
+      "bytes": 3135932
+    },
+    "current_year_2026_items.jsonl": {
+      "sha256": "9699673238f9408e92f5ad349fa0d919244b6fc9549df098cbc63052b94d3830",
+      "bytes": 3570947
+    },
+    "current_year_2026_items.csv": {
+      "sha256": "bb531273d3150231ea2f9666936ea17627154aaf53a51ba799951f33a57d7095",
+      "bytes": 3090786
+    },
+    "small_business_candidates.jsonl": {
+      "sha256": "7d08e135a01ebb5b0042fcdb16eaf81c06661a66da004424601549f91842a759",
+      "bytes": 633974
+    },
+    "small_business_candidates.csv": {
+      "sha256": "3a436b1dde334bbc5833175e7c64ccec849552710ba508dcee59e47379cd3067",
+      "bytes": 530565
+    }
+  },
+  "service_key_stored_in_output": false
+}

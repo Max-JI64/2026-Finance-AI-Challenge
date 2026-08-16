@@ -1,0 +1,24 @@
+{
+  "stage": "RE Stage 2",
+  "selected_variant": "A+C",
+  "selection_status": "final_user_approved",
+  "policy_count": 10,
+  "source": "data/processed_re/policy/re_stage1/portfolio_candidates.csv",
+  "source_sha256": "25486a0b81441761697a9e0948b04af95b07fc8e8d436b52a275f57e3f8e744c",
+  "output": "data/processed_re/policy/re_stage2/selected_policies.csv",
+  "output_sha256": "881a8710ee2e629795d24af7ec16c04da4f26242b7c481596b84e975508a88b3",
+  "policy_ids": [
+    "POL_SEOUL_FUND_2026",
+    "POL_SEOUL_CRISIS_TRACK2_2026H2",
+    "POL_SEOUL_CLOSURE_2026",
+    "POL_SEOUL_DIGITAL_MIDLIFE_2026H2",
+    "POL_SEOUL_ZERO_MARKET_2026_2",
+    "POL_SEOUL_SAFETY_TEST_2026H2",
+    "POL_SEOUL_RESTART_2026",
+    "POL_SEMAS_REFINANCE_2026",
+    "POL_SEMAS_RECHALLENGE_2026",
+    "POL_SEMAS_STABILITY_VOUCHER_2026"
+  ],
+  "official_validation_status": "공식원문검증완료_RE2",
+  "validated_at": "2026-08-15T23:59:00+09:00"
+}

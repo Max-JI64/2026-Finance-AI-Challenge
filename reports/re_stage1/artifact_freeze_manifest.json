@@ -1,0 +1,8 @@
+{
+  "stage": "RE Stage 1",
+  "status": "frozen",
+  "file_count": 503,
+  "total_size_bytes": 287909735,
+  "inventory_sha256": "0a969b94a70bff62ee2db6ef4aabeb1379eea9dd7b1d0937a7d3a11e067fd7a4",
+  "overwrite_allowed": false
+}

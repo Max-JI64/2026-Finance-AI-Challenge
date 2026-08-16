@@ -1,0 +1,112 @@
+{
+  "generated_at_local": "2026-08-15T23:15:55+09:00",
+  "status": "pre_RE1_QA_only_not_policy_approval",
+  "downloaded_source_files_modified": false,
+  "source_family": "P-04 Seoul",
+  "files": [
+    {
+      "path": "data/raw_re/policy/seoul_fund/2026/2026년 중소기업육성자금 융자지원/경영안정자금_융자대상.md",
+      "source_url": "https://news.seoul.go.kr/economy/rearing-funds",
+      "role": "P-04 initial notice attachment",
+      "bytes": 5485,
+      "sha256": "b282ba2f26c413c0cf7d075043bc2e0d27b6cce23cf4cea841d34b06473d220a",
+      "file_mtime_local": "2026-08-15T22:20:55+09:00",
+      "utf8_decode": "passed",
+      "heading_count": 1,
+      "table_row_count": 16,
+      "embedded_source_url": false,
+      "embedded_retrieved_at": false
+    },
+    {
+      "path": "data/raw_re/policy/seoul_fund/2026/2026년 중소기업육성자금 융자지원/시설자금_융자대상.md",
+      "source_url": "https://news.seoul.go.kr/economy/rearing-funds",
+      "role": "P-04 initial notice attachment",
+      "bytes": 17714,
+      "sha256": "10132849787b559730a0b49745aa01f5aa922d2a56ba9021c4657fa3d4c0f9b5",
+      "file_mtime_local": "2026-08-15T22:35:31+09:00",
+      "utf8_decode": "passed",
+      "heading_count": 4,
+      "table_row_count": 40,
+      "embedded_source_url": false,
+      "embedded_retrieved_at": false
+    },
+    {
+      "path": "data/raw_re/policy/seoul_fund/2026/2026년 중소기업육성자금 융자지원/시설자금_지원사업별_융자조건_및_한도.md",
+      "source_url": "https://news.seoul.go.kr/economy/rearing-funds",
+      "role": "P-04 initial notice attachment",
+      "bytes": 5029,
+      "sha256": "f79854d7121d371838b2b9a412ed94a699fc8f92215cad766f5018b8a3140f55",
+      "file_mtime_local": "2026-08-15T22:31:56+09:00",
+      "utf8_decode": "passed",
+      "heading_count": 6,
+      "table_row_count": 20,
+      "embedded_source_url": false,
+      "embedded_retrieved_at": false
+    },
+    {
+      "path": "data/raw_re/policy/seoul_fund/2026/2026년도 서울특별시 중소기업육성자금 융자지원 변경계획 공고/2026년_중소기업육성자금_융자지원_변경계획_공고.md",
+      "source_url": "https://www.seoul.go.kr/news/news_notice.do?nttNo=457365",
+      "role": "P-04 operative change notice",
+      "bytes": 22981,
+      "sha256": "f9ff4bb1f840fb468e10240d25084dee7018b31a84895daa812ae313d0856419",
+      "file_mtime_local": "2026-08-15T22:43:33+09:00",
+      "utf8_decode": "passed",
+      "heading_count": 19,
+      "table_row_count": 70,
+      "embedded_source_url": false,
+      "embedded_retrieved_at": false
+    },
+    {
+      "path": "data/raw_re/policy/seoul_fund/2026/2026년도 서울특별시 중소기업육성자금 융자지원 변경계획 공고/별표1_경영안정자금_융자대상.md",
+      "source_url": "https://www.seoul.go.kr/news/news_notice.do?nttNo=457365",
+      "role": "P-04 change-notice annex 1",
+      "bytes": 5485,
+      "sha256": "b282ba2f26c413c0cf7d075043bc2e0d27b6cce23cf4cea841d34b06473d220a",
+      "file_mtime_local": "2026-08-15T22:47:56+09:00",
+      "utf8_decode": "passed",
+      "heading_count": 1,
+      "table_row_count": 16,
+      "embedded_source_url": false,
+      "embedded_retrieved_at": false
+    },
+    {
+      "path": "data/raw_re/policy/seoul_fund/2026/2026년도 서울특별시 중소기업육성자금 융자지원 변경계획 공고/별표2_시설자금_융자대상.md",
+      "source_url": "https://www.seoul.go.kr/news/news_notice.do?nttNo=457365",
+      "role": "P-04 change-notice annex 2",
+      "bytes": 17717,
+      "sha256": "563cfa0726625e8331e4672fa0f1d99b5086b4d83cb2ef353d6f3888f0277295",
+      "file_mtime_local": "2026-08-15T22:50:17+09:00",
+      "utf8_decode": "passed",
+      "heading_count": 1,
+      "table_row_count": 40,
+      "embedded_source_url": false,
+      "embedded_retrieved_at": false
+    },
+    {
+      "path": "data/raw_re/policy/seoul_fund/2026/2026년도 서울특별시 중소기업육성자금 융자지원 변경계획 공고/별표3_시설자금_지원사업별_융자조건_및_한도.md",
+      "source_url": "https://www.seoul.go.kr/news/news_notice.do?nttNo=457365",
+      "role": "P-04 change-notice annex 3",
+      "bytes": 5446,
+      "sha256": "11f768c37d4c00326fa5676073b15818fcee5346c48f36940f8f50f65d1f4c6e",
+      "file_mtime_local": "2026-08-15T22:51:59+09:00",
+      "utf8_decode": "passed",
+      "heading_count": 5,
+      "table_row_count": 23,
+      "embedded_source_url": false,
+      "embedded_retrieved_at": false
+    },
+    {
+      "path": "data/raw_re/policy/seoul_fund/2026/소상공인 종합지원 사업/소상공인_종합지원_사업.md",
+      "source_url": "https://news.seoul.go.kr/economy/small-business-supports",
+      "role": "P-04 Seoul small-business support overview",
+      "bytes": 5006,
+      "sha256": "2fb22ee03b20c0c3f3034440e4cb59c73a9d19361607ed7a0d66624434a8e17d",
+      "file_mtime_local": "2026-08-15T22:59:58+09:00",
+      "utf8_decode": "passed",
+      "heading_count": 5,
+      "table_row_count": 10,
+      "embedded_source_url": true,
+      "embedded_retrieved_at": false
+    }
+  ]
+}
