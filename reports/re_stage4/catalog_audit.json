@@ -1,0 +1,15 @@
+{
+  "status": "pass",
+  "policy_count": 10,
+  "financial_event_count": 30,
+  "ready_with_user_scenario": 27,
+  "blocked_missing_official_terms": 2,
+  "requires_subproduct_selection": 1,
+  "representative_plan_count": 6,
+  "representative_financial_event_count": 561,
+  "manual_check_count": 26,
+  "manual_check_passed": 26,
+  "external_data_used": false,
+  "approval_probability_generated": false,
+  "causal_effect_claim_generated": false
+}

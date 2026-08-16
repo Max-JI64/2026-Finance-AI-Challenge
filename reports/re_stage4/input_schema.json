@@ -1,0 +1,1237 @@
+{
+  "grant": {
+    "$defs": {
+      "ScenarioStatus": {
+        "enum": [
+          "assumed_approved",
+          "not_approved"
+        ],
+        "title": "ScenarioStatus",
+        "type": "string"
+      },
+      "ValueSource": {
+        "enum": [
+          "official",
+          "user_input",
+          "explicit_scenario_assumption",
+          "calculated",
+          "unconfirmed"
+        ],
+        "title": "ValueSource",
+        "type": "string"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "policy_id": {
+        "title": "Policy Id",
+        "type": "string"
+      },
+      "event_id": {
+        "title": "Event Id",
+        "type": "string"
+      },
+      "scenario_status": {
+        "$ref": "#/$defs/ScenarioStatus"
+      },
+      "approved_support_amount": {
+        "anyOf": [
+          {
+            "minimum": 0,
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Approved Support Amount"
+      },
+      "approved_support_amount_source": {
+        "$ref": "#/$defs/ValueSource",
+        "default": "user_input"
+      },
+      "payment_date": {
+        "anyOf": [
+          {
+            "format": "date",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Payment Date"
+      },
+      "payment_date_source": {
+        "$ref": "#/$defs/ValueSource",
+        "default": "explicit_scenario_assumption"
+      },
+      "total_project_cost": {
+        "anyOf": [
+          {
+            "minimum": 0,
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Total Project Cost"
+      },
+      "eligible_expense_amount": {
+        "anyOf": [
+          {
+            "minimum": 0,
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Eligible Expense Amount"
+      },
+      "vat_amount": {
+        "default": 0,
+        "minimum": 0,
+        "title": "Vat Amount",
+        "type": "integer"
+      },
+      "expense_date": {
+        "anyOf": [
+          {
+            "format": "date",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Expense Date"
+      },
+      "expense_already_in_baseline": {
+        "default": false,
+        "title": "Expense Already In Baseline",
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "policy_id",
+      "event_id",
+      "scenario_status"
+    ],
+    "title": "GrantScenario",
+    "type": "object"
+  },
+  "voucher": {
+    "$defs": {
+      "ExpenseType": {
+        "enum": [
+          "rent",
+          "labor",
+          "purchase",
+          "tax",
+          "utility",
+          "social_insurance",
+          "vehicle_fuel",
+          "equipment",
+          "repair",
+          "other"
+        ],
+        "title": "ExpenseType",
+        "type": "string"
+      },
+      "ScenarioStatus": {
+        "enum": [
+          "assumed_approved",
+          "not_approved"
+        ],
+        "title": "ScenarioStatus",
+        "type": "string"
+      },
+      "ValueSource": {
+        "enum": [
+          "official",
+          "user_input",
+          "explicit_scenario_assumption",
+          "calculated",
+          "unconfirmed"
+        ],
+        "title": "ValueSource",
+        "type": "string"
+      },
+      "VoucherExpense": {
+        "additionalProperties": false,
+        "properties": {
+          "expense_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Expense Id",
+            "type": "string"
+          },
+          "expense_date": {
+            "format": "date",
+            "title": "Expense Date",
+            "type": "string"
+          },
+          "expense_type": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ExpenseType"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Expense Type"
+          },
+          "amount": {
+            "minimum": 0,
+            "title": "Amount",
+            "type": "integer"
+          },
+          "description": {
+            "default": "",
+            "maxLength": 300,
+            "title": "Description",
+            "type": "string"
+          }
+        },
+        "required": [
+          "expense_id",
+          "expense_date",
+          "expense_type",
+          "amount"
+        ],
+        "title": "VoucherExpense",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "policy_id": {
+        "title": "Policy Id",
+        "type": "string"
+      },
+      "event_id": {
+        "title": "Event Id",
+        "type": "string"
+      },
+      "scenario_status": {
+        "$ref": "#/$defs/ScenarioStatus"
+      },
+      "awarded_amount": {
+        "anyOf": [
+          {
+            "minimum": 0,
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Awarded Amount"
+      },
+      "awarded_amount_source": {
+        "$ref": "#/$defs/ValueSource",
+        "default": "user_input"
+      },
+      "activation_date": {
+        "anyOf": [
+          {
+            "format": "date",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Activation Date"
+      },
+      "expiry_date": {
+        "anyOf": [
+          {
+            "format": "date",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Expiry Date"
+      },
+      "active_period_source": {
+        "$ref": "#/$defs/ValueSource",
+        "default": "explicit_scenario_assumption"
+      },
+      "expenses": {
+        "items": {
+          "$ref": "#/$defs/VoucherExpense"
+        },
+        "title": "Expenses",
+        "type": "array"
+      }
+    },
+    "required": [
+      "policy_id",
+      "event_id",
+      "scenario_status"
+    ],
+    "title": "VoucherScenario",
+    "type": "object"
+  },
+  "loan": {
+    "$defs": {
+      "RepaymentMethod": {
+        "enum": [
+          "equal_principal",
+          "equal_payment",
+          "bullet"
+        ],
+        "title": "RepaymentMethod",
+        "type": "string"
+      },
+      "ScenarioStatus": {
+        "enum": [
+          "assumed_approved",
+          "not_approved"
+        ],
+        "title": "ScenarioStatus",
+        "type": "string"
+      },
+      "ValueSource": {
+        "enum": [
+          "official",
+          "user_input",
+          "explicit_scenario_assumption",
+          "calculated",
+          "unconfirmed"
+        ],
+        "title": "ValueSource",
+        "type": "string"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "policy_id": {
+        "title": "Policy Id",
+        "type": "string"
+      },
+      "event_id": {
+        "title": "Event Id",
+        "type": "string"
+      },
+      "scenario_status": {
+        "$ref": "#/$defs/ScenarioStatus"
+      },
+      "approved_principal": {
+        "anyOf": [
+          {
+            "exclusiveMinimum": 0,
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Approved Principal"
+      },
+      "approved_principal_source": {
+        "$ref": "#/$defs/ValueSource",
+        "default": "user_input"
+      },
+      "execution_date": {
+        "anyOf": [
+          {
+            "format": "date",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Execution Date"
+      },
+      "execution_date_source": {
+        "$ref": "#/$defs/ValueSource",
+        "default": "explicit_scenario_assumption"
+      },
+      "payment_day": {
+        "anyOf": [
+          {
+            "maximum": 31,
+            "minimum": 1,
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Payment Day"
+      },
+      "term_months": {
+        "anyOf": [
+          {
+            "exclusiveMinimum": 0,
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Term Months"
+      },
+      "grace_months": {
+        "default": 0,
+        "minimum": 0,
+        "title": "Grace Months",
+        "type": "integer"
+      },
+      "repayment_method": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/RepaymentMethod"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "bank_interest_rate_percent": {
+        "anyOf": [
+          {
+            "maximum": 100,
+            "minimum": 0,
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Bank Interest Rate Percent"
+      },
+      "reference_interest_rate_percent": {
+        "anyOf": [
+          {
+            "maximum": 100,
+            "minimum": 0,
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Reference Interest Rate Percent"
+      },
+      "upfront_fee": {
+        "default": 0,
+        "minimum": 0,
+        "title": "Upfront Fee",
+        "type": "integer"
+      },
+      "guarantee_fee": {
+        "default": 0,
+        "minimum": 0,
+        "title": "Guarantee Fee",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "policy_id",
+      "event_id",
+      "scenario_status"
+    ],
+    "title": "LoanScenario",
+    "type": "object"
+  },
+  "refinance": {
+    "$defs": {
+      "LoanInput": {
+        "additionalProperties": false,
+        "properties": {
+          "loan_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Loan Id",
+            "type": "string"
+          },
+          "principal": {
+            "exclusiveMinimum": 0,
+            "title": "Principal",
+            "type": "integer"
+          },
+          "annual_interest_rate_percent": {
+            "maximum": 100,
+            "minimum": 0,
+            "title": "Annual Interest Rate Percent",
+            "type": "number"
+          },
+          "repayment_method": {
+            "$ref": "#/$defs/RepaymentMethod"
+          },
+          "payment_day": {
+            "maximum": 31,
+            "minimum": 1,
+            "title": "Payment Day",
+            "type": "integer"
+          },
+          "maturity_date": {
+            "format": "date",
+            "title": "Maturity Date",
+            "type": "string"
+          },
+          "grace_months": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Grace Months",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "loan_id",
+          "principal",
+          "annual_interest_rate_percent",
+          "repayment_method",
+          "payment_day",
+          "maturity_date"
+        ],
+        "title": "LoanInput",
+        "type": "object"
+      },
+      "RepaymentMethod": {
+        "enum": [
+          "equal_principal",
+          "equal_payment",
+          "bullet"
+        ],
+        "title": "RepaymentMethod",
+        "type": "string"
+      },
+      "ScenarioStatus": {
+        "enum": [
+          "assumed_approved",
+          "not_approved"
+        ],
+        "title": "ScenarioStatus",
+        "type": "string"
+      },
+      "ValueSource": {
+        "enum": [
+          "official",
+          "user_input",
+          "explicit_scenario_assumption",
+          "calculated",
+          "unconfirmed"
+        ],
+        "title": "ValueSource",
+        "type": "string"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "policy_id": {
+        "title": "Policy Id",
+        "type": "string"
+      },
+      "event_id": {
+        "title": "Event Id",
+        "type": "string"
+      },
+      "scenario_status": {
+        "$ref": "#/$defs/ScenarioStatus"
+      },
+      "execution_date": {
+        "anyOf": [
+          {
+            "format": "date",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Execution Date"
+      },
+      "execution_date_source": {
+        "$ref": "#/$defs/ValueSource",
+        "default": "explicit_scenario_assumption"
+      },
+      "existing_refinanced_loan": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/LoanInput"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "replacement_loan": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/LoanInput"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "upfront_fee": {
+        "default": 0,
+        "minimum": 0,
+        "title": "Upfront Fee",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "policy_id",
+      "event_id",
+      "scenario_status"
+    ],
+    "title": "RefinanceScenario",
+    "type": "object"
+  },
+  "guarantee": {
+    "$defs": {
+      "LoanScenario": {
+        "additionalProperties": false,
+        "properties": {
+          "policy_id": {
+            "title": "Policy Id",
+            "type": "string"
+          },
+          "event_id": {
+            "title": "Event Id",
+            "type": "string"
+          },
+          "scenario_status": {
+            "$ref": "#/$defs/ScenarioStatus"
+          },
+          "approved_principal": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Approved Principal"
+          },
+          "approved_principal_source": {
+            "$ref": "#/$defs/ValueSource",
+            "default": "user_input"
+          },
+          "execution_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Execution Date"
+          },
+          "execution_date_source": {
+            "$ref": "#/$defs/ValueSource",
+            "default": "explicit_scenario_assumption"
+          },
+          "payment_day": {
+            "anyOf": [
+              {
+                "maximum": 31,
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Payment Day"
+          },
+          "term_months": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Term Months"
+          },
+          "grace_months": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Grace Months",
+            "type": "integer"
+          },
+          "repayment_method": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/RepaymentMethod"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "bank_interest_rate_percent": {
+            "anyOf": [
+              {
+                "maximum": 100,
+                "minimum": 0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Bank Interest Rate Percent"
+          },
+          "reference_interest_rate_percent": {
+            "anyOf": [
+              {
+                "maximum": 100,
+                "minimum": 0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Reference Interest Rate Percent"
+          },
+          "upfront_fee": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Upfront Fee",
+            "type": "integer"
+          },
+          "guarantee_fee": {
+            "default": 0,
+            "minimum": 0,
+            "title": "Guarantee Fee",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "policy_id",
+          "event_id",
+          "scenario_status"
+        ],
+        "title": "LoanScenario",
+        "type": "object"
+      },
+      "RepaymentMethod": {
+        "enum": [
+          "equal_principal",
+          "equal_payment",
+          "bullet"
+        ],
+        "title": "RepaymentMethod",
+        "type": "string"
+      },
+      "ScenarioStatus": {
+        "enum": [
+          "assumed_approved",
+          "not_approved"
+        ],
+        "title": "ScenarioStatus",
+        "type": "string"
+      },
+      "ValueSource": {
+        "enum": [
+          "official",
+          "user_input",
+          "explicit_scenario_assumption",
+          "calculated",
+          "unconfirmed"
+        ],
+        "title": "ValueSource",
+        "type": "string"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "policy_id": {
+        "title": "Policy Id",
+        "type": "string"
+      },
+      "event_id": {
+        "title": "Event Id",
+        "type": "string"
+      },
+      "scenario_status": {
+        "$ref": "#/$defs/ScenarioStatus"
+      },
+      "linked_loan_scenario": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/LoanScenario"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "guarantee_fee_amount": {
+        "default": 0,
+        "minimum": 0,
+        "title": "Guarantee Fee Amount",
+        "type": "integer"
+      },
+      "guarantee_fee_date": {
+        "anyOf": [
+          {
+            "format": "date",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Guarantee Fee Date"
+      },
+      "guarantee_fee_support_amount": {
+        "default": 0,
+        "minimum": 0,
+        "title": "Guarantee Fee Support Amount",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "policy_id",
+      "event_id",
+      "scenario_status"
+    ],
+    "title": "GuaranteeScenario",
+    "type": "object"
+  },
+  "financial_event": {
+    "$defs": {
+      "CashDirection": {
+        "enum": [
+          "inflow",
+          "outflow",
+          "none"
+        ],
+        "title": "CashDirection",
+        "type": "string"
+      },
+      "EffectKind": {
+        "enum": [
+          "support_cash_inflow",
+          "cost_reduction",
+          "user_contribution",
+          "new_debt_principal",
+          "project_expense",
+          "existing_debt_payoff",
+          "existing_principal_payment_reversal",
+          "existing_interest_payment_reversal",
+          "debt_principal_repayment",
+          "debt_interest",
+          "interest_reduction",
+          "guarantee_fee",
+          "guarantee_fee_support",
+          "other_fee",
+          "information_only"
+        ],
+        "title": "EffectKind",
+        "type": "string"
+      },
+      "ValueSource": {
+        "enum": [
+          "official",
+          "user_input",
+          "explicit_scenario_assumption",
+          "calculated",
+          "unconfirmed"
+        ],
+        "title": "ValueSource",
+        "type": "string"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "policy_id": {
+        "title": "Policy Id",
+        "type": "string"
+      },
+      "policy_version": {
+        "title": "Policy Version",
+        "type": "string"
+      },
+      "event_id": {
+        "title": "Event Id",
+        "type": "string"
+      },
+      "linked_event_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Linked Event Id"
+      },
+      "deduplication_key": {
+        "title": "Deduplication Key",
+        "type": "string"
+      },
+      "sequence": {
+        "minimum": 1,
+        "title": "Sequence",
+        "type": "integer"
+      },
+      "effect_kind": {
+        "$ref": "#/$defs/EffectKind"
+      },
+      "cash_direction": {
+        "$ref": "#/$defs/CashDirection"
+      },
+      "event_date": {
+        "anyOf": [
+          {
+            "format": "date",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Event Date"
+      },
+      "amount": {
+        "anyOf": [
+          {
+            "minimum": 0,
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Amount"
+      },
+      "amount_source": {
+        "$ref": "#/$defs/ValueSource"
+      },
+      "description": {
+        "title": "Description",
+        "type": "string"
+      }
+    },
+    "required": [
+      "policy_id",
+      "policy_version",
+      "event_id",
+      "deduplication_key",
+      "sequence",
+      "effect_kind",
+      "cash_direction",
+      "amount_source",
+      "description"
+    ],
+    "title": "PolicyFinancialEvent",
+    "type": "object"
+  },
+  "policy_plan": {
+    "$defs": {
+      "AssumptionEntry": {
+        "additionalProperties": false,
+        "properties": {
+          "field": {
+            "title": "Field",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value"
+          },
+          "source": {
+            "$ref": "#/$defs/ValueSource"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "field",
+          "value",
+          "source",
+          "reason"
+        ],
+        "title": "AssumptionEntry",
+        "type": "object"
+      },
+      "CashDirection": {
+        "enum": [
+          "inflow",
+          "outflow",
+          "none"
+        ],
+        "title": "CashDirection",
+        "type": "string"
+      },
+      "EffectKind": {
+        "enum": [
+          "support_cash_inflow",
+          "cost_reduction",
+          "user_contribution",
+          "new_debt_principal",
+          "project_expense",
+          "existing_debt_payoff",
+          "existing_principal_payment_reversal",
+          "existing_interest_payment_reversal",
+          "debt_principal_repayment",
+          "debt_interest",
+          "interest_reduction",
+          "guarantee_fee",
+          "guarantee_fee_support",
+          "other_fee",
+          "information_only"
+        ],
+        "title": "EffectKind",
+        "type": "string"
+      },
+      "PolicyFinancialEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "policy_id": {
+            "title": "Policy Id",
+            "type": "string"
+          },
+          "policy_version": {
+            "title": "Policy Version",
+            "type": "string"
+          },
+          "event_id": {
+            "title": "Event Id",
+            "type": "string"
+          },
+          "linked_event_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Linked Event Id"
+          },
+          "deduplication_key": {
+            "title": "Deduplication Key",
+            "type": "string"
+          },
+          "sequence": {
+            "minimum": 1,
+            "title": "Sequence",
+            "type": "integer"
+          },
+          "effect_kind": {
+            "$ref": "#/$defs/EffectKind"
+          },
+          "cash_direction": {
+            "$ref": "#/$defs/CashDirection"
+          },
+          "event_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Event Date"
+          },
+          "amount": {
+            "anyOf": [
+              {
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Amount"
+          },
+          "amount_source": {
+            "$ref": "#/$defs/ValueSource"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          }
+        },
+        "required": [
+          "policy_id",
+          "policy_version",
+          "event_id",
+          "deduplication_key",
+          "sequence",
+          "effect_kind",
+          "cash_direction",
+          "amount_source",
+          "description"
+        ],
+        "title": "PolicyFinancialEvent",
+        "type": "object"
+      },
+      "ScenarioStatus": {
+        "enum": [
+          "assumed_approved",
+          "not_approved"
+        ],
+        "title": "ScenarioStatus",
+        "type": "string"
+      },
+      "ValueSource": {
+        "enum": [
+          "official",
+          "user_input",
+          "explicit_scenario_assumption",
+          "calculated",
+          "unconfirmed"
+        ],
+        "title": "ValueSource",
+        "type": "string"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "policy_id": {
+        "title": "Policy Id",
+        "type": "string"
+      },
+      "policy_version": {
+        "title": "Policy Version",
+        "type": "string"
+      },
+      "event_id": {
+        "title": "Event Id",
+        "type": "string"
+      },
+      "event_name": {
+        "title": "Event Name",
+        "type": "string"
+      },
+      "support_kind": {
+        "title": "Support Kind",
+        "type": "string"
+      },
+      "scenario_status": {
+        "$ref": "#/$defs/ScenarioStatus"
+      },
+      "calculation_status": {
+        "title": "Calculation Status",
+        "type": "string"
+      },
+      "deduplication_key": {
+        "title": "Deduplication Key",
+        "type": "string"
+      },
+      "linked_event_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Linked Event Id"
+      },
+      "conditional_notice": {
+        "title": "Conditional Notice",
+        "type": "string"
+      },
+      "events": {
+        "items": {
+          "$ref": "#/$defs/PolicyFinancialEvent"
+        },
+        "title": "Events",
+        "type": "array"
+      },
+      "assumptions": {
+        "items": {
+          "$ref": "#/$defs/AssumptionEntry"
+        },
+        "title": "Assumptions",
+        "type": "array"
+      },
+      "unconfirmed_conditions": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Unconfirmed Conditions",
+        "type": "array"
+      },
+      "summary": {
+        "additionalProperties": true,
+        "title": "Summary",
+        "type": "object"
+      }
+    },
+    "required": [
+      "policy_id",
+      "policy_version",
+      "event_id",
+      "event_name",
+      "support_kind",
+      "scenario_status",
+      "calculation_status",
+      "deduplication_key",
+      "conditional_notice",
+      "events",
+      "assumptions",
+      "unconfirmed_conditions",
+      "summary"
+    ],
+    "title": "PolicyPlan",
+    "type": "object"
+  }
+}

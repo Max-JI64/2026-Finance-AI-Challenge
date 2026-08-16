@@ -1,0 +1,22 @@
+{"policy_id": "POL_SEOUL_CRISIS_TRACK2_2026H2", "event_id": "CRISIS_SOLUTION", "field": "scenario_status", "value": "assumed_approved", "source": "explicit_scenario_assumption", "reason": "승인을 예측하지 않고 승인된 경우만 가정합니다."}
+{"policy_id": "POL_SEOUL_CRISIS_TRACK2_2026H2", "event_id": "CRISIS_SOLUTION", "field": "approved_support_amount", "value": 3000000, "source": "user_input", "reason": "실제 승인금액 또는 사용자가 검토하려는 조건부 금액입니다."}
+{"policy_id": "POL_SEOUL_CRISIS_TRACK2_2026H2", "event_id": "CRISIS_SOLUTION", "field": "payment_date", "value": "2026-10-01", "source": "explicit_scenario_assumption", "reason": "공식 개별 지급일이 없으면 사용자가 날짜를 명시해야 합니다."}
+{"policy_id": "POL_SEOUL_CRISIS_TRACK2_2026H2", "event_id": "CRISIS_SOLUTION", "field": "total_project_cost", "value": 4000000, "source": "user_input", "reason": "사후정산 전 선행현금과 최종 자부담 계산에 사용합니다."}
+{"policy_id": "POL_SEOUL_CRISIS_TRACK2_2026H2", "event_id": "CRISIS_SOLUTION", "field": "expense_already_in_baseline", "value": false, "source": "user_input", "reason": "기준 현금흐름 비용의 중복 반영을 막습니다."}
+{"policy_id": "POL_SEMAS_STABILITY_VOUCHER_2026", "event_id": "STABILITY_VOUCHER", "field": "awarded_amount", "value": 250000, "source": "user_input", "reason": "실제 선정액 또는 조건부 시나리오 금액입니다."}
+{"policy_id": "POL_SEMAS_STABILITY_VOUCHER_2026", "event_id": "STABILITY_VOUCHER", "field": "expense_presence_in_baseline", "value": true, "source": "explicit_scenario_assumption", "reason": "비용감면 이벤트는 동일 비용이 기준 현금흐름에 있을 때만 적용합니다."}
+{"policy_id": "POL_SEMAS_STABILITY_VOUCHER_2026", "event_id": "STABILITY_VOUCHER", "field": "active_period", "value": ["2026-09-01", "2026-12-31"], "source": "explicit_scenario_assumption", "reason": "공식 카드 등록일·소진기한 또는 사용자가 명시한 조건부 기간입니다."}
+{"policy_id": "POL_SEOUL_FUND_2026", "event_id": "SEOUL_EMERGENCY", "field": "scenario_status", "value": "assumed_approved", "source": "explicit_scenario_assumption", "reason": "승인확률 없이 승인·실행된 경우만 가정합니다."}
+{"policy_id": "POL_SEOUL_FUND_2026", "event_id": "SEOUL_EMERGENCY", "field": "approved_principal", "value": 10000000, "source": "user_input", "reason": "실제 승인액 또는 사용자가 검토하는 조건부 금액입니다."}
+{"policy_id": "POL_SEOUL_FUND_2026", "event_id": "SEOUL_EMERGENCY", "field": "execution_date", "value": "2026-09-01", "source": "explicit_scenario_assumption", "reason": "개별 실행일은 사용자 입력이며 임의 생성하지 않습니다."}
+{"policy_id": "POL_SEOUL_FUND_2026", "event_id": "SEOUL_EMERGENCY", "field": "gross_interest_rate_percent", "value": 2.5, "source": "official", "reason": "공식 고정금리 또는 사용자 입력 기준금리·은행금리와 공식 규칙의 결합입니다."}
+{"policy_id": "POL_SEOUL_FUND_2026", "event_id": "SEOUL_EMERGENCY", "field": "loan_terms", "value": [60, 12, "equal_principal"], "source": "official", "reason": "사용자 선택값을 공식 기간·거치·상환방식 옵션과 대조했습니다."}
+{"policy_id": "POL_SEOUL_FUND_2026", "event_id": "SEOUL_ECONOMY", "field": "scenario_status", "value": "assumed_approved", "source": "explicit_scenario_assumption", "reason": "승인확률 없이 승인·실행된 경우만 가정합니다."}
+{"policy_id": "POL_SEOUL_FUND_2026", "event_id": "SEOUL_ECONOMY", "field": "approved_principal", "value": 12000000, "source": "user_input", "reason": "실제 승인액 또는 사용자가 검토하는 조건부 금액입니다."}
+{"policy_id": "POL_SEOUL_FUND_2026", "event_id": "SEOUL_ECONOMY", "field": "execution_date", "value": "2026-09-01", "source": "explicit_scenario_assumption", "reason": "개별 실행일은 사용자 입력이며 임의 생성하지 않습니다."}
+{"policy_id": "POL_SEOUL_FUND_2026", "event_id": "SEOUL_ECONOMY", "field": "gross_interest_rate_percent", "value": 5.0, "source": "calculated", "reason": "공식 고정금리 또는 사용자 입력 기준금리·은행금리와 공식 규칙의 결합입니다."}
+{"policy_id": "POL_SEOUL_FUND_2026", "event_id": "SEOUL_ECONOMY", "field": "loan_terms", "value": [60, 12, "equal_principal"], "source": "official", "reason": "사용자 선택값을 공식 기간·거치·상환방식 옵션과 대조했습니다."}
+{"policy_id": "POL_SEMAS_REFINANCE_2026", "event_id": "SEMAS_REFINANCE", "field": "existing_refinanced_loan", "value": "old-high-rate", "source": "user_input", "reason": "부분대환이면 대환되는 원금 구간만 별도 대출로 입력합니다."}
+{"policy_id": "POL_SEMAS_REFINANCE_2026", "event_id": "SEMAS_REFINANCE", "field": "scenario_status", "value": "assumed_approved", "source": "explicit_scenario_assumption", "reason": "승인·실행된 경우를 조건부로 비교합니다."}
+{"policy_id": "POL_SEMAS_REFINANCE_2026", "event_id": "SEMAS_REFINANCE", "field": "execution_date", "value": "2026-09-01", "source": "explicit_scenario_assumption", "reason": "대환 실행일의 출처를 공식·사용자·가정으로 구분합니다."}
+{"policy_id": "POL_SEOUL_RESTART_2026", "event_id": "RESTART_GUARANTEE", "field": "linked_loan_scenario", "value": null, "source": "unconfirmed", "reason": "실제 대출조건이 입력되지 않았습니다."}

@@ -1,0 +1,68 @@
+{
+  "stage": "RE Stage 4",
+  "status": "completed",
+  "engine_version": "re4-v1",
+  "verification_date": "2026-08-16",
+  "files": [
+    {
+      "path": "src/policy/catalog.py",
+      "bytes": 8001,
+      "sha256": "b846901a047da0a7700ac191370a7735c8ca26f16f6e6817e70d9bf5057fb91e"
+    },
+    {
+      "path": "src/policy/schemas.py",
+      "bytes": 8642,
+      "sha256": "f42e4a8b46ef954010c35a8545ff11696b1f6a927dbf7ca4e6e5fdb27cae6608"
+    },
+    {
+      "path": "src/policy/converters.py",
+      "bytes": 38717,
+      "sha256": "098d1f56d1ffd6f5c24ac4e020da67d2b2f591eb224f44da178c47b4305fdfac"
+    },
+    {
+      "path": "src/policy/apply.py",
+      "bytes": 8479,
+      "sha256": "5230f390b7412de42a7ac33a9cd5b9fdb979bdcd662e81a75f98750a5d98d3f8"
+    },
+    {
+      "path": "config/re_stage4.yaml",
+      "bytes": 1289,
+      "sha256": "781fa26b13e010179234b79bb9d8eaf68960d8dd322af9c6d24b7ab608c58ff5"
+    },
+    {
+      "path": "data/processed_re/policy/re_stage4/policy_event_profiles.csv",
+      "bytes": 15326,
+      "sha256": "6bd3503ceb1ebf9885a41516c7a123b6a195e9465365512060d98a93ba5f6dac"
+    },
+    {
+      "path": "reports/re_stage4/input_schema.json",
+      "bytes": 29343,
+      "sha256": "1f10a3b9accdb2abe35c2ebd2a3bfeaab3d735b3b64ef8116cec1e9a74573a78"
+    },
+    {
+      "path": "reports/re_stage4/representative_scenarios.json",
+      "bytes": 327135,
+      "sha256": "426c9ec4b8f22167cb8377a8c7f8ad6efa1c9214118750225cb0fd21fb793ade"
+    },
+    {
+      "path": "reports/re_stage4/assumption_ledger.jsonl",
+      "bytes": 5541,
+      "sha256": "b12648c3e51a1e25e877ece24f29953bfad421652159f3f06220b498f1cd14ef"
+    },
+    {
+      "path": "reports/re_stage4/financial_event_schedule.jsonl",
+      "bytes": 227578,
+      "sha256": "8bdf68f1b853414f31d6aff98c88e2b2494b74803015c0b19d66eb0fc8da384a"
+    },
+    {
+      "path": "reports/re_stage4/manual_check.csv",
+      "bytes": 1104,
+      "sha256": "abdd0e86ddfb8015621c03eedbbe3a561d35ebc1e4d0f73e693503060edfd448"
+    },
+    {
+      "path": "reports/re_stage4/catalog_audit.json",
+      "bytes": 456,
+      "sha256": "1027fa01c72c5a2e9f8651aabc7dbb2f9008c040e828e2ad615457c815dedddc"
+    }
+  ]
+}

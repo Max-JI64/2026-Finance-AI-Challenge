@@ -1,0 +1,25 @@
+{
+  "policy_id": "POL_SEMAS_REFINANCE_2026",
+  "event_id": "SEMAS_REFINANCE",
+  "scenario_status": "assumed_approved",
+  "execution_date": "2026-09-01",
+  "existing_refinanced_loan": {
+    "loan_id": "old-high-rate",
+    "principal": 12000000,
+    "annual_interest_rate_percent": 12.0,
+    "repayment_method": "equal_principal",
+    "payment_day": 1,
+    "maturity_date": "2027-08-01",
+    "grace_months": 0
+  },
+  "replacement_loan": {
+    "loan_id": "new-refinance",
+    "principal": 12000000,
+    "annual_interest_rate_percent": 4.5,
+    "repayment_method": "equal_principal",
+    "payment_day": 1,
+    "maturity_date": "2036-08-01",
+    "grace_months": 0
+  },
+  "upfront_fee": 0
+}

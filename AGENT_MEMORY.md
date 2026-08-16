@@ -5,9 +5,9 @@
 
 ## Project snapshot
 
-- Last updated: 2026-08-16T09:57+09:00
+- Last updated: 2026-08-16T11:08+09:00
 - Purpose: Build a working Seoul small-business policy-impact simulator that combines area-industry sales-environment scenarios, deterministic 13-week and 6-month cash flow, official policy eligibility and financial terms, intervention comparison, and evidence-grounded AI explanations.
-- Important paths: `프로젝트 계획서.md` is the main MVP plan; `MVP 단계별 구현 체크리스트.md` is the execution and completion-gate document; `reports/re_stage1/` and `reports/re_stage2/` preserve the service and 10-policy contracts; `src/cashflow/`, `config/re_stage3.yaml`, `data/templates/re_stage3/`, `data/samples/re_stage3/`, and `reports/re_stage3/` contain the completed deterministic cash-flow engine, contracts, synthetic evidence, and Gate RE3 review; `data/raw_re/향후 데이터 다운로드 가이드.md` is the acquisition guide.
+- Important paths: `프로젝트 계획서.md` is the main MVP plan; `MVP 단계별 구현 체크리스트.md` is the execution and completion-gate document; `reports/re_stage1/` and `reports/re_stage2/` preserve the service and 10-policy contracts; `src/cashflow/`, `config/re_stage3.yaml`, and `reports/re_stage3/` contain the completed deterministic baseline cash-flow engine; `src/policy/`, `config/re_stage4.yaml`, `data/processed_re/policy/re_stage4/`, and `reports/re_stage4/` contain the completed policy financial-event engine and Gate RE4 evidence; `data/raw_re/향후 데이터 다운로드 가이드.md` is the acquisition guide.
 
 ## Durable decisions
 
@@ -20,10 +20,10 @@
 
 - `decision:implementation-checklist`
   - Created: 2026-08-14T20:21+09:00
-  - Updated: 2026-08-16T09:57+09:00
+  - Updated: 2026-08-16T10:47+09:00
   - Status: active
-  - Content: The implementation checklist mirrors completed Stage 0-6 and RE Stage 1-3 plus pending RE Stage 4-9. It records the A+C 10-policy knowledge base and completed `re3-v1` baseline cash-flow engine, and requires a downstream-impact review plus necessary plan/config/test updates before every next Stage starts.
-  - Evidence: `MVP 단계별 구현 체크리스트.md` and Gate evidence under `reports/re_stage1/`, `reports/re_stage2/`, and `reports/re_stage3/`.
+  - Content: The implementation checklist mirrors completed Stage 0-6 and RE Stage 1-4 plus pending RE Stage 5-9. It records the A+C 10-policy knowledge base, completed `re3-v1` baseline cash-flow engine, and completed RE4 policy financial-event engine, and requires a downstream-impact review plus necessary plan/config/test updates before every next Stage starts.
+  - Evidence: `MVP 단계별 구현 체크리스트.md` and Gate evidence under `reports/re_stage1/`, `reports/re_stage2/`, `reports/re_stage3/`, and `reports/re_stage4/`.
 
 - `decision:policy-source-hierarchy`
   - Created: 2026-08-15T21:23+09:00
@@ -45,6 +45,20 @@
   - Status: active
   - Content: Gate RE3 passed with engine `re3-v1`. It supports simple input and detailed CSV; preserves negative calculated cash; treats simple monthly debt payment as combined principal-plus-interest outflow; calculates equal-principal, equal-payment, and bullet schedules only for detailed loans; uses monthly interest without daily accrual and won-level half-up rounding; and requires user-set safe cash plus actual receipt/payment dates without defaults.
   - Evidence: `src/cashflow/`, `config/re_stage3.yaml`, `reports/re_stage3/verification.md`, `reports/re_stage3/manifest.json`, and `tests/test_re_stage3_cashflow.py`; hand checks 26/26 and full tests 52 passed.
+
+- `decision:re-stage4-policy-financial-event-engine`
+  - Created: 2026-08-16T10:47+09:00
+  - Updated: 2026-08-16T10:47+09:00
+  - Status: active
+  - Content: Gate RE4 passed with contract `re4-v1`. All 30 reviewed RE2 financial Events across 10 policies remain represented: 27 are calculable only with explicit user scenario values, `SEOUL_SAFE_ACCOUNT` and `SAFETY_TEST` are blocked because official financial terms are missing, and `SEOUL_FACILITY` requires a subproduct selection. The engine supports grants, reimbursements, vouchers, direct and interest-subsidized loans, refinancing, and guarantees with linked-event deduplication, source provenance, approved/not-approved scenarios, and no approval probability or causal-effect claim.
+  - Evidence: `src/policy/`, `config/re_stage4.yaml`, `data/processed_re/policy/re_stage4/policy_event_profiles.csv`, `reports/re_stage4/verification.md`, `reports/re_stage4/manifest.json`, and `tests/test_re_stage4_policy_events.py`; hand checks 26/26, RE4 tests 12 passed, and full tests 64 passed.
+
+- `decision:re-stage5-partial-contract`
+  - Created: 2026-08-16T11:00+09:00
+  - Updated: 2026-08-16T11:08+09:00
+  - Status: active
+  - Content: The RE5 contract is fully approved but implementation is explicitly paused until a new user request. It fixes the existing observation unit; YoY Target A/B plus minimum-YoY auxiliary; QoQ as EDA/challenger only; no automatic clipping; 2021Q4-2024Q4 development with 2024Q1-Q4 expanding Validation; one-quarter Purge with 2025Q1 before the 2025Q2 reference holdout; 2025Q3-Q4 holdout outcomes; continuous and quantile metrics; and frozen LightGBM v1 only as a non-training benchmark/Fallback whose AUROC/AUPRC stays in an appendix.
+  - Evidence: `reports/re_stage5/approved_contract.md`, `프로젝트 계획서.md`, and `MVP 단계별 구현 체크리스트.md`; no Target, EDA, Panel, Fold, model, evaluation, external collection, or download was executed.
 
 - `decision:pre-re1-policy-qa`
   - Created: 2026-08-15T23:18+09:00
@@ -319,12 +333,26 @@
 ## Current handoff
 
 - `handoff:current`
-  - Updated: 2026-08-16T09:57+09:00
-  - Current state: Gates RE1-RE3 have passed. `re3-v1` deterministically produces 13-week and 6-month baseline cash flow from simple or detailed inputs without policy, ML, RAG, LLM, or external data; hand checks 26/26 and all 52 project tests passed.
-  - Next step: Begin RE Stage 4 by mapping the approved RE2 policy financial metadata into dated RE3-compatible inflow, cost-reduction, contribution, principal, interest, fee, and guarantee-fee events; stop before any unapproved policy assumption that changes financial meaning.
-  - Blockers: No RE3 blocker remains. RE4 may expose missing official dates or terms that must stay `미확인` or require an explicit user assumption; external downloads remain user-owned, RAG indexing remains blocked until RE6, and Target/model v2 remain blocked until the RE5 decision Gate.
+  - Updated: 2026-08-16T11:08+09:00
+  - Current state: Gates RE1-RE4 have passed. `re4-v1` preserves all 30 reviewed policy Events and applies user-specified intervention scenarios to the RE3 baseline with dated cash, cost-reduction, debt, interest, fee, and guarantee-fee effects; hand checks 26/26 and all 64 project tests passed.
+  - Next step: Do not start RE5 until the user explicitly asks to resume. On resumption, begin only with the approved existing-Panel Target QA and Baseline contract; do not collect new external data, and stop for approval if observed Target distributions would require a semantic processing change.
+  - Blockers: No RE5 contract decision remains, but execution is intentionally paused by user instruction. A new independent audit remains unavailable because estimated sales ends at 2025Q4; 2025Q3-Q4 is only an internal temporal holdout, and external downloads remain user-owned.
 
 ## Session log
+
+- `session:20260816-1100`
+  - Started: 2026-08-16T11:00+09:00
+  - Last activity: 2026-08-16T11:08+09:00
+  - Focus: Present the RE5 approval contract, record partial approval, and verify 2026Q1-Q2 estimated-sales availability and evaluation-metric applicability.
+  - Updated keys: `decision:re-stage5-partial-contract`, `handoff:current`
+  - Summary: The user fully approved the RE5 contract, including 2025Q1 Purge, 2025Q2 holdout reference with 2025Q3-Q4 outcomes, QoQ challenger-only use, expanded continuous/quantile metrics, and frozen LightGBM benchmark/Fallback status, while explicitly instructing that RE5 not start now. The plan, checklist, standalone contract, and handoff were updated; no implementation or external acquisition occurred.
+
+- `session:20260816-1026`
+  - Started: 2026-08-16T10:26+09:00
+  - Last activity: 2026-08-16T10:47+09:00
+  - Focus: Implement and verify RE Stage 4 policy financial-event conversion and baseline impact application.
+  - Updated keys: `decision:implementation-checklist`, `decision:re-stage4-policy-financial-event-engine`, `handoff:current`
+  - Summary: Completed `re4-v1` across all 10 policies and 30 reviewed Events, produced 561 representative dated Events, preserved missing official terms without invention, passed hand checks 26/26, RE4 tests 12, and all 64 project tests, and recorded no downstream Target, data, model, metric, policy, service, or schedule change.
 
 - `session:20260816-0943`
   - Started: 2026-08-16T09:43+09:00

@@ -1,0 +1,51 @@
+project:
+  stage: RE Stage 4
+  status: complete
+  engine_version: re4-v1
+  started_at: "2026-08-16"
+  completed_at: "2026-08-16"
+  gate: passed
+
+source_contract:
+  policy_portfolio: A+C
+  policy_count: 10
+  financial_event_count: 30
+  source: data/processed_re/policy/re_stage2/financial_metadata.csv
+  preserve_re2_source: true
+  unknown_value: 미확인
+  infer_missing_official_terms: false
+
+scenario_contract:
+  approval_states:
+    - assumed_approved
+    - not_approved
+  approval_probability: prohibited
+  causal_effect_claim: prohibited
+  user_dates_required_when_official_date_missing: true
+  user_amount_required_when_approved_amount_unknown: true
+  official_cap_enforced: true
+  linked_event_deduplication: true
+  policy_event_rounding: ROUND_HALF_UP_to_won
+  baseline_engine: re3-v1
+
+support_kinds:
+  - grant
+  - reimbursement_grant
+  - voucher
+  - direct_loan
+  - interest_subsidized_loan
+  - refinance
+  - guarantee
+  - credit_line
+  - inspection_support
+
+blocked_without_new_official_terms:
+  - POL_SEOUL_FUND_2026/SEOUL_SAFE_ACCOUNT
+  - POL_SEOUL_SAFETY_TEST_2026H2/SAFETY_TEST
+blocked_without_subproduct_selection:
+  - POL_SEOUL_FUND_2026/SEOUL_FACILITY
+
+paths:
+  processed: data/processed_re/policy/re_stage4
+  samples: data/samples/re_stage4
+  reports: reports/re_stage4

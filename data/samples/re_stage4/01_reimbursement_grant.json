@@ -1,0 +1,12 @@
+{
+  "policy_id": "POL_SEOUL_CRISIS_TRACK2_2026H2",
+  "event_id": "CRISIS_SOLUTION",
+  "scenario_status": "assumed_approved",
+  "approved_support_amount": 3000000,
+  "payment_date": "2026-10-01",
+  "total_project_cost": 4000000,
+  "eligible_expense_amount": 3000000,
+  "vat_amount": 300000,
+  "expense_date": "2026-09-01",
+  "expense_already_in_baseline": false
+}
