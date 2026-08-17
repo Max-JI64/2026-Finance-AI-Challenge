@@ -1,0 +1,76 @@
+project:
+  stage: RE Stage 8.1
+  contract_version: re8.1-contract-v2
+  api_version: re8-api-v1.2
+  status: complete
+  started_at: "2026-08-17"
+  completed_at: "2026-08-17"
+  gate: passed
+
+service:
+  name: 정책금융 영향 시뮬레이터
+  legacy_re1_name_preserved: true
+  public_ui_steps: [사업장 선택, 재무 입력, 현금 진단, 대안과 실행]
+  sample_mode: false
+  personal_data_persistence: prohibited
+
+commercial_area_map:
+  source: data/raw/서울시 상권분석서비스(영역-상권)
+  rendering: center_coordinate_area_proportional_circle
+  polygon_rendering: false
+  service_area_count: 1596
+  district_count: 25
+  administrative_dong_count: 398
+  drilldown: [district, administrative_dong, commercial_area]
+  palette: cobalt_blue_with_white_halo
+  permanent_labels: [district_name_and_count, administrative_dong_name_and_count, commercial_area_name]
+  commercial_area_search_scope: all_seoul
+  viewport_region_switching: true
+  zoom_out_to_district_level: 12
+  zoom_select_district: [13, 14]
+  zoom_select_administrative_dong: [15, 16]
+  zoom_select_commercial_area_minimum: 17
+
+decision_ui:
+  unconfirmed_policy_graph_visible: true
+  unconfirmed_policy_ranking_excluded: true
+  negative_minimum_cash_warning: true
+  modal_dismiss: [close_button, backdrop_click]
+
+public_input:
+  money_display_unit: ten_thousand_won
+  csv_encoding: utf-8-sig
+  csv_legacy_won_headers_supported: true
+  industry_major_groups: [외식업, 서비스업, 소매업]
+  presentation_presets: 5
+
+engines:
+  cashflow: re3-v1
+  policy_event: re4-v1
+  market_scenario: re5-lightgbm-quantile-v1
+  eligibility: re6-v1
+  recommendation: re7-v1
+  rag: re8-sqlite-bm25-v1
+  explanation_model: gpt-5.6-luna
+
+rag:
+  storage: sqlite
+  database: rag/index/policy_re8.sqlite3
+  source_index: data/processed_re/policy/re_stage6/policy_index.jsonl
+  user_queries_persisted: false
+  session_profiles_persisted: false
+  internal_search_fields_hidden: [chunk_id, bm25_score, search_rank]
+  llm_can_change_calculations: false
+  llm_can_change_eligibility: false
+  llm_can_change_ranking: false
+
+api:
+  prefix: /api/v1
+  max_json_bytes: 1048576
+  max_csv_bytes: 2097152
+  allowed_csv_content_types: [text/csv, application/vnd.ms-excel]
+
+paths:
+  static: app/static
+  reports: reports/re_stage8
+  tests: tests/test_re_stage8.py

@@ -1,0 +1,148 @@
+{
+  "stage": "RE Stage 8.1",
+  "status": "complete",
+  "gate": "passed",
+  "as_of_date": "2026-08-17",
+  "versions": {
+    "api": "re8-api-v1.2",
+    "cashflow_engine": "re3-v1",
+    "policy_event_engine": "re4-v1",
+    "market_model": "re5-lightgbm-quantile-v1",
+    "eligibility_engine": "re6-v1",
+    "recommendation_engine": "re7-v1",
+    "rag_engine": "re8-sqlite-bm25-v1",
+    "policy_data": "re6-v1-2026-08-16",
+    "explanation_model": "gpt-5.6-luna"
+  },
+  "local_rag": {
+    "database": "rag/index/policy_re8.sqlite3",
+    "chunk_count": 227,
+    "policy_count": 10,
+    "stores_user_queries": false,
+    "stores_session_profiles": false
+  },
+  "artifacts": {
+    "app/main.py": {
+      "sha256": "616251bb5ca051945fafd56e6e1397f5a0f13d1bd835be43218e6fc4981e36ba",
+      "bytes": 4711
+    },
+    "app/static/index.html": {
+      "sha256": "9e293a6f46e5b4fbd95f571dbd92ce57edd99098a94db06cc488d53fc002d72b",
+      "bytes": 19121
+    },
+    "app/static/styles.css": {
+      "sha256": "c8ef7dc08ea50bc4315554d7fa67b6cf595de8fc14aef7a33df4667bf0a58d34",
+      "bytes": 20671
+    },
+    "app/static/app.js": {
+      "sha256": "2e8576446eafaf7478a54fe3177f802e8ebdb6e9d6d6fc6bd9a5601fa451288a",
+      "bytes": 54009
+    },
+    "app/static/templates/거래내역_입력양식.csv": {
+      "sha256": "9f5949f4a7a06ae6dd1cb6bfbba7c8f518bf5caaf4b176403c2d1a9e1e59f76b",
+      "bytes": 318
+    },
+    "app/static/templates/대출_입력양식.csv": {
+      "sha256": "8cf886206873e9a35786131a09913a4b48006caa9b3c888670157fb363123189",
+      "bytes": 143
+    },
+    "src/integration/re_stage8.py": {
+      "sha256": "01c046ccc9074b8730fd0f4dafe16609fa8be69348f39841b5fe4b8059c33b82",
+      "bytes": 22890
+    },
+    "src/cashflow/quick_mode.py": {
+      "sha256": "f775e92c523a820a39e8a2a42d1a80912c96def625b38eb2d456a2151316e9ca",
+      "bytes": 8584
+    },
+    "src/models/re_stage5_scenario_service.py": {
+      "sha256": "c9d95084453f61207764f3c4a97ed94fb3bb18ec8d4f0788444ebbf6e60860e8",
+      "bytes": 3035
+    },
+    "src/rag/local_db.py": {
+      "sha256": "23c58ba6cbb6c7a22de1e7a6686279ad7791314a8cd65427809a0a960bb7c5d5",
+      "bytes": 6723
+    },
+    "src/rag/luna_client.py": {
+      "sha256": "b1d02ae228a1638cb1011e7de603d7e46ec001b8b105d83ff31914cba5f032b6",
+      "bytes": 5245
+    },
+    "scripts/build_re_stage8_service_data.py": {
+      "sha256": "7c074a6b161af2ece9593d059550b7c693030b1be4d81c10c452b8524948e475",
+      "bytes": 6525
+    },
+    "config/re_stage8.yaml": {
+      "sha256": "a3b2db3e571efbde8580d12aaf13fcaed5b55479f3d3692906ea91267213adc1",
+      "bytes": 2313
+    },
+    "data/processed_re/re_stage8/commercial_area_points.json": {
+      "sha256": "84b86a4ef8002b6baa60b8cc735912a8dbe8905a04c7fbb8a1076d638a2e5ac7",
+      "bytes": 441836
+    },
+    "data/processed_re/re_stage8/market_features_2025q4.parquet": {
+      "sha256": "66b300d2f06ddc9ff003ab7fe25abb3e58eeb80257aee8f6a48f4bd3cba25b24",
+      "bytes": 9659484
+    },
+    "data/processed_re/re_stage8/service_data_manifest.json": {
+      "sha256": "804202b46f55c091fe3fc3ed88ddbaa42fb8969c002c142b66fe5cdf7f8fc8c3",
+      "bytes": 1327
+    },
+    "rag/index/policy_re8.sqlite3": {
+      "sha256": "2076355e0b67af8c5c80c8747fccc3da672ef16aa6de2e21a39311377c5d6843",
+      "bytes": 712704
+    },
+    "tests/test_re_stage8.py": {
+      "sha256": "8977a063c09d0e0024251e26cf6a73d2c502b293807fe912e174ef6f1707c288",
+      "bytes": 18579
+    }
+  },
+  "openapi": {
+    "path": "reports/re_stage8/openapi.json",
+    "sha256": "60ddddf460481fa5a355c6c9a539f9cd93141046cd14d60559a5d917a1960932",
+    "path_count": 13
+  },
+  "legacy_re8_screen_samples": {
+    "status": "not_re8.1_evidence",
+    "items": {
+      "01_intro_desktop.png": {
+        "sha256": "1626f2bc7fe5bb85b3a5b84e3f9bf4406ce991d6b9854c2478d22c2fa25de055",
+        "bytes": 49308
+      },
+      "01_intro_mobile.png": {
+        "sha256": "cb2190270334fec2a9fdc4bbdaf15e53e7d5c02439aef78d64d03f69a96ebb4a",
+        "bytes": 30719
+      },
+      "02_business_desktop.png": {
+        "sha256": "193e5d820dec4677313e66a2402ac6b19a8592def6b791a95de99b481c8c1f77",
+        "bytes": 40464
+      },
+      "03_finance_desktop.png": {
+        "sha256": "91ddf80b4560c1d5dc301c2e1186d376ef8722188894b764dcd8e7e2ff11257c",
+        "bytes": 67546
+      },
+      "04_baseline_desktop.png": {
+        "sha256": "ffc31e2d7df42956234d02c7bfc5ac67f17f5b62105aeb4099de496c04bade50",
+        "bytes": 44495
+      },
+      "05_stress_desktop.png": {
+        "sha256": "0703bcb3bd13875a5e2c04699e9800f55054224f91a6707eeb34f934fbd292d5",
+        "bytes": 56623
+      },
+      "06_eligibility_desktop.png": {
+        "sha256": "48545687eb98168115c366ee5fb2ca10bbb57ba7ce1651b6c01d6b08f11d4de8",
+        "bytes": 71030
+      },
+      "07_comparison_desktop.png": {
+        "sha256": "d9d1c1d1aca9bcf5c605d3c4b63811063e4a78caeca2864857888f0ce0e4f698",
+        "bytes": 40745
+      },
+      "07_comparison_mobile.png": {
+        "sha256": "8f91ea441d643d33024d4498cd3dca68c529a73b4d8e5cda77407006a20106ea",
+        "bytes": 29877
+      },
+      "08_plan_desktop.png": {
+        "sha256": "dbe7d58fe58b1ff45419859569d832329c912457d4c46f08445ff4cca59230a2",
+        "bytes": 48826
+      }
+    }
+  }
+}

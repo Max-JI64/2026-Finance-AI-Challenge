@@ -1,0 +1,29 @@
+{
+  "version": "re8-service-data-v2",
+  "map": {
+    "source_rows": 1650,
+    "service_rows": 1596,
+    "excluded_historical_rows": 54,
+    "districts": 25,
+    "administrative_dongs": 396,
+    "minimum_area_m2": 1854.0,
+    "maximum_area_m2": 2462734.0
+  },
+  "market_features": {
+    "reference_period": "20254",
+    "rows": 21333,
+    "feature_count": 197,
+    "area_count": 1565,
+    "industry_count": 62
+  },
+  "sources": {
+    "data/raw/서울시 상권분석서비스(영역-상권)/서울시 상권분석서비스(영역-상권).shp": "4de3d04e79a8b77440655c4eb880184bbeec426ebeb3ac2d0e00b2e5a3c8016c",
+    "reports/stage6/area_catalog.csv": "b9cac0345dd0fd9a9da84481eafa115aed724121aa76e651ca4b49c1d78478a8",
+    "data/processed_re/model/re_stage5/panel_v2.parquet": "ed9481f565d62d321e86f8b567ad98508be77f4723b0cb93b72de1948086595c",
+    "artifacts/re_stage5_lightgbm_quantile/target_a_next_quarter_yoy__lightgbm_quantile.joblib": "c8dde476e46d76d97f5c79750bb6609767f4a3c012312159c6f116983a6ec820"
+  },
+  "outputs": {
+    "data/processed_re/re_stage8/commercial_area_points.json": "84b86a4ef8002b6baa60b8cc735912a8dbe8905a04c7fbb8a1076d638a2e5ac7",
+    "data/processed_re/re_stage8/market_features_2025q4.parquet": "66b300d2f06ddc9ff003ab7fe25abb3e58eeb80257aee8f6a48f4bd3cba25b24"
+  }
+}

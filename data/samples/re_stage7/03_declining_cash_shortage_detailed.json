@@ -1,0 +1,288 @@
+{
+  "reference_date": "2026-09-01",
+  "opening_cash": 1000000,
+  "safe_cash_threshold": 2000000,
+  "events": [
+    {
+      "event_id": "revenue-1",
+      "event_date": "2026-09-20",
+      "event_type": "operating_inflow",
+      "amount": 3500000,
+      "expense_type": null,
+      "description": "월 매출입금",
+      "source": "frozen_re7_detailed_sample"
+    },
+    {
+      "event_id": "rent-1",
+      "event_date": "2026-09-01",
+      "event_type": "fixed_cost",
+      "amount": 1500000,
+      "expense_type": "rent",
+      "description": "월 임대료",
+      "source": "frozen_re7_detailed_sample"
+    },
+    {
+      "event_id": "labor-1",
+      "event_date": "2026-09-10",
+      "event_type": "fixed_cost",
+      "amount": 2200000,
+      "expense_type": "labor",
+      "description": "월 인건비",
+      "source": "frozen_re7_detailed_sample"
+    },
+    {
+      "event_id": "variable-1",
+      "event_date": "2026-09-15",
+      "event_type": "variable_cost",
+      "amount": 900000,
+      "expense_type": "purchase",
+      "description": "월 필수매입",
+      "source": "frozen_re7_detailed_sample"
+    },
+    {
+      "event_id": "other-1-1",
+      "event_date": "2026-09-08",
+      "event_type": "fixed_cost",
+      "amount": 250000,
+      "expense_type": "vehicle_fuel",
+      "description": "차량연료비",
+      "source": "frozen_re7_detailed_sample"
+    },
+    {
+      "event_id": "revenue-2",
+      "event_date": "2026-10-20",
+      "event_type": "operating_inflow",
+      "amount": 3500000,
+      "expense_type": null,
+      "description": "월 매출입금",
+      "source": "frozen_re7_detailed_sample"
+    },
+    {
+      "event_id": "rent-2",
+      "event_date": "2026-10-01",
+      "event_type": "fixed_cost",
+      "amount": 1500000,
+      "expense_type": "rent",
+      "description": "월 임대료",
+      "source": "frozen_re7_detailed_sample"
+    },
+    {
+      "event_id": "labor-2",
+      "event_date": "2026-10-10",
+      "event_type": "fixed_cost",
+      "amount": 2200000,
+      "expense_type": "labor",
+      "description": "월 인건비",
+      "source": "frozen_re7_detailed_sample"
+    },
+    {
+      "event_id": "variable-2",
+      "event_date": "2026-10-15",
+      "event_type": "variable_cost",
+      "amount": 900000,
+      "expense_type": "purchase",
+      "description": "월 필수매입",
+      "source": "frozen_re7_detailed_sample"
+    },
+    {
+      "event_id": "other-1-2",
+      "event_date": "2026-10-08",
+      "event_type": "fixed_cost",
+      "amount": 250000,
+      "expense_type": "vehicle_fuel",
+      "description": "차량연료비",
+      "source": "frozen_re7_detailed_sample"
+    },
+    {
+      "event_id": "revenue-3",
+      "event_date": "2026-11-20",
+      "event_type": "operating_inflow",
+      "amount": 3500000,
+      "expense_type": null,
+      "description": "월 매출입금",
+      "source": "frozen_re7_detailed_sample"
+    },
+    {
+      "event_id": "rent-3",
+      "event_date": "2026-11-01",
+      "event_type": "fixed_cost",
+      "amount": 1500000,
+      "expense_type": "rent",
+      "description": "월 임대료",
+      "source": "frozen_re7_detailed_sample"
+    },
+    {
+      "event_id": "labor-3",
+      "event_date": "2026-11-10",
+      "event_type": "fixed_cost",
+      "amount": 2200000,
+      "expense_type": "labor",
+      "description": "월 인건비",
+      "source": "frozen_re7_detailed_sample"
+    },
+    {
+      "event_id": "variable-3",
+      "event_date": "2026-11-15",
+      "event_type": "variable_cost",
+      "amount": 900000,
+      "expense_type": "purchase",
+      "description": "월 필수매입",
+      "source": "frozen_re7_detailed_sample"
+    },
+    {
+      "event_id": "other-1-3",
+      "event_date": "2026-11-08",
+      "event_type": "fixed_cost",
+      "amount": 250000,
+      "expense_type": "vehicle_fuel",
+      "description": "차량연료비",
+      "source": "frozen_re7_detailed_sample"
+    },
+    {
+      "event_id": "revenue-4",
+      "event_date": "2026-12-20",
+      "event_type": "operating_inflow",
+      "amount": 3500000,
+      "expense_type": null,
+      "description": "월 매출입금",
+      "source": "frozen_re7_detailed_sample"
+    },
+    {
+      "event_id": "rent-4",
+      "event_date": "2026-12-01",
+      "event_type": "fixed_cost",
+      "amount": 1500000,
+      "expense_type": "rent",
+      "description": "월 임대료",
+      "source": "frozen_re7_detailed_sample"
+    },
+    {
+      "event_id": "labor-4",
+      "event_date": "2026-12-10",
+      "event_type": "fixed_cost",
+      "amount": 2200000,
+      "expense_type": "labor",
+      "description": "월 인건비",
+      "source": "frozen_re7_detailed_sample"
+    },
+    {
+      "event_id": "variable-4",
+      "event_date": "2026-12-15",
+      "event_type": "variable_cost",
+      "amount": 900000,
+      "expense_type": "purchase",
+      "description": "월 필수매입",
+      "source": "frozen_re7_detailed_sample"
+    },
+    {
+      "event_id": "other-1-4",
+      "event_date": "2026-12-08",
+      "event_type": "fixed_cost",
+      "amount": 250000,
+      "expense_type": "vehicle_fuel",
+      "description": "차량연료비",
+      "source": "frozen_re7_detailed_sample"
+    },
+    {
+      "event_id": "revenue-5",
+      "event_date": "2027-01-20",
+      "event_type": "operating_inflow",
+      "amount": 3500000,
+      "expense_type": null,
+      "description": "월 매출입금",
+      "source": "frozen_re7_detailed_sample"
+    },
+    {
+      "event_id": "rent-5",
+      "event_date": "2027-01-01",
+      "event_type": "fixed_cost",
+      "amount": 1500000,
+      "expense_type": "rent",
+      "description": "월 임대료",
+      "source": "frozen_re7_detailed_sample"
+    },
+    {
+      "event_id": "labor-5",
+      "event_date": "2027-01-10",
+      "event_type": "fixed_cost",
+      "amount": 2200000,
+      "expense_type": "labor",
+      "description": "월 인건비",
+      "source": "frozen_re7_detailed_sample"
+    },
+    {
+      "event_id": "variable-5",
+      "event_date": "2027-01-15",
+      "event_type": "variable_cost",
+      "amount": 900000,
+      "expense_type": "purchase",
+      "description": "월 필수매입",
+      "source": "frozen_re7_detailed_sample"
+    },
+    {
+      "event_id": "other-1-5",
+      "event_date": "2027-01-08",
+      "event_type": "fixed_cost",
+      "amount": 250000,
+      "expense_type": "vehicle_fuel",
+      "description": "차량연료비",
+      "source": "frozen_re7_detailed_sample"
+    },
+    {
+      "event_id": "revenue-6",
+      "event_date": "2027-02-20",
+      "event_type": "operating_inflow",
+      "amount": 3500000,
+      "expense_type": null,
+      "description": "월 매출입금",
+      "source": "frozen_re7_detailed_sample"
+    },
+    {
+      "event_id": "rent-6",
+      "event_date": "2027-02-01",
+      "event_type": "fixed_cost",
+      "amount": 1500000,
+      "expense_type": "rent",
+      "description": "월 임대료",
+      "source": "frozen_re7_detailed_sample"
+    },
+    {
+      "event_id": "labor-6",
+      "event_date": "2027-02-10",
+      "event_type": "fixed_cost",
+      "amount": 2200000,
+      "expense_type": "labor",
+      "description": "월 인건비",
+      "source": "frozen_re7_detailed_sample"
+    },
+    {
+      "event_id": "variable-6",
+      "event_date": "2027-02-15",
+      "event_type": "variable_cost",
+      "amount": 900000,
+      "expense_type": "purchase",
+      "description": "월 필수매입",
+      "source": "frozen_re7_detailed_sample"
+    },
+    {
+      "event_id": "other-1-6",
+      "event_date": "2027-02-08",
+      "event_type": "fixed_cost",
+      "amount": 250000,
+      "expense_type": "vehicle_fuel",
+      "description": "차량연료비",
+      "source": "frozen_re7_detailed_sample"
+    }
+  ],
+  "loans": [
+    {
+      "loan_id": "existing-loan",
+      "principal": 30000000,
+      "annual_interest_rate_percent": 12.0,
+      "repayment_method": "equal_principal",
+      "payment_day": 5,
+      "maturity_date": "2031-09-05",
+      "grace_months": 0
+    }
+  ]
+}

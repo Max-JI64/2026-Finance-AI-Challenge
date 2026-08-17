@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="서울 소상공인의 13주 현금 흐름과 정책금융 대안을 비교합니다.">
+  <title>서울 소상공인 현금흐름 진단</title>
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#" data-step="business"><span class="brand-mark">₩</span><span>서울 소상공인 현금흐름 진단</span></a>
+    <span class="header-note">입력 내용은 저장하지 않습니다</span>
+  </header>
+  <nav class="step-nav" aria-label="진행 단계">
+    <div class="step-nav-inner">
+      <button class="step-button is-active" data-step="business"><span>1</span>사업장 선택</button>
+      <button class="step-button" data-step="finance"><span>2</span>재무 입력</button>
+      <button class="step-button" data-step="diagnosis"><span>3</span>현금 진단</button>
+      <button class="step-button" data-step="decision"><span>4</span>대안과 실행</button>
+    </div>
+  </nav>
+  <main class="workspace">
+    <aside class="summary-panel" aria-label="입력 요약">
+      <div class="summary-heading"><span>현재 입력</span><strong id="summary-progress">1 / 4</strong></div>
+      <dl class="summary-list">
+        <div><dt>사업장</dt><dd id="summary-area">선택 전</dd><button data-step="business">수정</button></div>
+        <div><dt>업종</dt><dd id="summary-industry">선택 전</dd><button data-step="business">수정</button></div>
+        <div><dt>최근 월매출</dt><dd id="summary-revenue">입력 전</dd><button data-step="finance">수정</button></div>
+        <div><dt>현재 현금</dt><dd id="summary-cash">입력 전</dd><button data-step="finance">수정</button></div>
+        <div><dt>상권 상황</dt><dd id="summary-scenario">최근 추세가 이어질 때</dd><button data-step="diagnosis">수정</button></div>
+      </dl>
+    </aside>
+    <div class="screen-shell">
+      <section class="screen is-active" id="business" aria-labelledby="business-title">
+        <header class="section-heading"><p class="eyebrow">1단계</p><h1 id="business-title">어느 상권에서 운영하시나요?</h1><p>서울 전체에서 자치구, 행정동, 개별 상권 순서로 범위를 좁히거나 목록에서 바로 찾을 수 있습니다.</p></header>
+        <section class="presentation-presets" aria-labelledby="preset-title"><div><p class="eyebrow">빠른 시연</p><h2 id="preset-title">준비된 가게 상황으로 바로 비교</h2><p>발표 중에는 아래 상황을 누르면 입력과 계산이 한 번에 완료됩니다.</p></div><div class="preset-grid"><button type="button" data-preset="cash-rich"><span>1</span><strong>현금 여유가 큰 가게</strong><small>매출과 보유 현금이 안정적</small></button><button type="button" data-preset="stable"><span>2</span><strong>안정적으로 운영 중</strong><small>수입과 지출이 비슷한 수준</small></button><button type="button" data-preset="sales-down"><span>3</span><strong>매출이 줄고 있는 가게</strong><small>최근 3개월 매출이 하락</small></button><button type="button" data-preset="high-fixed"><span>4</span><strong>고정비가 큰 가게</strong><small>임대료와 인건비 부담이 큼</small></button><button type="button" data-preset="debt-heavy"><span>5</span><strong>대출 상환이 부담인 가게</strong><small>잔액과 이자 부담이 큼</small></button></div></section>
+        <div class="location-layout">
+          <div class="location-controls">
+            <label>서울 전체 상권 이름 검색<input id="area-search" type="search" placeholder="예: 망원시장, 강남역" autocomplete="off"></label>
+            <label>자치구<select id="district-select" required><option value="">서울 전체</option></select></label>
+            <label>행정동<select id="dong-select" disabled><option value="">자치구를 먼저 선택</option></select></label>
+            <label>상권<select id="area-select" size="8" required aria-describedby="area-count"></select></label>
+            <p class="field-help" id="area-count">지도에서 자치구를 선택해 주세요.</p>
+            <div class="selected-location" id="selected-location" aria-live="polite">지도 또는 목록에서 상권을 선택해 주세요.</div>
+          </div>
+          <div class="map-wrap"><div class="map-level" id="map-level" aria-label="지도 탐색 단계"><button type="button" data-map-level="district" class="is-current">서울 전체</button><span>›</span><button type="button" data-map-level="dong" disabled>자치구</button><span>›</span><button type="button" data-map-level="area" disabled>행정동</button></div><div id="area-map" aria-label="서울 상권 선택 지도"></div><p class="map-caption" id="map-caption">큰 원은 자치구, 중간 원은 행정동, 작은 원은 개별 상권입니다. 구·동 이름, 상권 수와 개별 상권명이 항상 표시됩니다. 지도를 다른 지역으로 옮기면 그 지역 원으로 바뀌고, 축소하면 상위 단계로 돌아갑니다.</p></div>
+        </div>
+        <div class="form-grid business-extra">
+          <label>업종 대분류<select id="industry-major-select" required><option value="">대분류 선택</option></select></label>
+          <label>세부 업종<select id="industry-select" required disabled><option value="">대분류를 먼저 선택</option></select></label>
+          <label>운영 기간<select id="operation-years"><option value="1">1년 미만</option><option value="2">1년 이상 3년 미만</option><option value="4">3년 이상 5년 미만</option><option value="6">5년 이상</option></select></label>
+        </div>
+        <p class="field-help">업종 대분류는 서울시 상권분석서비스 업종 코드의 상위 구분을 사용합니다.</p>
+        <div class="screen-actions"><span></span><button class="primary" id="business-next">재무 입력하기</button></div>
+      </section>
+      <section class="screen" id="finance" aria-labelledby="finance-title">
+        <header class="section-heading"><p class="eyebrow">2단계</p><h1 id="finance-title">최근 현금 흐름을 알려주세요</h1><p>최근 3개월 매출을 기본으로 입력합니다. 계절 변동이 크면 최대 12개월까지 추가할 수 있습니다.</p></header>
+        <section class="input-section" aria-labelledby="revenue-title">
+          <div class="input-section-heading"><div><h2 id="revenue-title">최근 월매출</h2><p>부가세 포함 여부를 매월 같은 기준으로 입력해 주세요.</p></div><button class="text-button" id="add-revenue-month">한 달 추가</button></div>
+          <div id="revenue-months" class="revenue-months"></div>
+          <p class="field-help">최소 3개월, 최대 12개월입니다. 진단에는 입력한 월매출의 평균을 사용합니다.</p>
+          <label class="wide-label">매출이 주로 들어오는 시기<select id="revenue-timing"><option value="daily">매일</option><option value="weekly">매주</option><option value="month_start">매월 1일부터 10일</option><option value="month_middle">매월 11일부터 20일</option><option value="month_end">매월 21일부터 월말</option></select></label>
+        </section>
+        <section class="input-section" aria-labelledby="cash-title">
+          <div class="input-section-heading"><div><h2 id="cash-title">현재 보유 현금과 월 지출</h2><p>통장과 보유 현금을 합친 금액, 그리고 매달 반드시 나가는 비용을 적어 주세요.</p></div></div>
+          <div class="form-grid money-grid">
+            <label>현재 보유 현금<span class="money-input"><input id="opening-cash" type="number" min="0" step="1" inputmode="numeric" placeholder="예: 500" required><b>만원</b></span></label>
+            <label>월 임대료<span class="money-input"><input id="monthly-rent" type="number" min="0" step="1" inputmode="numeric" placeholder="예: 150" required><b>만원</b></span></label>
+            <label>월 인건비<span class="money-input"><input id="monthly-labor" type="number" min="0" step="1" inputmode="numeric" placeholder="예: 300" required><b>만원</b></span></label>
+            <label>월 필수 매입비<span class="money-input"><input id="monthly-purchase" type="number" min="0" step="1" inputmode="numeric" placeholder="예: 250" required><b>만원</b></span></label>
+            <label>비용이 주로 나가는 시기<select id="expense-timing"><option value="early">1일부터 10일</option><option value="middle">11일부터 20일</option><option value="late">21일부터 월말</option></select></label>
+          </div>
+        </section>
+        <section class="input-section" aria-labelledby="loan-title">
+          <div class="input-section-heading"><div><h2 id="loan-title">현재 대출</h2><p>대출이 없으면 잔액에 0만원을 입력하세요.</p></div></div>
+          <div class="form-grid money-grid">
+            <label>남은 대출 잔액<span class="money-input"><input id="loan-balance" type="number" min="0" step="1" inputmode="numeric" value="0" required><b>만원</b></span></label>
+            <label>연 이자율<span class="money-input"><input id="loan-rate" type="number" min="0" max="100" step="0.1" inputmode="decimal" value="0"><b>%</b></span></label>
+            <label>남은 상환 기간<span class="money-input"><input id="loan-term" type="number" min="1" max="360" step="1" inputmode="numeric" value="36"><b>개월</b></span></label>
+            <label>상환금이 나가는 시기<select id="debt-timing"><option value="early">1일부터 10일</option><option value="middle">11일부터 20일</option><option value="late">21일부터 월말</option></select></label>
+          </div>
+        </section>
+        <details class="file-input-panel">
+          <summary>거래내역 파일로 더 정확하게 입력</summary>
+          <p>여러 달 또는 여러 분기의 실제 입출금 날짜를 그대로 넣을 수 있습니다. 금액은 만원 단위이며, 한글이 깨지지 않도록 UTF-8-SIG 양식으로 제공합니다.</p>
+          <div class="template-links"><a class="secondary" href="/static/templates/거래내역_입력양식.csv" download>거래내역 양식 받기</a><a class="secondary" href="/static/templates/대출_입력양식.csv" download>대출 양식 받기</a></div>
+          <div class="form-grid file-grid">
+            <label>기준일<input id="csv-reference" type="date"></label>
+            <label>기준일 현재 현금<span class="money-input"><input id="csv-opening" type="number" min="0" step="1"><b>만원</b></span></label>
+            <label>거래내역 파일<input id="events-file" type="file" accept=".csv,text/csv"></label>
+            <label>대출 파일, 선택<input id="loans-file" type="file" accept=".csv,text/csv"></label>
+          </div>
+          <button class="secondary" id="run-csv">파일로 현금 진단</button><p class="field-help" id="csv-status"></p>
+        </details>
+        <div class="screen-actions"><button class="secondary" data-step="business">이전</button><button class="primary" id="run-diagnosis">현금 진단 보기</button></div>
+      </section>
+      <section class="screen" id="diagnosis" aria-labelledby="diagnosis-title">
+        <header class="section-heading"><p class="eyebrow">3단계</p><h1 id="diagnosis-title">앞으로 13주, 현금이 버틸 수 있을까요?</h1><p>선택한 상권과 업종의 상황을 적용해 현금이 부족해지는 시점과 필요한 안전현금을 확인합니다.</p></header>
+        <section class="scenario-panel" aria-labelledby="scenario-title">
+          <div class="input-section-heading"><div><h2 id="scenario-title">상권 상황 선택</h2><p>같은 상권이라도 상황에 따라 결과가 달라집니다.</p></div><span id="model-period" class="status-badge">자료 확인 중</span></div>
+          <div class="scenario-options" id="scenario-options">
+            <label><input type="radio" name="market-scenario" value="downside"><span><strong>매출 환경이 약해질 때</strong><small>최근보다 상권 매출이 더 줄어드는 경우</small><b>확인 중</b></span></label>
+            <label><input type="radio" name="market-scenario" value="central" checked><span><strong>최근 추세가 이어질 때</strong><small>최근 상권 흐름이 그대로 이어지는 경우</small><b>확인 중</b></span></label>
+            <label><input type="radio" name="market-scenario" value="recovery"><span><strong>매출 환경이 나아질 때</strong><small>최근보다 상권 매출이 회복되는 경우</small><b>확인 중</b></span></label>
+          </div>
+          <p class="field-help">표시 값은 선택한 상권·업종 전체의 전년 같은 기간 대비 변화율이며, 내 점포의 예상 매출이 아닙니다.</p>
+        </section>
+        <div id="diagnosis-empty" class="empty-state"><h2>재무 입력을 완료해 주세요</h2><p>현금 진단을 계산하면 이곳에 결과가 표시됩니다.</p><button class="primary" data-step="finance">재무 입력으로 이동</button></div>
+        <div id="diagnosis-result" hidden>
+          <div class="metric-strip diagnosis-metrics" id="diagnosis-metrics"></div>
+          <section class="chart-panel"><div class="chart-heading"><div><h2>13주 현금 잔액</h2><p>안전현금 아래로 내려가는 시점과 현금 고갈 여부를 확인하세요.</p></div><div class="chart-legend"><span class="legend-safe">안전현금</span><span class="legend-cash">예상 현금</span></div></div><canvas id="baseline-chart" width="1100" height="520" aria-label="13주 예상 현금 잔액 그래프"></canvas></section>
+          <div class="explanation-grid"><article><h2>안전현금이란?</h2><p>앞으로 28일 안에 예정된 필수 비용과 대출 상환금을 합친 금액입니다. 실제 결제 일정이 바뀌면 함께 달라집니다.</p></article><article><h2>6개월 뒤에는?</h2><dl id="six-month-summary"></dl></article></div>
+          <label class="assumption-check"><input id="conditional-assumption" type="checkbox" checked><span>추가 확인이 필요한 정책도 가정해서 비교하기</span></label>
+        </div>
+        <div class="screen-actions"><button class="secondary" data-step="finance">입력 수정</button><button class="primary" id="diagnosis-next" disabled>대안 비교하기</button></div>
+      </section>
+      <section class="screen" id="decision" aria-labelledby="decision-title">
+        <header class="section-heading"><p class="eyebrow">4단계</p><h1 id="decision-title">내 상황에 맞는 대안을 비교하세요</h1><p>현금만 늘리는 안이 아니라 새로 생기는 빚과 매달 갚을 금액까지 함께 비교합니다.</p></header>
+        <fieldset class="goal-selector"><legend>지금 가장 중요한 목표</legend>
+          <label><input type="radio" name="goal" value="최소부채" checked><span><strong>빚을 덜 늘리기</strong><small>새로 생기는 부채가 적은 순서</small></span></label>
+          <label><input type="radio" name="goal" value="최장생존"><span><strong>현금을 오래 유지하기</strong><small>현금 고갈을 늦추는 순서</small></span></label>
+          <label><input type="radio" name="goal" value="최소상환"><span><strong>매달 갚는 돈 줄이기</strong><small>월 최대 상환액이 적은 순서</small></span></label>
+          <label><input type="radio" name="goal" value="빠른실행"><span><strong>효과가 빨리 반영되는 안</strong><small>비용 절감·지원금·대출 효과가 시작되는 시점이 빠른 순서</small></span></label>
+        </fieldset>
+        <div id="decision-empty" class="empty-state"><h2>먼저 현금 진단이 필요합니다</h2><button class="primary" data-step="finance">재무 입력으로 이동</button></div>
+        <div id="decision-result" hidden>
+          <section id="ranking-notice" class="ranking-notice" role="status" aria-live="polite" hidden></section>
+          <div id="alternative-cards" class="alternative-cards"></div>
+          <section class="chart-panel comparison-panel"><div class="chart-heading"><div><h2 id="selected-chart-title">모든 대안의 13주 현금 비교</h2><p>초록색이 현재 선택한 대안입니다. 회색 선이나 아래 이름을 누르면 선택이 바뀝니다.</p></div></div><div id="comparison-legend" class="comparison-legend" aria-label="비교 그래프 대안 선택"></div><canvas id="comparison-chart" width="1100" height="520" aria-label="모든 대안의 현금 잔액 비교"></canvas></section>
+          <details class="detail-table"><summary>모든 수치 한 번에 보기</summary><div class="table-wrap"><table><thead><tr><th>현재 목표 순위</th><th>대안</th><th>13주 뒤 현금</th><th>6개월 뒤 현금</th><th>신규부채</th><th>월 최대상환</th><th>총이자</th><th>확인할 조건</th></tr></thead><tbody id="comparison-body"></tbody></table></div></details>
+          <section id="qa-section" class="qa-panel" aria-labelledby="qa-title"><div class="section-heading compact"><h2 id="qa-title">정책 내용을 질문하세요</h2><p>공식 문서에서 찾은 근거로 답합니다. 재무 입력 내용은 AI에 보내지 않습니다.</p></div><div class="qa-controls"><label>정책<select id="qa-policy"><option value="POL_SEOUL_CRISIS_TRACK2_2026H2">위기 소상공인 Track2</option><option value="POL_SEMAS_REFINANCE_2026">소상공인 정책자금 대환대출</option><option value="POL_SEOUL_FUND_2026">서울시 중소기업육성자금</option></select></label><label>질문<textarea id="qa-question" maxlength="500" rows="3" placeholder="예: 신청 전에 어떤 조건을 확인해야 하나요?"></textarea></label><button class="primary" id="ask-button">공식 근거로 답변 받기</button></div><div id="qa-answer" class="qa-answer" aria-live="polite"></div></section>
+        </div>
+        <div class="screen-actions"><button class="secondary" data-step="diagnosis">현금 진단 보기</button><button class="primary" data-step="business">처음부터 다시 보기</button></div>
+      </section>
+    </div>
+  </main>
+  <dialog id="alternative-dialog" class="alternative-dialog"><button class="dialog-close" id="dialog-close" aria-label="닫기">×</button><div id="dialog-content"></div><div class="dialog-actions"><button class="primary" id="dialog-ai">이 정책 질문하기</button></div></dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="/static/app.js" defer></script>
+</body>
+</html>

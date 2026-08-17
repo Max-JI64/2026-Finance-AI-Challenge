@@ -1,4 +1,4 @@
-"""Extract and render the downloaded RE Stage 2 policy documents."""
+"""Extract text from the downloaded RE Stage 2 policy documents."""
 
 from __future__ import annotations
 
@@ -15,9 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-import fitz
 from bs4 import BeautifulSoup
-from PIL import Image, ImageDraw
 from pypdf import PdfReader
 
 from src.guards.re_stage2_guard import assert_stage2_action_allowed
@@ -26,7 +24,6 @@ from src.guards.re_stage2_guard import assert_stage2_action_allowed
 RAW_ROOT = ROOT / "data" / "raw_re" / "policy" / "selected" / "2026-08-15"
 PROCESSED_ROOT = ROOT / "data" / "processed_re" / "policy" / "re_stage2" / "extracted_text"
 REPORT_ROOT = ROOT / "reports" / "re_stage2"
-RENDER_ROOT = ROOT / "tmp" / "pdfs" / "re_stage2"
 INVENTORY = REPORT_ROOT / "document_inventory.csv"
 
 
@@ -38,7 +35,7 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def extract_pdf(path: Path, output: Path, render_dir: Path) -> tuple[int, int]:
+def extract_pdf(path: Path, output: Path) -> tuple[int, int]:
     reader = PdfReader(path)
     pages = []
     for index, page in enumerate(reader.pages, start=1):
@@ -46,44 +43,7 @@ def extract_pdf(path: Path, output: Path, render_dir: Path) -> tuple[int, int]:
     text = "\n".join(pages).strip() + "\n"
     output.write_text(text, encoding="utf-8")
 
-    render_dir.mkdir(parents=True, exist_ok=True)
-    document = fitz.open(path)
-    rendered: list[Path] = []
-    for index, page in enumerate(document, start=1):
-        pixmap = page.get_pixmap(matrix=fitz.Matrix(1.25, 1.25), alpha=False)
-        rendered_path = render_dir / f"page_{index:03d}.png"
-        pixmap.save(rendered_path)
-        rendered.append(rendered_path)
-    document.close()
-    build_contact_sheet(rendered, render_dir / "contact_sheet.png")
     return len(reader.pages), len(text)
-
-
-def build_contact_sheet(images: list[Path], output: Path) -> None:
-    if not images:
-        return
-    thumb_width, thumb_height = 280, 380
-    margin, label_height, columns = 16, 24, 3
-    rows = (len(images) + columns - 1) // columns
-    canvas = Image.new(
-        "RGB",
-        (
-            margin + columns * (thumb_width + margin),
-            margin + rows * (thumb_height + label_height + margin),
-        ),
-        "white",
-    )
-    draw = ImageDraw.Draw(canvas)
-    for index, path in enumerate(images):
-        image = Image.open(path).convert("RGB")
-        image.thumbnail((thumb_width, thumb_height))
-        column = index % columns
-        row = index // columns
-        x = margin + column * (thumb_width + margin)
-        y = margin + row * (thumb_height + label_height + margin)
-        canvas.paste(image, (x, y + label_height))
-        draw.text((x, y), f"page {index + 1}", fill="black")
-    canvas.save(output)
 
 
 def extract_hwpx(path: Path, output: Path) -> tuple[int, int]:
@@ -121,7 +81,6 @@ def main() -> None:
     assert_stage2_action_allowed("extract_selected_policy_documents")
     PROCESSED_ROOT.mkdir(parents=True, exist_ok=True)
     REPORT_ROOT.mkdir(parents=True, exist_ok=True)
-    RENDER_ROOT.mkdir(parents=True, exist_ok=True)
     rows = []
     for path in sorted(item for item in RAW_ROOT.rglob("*") if item.is_file()):
         policy_id = path.relative_to(RAW_ROOT).parts[0]
@@ -130,9 +89,7 @@ def main() -> None:
         output_dir.mkdir(parents=True, exist_ok=True)
         output = output_dir / f"{path.name}.txt"
         if suffix == ".pdf":
-            page_count, char_count = extract_pdf(
-                path, output, RENDER_ROOT / policy_id / path.stem
-            )
+            page_count, char_count = extract_pdf(path, output)
             signature_valid = path.read_bytes().startswith(b"%PDF-")
         elif suffix == ".hwpx":
             page_count, char_count = extract_hwpx(path, output)
@@ -169,4 +126,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

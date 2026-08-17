@@ -1,0 +1,1391 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "정책금융 영향 시뮬레이터",
+    "description": "13주와 6개월 기준 현금흐름에서 무대응과 정책금융 개입의 현금 및 부채 영향을 비교합니다.",
+    "version": "re8-api-v1.2"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Health Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/scope": {
+      "get": {
+        "summary": "Scope",
+        "operationId": "scope_scope_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Scope Scope Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/service-contract": {
+      "get": {
+        "summary": "Get Service Contract",
+        "operationId": "get_service_contract_api_v1_service_contract_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Get Service Contract Api V1 Service Contract Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/catalog/areas": {
+      "get": {
+        "summary": "Get Areas",
+        "operationId": "get_areas_api_v1_catalog_areas_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Get Areas Api V1 Catalog Areas Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/catalog/area-map": {
+      "get": {
+        "summary": "Get Area Map",
+        "operationId": "get_area_map_api_v1_catalog_area_map_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Get Area Map Api V1 Catalog Area Map Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/catalog/industries": {
+      "get": {
+        "summary": "Get Industries",
+        "operationId": "get_industries_api_v1_catalog_industries_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Get Industries Api V1 Catalog Industries Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/market-scenarios/{area_code}/{industry_code}": {
+      "get": {
+        "summary": "Get Market Scenarios",
+        "operationId": "get_market_scenarios_api_v1_market_scenarios__area_code___industry_code__get",
+        "parameters": [
+          {
+            "name": "area_code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Area Code"
+            }
+          },
+          {
+            "name": "industry_code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Industry Code"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Market Scenarios Api V1 Market Scenarios  Area Code   Industry Code  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/cashflow/baseline": {
+      "post": {
+        "summary": "Baseline",
+        "operationId": "baseline_api_v1_cashflow_baseline_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SimpleCashflowInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Baseline Api V1 Cashflow Baseline Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/cashflow/csv": {
+      "post": {
+        "summary": "Csv Baseline",
+        "operationId": "csv_baseline_api_v1_cashflow_csv_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CsvCashflowRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Csv Baseline Api V1 Cashflow Csv Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/policies/eligibility": {
+      "post": {
+        "summary": "Eligibility",
+        "operationId": "eligibility_api_v1_policies_eligibility_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EligibilityRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Eligibility Api V1 Policies Eligibility Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/simulations/policy-impact": {
+      "post": {
+        "summary": "Policy Impact",
+        "operationId": "policy_impact_api_v1_simulations_policy_impact_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SampleCompareRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Policy Impact Api V1 Simulations Policy Impact Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/alternatives/compare": {
+      "post": {
+        "summary": "Alternatives Compare",
+        "operationId": "alternatives_compare_api_v1_alternatives_compare_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SampleCompareRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Alternatives Compare Api V1 Alternatives Compare Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ai/ask": {
+      "post": {
+        "summary": "Ai Ask",
+        "operationId": "ai_ask_api_v1_ai_ask_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PolicyQuestionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Ai Ask Api V1 Ai Ask Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CashTiming": {
+        "type": "string",
+        "enum": [
+          "early",
+          "middle",
+          "late"
+        ],
+        "title": "CashTiming"
+      },
+      "CsvCashflowRequest": {
+        "properties": {
+          "reference_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Reference Date"
+          },
+          "opening_cash": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Opening Cash"
+          },
+          "safe_cash_threshold": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Safe Cash Threshold"
+          },
+          "events_csv": {
+            "type": "string",
+            "maxLength": 1500000,
+            "title": "Events Csv"
+          },
+          "loans_csv": {
+            "type": "string",
+            "maxLength": 500000,
+            "title": "Loans Csv",
+            "default": ""
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "reference_date",
+          "opening_cash",
+          "safe_cash_threshold",
+          "events_csv"
+        ],
+        "title": "CsvCashflowRequest"
+      },
+      "EligibilityRequest": {
+        "properties": {
+          "profile": {
+            "$ref": "#/components/schemas/SessionEligibilityProfile"
+          },
+          "policy_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 10,
+            "title": "Policy Ids"
+          },
+          "as_of": {
+            "type": "string",
+            "format": "date",
+            "title": "As Of",
+            "default": "2026-08-16"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "profile"
+        ],
+        "title": "EligibilityRequest"
+      },
+      "ExpenseType": {
+        "type": "string",
+        "enum": [
+          "rent",
+          "labor",
+          "purchase",
+          "tax",
+          "utility",
+          "social_insurance",
+          "vehicle_fuel",
+          "equipment",
+          "repair",
+          "other"
+        ],
+        "title": "ExpenseType"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "OtherFixedCost": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "amount": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Amount"
+          },
+          "payment_day": {
+            "type": "integer",
+            "maximum": 31.0,
+            "minimum": 1.0,
+            "title": "Payment Day"
+          },
+          "expense_type": {
+            "$ref": "#/components/schemas/ExpenseType",
+            "default": "other"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "amount",
+          "payment_day"
+        ],
+        "title": "OtherFixedCost"
+      },
+      "PolicyQuestionRequest": {
+        "properties": {
+          "policy_id": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Policy Id"
+          },
+          "policy_version": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Policy Version"
+          },
+          "question": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 2,
+            "title": "Question"
+          },
+          "as_of": {
+            "type": "string",
+            "format": "date",
+            "title": "As Of",
+            "default": "2026-08-16"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "policy_id",
+          "question"
+        ],
+        "title": "PolicyQuestionRequest"
+      },
+      "QuickModeInput": {
+        "properties": {
+          "reference_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Reference Date"
+          },
+          "opening_cash": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Opening Cash"
+          },
+          "safe_cash_threshold": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Safe Cash Threshold"
+          },
+          "monthly_revenue": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Monthly Revenue"
+          },
+          "recent_monthly_revenues": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recent Monthly Revenues"
+          },
+          "revenue_timing": {
+            "$ref": "#/components/schemas/RevenueTiming"
+          },
+          "monthly_rent": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Monthly Rent"
+          },
+          "monthly_labor_cost": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Monthly Labor Cost"
+          },
+          "monthly_variable_cost": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Monthly Variable Cost"
+          },
+          "expense_timing": {
+            "$ref": "#/components/schemas/CashTiming"
+          },
+          "total_loan_balance": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Total Loan Balance"
+          },
+          "annual_interest_rate_percent": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Annual Interest Rate Percent",
+            "default": 0
+          },
+          "remaining_term_months": {
+            "type": "integer",
+            "maximum": 360.0,
+            "minimum": 1.0,
+            "title": "Remaining Term Months",
+            "default": 60
+          },
+          "debt_timing": {
+            "$ref": "#/components/schemas/CashTiming"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "reference_date",
+          "opening_cash",
+          "safe_cash_threshold",
+          "revenue_timing",
+          "monthly_rent",
+          "monthly_labor_cost",
+          "monthly_variable_cost",
+          "expense_timing",
+          "total_loan_balance",
+          "debt_timing"
+        ],
+        "title": "QuickModeInput"
+      },
+      "RepresentativeAgeBand": {
+        "type": "string",
+        "enum": [
+          "40세 미만",
+          "40~49세",
+          "50세 이상",
+          "모름"
+        ],
+        "title": "RepresentativeAgeBand"
+      },
+      "RevenueTiming": {
+        "type": "string",
+        "enum": [
+          "daily",
+          "weekly",
+          "month_start",
+          "month_middle",
+          "month_end"
+        ],
+        "title": "RevenueTiming"
+      },
+      "SampleCompareRequest": {
+        "properties": {
+          "area_code": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 30
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area Code"
+          },
+          "industry_code": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 30
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Industry Code"
+          },
+          "sample_id": {
+            "type": "string",
+            "title": "Sample Id",
+            "default": "declining_cash_shortage"
+          },
+          "simple_input": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SimpleCashflowInput"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "quick_input": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/QuickModeInput"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "existing_loan_rate_percent": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Existing Loan Rate Percent",
+            "default": 12
+          },
+          "existing_loan_term_months": {
+            "type": "integer",
+            "maximum": 360.0,
+            "minimum": 1.0,
+            "title": "Existing Loan Term Months",
+            "default": 60
+          },
+          "direct_shock_13_week_percent": {
+            "type": "number",
+            "maximum": 1000.0,
+            "minimum": -100.0,
+            "title": "Direct Shock 13 Week Percent",
+            "default": -12
+          },
+          "direct_shock_6_month_percent": {
+            "type": "number",
+            "maximum": 1000.0,
+            "minimum": -100.0,
+            "title": "Direct Shock 6 Month Percent",
+            "default": -18
+          },
+          "safe_cash_override": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 10000000000.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Safe Cash Override"
+          },
+          "goal": {
+            "$ref": "#/components/schemas/UserGoal",
+            "default": "최소부채"
+          },
+          "market_scenario": {
+            "type": "string",
+            "enum": [
+              "downside",
+              "central",
+              "recovery"
+            ],
+            "title": "Market Scenario",
+            "default": "central"
+          },
+          "assume_conditional": {
+            "type": "boolean",
+            "title": "Assume Conditional",
+            "default": true
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "SampleCompareRequest"
+      },
+      "SessionEligibilityProfile": {
+        "properties": {
+          "region": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Region"
+          },
+          "industry_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Industry Code"
+          },
+          "industry_section": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Industry Section"
+          },
+          "business_scale": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Business Scale"
+          },
+          "opening_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Opening Date"
+          },
+          "business_age_months": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Business Age Months"
+          },
+          "representative_age_band": {
+            "$ref": "#/components/schemas/RepresentativeAgeBand",
+            "default": "모름"
+          },
+          "sales_2024": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sales 2024"
+          },
+          "sales_2025": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sales 2025"
+          },
+          "sales_2025_h1": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sales 2025 H1"
+          },
+          "sales_2025_h2": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sales 2025 H2"
+          },
+          "annual_sales_2025": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Annual Sales 2025"
+          },
+          "employee_count": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Employee Count"
+          },
+          "closure_planned_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Closure Planned Date"
+          },
+          "loan_origination_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Loan Origination Date"
+          },
+          "existing_interest_rate_percent": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Existing Interest Rate Percent"
+          },
+          "multiple_business_count": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Multiple Business Count"
+          },
+          "rented_exclusive_place": {
+            "$ref": "#/components/schemas/TriState",
+            "default": "unknown"
+          },
+          "self_owned_place": {
+            "$ref": "#/components/schemas/TriState",
+            "default": "unknown"
+          },
+          "is_operating": {
+            "$ref": "#/components/schemas/TriState",
+            "default": "unknown"
+          },
+          "sales_decreased": {
+            "$ref": "#/components/schemas/TriState",
+            "default": "unknown"
+          },
+          "disaster_document": {
+            "$ref": "#/components/schemas/TriState",
+            "default": "unknown"
+          },
+          "tax_paid": {
+            "$ref": "#/components/schemas/TriState",
+            "default": "unknown"
+          },
+          "fund_restricted_industry": {
+            "$ref": "#/components/schemas/TriState",
+            "default": "unknown"
+          },
+          "policy_loan_restricted_industry": {
+            "$ref": "#/components/schemas/TriState",
+            "default": "unknown"
+          },
+          "prior_crisis_support": {
+            "$ref": "#/components/schemas/TriState",
+            "default": "unknown"
+          },
+          "prior_closure_support": {
+            "$ref": "#/components/schemas/TriState",
+            "default": "unknown"
+          },
+          "prior_digital_support": {
+            "$ref": "#/components/schemas/TriState",
+            "default": "unknown"
+          },
+          "subfund_selected": {
+            "$ref": "#/components/schemas/TriState",
+            "default": "unknown"
+          },
+          "zero_market_operation": {
+            "$ref": "#/components/schemas/TriState",
+            "default": "unknown"
+          },
+          "eligible_business_registration": {
+            "$ref": "#/components/schemas/TriState",
+            "default": "unknown"
+          },
+          "shared_office_only": {
+            "$ref": "#/components/schemas/TriState",
+            "default": "unknown"
+          },
+          "consignment_only": {
+            "$ref": "#/components/schemas/TriState",
+            "default": "unknown"
+          },
+          "duplicate_public_support": {
+            "$ref": "#/components/schemas/TriState",
+            "default": "unknown"
+          },
+          "safety_product_business": {
+            "$ref": "#/components/schemas/TriState",
+            "default": "unknown"
+          },
+          "recovery_completed": {
+            "$ref": "#/components/schemas/TriState",
+            "default": "unknown"
+          },
+          "foundation_debt_repaid": {
+            "$ref": "#/components/schemas/TriState",
+            "default": "unknown"
+          },
+          "restarted_business": {
+            "$ref": "#/components/schemas/TriState",
+            "default": "unknown"
+          },
+          "ncb_839_or_below": {
+            "$ref": "#/components/schemas/TriState",
+            "default": "unknown"
+          },
+          "ncb_919_or_below": {
+            "$ref": "#/components/schemas/TriState",
+            "default": "unknown"
+          },
+          "maturity_extension_difficulty": {
+            "$ref": "#/components/schemas/TriState",
+            "default": "unknown"
+          },
+          "common_loan_restriction": {
+            "$ref": "#/components/schemas/TriState",
+            "default": "unknown"
+          },
+          "restart_education_completed": {
+            "$ref": "#/components/schemas/TriState",
+            "default": "unknown"
+          },
+          "restart_education_within_one_year": {
+            "$ref": "#/components/schemas/TriState",
+            "default": "unknown"
+          },
+          "restart_education_hours": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Restart Education Hours"
+          },
+          "restart_initial_stage": {
+            "$ref": "#/components/schemas/TriState",
+            "default": "unknown"
+          },
+          "debt_adjustment_compliant": {
+            "$ref": "#/components/schemas/TriState",
+            "default": "unknown"
+          },
+          "recovery_program_selected": {
+            "$ref": "#/components/schemas/TriState",
+            "default": "unknown"
+          },
+          "restart_business_age_months": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Restart Business Age Months"
+          },
+          "growth_condition_met": {
+            "$ref": "#/components/schemas/TriState",
+            "default": "unknown"
+          },
+          "direct_loan_repayment_good": {
+            "$ref": "#/components/schemas/TriState",
+            "default": "unknown"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "SessionEligibilityProfile",
+        "description": "Session-only policy facts. The caller must not persist the raw model."
+      },
+      "SimpleCashflowInput": {
+        "properties": {
+          "reference_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Reference Date"
+          },
+          "opening_cash": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Opening Cash"
+          },
+          "safe_cash_threshold": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Safe Cash Threshold"
+          },
+          "monthly_revenue": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Monthly Revenue"
+          },
+          "recent_monthly_revenues": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recent Monthly Revenues"
+          },
+          "revenue_receipt_day": {
+            "type": "integer",
+            "maximum": 31.0,
+            "minimum": 1.0,
+            "title": "Revenue Receipt Day"
+          },
+          "monthly_rent": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Monthly Rent"
+          },
+          "rent_payment_day": {
+            "type": "integer",
+            "maximum": 31.0,
+            "minimum": 1.0,
+            "title": "Rent Payment Day"
+          },
+          "monthly_labor_cost": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Monthly Labor Cost"
+          },
+          "labor_payment_day": {
+            "type": "integer",
+            "maximum": 31.0,
+            "minimum": 1.0,
+            "title": "Labor Payment Day"
+          },
+          "monthly_variable_cost": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Monthly Variable Cost"
+          },
+          "variable_cost_rate_percent": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Variable Cost Rate Percent"
+          },
+          "variable_cost_payment_day": {
+            "type": "integer",
+            "maximum": 31.0,
+            "minimum": 1.0,
+            "title": "Variable Cost Payment Day"
+          },
+          "other_fixed_costs": {
+            "items": {
+              "$ref": "#/components/schemas/OtherFixedCost"
+            },
+            "type": "array",
+            "title": "Other Fixed Costs"
+          },
+          "total_loan_balance": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Total Loan Balance"
+          },
+          "monthly_debt_payment": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Monthly Debt Payment"
+          },
+          "debt_payment_day": {
+            "type": "integer",
+            "maximum": 31.0,
+            "minimum": 1.0,
+            "title": "Debt Payment Day"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "reference_date",
+          "opening_cash",
+          "safe_cash_threshold",
+          "revenue_receipt_day",
+          "monthly_rent",
+          "rent_payment_day",
+          "monthly_labor_cost",
+          "labor_payment_day",
+          "variable_cost_payment_day",
+          "total_loan_balance",
+          "monthly_debt_payment",
+          "debt_payment_day"
+        ],
+        "title": "SimpleCashflowInput"
+      },
+      "TriState": {
+        "type": "string",
+        "enum": [
+          "yes",
+          "no",
+          "unknown"
+        ],
+        "title": "TriState"
+      },
+      "UserGoal": {
+        "type": "string",
+        "enum": [
+          "최소부채",
+          "최장생존",
+          "최소상환",
+          "빠른실행"
+        ],
+        "title": "UserGoal"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

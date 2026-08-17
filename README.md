@@ -2,18 +2,18 @@ https://daker.ai/public/hackathons/2026-finance-ai-challenge
 
 
 
-# 서울 소상공인 AI 금융 생존 내비게이터
+# 정책금융 영향 시뮬레이터
 
-서울시 상권·업종의 **다음 분기 매출환경 악화 위험**을 예측하고, 사용자가 입력한 사업체 금융부담을 별도로 진단한 뒤 공식 정책자료에 근거한 지원정책 추천과 설명을 제공하는 MVP입니다.
+서울 소상공인이 **정책 지원 전후의 13주 현금과 6개월 부채**를 같은 일정에서 비교하는 MVP입니다. 무대응, 비용절감, 비차입 지원, 대환, 신규 정책자금, 복합안을 함께 계산하고 공식 근거와 실행계획을 제공합니다.
 
-현재 **Stage 0~3을 완료**해 원본 품질검증과 2021Q1~2025Q4 Panel Dataset을 생성했습니다. Target·학습 모델·정책 추천·RAG는 아직 구현하지 않았으며 고정된 예시 결과를 반환하지 않습니다.
+현재 **Stage 0~6과 RE Stage 1~8.1**을 완료했습니다. RE8.1은 FastAPI 통합 API, 실제 사용자용 4단계 화면, 자치구→행정동→상권으로 좁히는 서울시 상권 지도, 만원 단위 최근 3~12개월 재무 입력, 5개 빠른 시연, SQLite 로컬 RAG, GPT-5.6 Luna 설명 Fallback을 포함합니다. 개인 매출·폐업·승인확률은 예측하지 않습니다.
 
 ## 예측 범위
 
-- 예측함: 서울시 `상권 × 업종`의 다음 분기 매출환경 악화 위험
-- 별도 계산함: 사용자 입력 기반 사업체 금융부담
-- 구현함: 규칙 기반 정책 후보 필터·순위와 공식자료 기반 RAG 설명
-- 예측·판단하지 않음: 개별 점포 폐업확률, 개인 신용평가, 부도확률, 대출 승인 가능성, 실제 대출심사
+- 계산함: 13주·6개월 현금흐름, 고갈시점, 신규부채, 월상환, 총이자
+- 구분함: 상권환경 스트레스, 사업체 현금흐름, 정책 자격, 정책 접수상태
+- 구현함: 규칙 기반 자격·후보 라우팅, 목표별 결정론적 비교, SQLite 공식자료 RAG, 선택적 Luna 설명
+- 예측·판단하지 않음: 개별 점포 미래매출·폐업확률, 개인 신용평가, 부도확률, 대출 승인 가능성, 정책 인과효과
 
 자세한 포함·제외 범위는 [reports/stage0/mvp_scope.md](reports/stage0/mvp_scope.md)를 확인하세요.
 
@@ -21,7 +21,7 @@ https://daker.ai/public/hackathons/2026-finance-ai-challenge
 
 - Windows 기준 Python 3.13.1
 - 패키지는 `requirements.txt`에 검증된 버전을 고정
-- API 키는 `.env.example`을 복사한 `.env` 또는 배포 환경변수로만 제공
+- API 키는 환경변수로만 제공하며 저장소·로그·로컬 DB에 기록하지 않음
 - 난수 시드와 주요 경로·임계값·가중치는 `config/settings.yaml`에서 관리
 
 ## 처음 실행하기
@@ -32,7 +32,6 @@ PowerShell에서 프로젝트 루트로 이동한 뒤 실행합니다.
 & 'C:\Program Files\Python313\python.exe' -m venv .venv
 .\.venv\Scripts\python.exe -m pip install --upgrade pip
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
-Copy-Item .env.example .env
 ```
 
 테스트:
@@ -41,23 +40,24 @@ Copy-Item .env.example .env
 .\.venv\Scripts\python.exe -m pytest
 ```
 
-Stage 0 전체 확인:
+RE8 로컬 정책근거 DB 재생성:
 
 ```powershell
-.\scripts\verify_stage0.ps1 -PythonPath '.\.venv\Scripts\python.exe'
+& 'C:\Program Files\Python313\python.exe' .\scripts\build_re_stage8_local_db.py
 ```
 
-Stage 2 원본 품질검증과 Stage 3 Panel 재생성:
+RE8.1 상권 지도와 최신 모델 입력자료 재생성은 사용자가 원본 상권 Shapefile을 내려받아 지정 폴더에 둔 뒤 실행합니다.
 
 ```powershell
-& 'C:\Program Files\Python313\python.exe' .\src\data\run_stage2_quality.py
-& 'C:\Program Files\Python313\python.exe' .\src\data\build_stage3_panel.py
+& 'C:\Program Files\Python313\python.exe' .\scripts\build_re_stage8_service_data.py
 ```
 
-- Stage 2 결과: `reports/stage2/qa_summary.md`
-- Stage 3 결과: `data/processed/stage3_panel.parquet` (439,141행 × 199열)
-- Stage 3 명세: `reports/stage3/panel_manifest.json`, `reports/stage3/data_dictionary.csv`
-- 두 스크립트 모두 원본 CSV를 20,000행 청크로 읽으며 `data/raw/`를 수정하지 않습니다.
+OpenAI 설명을 사용할 때 현재 PowerShell 프로세스에 새 키를 설정합니다. 채팅이나 파일에 키를 붙여 넣지 마세요.
+
+```powershell
+$env:OPENAI_API_KEY='새로 발급한 키'
+$env:OPENAI_MODEL='gpt-5.6-luna'
+```
 
 개발 서버:
 
@@ -68,7 +68,8 @@ Stage 2 원본 품질검증과 Stage 3 Panel 재생성:
 서버 실행 후 아래 주소를 확인합니다.
 
 - 상태 확인: `http://127.0.0.1:8000/health`
-- 서비스 범위: `http://127.0.0.1:8000/scope`
+- 웹 화면: `http://127.0.0.1:8000/`
+- 현재 서비스 계약: `http://127.0.0.1:8000/api/v1/service-contract`
 - API 문서: `http://127.0.0.1:8000/docs`
 
 ## 폴더 구조
@@ -87,7 +88,7 @@ src/modeling/        학습·평가·예측
 src/finance/         금융부담 진단
 src/recommendation/  정책 필터와 Ranking
 src/rag/             검색과 근거 기반 답변
-app/                 웹 API와 향후 화면
+app/                 FastAPI 통합 API와 정적 웹 화면
 tests/               핵심 로직 테스트
 reports/             QA·성능·데모 증거
 config/              경로·임계값·가중치·시드
@@ -109,4 +110,4 @@ config/              경로·임계값·가중치·시드
 & 'C:\Program Files\Python313\python.exe' -m pytest
 ```
 
-단계별 검증 결과는 `reports/stage0/`, `reports/stage2/`, `reports/stage3/`에 기록합니다.
+RE8.1 API·기능·검증·Manifest는 `reports/re_stage8/`에 기록합니다.

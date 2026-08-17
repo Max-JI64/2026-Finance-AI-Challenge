@@ -1,8 +1,12 @@
 project:
   stage: RE Stage 7
   contract_version: re7-contract-v1
-  status: full_contract_approved_implementation_not_started
+  engine_version: re7-v1
+  status: complete
   approved_at: "2026-08-16"
+  started_at: "2026-08-16"
+  completed_at: "2026-08-16"
+  gate: passed
 
 inputs:
   cashflow_engine: re3-v1
@@ -65,4 +69,31 @@ safe_cash:
   insufficient_input_action: 사용자 직접 입력 요청
   arbitrary_fixed_amount_allowed: false
 
-implementation_authorized: false
+decision_engine:
+  inject_no_action: true
+  arbitrary_weighted_score: prohibited
+  default_goal: 최소부채
+  feasibility_priority: 13_week_non_depletion
+  goals: [최소부채, 최장생존, 최소상환, 빠른실행]
+  conditional_default_ranking_allowed: false
+  pareto_actionable_only: true
+  approval_probability: prohibited
+  causal_effect_claim: prohibited
+
+hero:
+  detailed_samples: 3
+  primary_sample: data/samples/re_stage7/03_declining_cash_shortage_detailed.json
+  visible_curve_limit: 4
+  visible_curve_ids: [no_action, track2_reimbursement, emergency_loan, combined_safe_cash]
+  toggle_ids: [cost_reduction_5, refinance]
+  survival_definition: 현금잔액 0원 이상 유지기간
+  real_business_survival_prediction: prohibited
+
+paths:
+  source: src/recommendation
+  samples: data/samples/re_stage7
+  processed: data/processed_re/re_stage7
+  reports: reports/re_stage7
+  tests: tests/test_re_stage7.py
+
+implementation_authorized: true

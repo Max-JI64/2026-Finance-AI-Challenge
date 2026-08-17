@@ -1,0 +1,53 @@
+{
+  "stage": "RE Stage 7",
+  "engine_version": "re7-v1",
+  "contract_version": "re7-contract-v1",
+  "generated_as_of": "2026-08-16",
+  "sample_count": 3,
+  "alternative_count_including_no_action": 6,
+  "simulated_count": 6,
+  "ranking_eligible_count": 2,
+  "conditional_simulated_count": 4,
+  "goal_ranking_count": 4,
+  "pareto_frontier_count": 1,
+  "minimum_safe_cash_loan": 17559958,
+  "prohibited_fit_percentage_fields": 0,
+  "hero_visible_curve_ids": [
+    "no_action",
+    "track2_reimbursement",
+    "emergency_loan",
+    "combined_safe_cash"
+  ],
+  "hero_toggle_ids": [
+    "cost_reduction_5",
+    "refinance"
+  ],
+  "samples": [
+    {
+      "path": "data/samples/re_stage7/01_declining_low_debt_detailed.json",
+      "sha256": "f7d4847092ab2dacf2b27db18f39fc5582fbf0edeb9b9865a7c5c4fb939099c5"
+    },
+    {
+      "path": "data/samples/re_stage7/02_stable_high_debt_detailed.json",
+      "sha256": "761661c991c80261fe7483c1b8f2deb09d493fdb12933c4d716b04669c2b2f25"
+    },
+    {
+      "path": "data/samples/re_stage7/03_declining_cash_shortage_detailed.json",
+      "sha256": "bea6a338c12a4aadccfce59deb6946fd06d93850cd22c61ff30c62a6c2047ebf"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "data/processed_re/re_stage7/hero_decision_result.json",
+      "sha256": "e7ef2815ca42393a04246b86c450af2cd041d98107c06bfb1bbc3c639dccb382"
+    },
+    {
+      "path": "data/processed_re/re_stage7/comparison_table.csv",
+      "sha256": "fa5945f90ee595262752cd3dace4e61b21305d6e21fac8017a4740bee3a8526b"
+    },
+    {
+      "path": "reports/re_stage7/representative_scenarios.md",
+      "sha256": "46a291e40982dfc52a851505e00593289610a4bf664ed72240f4ad29ddf08ca1"
+    }
+  ]
+}

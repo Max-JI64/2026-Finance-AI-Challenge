@@ -5,9 +5,9 @@
 
 ## Project snapshot
 
-- Last updated: 2026-08-16T22:37+09:00
+- Last updated: 2026-08-17T11:33+09:00
 - Purpose: Build a working Seoul small-business policy-finance impact simulator whose hero compares 13-week survival and 6-month debt consequences across no action and representative interventions, using area-industry stress scenarios, schedule-based cash flow, official policy terms, and evidence-grounded AI explanations without causal-effect or personal-sales claims.
-- Important paths: `프로젝트 계획서.md` is the main MVP plan; `MVP 단계별 구현 체크리스트.md` is the execution and completion-gate document; `reports/re_stage1/` and `reports/re_stage2/` preserve the service and 10-policy contracts; `src/cashflow/`, `config/re_stage3.yaml`, and `reports/re_stage3/` contain the completed deterministic baseline cash-flow engine; `src/policy/`, `config/re_stage4.yaml`, `data/processed_re/policy/re_stage4/`, and `reports/re_stage4/` contain the completed policy financial-event engine; `config/re_stage5.yaml`, `src/data/build_re_stage5_baseline.py`, `src/models/run_re_stage5_quantile.py`, `data/processed_re/model/re_stage5/`, and `reports/re_stage5/` contain the prepared RE5 baseline and user-operated CV runner; `data/raw_re/향후 데이터 다운로드 가이드.md` is the acquisition guide.
+- Important paths: `프로젝트 계획서.md` is the main MVP plan; `MVP 단계별 구현 체크리스트.md` is the execution and completion-gate document; `src/cashflow/` and `src/policy/` hold the completed RE3-RE4 engines; `config/re_stage5.yaml` and `reports/re_stage5/` hold the completed aggregate scenario model evidence; `src/policy/eligibility.py`, `src/rag/`, and `reports/re_stage6/` hold RE6; `src/recommendation/` and `reports/re_stage7/` hold the RE7 decision engine; `app/`, `src/integration/re_stage8.py`, `src/rag/local_db.py`, `src/rag/luna_client.py`, `config/re_stage8.yaml`, and `reports/re_stage8/` hold the completed RE8 local web/API/RAG integration; `data/raw_re/향후 데이터 다운로드 가이드.md` is the acquisition guide.
 
 ## Durable decisions
 
@@ -20,10 +20,10 @@
 
 - `decision:implementation-checklist`
   - Created: 2026-08-14T20:21+09:00
-  - Updated: 2026-08-16T22:28+09:00
+  - Updated: 2026-08-17T11:04+09:00
   - Status: active
-  - Content: The checklist mirrors completed Stage 0-6 and RE Stage 1-6, the partially approved RE7 candidate-routing contract, and pending RE Stage 7-9 implementation. It requires the approved categorical-timing quick-mode wrapper, 13-week survival Hero, area-environment stress naming, verified 10-policy depth message, an 8-persona deterministic mock validation, and downstream-impact review before each next Stage.
-  - Evidence: `MVP 단계별 구현 체크리스트.md` and Gate evidence under `reports/re_stage1/` through `reports/re_stage7/`.
+  - Content: The checklist records completed Stage 0-6 and RE Stage 1-8.1 with Gate evidence; only RE9 deployment, policy-currentness refresh, live Luna check with a newly issued local key, and frozen eight-persona mock validation remain. RE8.1 exposes the four user tasks, a synchronized low-overlap commercial-area map and lists, recent finance input, RE5 scenarios, deterministic comparisons, execution planning, and local evidence-grounded AI explanation flow.
+  - Evidence: `MVP 단계별 구현 체크리스트.md` and Gate evidence under `reports/re_stage1/` through `reports/re_stage8/`.
 
 - `decision:policy-source-hierarchy`
   - Created: 2026-08-15T21:23+09:00
@@ -41,10 +41,24 @@
 
 - `decision:re-stage3-input-calculation-contract`
   - Created: 2026-08-16T00:25+09:00
-  - Updated: 2026-08-16T16:47+09:00
+  - Updated: 2026-08-17T10:06+09:00
   - Status: active
-  - Content: Gate RE3 passed with `re3-v1`. The approved future quick-mode wrapper accepts sales timing types plus early/mid/late expense and debt timing, maps early=days 1-10, mid=11-20, late=21-month-end, and calls the unchanged engine for conservative, central, and favorable schedules; exact dates override categories. The wrapper and UI band are approved but not implemented, and arbitrary depletion ranges remain forbidden.
-  - Evidence: `src/cashflow/`, `config/re_stage3.yaml`, `reports/re_stage3/verification.md`, `reports/re_stage3/manifest.json`, and `tests/test_re_stage3_cashflow.py`; hand checks 26/26 and full tests 52 passed.
+  - Content: Gate RE3 passed with `re3-v1`. RE8.1 takes 3-12 recent monthly revenues and all guided amounts in ten-thousand-won units, converts them to won before calculation, and maps revenue plus early/middle/late expense and debt categories to conservative, central, and favorable exact-date schedules. UTF-8-SIG Korean CSV uses `금액(만원)` and `잔액(만원)` while legacy Korean won and English headers remain supported; arbitrary depletion ranges remain forbidden.
+  - Evidence: `src/cashflow/quick_mode.py`, `app/static/templates/`, `src/integration/re_stage8.py`, `tests/test_re_stage8.py`, and `reports/re_stage8/verification.md`; full tests 125 passed.
+
+- `decision:re-stage8-api-web-local-rag`
+  - Created: 2026-08-17T08:19+09:00
+  - Updated: 2026-08-17T11:22+09:00
+  - Status: active
+  - Content: Gate RE8 remains `re8-api-v1.2`: the four-step UI keeps district, dong, and all commercial-area names visible, searches all Seoul, and selects district/dong/area from map-center zoom levels. Region or industry changes recalculate existing results. The four user goals now reorder eligible alternatives, expose the active goal-specific judgment value and table rank, and reset selection to the resulting top alternative; identical top choices across goals remain valid deterministic outcomes. The decision notice follows the currently selected alternative and replaces its rank status, intraperiod cash warning, eligibility caution, and policy-specific confirmation items on every card or graph selection. Duplicate evidence URLs are grouped, the modal closes from button or backdrop, Luna remains explanation-only, and OpenAI IDs and token usage are discarded.
+  - Evidence: `app/static/`, `src/integration/re_stage8.py`, `config/re_stage8.yaml`, `reports/re_stage8/manifest.json`, `reports/re_stage8/functional_spec.md`, `reports/re_stage8/verification.md`, and `tests/test_re_stage8.py`; RE7+RE8 tests 38 passed, JavaScript syntax passed, and visual validation remains user-owned.
+
+- `decision:policy-pdf-text-only`
+  - Created: 2026-08-17T11:04+09:00
+  - Updated: 2026-08-17T11:04+09:00
+  - Status: active
+  - Content: Policy PDFs are converted to UTF-8 page-delimited text with `pypdf` and only text is chunked into the local SQLite RAG database. Future extraction must not render PDF pages, create contact sheets, OCR, or analyze PDF images. Historical temporary renders may exist but are not RAG inputs and were not inspected in this follow-up.
+  - Evidence: `scripts/extract_re_stage2_policy_docs.py`, `scripts/build_re_stage2_knowledge_base.py`, `reports/re_stage2/document_inventory.csv`, `data/processed_re/policy/re_stage2/extracted_text/`, and `tests/test_re_stage8.py`.
 
 - `decision:presentation-and-user-validation`
   - Created: 2026-08-16T11:28+09:00
@@ -69,17 +83,17 @@
 
 - `decision:re-stage6-eligibility-rag-safety`
   - Created: 2026-08-16T22:21+09:00
-  - Updated: 2026-08-16T22:21+09:00
+  - Updated: 2026-08-17T11:30+09:00
   - Status: active
-  - Content: Gate RE6 passed with `re6-v1`. A deterministic engine evaluates 56 reviewed official rules using a session-only profile and separates eligibility from application availability. A no-training BM25 index searches 227 official/reviewed chunks with policy/version/effective-date filters, while `SafeExplanation` fact-locks eligibility, cash-flow, debt, interest, and retrieved evidence so a future LLM cannot create or change financial calculations, eligibility, approval probability, causal effects, or rank.
-  - Evidence: `src/policy/eligibility.py`, `src/rag/policy_index.py`, `src/rag/safe_explanation.py`, `data/processed_re/policy/re_stage6/`, and `reports/re_stage6/`; reviewed eligibility examples 20/20, retrieval Hit@3 8/8, MRR 0.7917, unique official chunks 227/227, RE6 tests 16 and full tests 89 passed, with no model training, external LLM call, or raw session-profile persistence.
+  - Content: Gate RE6 passed with `re6-v1`. A deterministic engine evaluates 56 reviewed official rules and separates eligibility from application availability. Retrieval is lexical BM25 over word and Korean-character-bigram tokens in 227 SQLite text chunks with policy/version/effective-date filters; it does not create or store vector embeddings and uses no vector database or cosine search. `SafeExplanation` fact-locks calculations, eligibility, approval probability, effects, and rank before Luna explains retrieved evidence.
+  - Evidence: `src/policy/eligibility.py`, `src/rag/policy_index.py`, `src/rag/local_db.py`, `src/rag/safe_explanation.py`, `config/re_stage8.yaml`, and `reports/re_stage6/`; reviewed examples 20/20, retrieval Hit@3 8/8, MRR 0.7917, unique official chunks 227/227, with no embedding API, vector column, FAISS/Chroma, model training, or raw session-profile persistence.
 
 - `decision:re-stage7-candidate-routing-partial-contract`
   - Created: 2026-08-16T22:28+09:00
-  - Updated: 2026-08-16T22:37+09:00
+  - Updated: 2026-08-16T23:00+09:00
   - Status: active
-  - Content: The user finalized `re7-contract-v1`: preserve separate eligibility/availability but show only three candidate groups; classify policy pairs as confirmed-compatible, confirmation-required, or prohibited and default-combine only confirmed pairs; map RE5 Target A to 13 weeks and Target B to 6 months at a transparent 100% reference rate with user adjustment/direct override; suggest editable safe cash from the next 28 days of required outflows and require direct input when insufficient. RE8 safety/privacy and RE9 all-policy QA boundaries remain active.
-  - Evidence: `config/re_stage7.yaml`, `reports/re_stage7/approved_contract.md`, `reports/re_stage7/approved_partial_contract.md`, `reports/re_stage6/downstream_impact_review.md`, `프로젝트 계획서.md`, `프로젝트 차별화 구상.md`, and `MVP 단계별 구현 체크리스트.md`. The user explicitly ordered no implementation, so `implementation_authorized=false` and no RE7 code, tests, or data generation started.
+  - Content: Gate RE7 passed with `re7-v1` under the unchanged `re7-contract-v1`: separate eligibility/availability routing, conservative pair compatibility, Target A/B horizon mapping with direct override, 28-day editable safe cash, no-action plus five intervention forms, lexicographic four-goal ranking, actionable-only Pareto, and execution plans. Conditional policies may be simulated only by explicit assumption and never receive a default or fast-execution top rank.
+  - Evidence: `src/recommendation/`, `config/re_stage7.yaml`, `tests/test_re_stage7.py`, `data/samples/re_stage7/`, `data/processed_re/re_stage7/`, and `reports/re_stage7/`; three detailed samples, six Hero alternatives, RE7 tests 14 and full tests 103 passed, deterministic Manifest SHA-256 `609FDD3274BA4C1605010551B2C1EEEB77C2EA7638B1EE350A86D43650A10699` matched across reruns.
 
 - `decision:pre-re1-policy-qa`
   - Created: 2026-08-15T23:18+09:00
@@ -376,15 +390,82 @@
   - Fix: Describe the P-05 collection as announcements updated during 2026-01-01 through 2026-08-15, retain older or missing registration dates, and record per-window registration-date and update-date counts in the Manifest.
   - Evidence: `data/raw_re/policy/sme24/2026-08-15/manifest.json`, `QA.md`, and the 8 raw files under `windows/`.
 
+- `issue:re8-user-facing-ux`
+  - Created: 2026-08-17T08:41+09:00
+  - Updated: 2026-08-17T09:18+09:00
+  - Status: resolved
+  - Symptom: The RE8 eight-screen flow exposes internal terms, synthetic sample language, raw CSV schema, direct shock rates, unlabeled charts, and dense metric tables, so a real small-business user cannot easily connect inputs, recommendations, and next actions.
+  - Cause: The first RE8 interface mirrored engine stages and verification artifacts instead of a user task model; it also advertises the RE5 model while the current comparison route actually applies user-supplied direct shocks and hardcoded Hero candidates.
+  - Fix: Replaced the interface with the approved four-step workspace, 3-12-month guided finance input, RE5 live area-industry scenarios, result-first cards, selected-alternative modal, and execution/AI shortcuts. The user chose official center coordinates plus area-proportional circles rather than polygons; district and area lists remain available and synchronized with the map.
+  - Evidence: `app/static/`, `src/integration/re_stage8.py`, `src/models/re_stage5_scenario_service.py`, `data/processed_re/re_stage8/`, and `reports/re_stage8/verification.md`; desktop and 390x844 browser flows passed with matching diagnosis/no-action values and zero console errors.
+
+- `issue:re8-fixed-policy-candidate-routing`
+  - Created: 2026-08-17T11:33+09:00
+  - Updated: 2026-08-17T11:33+09:00
+  - Status: open
+  - Symptom: User area, industry, revenue, cash, and debt inputs change the market scenario and cash flow, but do not dynamically discover policies across the approved portfolio; the comparison screen always builds the fixed Hero alternatives.
+  - Cause: `compare_sample` calls `build_hero` and maps only hardcoded `HERO_POLICY_BY_ALTERNATIVE` policies, while the full deterministic eligibility engine is exposed through a separate API and the UI does not collect its broader profile fields.
+  - Fix: Proposed, not approved or implemented: generate candidates from structured user facts plus hybrid BM25 and semantic retrieval, apply official-rule eligibility as a hard gate, simulate only policies with structured financial Events, and retain deterministic four-goal ranking; embeddings must never override eligibility or cash-flow outcomes.
+  - Evidence: `src/integration/re_stage8.py`, `src/policy/eligibility.py`, `src/rag/local_db.py`, and `src/recommendation/engine.py`.
+
 ## Current handoff
 
 - `handoff:current`
-  - Updated: 2026-08-16T22:37+09:00
-  - Current state: Gates RE1-RE6 passed and the complete `re7-contract-v1` is approved, including candidate routing, policy-pair compatibility, horizon-specific 100% reference scenario application with user controls, and four-week editable safe-cash suggestion. No RE7 implementation has started.
-  - Next step: Keep RE7 paused until the user explicitly requests implementation; when resumed, implement only against `reports/re_stage7/approved_contract.md` and `config/re_stage7.yaml` without reopening the approved material decisions unless new evidence requires it.
-  - Blockers: No contract blocker remains. Implementation is intentionally unauthorized by the user's current instruction; new-data Ablations, a new independent 2026Q1-Q2 model audit, and real-user usability remain post-MVP or later validation work.
+  - Updated: 2026-08-17T11:33+09:00
+  - Current state: RE8.1 goal ranking and selected-alternative notices are implemented. Policy RAG is text-only lexical BM25 over 227 chunks, and the user-input comparison currently uses fixed Hero policy candidates rather than discovering policies across the 10-policy portfolio. Luna receives retrieved text only for explanation.
+  - Next step: Await a material user decision on whether to add hybrid candidate discovery and whether embeddings run locally or through an external API. If approved, use structured eligibility as a hard gate, hybrid retrieval only for candidate recall and evidence, and deterministic cash-flow ranking for the final order.
+  - Blockers: Hybrid implementation changes service scope and requires an approved embedding approach; a local model file must be user-downloaded under the external-data rule, while API embeddings would require explicit external-transmission approval and a rotated key.
 
 ## Session log
+
+- `session:20260817-1130`
+  - Started: 2026-08-17T11:30+09:00
+  - Last activity: 2026-08-17T11:33+09:00
+  - Focus: Verify the current retrieval architecture and assess hybrid search for both user-input policy discovery and AI evidence questions.
+  - Updated keys: `decision:re-stage6-eligibility-rag-safety`, `issue:re8-fixed-policy-candidate-routing`, `handoff:current`
+  - Summary: Confirmed lexical BM25 storage and found that the comparison route uses fixed Hero policies rather than full-portfolio discovery. Proposed a non-implemented hybrid architecture where structured facts and BM25 plus semantic retrieval improve candidate recall, official rules remain the hard eligibility gate, and deterministic cash-flow outcomes retain final ranking; embedding deployment requires a separate user decision.
+
+- `session:20260817-1122`
+  - Started: 2026-08-17T11:22+09:00
+  - Last activity: 2026-08-17T11:22+09:00
+  - Focus: Make four-goal ranking changes visible and bind warnings and cautions to the currently selected alternative.
+  - Updated keys: `decision:re-stage8-api-web-local-rag`, `handoff:current`
+  - Summary: Reordered eligible alternatives from the selected goal's deterministic result, added goal-specific judgment values and explicit table ranks, and replaced the top-only yellow warning with selected-alternative rank, minimum-cash, eligibility, and confirmation guidance. Updated RE8 specifications and Manifest, passed RE7+RE8 tests 38 and JavaScript syntax, and left visual validation to the user as requested.
+
+- `session:20260817-1104`
+  - Started: 2026-08-17T10:42+09:00
+  - Last activity: 2026-08-17T11:04+09:00
+  - Focus: Diagnose RAG links, region sensitivity, deterministic policy curves, OpenAI usage visibility, and policy-source processing while applying the user's additional map and decision-modal corrections.
+  - Updated keys: `decision:implementation-checklist`, `decision:re-stage8-api-web-local-rag`, `decision:policy-pdf-text-only`, `handoff:current`
+  - Summary: Grouped identical evidence URLs by source and page, made area labels and search global, synchronized zoom-center selections, recalculated existing results after market selection changes, added backdrop modal dismissal and transparent rank/negative-cash warnings, and removed all future PDF rendering from extraction. Reproduced the high-fixed-cost case, confirmed two districts yield different LightGBM scenarios, verified the SQLite DB stores text only, found three official policy expansion candidates without downloading them, and passed 24 RE8 tests plus syntax/whitespace checks; no PDF image inspection, browser validation, external data download, or live OpenAI call occurred.
+
+- `session:20260817-0848`
+  - Started: 2026-08-17T08:48+09:00
+  - Last activity: 2026-08-17T10:42+09:00
+  - Focus: Implement and verify the approved RE8.1 actual-user redesign and the follow-up usability corrections using the user-provided Seoul commercial-area source.
+  - Updated keys: `decision:re-stage3-input-calculation-contract`, `decision:re-stage8-api-web-local-rag`, `issue:re8-user-facing-ux`, `handoff:current`
+  - Summary: Extended the four-step workspace with 25 district to administrative-dong to area circle drilldown, official-code industry grouping, ten-thousand-won inputs, UTF-8-SIG templates, clearer scenario and timing labels, five one-click presentation cases, all-alternative graph selection, and a green-button-only modal containing humanized execution details and named official links. Replaced the orange/pink map with a cobalt-and-white high-contrast palette, added permanent district/dong labels, limited dong and area layers to the current map region, swapped regions on pan, and reset to parent levels on zoom-out. Cleared a secret-shaped value from `.env.example`, passed RE8.1 tests 23 and all 126 tests, completed desktop browser checks including Yong-san to Gang-dong pan and 16-dong to 25-district zoom reset with zero console errors, and made no external AI call.
+
+- `session:20260817-0841`
+  - Started: 2026-08-17T08:41+09:00
+  - Last activity: 2026-08-17T08:43+09:00
+  - Focus: Audit the rejected RE8 interface from an actual-user perspective, configure the Luna model safely, and define the required RE8.1 redesign boundary before RE9.
+  - Updated keys: `issue:re8-user-facing-ux`, `handoff:current`
+  - Summary: Created ignored `.env` with only the Luna model name, connected safe local loading for OpenAI settings, removed unused public-data key placeholders, and passed all 16 RE8 tests without a live key. Verified no local commercial-area geometry and rejected the proposed `sig.shp` code because it joins municipality polygons to administrative-district data rather than seven-digit commercial-area codes; recommended a four-step pre-RE9 redesign that awaits material rule approval and matching user-supplied boundary data.
+
+- `session:20260817-0740`
+  - Started: 2026-08-17T07:40+09:00
+  - Last activity: 2026-08-17T08:19+09:00
+  - Focus: Implement and verify RE Stage 8 as a local FastAPI web/API product with local SQLite RAG and optional GPT-5.6 Luna explanations.
+  - Updated keys: `decision:implementation-checklist`, `decision:re-stage3-input-calculation-contract`, `decision:re-stage8-api-web-local-rag`, `handoff:current`
+  - Summary: Built the responsive eight-screen flow, 11-path API contract, approved three-schedule quick mode, detailed CSV baseline route, local 227-chunk policy index, eligibility/comparison/plan integration, and privacy-safe Luna client with deterministic fallback and Fact-lock; generated specs, manifest, verification, and 10 screenshots, passed RE8 tests 16 and all 119 tests, stored no API key, and passed Gate RE8.
+
+- `session:20260816-2241`
+  - Started: 2026-08-16T22:41+09:00
+  - Last activity: 2026-08-16T23:00+09:00
+  - Focus: Implement and verify RE Stage 7 against the approved contract without changing policy, model, or data scope.
+  - Updated keys: `decision:implementation-checklist`, `decision:re-stage7-candidate-routing-partial-contract`, `handoff:current`
+  - Summary: Built `re7-v1` candidate routing, conservative combination checks, Target A/B cash-flow scenarios, safe cash, six alternatives, four lexicographic goals, Pareto and execution plans; froze three detailed samples, passed RE7 tests 14 and all 103 tests, verified deterministic hashes, passed Gate RE7, and handed actual screen controls to RE8.
 
 - `session:20260816-2237`
   - Started: 2026-08-16T22:37+09:00
@@ -561,20 +642,6 @@
   - Updated keys: `decision:mvp-scope`, `decision:implementation-checklist`, `decision:policy-source-hierarchy`, `decision:data-download-catalog`, `decision:competitive-positioning`, `decision:recommendation-role-boundary`, `proposal:policy-intervention-digital-twin`, `decision:stage7-finance-burden-policy-v1`, `handoff:current`
   - Summary: Expanded the plan and checklist, corrected guide links, and clarified the acquisition order: finish P-05 and deduplicate it with P-01 first; P-04 fixed attachments and P-03 shared references can be captured immediately, while P-02 and policy-specific P-03 documents are collected only after approving the 8-12-policy shortlist. No policy application is submitted.
 
-- `session:20260814-1952`
-  - Started: 2026-08-14T19:52+09:00
-  - Last activity: 2026-08-14T20:21+09:00
-  - Focus: Reformat the MVP plan and create an implementation checkpoint document without browsing embedded links.
-  - Updated keys: `decision:mvp-scope`, `decision:implementation-checklist`, `convention:plan-source-preservation`, `handoff:current`
-  - Summary: Reorganized the plan, then created a 13-stage implementation checklist with 449 tasks covering data, ML, finance diagnosis, recommendation, RAG, integration, deployment, and final acceptance.
-
-- `session:20260814-2034`
-  - Started: 2026-08-14T20:34+09:00
-  - Last activity: 2026-08-15T00:39+09:00
-  - Focus: Complete Stages 0-3 from project setup through chunk-based raw QA and a reproducible panel build.
-  - Updated keys: `decision:stage0-stack`, `decision:solo-team-validation`, `decision:stage3-panel-contract`, `decision:stage4-persistent-target-structure`, `decision:stage4-cv-design`, `decision:stage45-modeling-eda-plan`, `decision:stage5-model-selection-workflow`, `decision:stage5-comparison-contract`, `convention:user-owned-data-acquisition`, `convention:bounded-raw-inspection`, `convention:chronological-project-log`, `convention:mandatory-user-decision`, `convention:proportional-verification`, `issue:bounded-reader-full-file-call`, `issue:store-2025-header-language`, `issue:stage5-preprocessing-memory`, `handoff:current`
-  - Summary: Completed Stages 2-4, then inserted a detailed plot-free Stage 4.5 plan for modeling EDA, derived Features, and Feature-contract approval; no analysis was run, Stage 5 remains blocked, and the new session should begin from this plan.
-
 - `session:20260815-1106`
   - Started: 2026-08-15T11:06+09:00
   - Last activity: 2026-08-15T12:19+09:00
@@ -604,3 +671,6 @@
   - Summary: Stage 6 passed with all 27 tests; the user approved finance-burden policy v1 and requested documentation only, so the exact formula, bands, edge cases, example result, and non-DSR limitations were added to the plan without implementation.
 
 ## Session archive
+
+- `session:20260814-1952` — 2026-08-14T19:52+09:00 to 2026-08-14T20:21+09:00; plan/checklist reformat; updated `decision:mvp-scope`, `decision:implementation-checklist`, `convention:plan-source-preservation`, `handoff:current`; created the original 13-stage execution checklist.
+- `session:20260814-2034` — 2026-08-14T20:34+09:00 to 2026-08-15T00:39+09:00; Stage 0-4 and Stage 4.5 planning; updated project decisions, conventions, issues, and `handoff:current`; completed the early data pipeline and left Stage 5 blocked pending feature work.

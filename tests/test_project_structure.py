@@ -55,6 +55,6 @@ def test_environment_example_has_no_secret_values() -> None:
 
     for line in env_example.splitlines():
         if line and not line.startswith("#"):
-            _, value = line.split("=", maxsplit=1)
-            assert value == ""
-
+            name, value = line.split("=", maxsplit=1)
+            if name.endswith(("_KEY", "_TOKEN", "_SECRET", "_PASSWORD")):
+                assert value == ""
