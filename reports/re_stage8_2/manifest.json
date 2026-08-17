@@ -1,0 +1,273 @@
+{
+  "stage": "RE Stage 8.2",
+  "as_of_date": "2026-08-17",
+  "status": "completed",
+  "engine_version": "re8.2-sqlite-hybrid-v1",
+  "database": {
+    "path": "rag/index/policy_re8.sqlite3",
+    "sha256": "e30f88ad7bdcb0c6f0980f4e13bb3356553bce151c25e42c7ee34b81ab9071e7",
+    "policy_count": 17,
+    "chunk_count": 817,
+    "embedding_specs": [
+      {
+        "model": "text-embedding-3-large",
+        "dimensions": 3072,
+        "rows": 817
+      },
+      {
+        "model": "text-embedding-3-small",
+        "dimensions": 1536,
+        "rows": 817
+      }
+    ]
+  },
+  "canonical_policy_body": "user_reviewed_markdown",
+  "saved_html_usage": "official_link_only",
+  "sources": [
+    {
+      "policy_id": "POL_JUNGGU_CUSTOM_SUPPORT_2026",
+      "policy_version": "2026-04-30",
+      "canonical_markdown_path": "data/raw_re/policy/selected/2026-08-17/POL_JUNGGU_CUSTOM_SUPPORT_2026/중구 편편한 소상공인 맞춤형 지원.md",
+      "canonical_markdown_sha256": "62ecfe55ad6a1c535ad4dc80533a16249fcfd9299f084d1034ceb129a8311c29",
+      "saved_html_path": null,
+      "official_url": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000121649",
+      "ingestion_mode": "markdown_body_html_link_only"
+    },
+    {
+      "policy_id": "POL_SEMAS_EMPLOYMENT_INSURANCE_2026",
+      "policy_version": "2025-12-29",
+      "canonical_markdown_path": "data/raw_re/policy/selected/2026-08-17/POL_SEMAS_EMPLOYMENT_INSURANCE_2026/2026년 소상공인 고용보험료 지원사업.md",
+      "canonical_markdown_sha256": "53b8cd6064129efaecb037f4cc984a8d19eb0536b11a35315d570b53a46719ac",
+      "saved_html_path": null,
+      "official_url": "https://news.seoul.go.kr/economy/archives/568900",
+      "ingestion_mode": "markdown_body_html_link_only"
+    },
+    {
+      "policy_id": "POL_SEMAS_RECHALLENGE_2026",
+      "policy_version": "2026-07-29-change4",
+      "canonical_markdown_path": "data/raw_re/policy/selected/2026-08-15/POL_SEMAS_POLICY_LOANS_2026_CHANGE4/2026년 소상공인 정책자금 융자사업 4차변경 공고.md",
+      "canonical_markdown_sha256": "cd711f081160e4a8885f64eaa52f35b45e25b981cac67eb05c45bbeb950c7379",
+      "saved_html_path": "data/raw_re/policy/selected/2026-08-15/POL_SEMAS_POLICY_LOANS_2026_CHANGE4/official_page.html",
+      "official_url": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124909",
+      "ingestion_mode": "markdown_body_html_link_only"
+    },
+    {
+      "policy_id": "POL_SEMAS_REFINANCE_2026",
+      "policy_version": "2026-07-29-change4",
+      "canonical_markdown_path": "data/raw_re/policy/selected/2026-08-15/POL_SEMAS_POLICY_LOANS_2026_CHANGE4/2026년 소상공인 정책자금 융자사업 4차변경 공고.md",
+      "canonical_markdown_sha256": "cd711f081160e4a8885f64eaa52f35b45e25b981cac67eb05c45bbeb950c7379",
+      "saved_html_path": "data/raw_re/policy/selected/2026-08-15/POL_SEMAS_POLICY_LOANS_2026_CHANGE4/official_page.html",
+      "official_url": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124909",
+      "ingestion_mode": "markdown_body_html_link_only"
+    },
+    {
+      "policy_id": "POL_SEMAS_STABILITY_VOUCHER_2026",
+      "policy_version": "2026-01-28",
+      "canonical_markdown_path": "data/raw_re/policy/selected/2026-08-15/POL_SEMAS_STABILITY_VOUCHER_2026/2026년 소상공인 경영안정 바우처 지원사업 공고.md",
+      "canonical_markdown_sha256": "23143bfb691822eef5643223796f0cd46199f4bb3f86a3f7d963ca9a54935e51",
+      "saved_html_path": "data/raw_re/policy/selected/2026-08-15/POL_SEMAS_STABILITY_VOUCHER_2026/official_page.html",
+      "official_url": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000117908",
+      "ingestion_mode": "markdown_body_html_link_only"
+    },
+    {
+      "policy_id": "POL_SEOUL_CLOSURE_2026",
+      "policy_version": "2026-02",
+      "canonical_markdown_path": "data/raw_re/policy/selected/2026-08-15/POL_SEOUL_CLOSURE_2026/2026년_새_길_여는_폐업지원_공고.md",
+      "canonical_markdown_sha256": "a33fc2a9102761f937d80213336ad286a35408f5cd88be03e98562195d8a5599",
+      "saved_html_path": "data/raw_re/policy/selected/2026-08-15/POL_SEOUL_CLOSURE_2026/official_page.html",
+      "official_url": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000119017",
+      "ingestion_mode": "markdown_body_html_link_only"
+    },
+    {
+      "policy_id": "POL_SEOUL_CRISIS_TRACK2_2026H2",
+      "policy_version": "2026-06-30",
+      "canonical_markdown_path": "data/raw_re/policy/selected/2026-08-15/POL_SEOUL_CRISIS_TRACK2_2026H2/2026년_하반기_위기_소상공인_Track2_공고.md",
+      "canonical_markdown_sha256": "01118795dfcd269d9d53a435b507a21d48cfd74e22bf73c4069da3df5586f63c",
+      "saved_html_path": "data/raw_re/policy/selected/2026-08-15/POL_SEOUL_CRISIS_TRACK2_2026H2/official_page.html",
+      "official_url": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000123842",
+      "ingestion_mode": "markdown_body_html_link_only"
+    },
+    {
+      "policy_id": "POL_SEOUL_DIGITAL_MIDLIFE_2026H2",
+      "policy_version": "2026-06-30",
+      "canonical_markdown_path": "data/raw_re/policy/selected/2026-08-15/POL_SEOUL_DIGITAL_MIDLIFE_2026H2/2026_하반기_중장년_디지털전환_공고.md",
+      "canonical_markdown_sha256": "6c4016cde5ac1ef6159e574263f0e5f2256c84eba11fbe564edc8a5c9488f1e7",
+      "saved_html_path": "data/raw_re/policy/selected/2026-08-15/POL_SEOUL_DIGITAL_MIDLIFE_2026H2/official_page.html",
+      "official_url": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000123844",
+      "ingestion_mode": "markdown_body_html_link_only"
+    },
+    {
+      "policy_id": "POL_SEOUL_FAMILY_FRIENDLY_EMPLOYER_2026",
+      "policy_version": "2026-03-11",
+      "canonical_markdown_path": "data/raw_re/policy/selected/2026-08-17/POL_SEOUL_FAMILY_FRIENDLY_EMPLOYER_2026/2026년 서울시 육아휴직·출산휴가 기업지원금 및 출산휴가급여 근로자지원금 신청 공고문.md",
+      "canonical_markdown_sha256": "fc5139f35bbb848c882e81978e08203f3ad017a7a82e40ef114a54fe5558227d",
+      "saved_html_path": null,
+      "official_url": "https://pointseoul.or.kr/",
+      "ingestion_mode": "markdown_body_html_link_only"
+    },
+    {
+      "policy_id": "POL_SEOUL_FUND_2026",
+      "policy_version": "2026-05-04-change",
+      "canonical_markdown_path": "data/raw_re/policy/seoul_fund/2026/2026년도 서울특별시 중소기업육성자금 융자지원 변경계획 공고/2026년_중소기업육성자금_융자지원_변경계획_공고.md",
+      "canonical_markdown_sha256": "f9ff4bb1f840fb468e10240d25084dee7018b31a84895daa812ae313d0856419",
+      "saved_html_path": null,
+      "official_url": "https://www.seoul.go.kr/news/news_notice.do?nttNo=457365",
+      "ingestion_mode": "markdown_body_html_link_only"
+    },
+    {
+      "policy_id": "POL_SEOUL_HOSPITAL_LIVING_EXPENSE_2026",
+      "policy_version": "2026-07-24",
+      "canonical_markdown_path": "data/raw_re/policy/selected/2026-08-17/POL_SEOUL_HOSPITAL_LIVING_EXPENSE_2026/서울형_입원_생활비_지원.md",
+      "canonical_markdown_sha256": "f75bf76bde26b6d3298516f19fade8e6dea771217ebd4fd44de2c3021810b5ff",
+      "saved_html_path": null,
+      "official_url": "https://news.seoul.go.kr/economy/archives/508129",
+      "ingestion_mode": "markdown_body_html_link_only"
+    },
+    {
+      "policy_id": "POL_SEOUL_IEUM_SAVINGS_2026",
+      "policy_version": "2026-05-22",
+      "canonical_markdown_path": "data/raw_re/policy/selected/2026-08-17/POL_SEOUL_IEUM_SAVINGS_2026/2026년 서울형 이음공제 사업 공고문.md",
+      "canonical_markdown_sha256": "49d3e9b58b880289dfe6173df82add9ad636a909c075e68010eac2ebc845a555",
+      "saved_html_path": null,
+      "official_url": "https://news.seoul.go.kr/economy/archives/572616",
+      "ingestion_mode": "markdown_body_html_link_only"
+    },
+    {
+      "policy_id": "POL_SEOUL_PRIVATE_CHILDCARE_2026",
+      "policy_version": "2026-05-26-3rd",
+      "canonical_markdown_path": "data/raw_re/policy/selected/2026-08-17/POL_SEOUL_PRIVATE_CHILDCARE_2026/소상공인 민간 아이돌봄서비스 지원.md",
+      "canonical_markdown_sha256": "3ece454876e3938b0a28a7d77a0fe10a10f0f98681e8687e02020d2e590e6daa",
+      "saved_html_path": null,
+      "official_url": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000122913",
+      "ingestion_mode": "markdown_body_html_link_only"
+    },
+    {
+      "policy_id": "POL_SEOUL_RESTART_2026",
+      "policy_version": "2026-07-16",
+      "canonical_markdown_path": "data/raw_re/policy/selected/2026-08-15/POL_SEOUL_RESTART_2026/2026년 소상공인 '서울형 다시서기 프로젝트' 하반기 신청 안내.md",
+      "canonical_markdown_sha256": "1ce8947739582e495ba69e236e3a143e376cfc195e493ce6a81b208ea7cb7b97",
+      "saved_html_path": "data/raw_re/policy/selected/2026-08-15/POL_SEOUL_RESTART_2026/official_page.html",
+      "official_url": "https://news.seoul.go.kr/economy/archives/573571",
+      "ingestion_mode": "markdown_body_html_link_only"
+    },
+    {
+      "policy_id": "POL_SEOUL_SAFETY_TEST_2026H2",
+      "policy_version": "2026-07-23",
+      "canonical_markdown_path": "data/raw_re/policy/selected/2026-08-15/POL_SEOUL_SAFETY_TEST_2026H2/2026_서울_소상공인_안전검사_하반기_지원사업_공고(생활용품_및_어린이제품).md",
+      "canonical_markdown_sha256": "8e901a89f0ede9c8065db92ee2b2f21fd0b4dc0b861612bcc7c408bb0e7dec1e",
+      "saved_html_path": "data/raw_re/policy/selected/2026-08-15/POL_SEOUL_SAFETY_TEST_2026H2/official_page.html",
+      "official_url": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000124676",
+      "ingestion_mode": "markdown_body_html_link_only"
+    },
+    {
+      "policy_id": "POL_SEOUL_YELLOW_UMBRELLA_2026",
+      "policy_version": "2026-08-12",
+      "canonical_markdown_path": "data/raw_re/policy/selected/2026-08-17/POL_SEOUL_YELLOW_UMBRELLA_2026/서울시_노란우산공제_희망장려금.md",
+      "canonical_markdown_sha256": "99a328b01c435ecf4cdc0e069fedb3ca3b6d08c3561df7df2bf688abd5addc1a",
+      "saved_html_path": null,
+      "official_url": "https://news.seoul.go.kr/economy/archives/568855",
+      "ingestion_mode": "markdown_body_html_link_only"
+    },
+    {
+      "policy_id": "POL_SEOUL_ZERO_MARKET_2026_2",
+      "policy_version": "2026-06-17-2nd",
+      "canonical_markdown_path": "data/raw_re/policy/selected/2026-08-15/POL_SEOUL_ZERO_MARKET_2026_2/2026_서울제로마켓_활성화_사업_참여자_2차_공고.md",
+      "canonical_markdown_sha256": "6a23c108209243aedbd45e46673388ec812f6ed7789a351a50d05489a70f5bc7",
+      "saved_html_path": "data/raw_re/policy/selected/2026-08-15/POL_SEOUL_ZERO_MARKET_2026_2/official_page.html",
+      "official_url": "https://www.bizinfo.go.kr/sii/siia/selectSIIA200Detail.do?pblancId=PBLN_000000000123336",
+      "ingestion_mode": "markdown_body_html_link_only"
+    }
+  ],
+  "retrieval_evaluation": {
+    "oracle_cases": 40,
+    "retrieval_cases": 32,
+    "safety_cases": 8,
+    "metrics": {
+      "bm25": {
+        "candidate_recall_at_5": 0.953125,
+        "hit_rate_at_5": 0.96875,
+        "mean_reciprocal_rank": 0.8229166666666666,
+        "total_latency_ms": 1722.5
+      },
+      "vector-small": {
+        "candidate_recall_at_5": 0.921875,
+        "hit_rate_at_5": 0.96875,
+        "mean_reciprocal_rank": 0.7119791666666667,
+        "total_latency_ms": 15612.7
+      },
+      "hybrid-small": {
+        "candidate_recall_at_5": 0.984375,
+        "hit_rate_at_5": 1.0,
+        "mean_reciprocal_rank": 0.8890625,
+        "total_latency_ms": 4573.5
+      },
+      "vector-large": {
+        "candidate_recall_at_5": 0.984375,
+        "hit_rate_at_5": 1.0,
+        "mean_reciprocal_rank": 0.7989583333333333,
+        "total_latency_ms": 22926.6
+      },
+      "hybrid-large": {
+        "candidate_recall_at_5": 1.0,
+        "hit_rate_at_5": 1.0,
+        "mean_reciprocal_rank": 0.8723958333333334,
+        "total_latency_ms": 7273.4
+      }
+    },
+    "selected_variant": "hybrid-large",
+    "selection_approved_by_user": true,
+    "thresholds": {
+      "candidate_recall_at_5": 0.95,
+      "hit_rate_at_5": 0.95,
+      "mean_reciprocal_rank": 0.8
+    },
+    "new_policy_hit_rate_at_5": 1.0,
+    "safety_pass_rate": 1.0,
+    "quality_gate_passed": true
+  },
+  "runtime": "text-embedding-3-large_3072d_hybrid_with_bm25_fallback",
+  "embedding_request_contract": {
+    "timeout_seconds": 5,
+    "max_attempts_per_user_action": 2,
+    "retryable": [
+      "HTTP 429",
+      "HTTP 5xx",
+      "connection",
+      "timeout",
+      "response_json"
+    ],
+    "fallback": "bm25",
+    "rate_limit": "account_usage_tier_dependent_no_fixed_assumption",
+    "price_usd_per_million_input_tokens": 0.13
+  },
+  "privacy_contract": {
+    "approved_embedding_fields": [
+      "district_name",
+      "industry_major_group",
+      "revenue_trend_band",
+      "fixed_cost_band",
+      "debt_burden_band",
+      "cash_risk_band",
+      "user_goal"
+    ],
+    "raw_eligibility_answers_external": false,
+    "service_persistence": false,
+    "openai_default_abuse_monitoring_notice": "up_to_30_days"
+  },
+  "approved_contract": "reports/re_stage8_2/approved_contract.md",
+  "checks": {
+    "policy_count_matches_db_metadata": true,
+    "chunk_count_matches_db_metadata": true,
+    "html_body_indexed_is_false": true,
+    "canonical_markdown_hashes_match": true,
+    "both_embedding_models_complete": true,
+    "queries_are_not_persisted": true,
+    "policy_metadata_complete": true,
+    "approved_contract_present": true,
+    "selected_hybrid_quality_gate_passed": true,
+    "safety_cases_all_passed": true
+  },
+  "gate_passed": true,
+  "gate_blockers": [],
+  "scope_exclusion": "산재보험료 지원은 올바른 사용자 검토 Markdown 적재 전까지 제외"
+}

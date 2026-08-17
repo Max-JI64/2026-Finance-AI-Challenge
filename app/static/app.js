@@ -1,8 +1,9 @@
 const state = {
   data: null, areaPoints: [], industries: [], selectedArea: null, selectedDong: "",
   marketScenarios: null, scenario: "central", goal: "최소부채", selectedAlternative: null,
-  revenueMonths: 3, mapLevel: "district", map: null, circleLayer: null, circles: new Map(),
-  visibleDongDistrict: "", visibleAreaScope: "",
+  revenueMonths: 6, mapLevel: "district", map: null, circleLayer: null, circles: new Map(),
+  visibleDongDistrict: "", visibleAreaScope: "", policies: [], chatMessages: [], chatTurns: 0,
+  eligibilityAnswers: {}, policyScenarioValues: {},
 };
 
 const byId = (id) => document.getElementById(id);
@@ -15,7 +16,7 @@ const compactMoney = (value) => {
   return `${amount.toLocaleString("ko-KR")}원`;
 };
 const safeUrl = (value) => { try { const parsed = new URL(value); return ["https:", "http:"].includes(parsed.protocol) ? escapeHtml(parsed.href) : "#"; } catch { return "#"; } };
-const scenarioLabels = { downside: "매출 환경이 약해질 때", central: "최근 추세가 이어질 때", recovery: "매출 환경이 나아질 때" };
+const scenarioLabels = { downside: "하방 범위", central: "기준 범위", recovery: "회복 범위" };
 const industryMajorLabels = { CS1: "외식업", CS2: "서비스업", CS3: "소매업" };
 const policyNames = {
   POL_SEOUL_CRISIS_TRACK2_2026H2: "위기 소상공인 지원",
@@ -48,11 +49,11 @@ const mapPalette = {
   selected: { stroke: "#102a56", fill: "#2563eb" },
 };
 const presentationPresets = {
-  "cash-rich": { revenues: [1800, 1750, 1700], cash: 3000, rent: 200, labor: 450, purchase: 400, loan: 1000, rate: 4, term: 48 },
-  stable: { revenues: [1200, 1180, 1150], cash: 1200, rent: 180, labor: 350, purchase: 300, loan: 1500, rate: 5, term: 36 },
-  "sales-down": { revenues: [700, 850, 1000], cash: 500, rent: 180, labor: 350, purchase: 280, loan: 2000, rate: 6.5, term: 36 },
-  "high-fixed": { revenues: [1000, 1050, 1100], cash: 400, rent: 300, labor: 500, purchase: 250, loan: 1500, rate: 6, term: 30 },
-  "debt-heavy": { revenues: [1100, 1150, 1200], cash: 300, rent: 180, labor: 300, purchase: 250, loan: 5000, rate: 9, term: 24 },
+  "cash-rich": { revenues: [1800, 1780, 1760, 1740, 1710, 1680], cash: 3000, rent: 200, labor: 450, purchase: 400, loan: 1000, rate: 4, term: 48 },
+  stable: { revenues: [1200, 1190, 1210, 1180, 1200, 1190], cash: 1200, rent: 180, labor: 350, purchase: 300, loan: 1500, rate: 5, term: 36 },
+  "sales-down": { revenues: [700, 760, 820, 880, 940, 1000], cash: 500, rent: 180, labor: 350, purchase: 280, loan: 2000, rate: 6.5, term: 36 },
+  "high-fixed": { revenues: [1000, 1020, 1040, 1060, 1080, 1100], cash: 400, rent: 300, labor: 500, purchase: 250, loan: 1500, rate: 6, term: 30 },
+  "debt-heavy": { revenues: [1100, 1120, 1140, 1160, 1180, 1200], cash: 300, rent: 180, labor: 300, purchase: 250, loan: 5000, rate: 9, term: 24 },
 };
 
 function toast(message) {
@@ -331,8 +332,10 @@ function populateIndustries(major, selected = "") {
 }
 
 async function loadCatalogs() {
-  const [areas, industries] = await Promise.all([api("/api/v1/catalog/area-map"), api("/api/v1/catalog/industries")]);
-  state.areaPoints = areas.items; state.industries = industries.items;
+  const [areas, industries, policies] = await Promise.all([api("/api/v1/catalog/area-map"), api("/api/v1/catalog/industries"), api("/api/v1/catalog/policies")]);
+  state.areaPoints = areas.items; state.industries = industries.items; state.policies = policies.items;
+  state.policies.forEach((item) => { policyNames[item.policy_id] = item.policy_name; });
+  byId("qa-policy").innerHTML = `<option value="">전체 정책에서 찾기</option>${state.policies.map((item) => `<option value="${escapeHtml(item.policy_id)}">${escapeHtml(item.policy_name)}</option>`).join("")}`;
   const districts = [...new Set(state.areaPoints.map((item) => item.district))].sort((a, b) => a.localeCompare(b, "ko"));
   byId("district-select").innerHTML = `<option value="">서울 전체</option>${districts.map((name) => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join("")}`;
   const majors = [...new Set(state.industries.map((item) => industryMajor(item.code)))].filter(Boolean);
@@ -374,9 +377,39 @@ function referenceDate() {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-01`;
 }
 
+const coreEligibilityFields = new Set(["business_scale", "opening_date", "employee_count", "is_operating", "rented_exclusive_place", "self_owned_place", "sales_decreased", "disaster_document", "tax_paid", "fund_restricted_industry", "policy_loan_restricted_industry", "prior_crisis_support", "prior_closure_support", "prior_digital_support", "subfund_selected", "zero_market_operation", "eligible_business_registration", "shared_office_only", "consignment_only", "duplicate_public_support", "safety_product_business", "ncb_919_or_below", "maturity_extension_difficulty", "common_loan_restriction"]);
+
+function eligibilityProfilePayload() {
+  const profile = { policy_answers: {} };
+  Object.entries(state.eligibilityAnswers).forEach(([field, value]) => {
+    if (value === "" || value == null || value === "unknown") return;
+    if (coreEligibilityFields.has(field)) profile[field] = field === "employee_count" ? Number(value) : value;
+    else profile.policy_answers[field] = value;
+  });
+  return profile;
+}
+
+function policyScenarioPayload() {
+  const scenarios = [];
+  const employment = state.policyScenarioValues.POL_SEMAS_EMPLOYMENT_INSURANCE_2026 || {};
+  if (employment.grade && ["true", "false"].includes(employment.inBaseline)) scenarios.push({
+    policy_id: "POL_SEMAS_EMPLOYMENT_INSURANCE_2026",
+    employment_insurance_grade: Number(employment.grade),
+    expense_already_in_baseline: employment.inBaseline === "true",
+  });
+  const family = state.policyScenarioValues.POL_SEOUL_FAMILY_FRIENDLY_EMPLOYER_2026 || {};
+  if (family.amount && family.paymentDate) scenarios.push({
+    policy_id: "POL_SEOUL_FAMILY_FRIENDLY_EMPLOYER_2026",
+    approved_support_amount: Math.round(Number(family.amount) * 10000),
+    payment_date: family.paymentDate,
+  });
+  return scenarios;
+}
+
 async function loadMarketScenarios() {
   if (!state.selectedArea || !byId("industry-select").value) return;
-  byId("model-period").textContent = "자료 확인 중";
+  byId("model-period").textContent = "기준자료 확인 중";
+  byId("model-period-help").textContent = "선택한 상권·업종의 마지막 집계시점을 확인하고 있습니다.";
   try {
     const payload = await api(`/api/v1/market-scenarios/${encodeURIComponent(state.selectedArea.code)}/${encodeURIComponent(byId("industry-select").value)}`);
     state.marketScenarios = payload.market_scenario;
@@ -384,9 +417,11 @@ async function loadMarketScenarios() {
     if (state.marketScenarios.available) {
       ["downside", "central", "recovery"].forEach((name, index) => { const item = state.marketScenarios.scenarios[name]; nodes[index].querySelector("b").textContent = `13주 ${formatPercent(item.thirteen_week_percent)} · 6개월 ${formatPercent(item.six_month_percent)}`; });
       const period = String(state.marketScenarios.reference_period);
-      byId("model-period").textContent = period.length === 5 ? `${period.slice(0, 4)}년 ${period.slice(4)}분기 자료` : `${period} 자료`;
-    } else { nodes.forEach((node) => node.querySelector("b").textContent = "집계자료 없음"); byId("model-period").textContent = "상권 변화 0%로 계산"; }
-  } catch { state.marketScenarios = null; byId("model-period").textContent = "상권 자료를 불러오지 못함"; }
+      const periodLabel = period.length === 5 ? `${period.slice(0, 4)}년 ${period.slice(4)}분기` : period;
+      byId("model-period").textContent = `모델 입력 기준 · ${periodLabel}`;
+      byId("model-period-help").textContent = `${periodLabel}까지 집계된 상권·업종 자료를 모델 입력으로 사용해 이후 13주와 6개월의 변화 범위를 계산합니다. 현재 실시간 자료나 내 점포 실적을 뜻하지 않습니다.`;
+    } else { nodes.forEach((node) => node.querySelector("b").textContent = "집계자료 없음"); byId("model-period").textContent = "모델 자료 없음"; byId("model-period-help").textContent = "선택한 조합의 모델 입력자료가 없어 상권 변화율 0%로 계산합니다."; }
+  } catch { state.marketScenarios = null; byId("model-period").textContent = "기준자료 불러오기 실패"; byId("model-period-help").textContent = "상권 변화율을 불러오지 못해 입력한 재무정보만으로 계산합니다."; }
 }
 function formatPercent(value) { return `${Number(value) > 0 ? "+" : ""}${Number(value).toLocaleString("ko-KR", { maximumFractionDigits: 1 })}%`; }
 
@@ -412,6 +447,8 @@ async function runComparison(next = "diagnosis", navigate = true) {
     },
     existing_loan_rate_percent: loanBalance ? numericValue("loan-rate") : 0,
     existing_loan_term_months: loanBalance ? numericValue("loan-term") : 1,
+    eligibility_profile: eligibilityProfilePayload(),
+    policy_scenarios: policyScenarioPayload(),
   };
   const button = next === "diagnosis" ? byId("run-diagnosis") : byId("diagnosis-next");
   const original = button.textContent; button.disabled = true; button.textContent = "계산 중";
@@ -430,11 +467,14 @@ async function applyPreset(id) {
   if (!preset || !area || !industry) return toast("준비된 가게 상황을 불러오지 못했습니다.");
   selectArea(area.code, false, false);
   const major = industryMajor(industry.code); byId("industry-major-select").value = major; populateIndustries(major, industry.code);
-  state.revenueMonths = 3; renderRevenueMonths(preset.revenues);
+  state.revenueMonths = preset.revenues.length; renderRevenueMonths(preset.revenues);
   [["opening-cash", preset.cash], ["monthly-rent", preset.rent], ["monthly-labor", preset.labor], ["monthly-purchase", preset.purchase], ["loan-balance", preset.loan], ["loan-rate", preset.rate], ["loan-term", preset.term]].forEach(([field, value]) => { byId(field).value = value; });
   byId("revenue-timing").value = "daily"; byId("expense-timing").value = "early"; byId("debt-timing").value = "late";
   state.scenario = "central"; document.querySelector('input[name="market-scenario"][value="central"]').checked = true;
-  updateSummary(); await loadMarketScenarios(); await runComparison("decision");
+  document.querySelectorAll("[data-preset]").forEach((node) => node.classList.toggle("is-selected", node.dataset.preset === id));
+  byId("preset-status").textContent = "6개월 재무정보를 채웠습니다. 아래 사업장을 확인한 뒤 재무 입력과 현금 진단을 순서대로 볼 수 있습니다.";
+  updateSummary(); await loadMarketScenarios(); await runComparison("diagnosis", false);
+  toast("6개월 입력을 채웠습니다. 현재 화면에서 다음 단계로 진행하세요.");
 }
 
 async function runCsvBaseline() {
@@ -449,6 +489,8 @@ async function runCsvBaseline() {
 }
 
 function firstBelowSafe(weekly, safeCash) { const found = weekly.find((item) => item.closing_cash < safeCash); return found ? `${found.period}주차 (${found.end_date})` : "13주 내 없음"; }
+function scenarioComparison() { return state.data?.market_scenario_comparison || []; }
+function scenarioValuesDiffer(selector) { const values = scenarioComparison().map(selector); return new Set(values.map((value) => String(value))).size > 1; }
 function renderResults() {
   byId("diagnosis-empty").hidden = true; byId("diagnosis-result").hidden = false; byId("decision-empty").hidden = true; byId("decision-result").hidden = false; byId("diagnosis-next").disabled = false;
   const inputBaseline = state.data.baseline_cashflow;
@@ -457,9 +499,57 @@ function renderResults() {
   const week13EndingCash = baselineAlternative?.metrics?.week13_ending_cash ?? inputBaseline.weekly_summary.ending_cash;
   const month6EndingCash = baselineAlternative?.metrics?.month6_ending_cash ?? inputBaseline.monthly_summary.ending_cash;
   const safeCash = state.data.safe_cash.suggested_amount;
-  byId("diagnosis-metrics").innerHTML = [["현재 보유 현금", compactMoney(inputBaseline.weekly_13[0]?.opening_cash ?? state.data.baseline_input.opening_cash), "진단 시작 금액"], ["필요한 안전현금", compactMoney(safeCash), "앞으로 28일 필수 지출"], ["안전현금 아래", firstBelowSafe(weekly, safeCash), "현금 여유가 줄어드는 시점"], ["13주 뒤 현금", compactMoney(week13EndingCash), week13EndingCash < 0 ? "현금 부족 예상" : "0원 이상 유지"]].map(([label, value, note]) => `<div class="metric"><span>${label}</span><strong>${escapeHtml(value)}</strong><small>${escapeHtml(note)}</small></div>`).join("");
-  byId("six-month-summary").innerHTML = `<dt>현금 잔액</dt><dd>${compactMoney(month6EndingCash)}</dd><dt>남은 대출</dt><dd>${compactMoney(inputBaseline.debt_summary.remaining_principal_at_6_months)}</dd><dt>만기까지 총이자</dt><dd>${compactMoney(baselineAlternative?.metrics?.total_interest_through_maturity ?? inputBaseline.debt_summary.total_interest_through_maturity)}</dd>`;
-  renderAlternatives(); renderCharts();
+  const safeDateChanges = scenarioValuesDiffer((item) => firstBelowSafe(item.weekly_13, safeCash));
+  const week13Changes = scenarioValuesDiffer((item) => item.week13_ending_cash);
+  const month6Changes = scenarioValuesDiffer((item) => item.month6_ending_cash);
+  const metrics = [
+    ["현재 보유 현금", compactMoney(inputBaseline.weekly_13[0]?.opening_cash ?? state.data.baseline_input.opening_cash), "상권 범위와 무관한 입력값", false],
+    ["필요한 안전현금", compactMoney(safeCash), "향후 28일 필수 지출이라 범위 선택과 무관", false],
+    ["안전현금 아래", firstBelowSafe(weekly, safeCash), "선택한 상권 범위에 따라 달라짐", safeDateChanges],
+    ["13주 뒤 현금", compactMoney(week13EndingCash), week13EndingCash < 0 ? "선택 범위에서 현금 부족 예상" : "선택 범위에서 0원 이상 유지", week13Changes],
+  ];
+  byId("diagnosis-metrics").innerHTML = metrics.map(([label, value, note, changes]) => `<div class="metric ${changes ? "is-scenario-sensitive" : "is-fixed"}"><span>${label}</span><strong>${escapeHtml(value)}</strong><small>${escapeHtml(note)}</small></div>`).join("");
+  byId("six-month-summary").innerHTML = `<dt class="${month6Changes ? "is-scenario-sensitive" : ""}">현금 잔액</dt><dd class="${month6Changes ? "is-scenario-sensitive" : ""}">${compactMoney(month6EndingCash)}</dd><dt>남은 대출</dt><dd>${compactMoney(inputBaseline.debt_summary.remaining_principal_at_6_months)}</dd><dt>만기까지 총이자</dt><dd>${compactMoney(baselineAlternative?.metrics?.total_interest_through_maturity ?? inputBaseline.debt_summary.total_interest_through_maturity)}</dd>`;
+  renderAlternatives(); renderPolicyDiscovery(); renderCharts();
+}
+
+function renderPolicyDiscovery() {
+  const discovery = state.data?.policy_discovery;
+  if (!discovery) return;
+  byId("situation-labels").innerHTML = (discovery.situation_labels || []).map((label) => `<span>${escapeHtml(label)}</span>`).join("");
+  const mode = discovery.retrieval_mode === "hybrid" ? `Hybrid AI 검색 · ${discovery.embedding_model}` : discovery.retrieval_mode === "bm25_fallback" ? "Embedding 2회 실패 · 정확어 검색으로 계속" : "정확어 검색";
+  byId("policy-discovery-status").textContent = `${mode}. ${discovery.privacy || ""}`;
+  const hasScenarioInputs = (discovery.candidates || []).some((item) => item.candidate_state !== "제외" && ["reviewed_event_requires_grade", "reviewed_event_requires_amount_date"].includes(item.event_status));
+  renderStagedQuestions(discovery.staged_questions || [], hasScenarioInputs);
+  byId("policy-discovery-cards").innerHTML = (discovery.candidates || []).map((item) => `<article class="policy-discovery-card"><div><span class="policy-readiness">${escapeHtml(item.eligibility_readiness)}</span><h3>${escapeHtml(item.policy_name)}</h3><p class="matched-section">찾은 근거: ${escapeHtml(item.matched_section)}</p><p>${escapeHtml(String(item.match_explanation || "").replace(/[#|>*_]/g, " ").replace(/\s+/g, " "))}</p><small>${escapeHtml(item.simulation_readiness)}</small>${renderPolicyScenarioInputs(item)}</div><div class="policy-card-actions"><a href="${safeUrl(item.official_url)}" target="_blank" rel="noreferrer">공고 보기</a><button type="button" class="primary" data-ask-policy="${escapeHtml(item.policy_id)}">이 정책 질문하기</button></div></article>`).join("") || '<p class="field-help">현재 입력에서 추가 정책 후보를 찾지 못했습니다.</p>';
+  bindPolicyScenarioInputs();
+}
+
+function renderStagedQuestions(questions, hasScenarioInputs = false) {
+  const panel = byId("staged-question-panel");
+  panel.hidden = !questions.length && !hasScenarioInputs;
+  byId("staged-questions").innerHTML = questions.map((item) => {
+    const value = state.eligibilityAnswers[item.field] ?? "";
+    const control = item.input_type === "date" ? `<input type="date" data-eligibility-field="${escapeHtml(item.field)}" value="${escapeHtml(value)}">` : item.input_type === "number" ? `<input type="number" min="0" max="10000" step="1" data-eligibility-field="${escapeHtml(item.field)}" value="${escapeHtml(value)}" placeholder="모르면 비워두기">` : `<select data-eligibility-field="${escapeHtml(item.field)}"><option value="">모름</option>${(item.options || []).filter((option) => option.value !== "unknown").map((option) => `<option value="${escapeHtml(option.value)}" ${value === option.value ? "selected" : ""}>${escapeHtml(option.label)}</option>`).join("")}</select>`;
+    return `<div class="staged-question"><label>${escapeHtml(item.label)}</label>${control}<small>${escapeHtml(item.reason)} ${escapeHtml(item.impact)}</small></div>`;
+  }).join("");
+  document.querySelectorAll("[data-eligibility-field]").forEach((node) => node.addEventListener("change", () => { state.eligibilityAnswers[node.dataset.eligibilityField] = node.value; }));
+}
+
+function renderPolicyScenarioInputs(item) {
+  if (item.candidate_state === "제외") return "";
+  const saved = state.policyScenarioValues[item.policy_id] || {};
+  if (item.event_status === "reviewed_event_requires_grade") return `<div class="policy-scenario-inputs" data-policy-scenario="${escapeHtml(item.policy_id)}"><label>고용보험 가입등급<select data-scenario-key="grade"><option value="">선택</option>${[1,2,3,4,5,6,7].map((grade) => `<option value="${grade}" ${String(saved.grade) === String(grade) ? "selected" : ""}>${grade}등급</option>`).join("")}</select></label><label>보험료가 현재 월지출에 포함됐나요?<select data-scenario-key="inBaseline"><option value="">모름</option><option value="true" ${saved.inBaseline === "true" ? "selected" : ""}>예</option><option value="false" ${saved.inBaseline === "false" ? "selected" : ""}>아니오</option></select></label></div>`;
+  if (item.event_status === "reviewed_event_requires_amount_date") return `<div class="policy-scenario-inputs" data-policy-scenario="${escapeHtml(item.policy_id)}"><label>실제 신청금액<input type="number" min="1" max="450" step="1" data-scenario-key="amount" value="${escapeHtml(saved.amount || "")}" placeholder="만원"></label><label>공고 차수 지급예정일<input type="date" data-scenario-key="paymentDate" value="${escapeHtml(saved.paymentDate || "")}"></label></div>`;
+  return "";
+}
+
+function bindPolicyScenarioInputs() {
+  document.querySelectorAll("[data-policy-scenario]").forEach((group) => {
+    const policyId = group.dataset.policyScenario;
+    state.policyScenarioValues[policyId] ||= {};
+    group.querySelectorAll("[data-scenario-key]").forEach((node) => node.addEventListener("change", () => { state.policyScenarioValues[policyId][node.dataset.scenarioKey] = node.value; }));
+  });
 }
 
 function humanizeText(value) {
@@ -545,15 +635,17 @@ function drawChart(canvas, series, safeCash = null, interactive = false) {
   for (let i = 0; i <= 4; i += 1) { const value = min + (max - min) * i / 4, py = y(value); ctx.strokeStyle = colors.line; ctx.beginPath(); ctx.moveTo(pad.left, py); ctx.lineTo(width - pad.right, py); ctx.stroke(); ctx.fillStyle = colors.text; ctx.fillText(`${Math.round(value / 10000).toLocaleString("ko-KR")}만`, 25, py + 4); }
   ctx.save(); ctx.translate(14, height / 2); ctx.rotate(-Math.PI / 2); ctx.fillStyle = colors.text; ctx.textAlign = "center"; ctx.fillText("현금 잔액(만원)", 0, 0); ctx.restore();
   canvas._seriesHit = [];
-  series.forEach((item) => { const points = item.values.map((value, index) => ({ x: x(index), y: y(value) })); ctx.strokeStyle = item.color; ctx.globalAlpha = item.opacity ?? 1; ctx.lineWidth = item.width || 3; ctx.beginPath(); points.forEach((point, index) => index ? ctx.lineTo(point.x, point.y) : ctx.moveTo(point.x, point.y)); ctx.stroke(); ctx.globalAlpha = 1; if (interactive && item.id) canvas._seriesHit.push({ id: item.id, points }); });
+  series.forEach((item) => { const points = item.values.map((value, index) => ({ x: x(index), y: y(value) })); ctx.strokeStyle = item.color; ctx.globalAlpha = item.opacity ?? 1; ctx.lineWidth = item.width || 3; ctx.lineCap = "round"; ctx.setLineDash(item.dash || []); ctx.beginPath(); points.forEach((point, index) => index ? ctx.lineTo(point.x, point.y) : ctx.moveTo(point.x, point.y)); ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = 1; if (interactive && item.id) canvas._seriesHit.push({ id: item.id, points }); });
   ctx.fillStyle = colors.text; ctx.textAlign = "center"; series[0].values.forEach((_, index) => { if (index === 0 || index === series[0].values.length - 1 || index % 2 === 0) ctx.fillText(`${index + 1}주`, x(index), height - 22); });
 }
 function renderCharts() {
   if (!state.data) return;
   const accent = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim();
   const alternatives = state.data.intervention_results.filter((item) => item.metrics), baseline = alternatives.find((item) => item.alternative_id === "no_action");
-  const diagnosisWeekly = baseline?.weekly_13 || state.data.baseline_cashflow.weekly_13;
-  drawChart(byId("baseline-chart"), [{ label: "예상 현금", color: accent, values: diagnosisWeekly.map((item) => item.closing_cash) }], state.data.safe_cash.suggested_amount);
+  const comparisons = scenarioComparison();
+  const scenarioSeries = comparisons.length ? comparisons.map((item) => ({ id: item.scenario, label: scenarioLabels[item.scenario], color: item.scenario === state.scenario ? accent : "#7f8984", opacity: item.scenario === state.scenario ? 1 : .5, width: item.scenario === state.scenario ? 4 : 2, dash: item.scenario === "downside" ? [8, 5] : item.scenario === "recovery" ? [2, 5] : [], values: item.weekly_13.map((week) => week.closing_cash) })).sort((left, right) => Number(left.id === state.scenario) - Number(right.id === state.scenario)) : [{ label: scenarioLabels[state.scenario], color: accent, values: (baseline?.weekly_13 || state.data.baseline_cashflow.weekly_13).map((item) => item.closing_cash) }];
+  byId("scenario-chart-legend").innerHTML = (comparisons.length ? comparisons : [{ scenario: state.scenario }]).map((item) => `<span class="${item.scenario === state.scenario ? "is-selected" : ""}"><i class="scenario-line scenario-line--${escapeHtml(item.scenario)}"></i>${escapeHtml(scenarioLabels[item.scenario])}${item.thirteen_week_percent == null ? "" : ` · 13주 ${escapeHtml(formatPercent(item.thirteen_week_percent))}`}</span>`).join("");
+  drawChart(byId("baseline-chart"), scenarioSeries, state.data.safe_cash.suggested_amount);
   const ordered = [...alternatives].sort((a, b) => Number(a.alternative_id === state.selectedAlternative) - Number(b.alternative_id === state.selectedAlternative));
   const series = ordered.map((item) => ({ id: item.alternative_id, label: item.label, color: item.alternative_id === state.selectedAlternative ? accent : "#7f8984", opacity: item.alternative_id === state.selectedAlternative ? 1 : .48, width: item.alternative_id === state.selectedAlternative ? 4 : 1.7, values: item.weekly_13.map((week) => week.closing_cash) }));
   byId("comparison-legend").innerHTML = alternatives.map((item) => `<button type="button" data-select-alternative="${escapeHtml(item.alternative_id)}" class="${item.alternative_id === state.selectedAlternative ? "is-selected" : ""}"><span></span>${escapeHtml(item.label)}</button>`).join("");
@@ -614,21 +706,70 @@ function openAlternative(id) {
   const dialog = byId("alternative-dialog"); if (typeof dialog.showModal === "function") dialog.showModal();
 }
 
+function appendChatMessage(role, content, extraHtml = "") {
+  const thread = byId("chat-thread");
+  const article = document.createElement("article");
+  article.className = `chat-message chat-message--${role}`;
+  article.innerHTML = `<div class="chat-avatar" aria-hidden="true">${role === "user" ? "나" : "AI"}</div><div class="chat-bubble"><p>${escapeHtml(content)}</p>${extraHtml}</div>`;
+  thread.appendChild(article);
+  thread.scrollTop = thread.scrollHeight;
+  return article;
+}
+
+function discoveredPolicyLinks(items = []) {
+  if (!items.length) return "";
+  return `<div class="chat-policy-results"><strong>함께 확인할 정책</strong>${items.map((item) => `<a href="${safeUrl(item.official_url)}" target="_blank" rel="noreferrer"><span>${escapeHtml(item.policy_name)}</span><small>${escapeHtml(humanizeText(item.matched_section))}</small></a>`).join("")}</div>`;
+}
+
+function updateChatLimit() {
+  const remaining = Math.max(0, 5 - state.chatTurns);
+  byId("chat-count").textContent = `${state.chatTurns} / 5회`;
+  byId("chat-send").disabled = remaining === 0;
+  byId("chat-question").disabled = remaining === 0;
+  byId("chat-question").placeholder = remaining === 0 ? "이번 상담의 5회 질문을 모두 사용했습니다." : "예: 제가 아파서 가게를 쉬면 받을 수 있는 지원이 있나요?";
+}
+
 async function askPolicy() {
-  const question = byId("qa-question").value.trim(); if (question.length < 2) return toast("질문을 입력해 주세요.");
-  const target = byId("qa-answer"); target.innerHTML = '<div class="loading-block"></div>';
+  if (state.chatTurns >= 5) return toast("정책 상담은 현재 페이지에서 5회까지 가능합니다.");
+  const input = byId("chat-question");
+  const question = input.value.trim();
+  if (question.length < 2) return toast("질문을 입력해 주세요.");
+  const history = state.chatMessages.slice(-8);
+  appendChatMessage("user", question);
+  state.chatMessages.push({ role: "user", content: question });
+  state.chatTurns += 1;
+  input.value = "";
+  updateChatLimit();
+  const pending = appendChatMessage("assistant", "공식 공고에서 관련 근거를 찾고 있습니다.");
+  pending.classList.add("is-loading");
   try {
-    const payload = await api("/api/v1/ai/ask", { method: "POST", body: JSON.stringify({ policy_id: byId("qa-policy").value, question }) });
+    const selectedPolicy = byId("qa-policy").value;
+    const payload = await api("/api/v1/ai/ask", { method: "POST", body: JSON.stringify({ policy_id: selectedPolicy || null, question, history }) });
     const links = evidenceLinks(payload.official_evidence);
-    target.innerHTML = `<strong>${payload.answer_source === "openai" ? "AI 설명" : "로컬 공식근거 요약"}</strong><p>${escapeHtml(payload.answer)}</p><div class="official-links evidence-links">${links}</div><p class="field-help">계산과 자격 판단은 AI가 만들거나 바꾸지 않습니다. 최신 조건은 공식기관에 확인하세요.</p>`;
-  } catch (error) { target.textContent = error.message; }
+    const extra = `${discoveredPolicyLinks(payload.discovered_policies)}${links ? `<div class="official-links evidence-links">${links}</div>` : ""}<p class="field-help">자격과 승인 여부는 공식기관에서 최종 확인하세요.</p>`;
+    pending.remove();
+    appendChatMessage("assistant", payload.answer, extra);
+    state.chatMessages.push({ role: "assistant", content: payload.answer });
+  } catch (error) {
+    pending.remove();
+    const message = `답변을 불러오지 못했습니다. ${error.message}`;
+    appendChatMessage("assistant", message);
+    state.chatMessages.push({ role: "assistant", content: message });
+  }
 }
 
 document.addEventListener("click", (event) => {
   const step = event.target.closest("[data-step]"); if (step) { event.preventDefault(); showStep(step.dataset.step); return; }
   const preset = event.target.closest("[data-preset]"); if (preset) { applyPreset(preset.dataset.preset); return; }
+  const questionExample = event.target.closest("[data-question-example]");
+  if (questionExample) {
+    byId("chat-question").value = questionExample.dataset.questionExample;
+    byId("chat-question").focus();
+    return;
+  }
   const detail = event.target.closest("[data-open-alternative]"); if (detail) { event.stopPropagation(); openAlternative(detail.dataset.openAlternative); return; }
   const alternative = event.target.closest("[data-select-alternative]"); if (alternative) selectAlternative(alternative.dataset.selectAlternative);
+  const askCandidate = event.target.closest("[data-ask-policy]"); if (askCandidate) { byId("qa-policy").value = askCandidate.dataset.askPolicy; byId("qa-section").scrollIntoView({ behavior: "smooth" }); byId("chat-question").focus(); return; }
   const level = event.target.closest("[data-map-level]");
   if (level?.dataset.mapLevel === "district") resetMapToSeoul();
   if (level?.dataset.mapLevel === "dong" && byId("district-select").value) { byId("dong-select").value = ""; state.selectedDong = ""; clearSelectedArea(); refreshAreaList(); renderDongCircles(true); }
@@ -649,15 +790,27 @@ byId("business-next").addEventListener("click", () => { try { validateBusiness()
 byId("add-revenue-month").addEventListener("click", () => { if (state.revenueMonths < 12) { state.revenueMonths += 1; renderRevenueMonths(); } });
 ["opening-cash", "monthly-rent", "monthly-labor", "monthly-purchase", "loan-balance"].forEach((id) => byId(id).addEventListener("input", updateSummary));
 byId("run-diagnosis").addEventListener("click", () => runComparison("diagnosis"));
+byId("apply-staged-answers").addEventListener("click", () => runComparison("decision", false));
 byId("diagnosis-next").addEventListener("click", () => showStep("decision"));
 byId("run-csv").addEventListener("click", runCsvBaseline);
 byId("comparison-chart").addEventListener("click", selectChartLine);
-document.querySelectorAll("input[name=market-scenario]").forEach((node) => node.addEventListener("change", () => { state.scenario = node.value; updateSummary(); if (state.data) runComparison("diagnosis"); }));
+document.querySelectorAll("input[name=market-scenario]").forEach((node) => node.addEventListener("change", async () => {
+  state.scenario = node.value;
+  updateSummary();
+  if (!state.data) return;
+  const completed = await runComparison("diagnosis", false);
+  if (completed) {
+    const result = byId("diagnosis-result");
+    result.scrollIntoView({ behavior: "smooth", block: "start" });
+    result.focus({ preventScroll: true });
+  }
+}));
 document.querySelectorAll("input[name=goal]").forEach((node) => node.addEventListener("change", () => { state.goal = node.value; if (state.data) runComparison("decision"); }));
 byId("conditional-assumption").addEventListener("change", () => { if (state.data) runComparison("diagnosis"); });
-byId("ask-button").addEventListener("click", askPolicy);
+byId("chat-send").addEventListener("click", askPolicy);
+byId("chat-question").addEventListener("keydown", (event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); askPolicy(); } });
 byId("dialog-close").addEventListener("click", () => byId("alternative-dialog").close());
-byId("dialog-ai").addEventListener("click", () => { byId("alternative-dialog").close(); byId("qa-section").scrollIntoView({ behavior: "smooth" }); byId("qa-question").focus(); });
+byId("dialog-ai").addEventListener("click", () => { byId("alternative-dialog").close(); byId("qa-section").scrollIntoView({ behavior: "smooth" }); byId("chat-question").focus(); });
 byId("alternative-dialog").addEventListener("click", (event) => {
   const dialog = event.currentTarget;
   const rect = dialog.getBoundingClientRect();
@@ -669,4 +822,5 @@ window.addEventListener("resize", () => state.data && renderCharts(), { passive:
 const today = new Date();
 byId("csv-reference").value = today.toISOString().slice(0, 10);
 renderRevenueMonths();
+updateChatLimit();
 loadCatalogs().catch(() => toast("상권과 업종 목록을 불러오지 못했습니다."));

@@ -5,9 +5,9 @@
 
 ## Project snapshot
 
-- Last updated: 2026-08-17T11:33+09:00
+- Last updated: 2026-08-17T13:54+09:00
 - Purpose: Build a working Seoul small-business policy-finance impact simulator whose hero compares 13-week survival and 6-month debt consequences across no action and representative interventions, using area-industry stress scenarios, schedule-based cash flow, official policy terms, and evidence-grounded AI explanations without causal-effect or personal-sales claims.
-- Important paths: `프로젝트 계획서.md` is the main MVP plan; `MVP 단계별 구현 체크리스트.md` is the execution and completion-gate document; `src/cashflow/` and `src/policy/` hold the completed RE3-RE4 engines; `config/re_stage5.yaml` and `reports/re_stage5/` hold the completed aggregate scenario model evidence; `src/policy/eligibility.py`, `src/rag/`, and `reports/re_stage6/` hold RE6; `src/recommendation/` and `reports/re_stage7/` hold the RE7 decision engine; `app/`, `src/integration/re_stage8.py`, `src/rag/local_db.py`, `src/rag/luna_client.py`, `config/re_stage8.yaml`, and `reports/re_stage8/` hold the completed RE8 local web/API/RAG integration; `data/raw_re/향후 데이터 다운로드 가이드.md` is the acquisition guide.
+- Important paths: `프로젝트 계획서.md` is the main MVP plan; `MVP 단계별 구현 체크리스트.md` is the execution and completion-gate document; `src/cashflow/` and `src/policy/` hold the completed RE3-RE4 engines; `config/re_stage5.yaml` and `reports/re_stage5/` hold the completed aggregate scenario model evidence; `src/policy/eligibility.py`, `src/rag/`, and `reports/re_stage6/` hold RE6; `src/recommendation/` and `reports/re_stage7/` hold the RE7 decision engine; `app/`, `src/integration/re_stage8.py`, `src/policy/discovery.py`, `src/policy/re_stage8_2_events.py`, `src/rag/hybrid_search.py`, `config/re_stage8.yaml`, and `reports/re_stage8_2/` hold the completed RE8.2 integration; `data/raw_re/향후 데이터 다운로드 가이드.md` is the acquisition guide.
 
 ## Durable decisions
 
@@ -20,10 +20,10 @@
 
 - `decision:implementation-checklist`
   - Created: 2026-08-14T20:21+09:00
-  - Updated: 2026-08-17T11:04+09:00
+  - Updated: 2026-08-17T13:54+09:00
   - Status: active
-  - Content: The checklist records completed Stage 0-6 and RE Stage 1-8.1 with Gate evidence; only RE9 deployment, policy-currentness refresh, live Luna check with a newly issued local key, and frozen eight-persona mock validation remain. RE8.1 exposes the four user tasks, a synchronized low-overlap commercial-area map and lists, recent finance input, RE5 scenarios, deterministic comparisons, execution planning, and local evidence-grounded AI explanation flow.
-  - Evidence: `MVP 단계별 구현 체크리스트.md` and Gate evidence under `reports/re_stage1/` through `reports/re_stage8/`.
+  - Content: The checklist records completed Stage 0-6 and RE Stage 1-8.2 with Gate evidence. RE8.2 passed after user approval of Hybrid-large 3072D, seven exact de-identified discovery fields, staged eligibility questions, a 40-case evaluation contract, five-second timeout, and at most two Embedding attempts before BM25 fallback. RE9 is now the next stage.
+  - Evidence: `MVP 단계별 구현 체크리스트.md`, `프로젝트 계획서.md`, and Gate evidence under `reports/re_stage1/` through `reports/re_stage8_2/`.
 
 - `decision:policy-source-hierarchy`
   - Created: 2026-08-15T21:23+09:00
@@ -41,17 +41,24 @@
 
 - `decision:re-stage3-input-calculation-contract`
   - Created: 2026-08-16T00:25+09:00
-  - Updated: 2026-08-17T10:06+09:00
+  - Updated: 2026-08-17T12:37+09:00
   - Status: active
-  - Content: Gate RE3 passed with `re3-v1`. RE8.1 takes 3-12 recent monthly revenues and all guided amounts in ten-thousand-won units, converts them to won before calculation, and maps revenue plus early/middle/late expense and debt categories to conservative, central, and favorable exact-date schedules. UTF-8-SIG Korean CSV uses `금액(만원)` and `잔액(만원)` while legacy Korean won and English headers remain supported; arbitrary depletion ranges remain forbidden.
+  - Content: Gate RE3 passed with `re3-v1`. RE8.1 now takes six recent monthly revenues by default and up to 12, with newest month first; it uses the rounded mean for the cash-flow baseline and newest-versus-oldest direction only for categorical policy discovery. Six months improve the stability of user-input cash context but do not retrain or increase the intrinsic precision of the independent area-industry LightGBM. All guided amounts are ten-thousand-won units and UTF-8-SIG Korean CSV remains supported.
   - Evidence: `src/cashflow/quick_mode.py`, `app/static/templates/`, `src/integration/re_stage8.py`, `tests/test_re_stage8.py`, and `reports/re_stage8/verification.md`; full tests 125 passed.
 
 - `decision:re-stage8-api-web-local-rag`
   - Created: 2026-08-17T08:19+09:00
-  - Updated: 2026-08-17T11:22+09:00
+  - Updated: 2026-08-17T13:54+09:00
   - Status: active
-  - Content: Gate RE8 remains `re8-api-v1.2`: the four-step UI keeps district, dong, and all commercial-area names visible, searches all Seoul, and selects district/dong/area from map-center zoom levels. Region or industry changes recalculate existing results. The four user goals now reorder eligible alternatives, expose the active goal-specific judgment value and table rank, and reset selection to the resulting top alternative; identical top choices across goals remain valid deterministic outcomes. The decision notice follows the currently selected alternative and replaces its rank status, intraperiod cash warning, eligibility caution, and policy-specific confirmation items on every card or graph selection. Duplicate evidence URLs are grouped, the modal closes from button or backdrop, Luna remains explanation-only, and OpenAI IDs and token usage are discarded.
-  - Evidence: `app/static/`, `src/integration/re_stage8.py`, `config/re_stage8.yaml`, `reports/re_stage8/manifest.json`, `reports/re_stage8/functional_spec.md`, `reports/re_stage8/verification.md`, and `tests/test_re_stage8.py`; RE7+RE8 tests 38 passed, JavaScript syntax passed, and visual validation remains user-owned.
+  - Content: Gate RE8 remains complete and the current API is `re8-api-v1.4`. Presentation presets and the four-step flow remain, while the decision screen now adds Hybrid policy discovery, staged questions, availability and eligibility separation, and reviewed dynamic alternatives. The five-turn page-memory chat remains explanation-only and locally redacts approved sensitive patterns before external calls.
+  - Evidence: `app/static/`, `src/integration/re_stage8.py`, `config/re_stage8.yaml`, `reports/re_stage8_2/`, and `tests/test_re_stage8_2.py`; all 144 tests, JavaScript syntax, whitespace checks, and current-code local browser rendering passed.
+
+- `decision:re-stage8-2-hybrid-policy-discovery-plan`
+  - Created: 2026-08-17T11:41+09:00
+  - Updated: 2026-08-17T13:54+09:00
+  - Status: complete
+  - Content: RE8.2 indexes 17 user-reviewed Markdown policies as 817 chunks plus complete small 1536D and large 3072D vectors, while HTML remains link-only. The approved runtime is large 3072D Hybrid with five-second timeout, no more than two attempts, and BM25 fallback. Seventeen policies have district, industry, availability, effective-date, version, Rule-engine, and Event-status metadata; ten use frozen RE6 Rules and seven use a separate deterministic overlay. Candidate-specific questions preserve unknown states, and only reviewed business-cash Events with explicit user financial inputs become dynamic RE7 alternatives. Personal living cash, restricted savings, service subsidies, out-of-horizon effects, and closed calls are not promoted.
+  - Evidence: `reports/re_stage8_2/approved_contract.md`, `reports/re_stage8_2/manifest.json`, `data/processed_re/policy/re_stage8_2/`, `src/policy/discovery.py`, `src/policy/re_stage8_2_events.py`, and `tests/test_re_stage8_2.py`; 40-case evaluation passed with Hybrid-large Recall@5 and Hit@5 1.000, MRR 0.872, new-policy Hit@5 1.000, safety 8/8, and all 144 project tests passed.
 
 - `decision:policy-pdf-text-only`
   - Created: 2026-08-17T11:04+09:00
@@ -111,9 +118,9 @@
 
 - `decision:re-stage2-policy-knowledge-base`
   - Created: 2026-08-16T00:08+09:00
-  - Updated: 2026-08-16T00:08+09:00
+  - Updated: 2026-08-17T13:16+09:00
   - Status: active
-  - Content: The user approved A+C as the final 10-policy MVP portfolio. RE2 preserves 27 official source records and structures 10 Metadata rows, 56 eligibility Rules, 20 reviewed eligibility examples, 30 financial Events, 11 versions, and 217 pre-index text chunks. Seoul funding is split into 17 sub-events, rechallenge into three types, and any missing amount, date, status, or process stays `미확인`; no RAG index was built.
+  - Content: The user approved A+C as the final 10-policy Rule/Event portfolio. RE2 preserves 27 source records and structures 10 Metadata rows, 56 eligibility Rules, 20 reviewed eligibility examples, 30 financial Events, 11 versions, and 217 pre-index text chunks. The user later deleted seven obsolete PDF/HWPX originals and approved reviewed Markdown as sufficient; eight affected manifest rows now point to the exact Markdown files with recomputed size and SHA-256. Missing amounts, dates, status, or processes remain `미확인`.
   - Evidence: `config/re_stage2.yaml`, `data/processed_re/policy/re_stage2/`, `reports/re_stage2/structured_qa.md`, `reports/re_stage2/verification.md`, and nine passing RE2 tests.
 
 - `convention:stage-result-feedback-loop`
@@ -401,29 +408,43 @@
 
 - `issue:re8-fixed-policy-candidate-routing`
   - Created: 2026-08-17T11:33+09:00
-  - Updated: 2026-08-17T11:33+09:00
-  - Status: open
+  - Updated: 2026-08-17T13:16+09:00
+  - Status: resolved
   - Symptom: User area, industry, revenue, cash, and debt inputs change the market scenario and cash flow, but do not dynamically discover policies across the approved portfolio; the comparison screen always builds the fixed Hero alternatives.
   - Cause: `compare_sample` calls `build_hero` and maps only hardcoded `HERO_POLICY_BY_ALTERNATIVE` policies, while the full deterministic eligibility engine is exposed through a separate API and the UI does not collect its broader profile fields.
-  - Fix: Proposed, not approved or implemented: generate candidates from structured user facts plus hybrid BM25 and semantic retrieval, apply official-rule eligibility as a hard gate, simulate only policies with structured financial Events, and retain deterministic four-goal ranking; embeddings must never override eligibility or cash-flow outcomes.
-  - Evidence: `src/integration/re_stage8.py`, `src/policy/eligibility.py`, `src/rag/local_db.py`, and `src/recommendation/engine.py`.
+  - Fix: RE8.2 now uses approved Hybrid retrieval across all 17 policies, asks only candidate-specific missing questions, applies frozen RE6 or separate reviewed overlay Rules, and feeds only verified business-cash Events with explicit user amounts and dates into the deterministic four-goal ranking. Embeddings and Luna never override eligibility or cash-flow outcomes.
+  - Evidence: `src/integration/re_stage8.py`, `src/policy/discovery.py`, `src/policy/re_stage8_2_events.py`, `src/rag/hybrid_search.py`, and `src/recommendation/engine.py`.
 
 ## Current handoff
 
 - `handoff:current`
-  - Updated: 2026-08-17T11:33+09:00
-  - Current state: RE8.1 goal ranking and selected-alternative notices are implemented. Policy RAG is text-only lexical BM25 over 227 chunks, and the user-input comparison currently uses fixed Hero policy candidates rather than discovering policies across the 10-policy portfolio. Luna receives retrieved text only for explanation.
-  - Next step: Await a material user decision on whether to add hybrid candidate discovery and whether embeddings run locally or through an external API. If approved, use structured eligibility as a hard gate, hybrid retrieval only for candidate recall and evidence, and deterministic cash-flow ranking for the final order.
-  - Blockers: Hybrid implementation changes service scope and requires an approved embedding approach; a local model file must be user-downloaded under the external-data rule, while API embeddings would require explicit external-transmission approval and a rotated key.
+  - Updated: 2026-08-17T13:54+09:00
+  - Current state: RE8.2 is complete and Gate-passed with 17 policies, 817 Markdown chunks, large 3072D Hybrid runtime, staged Rule questions, reviewed Event boundaries, dynamic RE7 alternatives, a frozen 40-case oracle, final Manifest, and local browser QA.
+  - Next step: Begin RE9 deployment and submission QA only when requested; verify the deployment account's Usage tier and API key, reproduce the eight synthetic personas including Hybrid fallback, and align final documents with the live URL.
+  - Blockers: No RE8.2 blocker. Industrial-accident insurance remains outside the frozen 17-policy set until the user supplies the correct Markdown and explicitly expands scope.
 
 ## Session log
 
+- `session:20260817-1318`
+  - Started: 2026-08-17T13:18+09:00
+  - Last activity: 2026-08-17T13:54+09:00
+  - Focus: Complete the user-approved RE8.2 Hybrid policy-discovery contract and close its Gate with executable evidence.
+  - Updated keys: `decision:implementation-checklist`, `decision:re-stage8-api-web-local-rag`, `decision:re-stage8-2-hybrid-policy-discovery-plan`, `issue:re8-fixed-policy-candidate-routing`, `handoff:current`
+  - Summary: Activated large 3072D Hybrid with a strict two-attempt maximum and BM25 fallback, added 17-policy metadata, staged questions, ten RE6 plus seven overlay Rule paths, and reviewed Event-to-RE7 dynamic alternatives while keeping personal or closed benefits out of business cash. Froze the privacy/cost contract and 40-case oracle; Hybrid-large reached Recall@5 1.000, Hit@5 1.000, MRR 0.872, new-policy Hit@5 1.000, and safety 8/8. All 144 tests, JavaScript syntax, whitespace checks, Manifest checks, and current-code local browser rendering passed; Gate RE8.2 is complete and RE9 is next.
+
+- `session:20260817-1152`
+  - Started: 2026-08-17T11:52+09:00
+  - Last activity: 2026-08-17T13:16+09:00
+  - Focus: Preserve and extend RE8.2 with user-reviewed policy Markdown, whole-catalog policy chat, and an exact implemented-versus-pending handoff.
+  - Updated keys: `decision:implementation-checklist`, `decision:re-stage3-input-calculation-contract`, `decision:re-stage8-api-web-local-rag`, `decision:re-stage8-2-hybrid-policy-discovery-plan`, `handoff:current`
+  - Summary: Migrated obsolete PDF/HWPX provenance to reviewed Markdown, deleted one misfiled duplicate, indexed four valid new policies for a total of 17 policies and 817 chunks with both vector sets, and replaced one-shot QA with a five-turn page-memory chat that searches the whole catalog and returns distinct policy links. Added illness and childcare examples plus deterministic query expansion; live Luna returned hospital living expense first with fact-lock passed, all 135 tests and JavaScript syntax passed, and the checklist/guide/Manifest now preserve the remaining RE8.2 Gate work.
+
 - `session:20260817-1130`
   - Started: 2026-08-17T11:30+09:00
-  - Last activity: 2026-08-17T11:33+09:00
-  - Focus: Verify the current retrieval architecture and assess hybrid search for both user-input policy discovery and AI evidence questions.
-  - Updated keys: `decision:re-stage6-eligibility-rag-safety`, `issue:re8-fixed-policy-candidate-routing`, `handoff:current`
-  - Summary: Confirmed lexical BM25 storage and found that the comparison route uses fixed Hero policies rather than full-portfolio discovery. Proposed a non-implemented hybrid architecture where structured facts and BM25 plus semantic retrieval improve candidate recall, official rules remain the hard eligibility gate, and deterministic cash-flow outcomes retain final ranking; embedding deployment requires a separate user decision.
+  - Last activity: 2026-08-17T11:51+09:00
+  - Focus: Verify the current retrieval architecture, plan Hybrid user-situation policy discovery, and assess whether the LightGBM, Luna, and planned OpenAI Embedding roles satisfy the Finance AI Challenge brief.
+  - Updated keys: `decision:implementation-checklist`, `decision:re-stage6-eligibility-rag-safety`, `decision:re-stage8-2-hybrid-policy-discovery-plan`, `issue:re8-fixed-policy-candidate-routing`, `handoff:current`
+  - Summary: Added RE8.2 before RE9 in both active plans, selected OpenAI Embeddings as the provider, and fixed a common BM25-only, Vector-only, and Hybrid Korean evaluation principle. Confirmed from the competition brief that the submission must explain its generative-AI role; current LightGBM is valid ML but fixed candidates make the present AI story incomplete, so RE8.2 must be implemented and evaluated as the material AI expansion. No API call or implementation change was made.
 
 - `session:20260817-1122`
   - Started: 2026-08-17T11:22+09:00

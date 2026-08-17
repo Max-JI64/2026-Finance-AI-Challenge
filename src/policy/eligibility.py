@@ -10,7 +10,7 @@ from enum import StrEnum
 from pathlib import Path
 from typing import Any, Iterable
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from src.settings import PROJECT_ROOT
 
@@ -108,6 +108,16 @@ class SessionEligibilityProfile(BaseModel):
     restart_business_age_months: int | None = Field(default=None, ge=0)
     growth_condition_met: TriState = TriState.UNKNOWN
     direct_loan_repayment_good: TriState = TriState.UNKNOWN
+    policy_answers: dict[str, TriState] = Field(default_factory=dict)
+
+    @field_validator("policy_answers")
+    @classmethod
+    def validate_policy_answers(cls, value: dict[str, TriState]) -> dict[str, TriState]:
+        if len(value) > 40:
+            raise ValueError("정책별 확인 응답은 40개를 초과할 수 없습니다.")
+        if any(not key or len(key) > 80 for key in value):
+            raise ValueError("정책별 확인 항목 키가 올바르지 않습니다.")
+        return value
 
 
 class RuleEvaluation(BaseModel):

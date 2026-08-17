@@ -153,6 +153,7 @@ def build_hero(
     market: MarketScenario | None = None,
     safe_cash_override: int | None = None,
     assume_conditional: bool = True,
+    additional_alternatives: list[AlternativeSpec] | None = None,
 ):
     market = market or MarketScenario(
         target_a_percent=-12,
@@ -308,6 +309,7 @@ def build_hero(
                 official_urls=[refinance_url, "https://ols.semas.or.kr"],
             ),
         )
+    alternatives.extend(additional_alternatives or [])
     result = compare_alternatives(
         hero,
         market,

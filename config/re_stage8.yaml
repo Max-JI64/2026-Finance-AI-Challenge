@@ -1,8 +1,8 @@
 project:
-  stage: RE Stage 8.1
-  contract_version: re8.1-contract-v2
-  api_version: re8-api-v1.2
-  status: complete
+  stage: RE Stage 8.2
+  contract_version: re8.2-contract-v1
+  api_version: re8-api-v1.4
+  status: completed
   started_at: "2026-08-17"
   completed_at: "2026-08-17"
   gate: passed
@@ -50,15 +50,30 @@ engines:
   market_scenario: re5-lightgbm-quantile-v1
   eligibility: re6-v1
   recommendation: re7-v1
-  rag: re8-sqlite-bm25-v1
+  rag: re8.2-sqlite-hybrid-v1
+  embedding_candidates: [text-embedding-3-small, text-embedding-3-large]
+  selected_embedding_model: text-embedding-3-large
+  selected_embedding_dimensions: 3072
   explanation_model: gpt-5.6-luna
 
 rag:
   storage: sqlite
   database: rag/index/policy_re8.sqlite3
-  source_index: data/processed_re/policy/re_stage6/policy_index.jsonl
+  canonical_body: user_reviewed_markdown
+  html_usage: official_link_only
+  policy_count: 17
+  chunk_count: 817
+  embedding_rows: 1634
+  runtime: hybrid_large_with_bm25_fallback
+  embedding_timeout_seconds: 5
+  embedding_max_attempts_per_user_action: 2
+  retry_policy: one_retry_then_bm25_fallback
+  vector_combination: reciprocal_rank_fusion
   user_queries_persisted: false
   session_profiles_persisted: false
+  approved_external_fields: [district_name, industry_major_group, revenue_trend_band, fixed_cost_band, debt_burden_band, cash_risk_band, user_goal, locally_redacted_policy_question]
+  prohibited_external_fields: [raw_money_amounts, business_name, commercial_area_name, detailed_address, resident_registration_number, business_registration_number, account_number, raw_eligibility_answers]
+  openai_default_abuse_monitoring_retention_notice: up_to_30_days
   internal_search_fields_hidden: [chunk_id, bm25_score, search_rank]
   llm_can_change_calculations: false
   llm_can_change_eligibility: false

@@ -36,7 +36,7 @@
     <div class="screen-shell">
       <section class="screen is-active" id="business" aria-labelledby="business-title">
         <header class="section-heading"><p class="eyebrow">1단계</p><h1 id="business-title">어느 상권에서 운영하시나요?</h1><p>서울 전체에서 자치구, 행정동, 개별 상권 순서로 범위를 좁히거나 목록에서 바로 찾을 수 있습니다.</p></header>
-        <section class="presentation-presets" aria-labelledby="preset-title"><div><p class="eyebrow">빠른 시연</p><h2 id="preset-title">준비된 가게 상황으로 바로 비교</h2><p>발표 중에는 아래 상황을 누르면 입력과 계산이 한 번에 완료됩니다.</p></div><div class="preset-grid"><button type="button" data-preset="cash-rich"><span>1</span><strong>현금 여유가 큰 가게</strong><small>매출과 보유 현금이 안정적</small></button><button type="button" data-preset="stable"><span>2</span><strong>안정적으로 운영 중</strong><small>수입과 지출이 비슷한 수준</small></button><button type="button" data-preset="sales-down"><span>3</span><strong>매출이 줄고 있는 가게</strong><small>최근 3개월 매출이 하락</small></button><button type="button" data-preset="high-fixed"><span>4</span><strong>고정비가 큰 가게</strong><small>임대료와 인건비 부담이 큼</small></button><button type="button" data-preset="debt-heavy"><span>5</span><strong>대출 상환이 부담인 가게</strong><small>잔액과 이자 부담이 큼</small></button></div></section>
+        <details class="presentation-presets" id="presentation-presets"><summary><span><strong>발표용 빠른 시연</strong><small>준비된 가게 상황 5개 보기</small></span></summary><div class="preset-content"><p id="preset-title">상황을 누르면 6개월 매출과 재무 값이 채워집니다. 현재 화면은 그대로 유지되므로 재무 입력과 현금 진단을 순서대로 확인할 수 있습니다.</p><div class="preset-grid"><button type="button" data-preset="cash-rich"><span>1</span><strong>현금 여유가 큰 가게</strong><small>매출과 보유 현금이 안정적</small></button><button type="button" data-preset="stable"><span>2</span><strong>안정적으로 운영 중</strong><small>6개월 매출이 비슷한 수준</small></button><button type="button" data-preset="sales-down"><span>3</span><strong>매출이 줄고 있는 가게</strong><small>최근 2개 분기 동안 매출 하락</small></button><button type="button" data-preset="high-fixed"><span>4</span><strong>고정비가 큰 가게</strong><small>임대료와 인건비 부담이 큼</small></button><button type="button" data-preset="debt-heavy"><span>5</span><strong>대출 상환이 부담인 가게</strong><small>잔액과 이자 부담이 큼</small></button></div><p class="preset-status" id="preset-status" aria-live="polite"></p></div></details>
         <div class="location-layout">
           <div class="location-controls">
             <label>서울 전체 상권 이름 검색<input id="area-search" type="search" placeholder="예: 망원시장, 강남역" autocomplete="off"></label>
@@ -57,11 +57,11 @@
         <div class="screen-actions"><span></span><button class="primary" id="business-next">재무 입력하기</button></div>
       </section>
       <section class="screen" id="finance" aria-labelledby="finance-title">
-        <header class="section-heading"><p class="eyebrow">2단계</p><h1 id="finance-title">최근 현금 흐름을 알려주세요</h1><p>최근 3개월 매출을 기본으로 입력합니다. 계절 변동이 크면 최대 12개월까지 추가할 수 있습니다.</p></header>
+        <header class="section-heading"><p class="eyebrow">2단계</p><h1 id="finance-title">최근 현금 흐름을 알려주세요</h1><p>최근 2개 분기, 6개월 매출을 기본으로 입력합니다. 계절 변동이 크면 최대 12개월까지 추가할 수 있습니다.</p></header>
         <section class="input-section" aria-labelledby="revenue-title">
           <div class="input-section-heading"><div><h2 id="revenue-title">최근 월매출</h2><p>부가세 포함 여부를 매월 같은 기준으로 입력해 주세요.</p></div><button class="text-button" id="add-revenue-month">한 달 추가</button></div>
           <div id="revenue-months" class="revenue-months"></div>
-          <p class="field-help">최소 3개월, 최대 12개월입니다. 진단에는 입력한 월매출의 평균을 사용합니다.</p>
+          <p class="field-help">기본 6개월, 최소 3개월, 최대 12개월입니다. 현금흐름은 6개월 평균을 사용하고 최근과 과거의 차이는 정책 후보를 찾는 매출 흐름으로 반영합니다.</p>
           <label class="wide-label">매출이 주로 들어오는 시기<select id="revenue-timing"><option value="daily">매일</option><option value="weekly">매주</option><option value="month_start">매월 1일부터 10일</option><option value="month_middle">매월 11일부터 20일</option><option value="month_end">매월 21일부터 월말</option></select></label>
         </section>
         <section class="input-section" aria-labelledby="cash-title">
@@ -100,18 +100,19 @@
       <section class="screen" id="diagnosis" aria-labelledby="diagnosis-title">
         <header class="section-heading"><p class="eyebrow">3단계</p><h1 id="diagnosis-title">앞으로 13주, 현금이 버틸 수 있을까요?</h1><p>선택한 상권과 업종의 상황을 적용해 현금이 부족해지는 시점과 필요한 안전현금을 확인합니다.</p></header>
         <section class="scenario-panel" aria-labelledby="scenario-title">
-          <div class="input-section-heading"><div><h2 id="scenario-title">상권 상황 선택</h2><p>같은 상권이라도 상황에 따라 결과가 달라집니다.</p></div><span id="model-period" class="status-badge">자료 확인 중</span></div>
+          <div class="input-section-heading"><div><h2 id="scenario-title">선택한 상권의 매출 변화 범위</h2><p>선택한 상권·업종의 과거 흐름에서 계산한 세 가지 범위입니다. 내 점포의 매출 예측이나 직접 고르는 경기 전망이 아닙니다.</p></div><span id="model-period" class="status-badge">기준자료 확인 중</span></div>
           <div class="scenario-options" id="scenario-options">
-            <label><input type="radio" name="market-scenario" value="downside"><span><strong>매출 환경이 약해질 때</strong><small>최근보다 상권 매출이 더 줄어드는 경우</small><b>확인 중</b></span></label>
-            <label><input type="radio" name="market-scenario" value="central" checked><span><strong>최근 추세가 이어질 때</strong><small>최근 상권 흐름이 그대로 이어지는 경우</small><b>확인 중</b></span></label>
-            <label><input type="radio" name="market-scenario" value="recovery"><span><strong>매출 환경이 나아질 때</strong><small>최근보다 상권 매출이 회복되는 경우</small><b>확인 중</b></span></label>
+            <label><input type="radio" name="market-scenario" value="downside"><span><strong>하방 범위</strong><small>계산된 범위 중 매출 감소가 가장 큰 경우</small><b>확인 중</b></span></label>
+            <label><input type="radio" name="market-scenario" value="central" checked><span><strong>기준 범위</strong><small>계산된 세 범위의 중앙값을 적용한 경우</small><b>확인 중</b></span></label>
+            <label><input type="radio" name="market-scenario" value="recovery"><span><strong>회복 범위</strong><small>계산된 범위 중 매출 감소가 작거나 회복하는 경우</small><b>확인 중</b></span></label>
           </div>
-          <p class="field-help">표시 값은 선택한 상권·업종 전체의 전년 같은 기간 대비 변화율이며, 내 점포의 예상 매출이 아닙니다.</p>
+          <div class="model-period-help"><strong>기준자료가 뜻하는 것</strong><p id="model-period-help">선택한 상권·업종의 마지막 집계시점을 확인하고 있습니다.</p></div>
+          <p class="field-help">각 카드의 13주·6개월 값은 선택한 상권·업종 전체의 전년 같은 기간 대비 매출 변화율입니다.</p>
         </section>
         <div id="diagnosis-empty" class="empty-state"><h2>재무 입력을 완료해 주세요</h2><p>현금 진단을 계산하면 이곳에 결과가 표시됩니다.</p><button class="primary" data-step="finance">재무 입력으로 이동</button></div>
-        <div id="diagnosis-result" hidden>
+        <div id="diagnosis-result" hidden tabindex="-1">
           <div class="metric-strip diagnosis-metrics" id="diagnosis-metrics"></div>
-          <section class="chart-panel"><div class="chart-heading"><div><h2>13주 현금 잔액</h2><p>안전현금 아래로 내려가는 시점과 현금 고갈 여부를 확인하세요.</p></div><div class="chart-legend"><span class="legend-safe">안전현금</span><span class="legend-cash">예상 현금</span></div></div><canvas id="baseline-chart" width="1100" height="520" aria-label="13주 예상 현금 잔액 그래프"></canvas></section>
+          <section class="chart-panel"><div class="chart-heading"><div><h2>세 가지 상권 범위의 13주 현금 비교</h2><p>진하게 표시된 선이 현재 선택한 범위입니다. 안전현금 아래로 내려가는 시점을 함께 비교하세요.</p></div><div class="chart-legend scenario-chart-legend" id="scenario-chart-legend"></div></div><canvas id="baseline-chart" width="1100" height="520" aria-label="세 가지 상권 범위의 13주 예상 현금 잔액 비교 그래프"></canvas></section>
           <div class="explanation-grid"><article><h2>안전현금이란?</h2><p>앞으로 28일 안에 예정된 필수 비용과 대출 상환금을 합친 금액입니다. 실제 결제 일정이 바뀌면 함께 달라집니다.</p></article><article><h2>6개월 뒤에는?</h2><dl id="six-month-summary"></dl></article></div>
           <label class="assumption-check"><input id="conditional-assumption" type="checkbox" checked><span>추가 확인이 필요한 정책도 가정해서 비교하기</span></label>
         </div>
@@ -129,9 +130,29 @@
         <div id="decision-result" hidden>
           <section id="ranking-notice" class="ranking-notice" role="status" aria-live="polite" hidden></section>
           <div id="alternative-cards" class="alternative-cards"></div>
+          <section class="policy-discovery" aria-labelledby="policy-discovery-title">
+            <div class="section-heading compact"><p class="eyebrow">상황 기반 정책발굴</p><h2 id="policy-discovery-title">입력한 상황에서 함께 확인할 정책</h2><p>상권·업종·매출 흐름·현금 부족·고정비·대출 부담을 범주로 바꿔 전체 정책 문서에서 후보를 찾습니다. 아래 후보는 승인이나 자격 확정이 아닙니다.</p></div>
+            <div id="situation-labels" class="situation-labels"></div>
+            <div id="policy-discovery-status" class="field-help"></div>
+            <section id="staged-question-panel" class="staged-question-panel" hidden>
+              <div><h3>후보에 필요한 조건만 확인</h3><p>모르면 그대로 두어도 됩니다. 답은 현재 페이지에서만 사용하며, 공식 자격판정은 검수된 Rule이 담당합니다.</p></div>
+              <div id="staged-questions" class="staged-questions"></div>
+              <button id="apply-staged-answers" type="button" class="primary">조건·금융값 반영해 다시 비교</button>
+            </section>
+            <div id="policy-discovery-cards" class="policy-discovery-cards"></div>
+          </section>
           <section class="chart-panel comparison-panel"><div class="chart-heading"><div><h2 id="selected-chart-title">모든 대안의 13주 현금 비교</h2><p>초록색이 현재 선택한 대안입니다. 회색 선이나 아래 이름을 누르면 선택이 바뀝니다.</p></div></div><div id="comparison-legend" class="comparison-legend" aria-label="비교 그래프 대안 선택"></div><canvas id="comparison-chart" width="1100" height="520" aria-label="모든 대안의 현금 잔액 비교"></canvas></section>
           <details class="detail-table"><summary>모든 수치 한 번에 보기</summary><div class="table-wrap"><table><thead><tr><th>현재 목표 순위</th><th>대안</th><th>13주 뒤 현금</th><th>6개월 뒤 현금</th><th>신규부채</th><th>월 최대상환</th><th>총이자</th><th>확인할 조건</th></tr></thead><tbody id="comparison-body"></tbody></table></div></details>
-          <section id="qa-section" class="qa-panel" aria-labelledby="qa-title"><div class="section-heading compact"><h2 id="qa-title">정책 내용을 질문하세요</h2><p>공식 문서에서 찾은 근거로 답합니다. 재무 입력 내용은 AI에 보내지 않습니다.</p></div><div class="qa-controls"><label>정책<select id="qa-policy"><option value="POL_SEOUL_CRISIS_TRACK2_2026H2">위기 소상공인 Track2</option><option value="POL_SEMAS_REFINANCE_2026">소상공인 정책자금 대환대출</option><option value="POL_SEOUL_FUND_2026">서울시 중소기업육성자금</option></select></label><label>질문<textarea id="qa-question" maxlength="500" rows="3" placeholder="예: 신청 전에 어떤 조건을 확인해야 하나요?"></textarea></label><button class="primary" id="ask-button">공식 근거로 답변 받기</button></div><div id="qa-answer" class="qa-answer" aria-live="polite"></div></section>
+          <section id="qa-section" class="qa-panel" aria-labelledby="qa-title">
+            <div class="section-heading compact"><p class="eyebrow">공식 공고 기반 상담</p><h2 id="qa-title">정책 상담 채팅</h2><p>추천 목록에 없던 정책도 전체 공고에서 찾아 안내합니다. 숫자·식별정보 패턴은 외부 전송 전에 제거하며 대화는 이 페이지를 떠나면 사라집니다. OpenAI 기본 악용 모니터링 로그에는 최대 30일 포함될 수 있습니다.</p></div>
+            <div class="chat-toolbar"><label>검색 범위<select id="qa-policy"><option value="">전체 정책에서 찾기</option></select></label><span id="chat-count" class="chat-count">0 / 5회</span></div>
+            <div id="chat-thread" class="chat-thread" role="log" aria-live="polite" aria-relevant="additions">
+              <article class="chat-message chat-message--assistant"><div class="chat-avatar" aria-hidden="true">AI</div><div class="chat-bubble"><strong>정책 상담</strong><p>현재 상황을 편하게 말씀해 주세요. 관련 정책과 확인할 조건을 공식 공고에서 찾아드릴게요.</p></div></article>
+            </div>
+            <details class="qa-prompt-presets"><summary>발표용 질문 예시 보기</summary><div class="qa-prompt-grid"><button type="button" data-question-example="요즘 아파서 며칠 가게를 쉬어야 하는데 생활비를 지원받을 정책이 있나요?">아파서 쉬어야 할 때</button><button type="button" data-question-example="아이를 돌보느라 영업시간을 줄여야 하는데 받을 수 있는 지원이 있나요?">아이 돌봄이 필요할 때</button><button type="button" data-question-example="이 정책은 누구에게 무엇을 지원하나요?">지원 내용</button><button type="button" data-question-example="신청 전에 확인할 조건과 준비해야 할 서류는 무엇인가요?">조건과 서류</button><button type="button" data-question-example="다른 지원정책과 함께 신청하거나 지원받을 수 있나요?">다른 정책 함께 찾기</button></div></details>
+            <div class="chat-composer"><label for="chat-question" class="sr-only">정책 질문</label><textarea id="chat-question" maxlength="500" rows="2" placeholder="예: 제가 아파서 가게를 쉬면 받을 수 있는 지원이 있나요?"></textarea><button class="primary" id="chat-send" type="button">보내기</button></div>
+            <p class="chat-privacy">최대 5회 · 서비스 화면의 대화 기록은 새로고침하거나 페이지를 떠나면 삭제 · AI 응답 생성을 위한 OpenAI API 처리 정책은 별도 적용</p>
+          </section>
         </div>
         <div class="screen-actions"><button class="secondary" data-step="diagnosis">현금 진단 보기</button><button class="primary" data-step="business">처음부터 다시 보기</button></div>
       </section>

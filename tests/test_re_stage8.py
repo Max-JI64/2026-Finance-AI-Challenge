@@ -31,12 +31,14 @@ def test_re8_health_contract_and_catalogs() -> None:
     contract = client.get("/api/v1/service-contract").json()
     areas = client.get("/api/v1/catalog/areas").json()
     industries = client.get("/api/v1/catalog/industries").json()
+    policies = client.get("/api/v1/catalog/policies").json()
 
     assert health["status"] == "ok"
-    assert health["versions"]["rag_engine"] == "re8-sqlite-bm25-v1"
+    assert health["versions"]["rag_engine"] == "re8.2-sqlite-hybrid-v1"
     assert contract["service_name"] == "정책금융 영향 시뮬레이터"
     assert any("승인확률" in item for item in contract["does_not"])
     assert areas["items"] and industries["items"]
+    assert len(policies["items"]) == 17
 
 
 def test_sample_comparison_is_deterministic_and_numbers_agree() -> None:
@@ -266,6 +268,19 @@ def test_re5_market_scenarios_are_exposed_for_known_pair() -> None:
         assert payload["scenarios"]["central"][horizon] <= payload["scenarios"]["recovery"][horizon]
 
 
+def test_compare_returns_all_market_cash_paths_with_fixed_safe_cash() -> None:
+    response = client.post(
+        "/api/v1/alternatives/compare",
+        json=sample_request(area_code="3001491", industry_code="CS100001"),
+    )
+    assert response.status_code == 200
+    market_rows = response.json()["market_scenario_comparison"]
+    assert [item["scenario"] for item in market_rows] == ["downside", "central", "recovery"]
+    assert len({item["week13_ending_cash"] for item in market_rows}) == 3
+    assert len({item["month6_ending_cash"] for item in market_rows}) == 3
+    assert len({item["safe_cash_suggested_amount"] for item in market_rows}) == 1
+
+
 def test_recent_month_revenues_use_rounded_average() -> None:
     quick = QuickModeInput(
         reference_date="2026-09-01",
@@ -309,12 +324,30 @@ def test_local_policy_database_contains_only_frozen_chunks() -> None:
     try:
         chunk_count = connection.execute("SELECT COUNT(*) FROM policy_chunks").fetchone()[0]
         policy_count = connection.execute("SELECT COUNT(DISTINCT policy_id) FROM policy_chunks").fetchone()[0]
+        embedding_count = connection.execute("SELECT COUNT(*) FROM policy_embeddings").fetchone()[0]
+        embedding_specs = connection.execute(
+            "SELECT model, MIN(dimensions), MAX(dimensions), COUNT(*) "
+            "FROM policy_embeddings GROUP BY model ORDER BY model"
+        ).fetchall()
+        html_chunk_count = connection.execute(
+            "SELECT COUNT(*) FROM policy_chunks WHERE lower(source_path) LIKE '%.html'"
+        ).fetchone()[0]
+        source_modes = {
+            row[0] for row in connection.execute("SELECT DISTINCT ingestion_mode FROM policy_sources")
+        }
         tables = {row[0] for row in connection.execute("SELECT name FROM sqlite_master WHERE type='table'")}
     finally:
         connection.close()
-    assert chunk_count == 227
-    assert policy_count == 10
-    assert tables == {"metadata", "policy_chunks"}
+    assert chunk_count == 817
+    assert policy_count == 17
+    assert embedding_count == 1634
+    assert embedding_specs == [
+        ("text-embedding-3-large", 3072, 3072, 817),
+        ("text-embedding-3-small", 1536, 1536, 817),
+    ]
+    assert html_chunk_count == 0
+    assert source_modes == {"markdown_body_html_link_only"}
+    assert tables == {"metadata", "policy_sources", "policy_chunks", "policy_embeddings"}
 
 
 def test_policy_pdf_pipeline_is_text_only() -> None:
@@ -399,6 +432,8 @@ def test_web_has_four_user_steps_map_and_no_design_dash() -> None:
     assert 'id="dong-select"' in html
     assert 'id="industry-major-select"' in html
     assert html.count('data-preset=') == 5
+    assert '<details class="presentation-presets"' in html
+    assert html.count('data-question-example=') == 5
     assert 'id="execution-section"' not in html
     assert "데모" not in html
     assert "샘플" not in html
@@ -423,6 +458,19 @@ def test_map_keeps_level_layers_and_permanent_group_labels() -> None:
     assert html.index('id="area-search"') < html.index('id="district-select"')
     assert "evidenceLinks(payload.official_evidence)" in javascript
     assert 'runComparison("diagnosis", false)' in javascript
+    assert 'state.revenueMonths: 6' not in javascript
+    assert 'revenueMonths: 6' in javascript
+    assert 'result.scrollIntoView({ behavior: "smooth", block: "start" })' in javascript
+    assert 'questionExample.dataset.questionExample' in javascript
+    assert 'id="chat-thread"' in html
+    assert 'id="chat-question"' in html
+    assert 'id="chat-send"' in html
+    assert "state.chatTurns >= 5" in javascript
+    assert "state.chatMessages.slice(-8)" in javascript
+    assert "localStorage" not in javascript
+    assert "sessionStorage" not in javascript
+    assert 'scenario-chart-legend' in styles
+    assert 'is-scenario-sensitive' in styles
     assert 'byId("alternative-dialog").addEventListener("click"' in javascript
     assert "if (!inside) dialog.close()" in javascript
     assert 'if (zoom <= 14)' in javascript

@@ -25,6 +25,7 @@ from src.integration.re_stage8 import (
     envelope,
     industry_catalog,
     market_scenario,
+    policy_catalog,
     service_contract,
 )
 from src.settings import PROJECT_ROOT
@@ -121,6 +122,11 @@ def get_area_map() -> dict[str, object]:
 @app.get("/api/v1/catalog/industries")
 def get_industries() -> dict[str, object]:
     return envelope(items=industry_catalog())
+
+
+@app.get("/api/v1/catalog/policies")
+def get_policies() -> dict[str, object]:
+    return envelope(items=policy_catalog())
 
 
 @app.get("/api/v1/market-scenarios/{area_code}/{industry_code}")
