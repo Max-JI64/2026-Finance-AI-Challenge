@@ -1,0 +1,825 @@
+{
+  "contract_version": "re9-v1",
+  "as_of_date": "2026-08-17",
+  "persona_input_sha256": "36e256109c3ed592b2d2cba313335f9e2e1994d7863db4d05ed88ce72c8ae9fa",
+  "retrieval_input_sha256": "36f803878c98f7c2181550cc2b6f8cadde7326d5889811f6c898e5f587fd25a1",
+  "persona_count": 8,
+  "persona_pass_count": 8,
+  "retrieval_case_count": 20,
+  "retrieval_pass_count": 20,
+  "prohibited_positive_claim_hits": [],
+  "screenshot_image_analysis_performed": false,
+  "personas": [
+    {
+      "persona_id": "P01",
+      "name": "상권 하락·낮은 부채",
+      "input_sha256": "fa0db34b656d510bb2226fc0a2f61f8daf1762725672aab2a2bd4d4e2fe070e8",
+      "screen_step_count": 4,
+      "sample_notice": "실제 사업장이 아닌 검증용 가상 사업장입니다.",
+      "external_scenario_source": "모델자료 없음 시 직접 입력 Fallback",
+      "retrieval_mode": "bm25_fallback",
+      "embedding_attempts": 0,
+      "candidate_count": 6,
+      "staged_question_count": 14,
+      "selected_goal": "최소부채",
+      "top_alternative_id": "cost_reduction_5",
+      "ranking_trace": [
+        "cost_reduction_5",
+        "no_action"
+      ],
+      "no_action": {
+        "alternative_id": "no_action",
+        "candidate_state": "지금 비교 가능",
+        "ranking_eligible": true,
+        "week13_ending_cash": 11075136,
+        "month6_ending_cash": 10014596,
+        "week13_minimum_cash": 9000000,
+        "net_new_borrowing": 0,
+        "refinanced_principal": 0,
+        "maximum_monthly_debt_service": 424324,
+        "total_interest_through_maturity": 1900004,
+        "confirmation_item_count": 0
+      },
+      "focus_alternative": {
+        "alternative_id": "cost_reduction_5",
+        "candidate_state": "지금 비교 가능",
+        "ranking_eligible": true,
+        "week13_ending_cash": 11750136,
+        "month6_ending_cash": 11364596,
+        "week13_minimum_cash": 9050000,
+        "net_new_borrowing": 0,
+        "refinanced_principal": 0,
+        "maximum_monthly_debt_service": 424324,
+        "total_interest_through_maturity": 1900004,
+        "confirmation_item_count": 0
+      },
+      "graph_metric_match": true,
+      "raw_internal_identifier_exposed": false,
+      "passed": true
+    },
+    {
+      "persona_id": "P02",
+      "name": "안정 상권·높은 상환부담",
+      "input_sha256": "65b7934026e85a68d9c5800ba679f402ea2188f998ef5d45eddf1ba907e9a937",
+      "screen_step_count": 4,
+      "sample_notice": "실제 사업장이 아닌 검증용 가상 사업장입니다.",
+      "external_scenario_source": "모델자료 없음 시 직접 입력 Fallback",
+      "retrieval_mode": "bm25_fallback",
+      "embedding_attempts": 0,
+      "candidate_count": 6,
+      "staged_question_count": 14,
+      "selected_goal": "최소상환",
+      "top_alternative_id": "cost_reduction_5",
+      "ranking_trace": [
+        "cost_reduction_5",
+        "no_action"
+      ],
+      "no_action": {
+        "alternative_id": "no_action",
+        "candidate_state": "지금 비교 가능",
+        "ranking_eligible": true,
+        "week13_ending_cash": 7505816,
+        "month6_ending_cash": 7123259,
+        "week13_minimum_cash": 6158141,
+        "net_new_borrowing": 0,
+        "refinanced_principal": 0,
+        "maximum_monthly_debt_service": 2393798,
+        "total_interest_through_maturity": 11733334,
+        "confirmation_item_count": 0
+      },
+      "focus_alternative": {
+        "alternative_id": "cost_reduction_5",
+        "candidate_state": "지금 비교 가능",
+        "ranking_eligible": true,
+        "week13_ending_cash": 8525816,
+        "month6_ending_cash": 9163259,
+        "week13_minimum_cash": 6575000,
+        "net_new_borrowing": 0,
+        "refinanced_principal": 0,
+        "maximum_monthly_debt_service": 2393798,
+        "total_interest_through_maturity": 11733334,
+        "confirmation_item_count": 0
+      },
+      "graph_metric_match": true,
+      "raw_internal_identifier_exposed": false,
+      "partial_refinance": {
+        "alternative_id": "refinance",
+        "candidate_state": "확인 후 비교",
+        "ranking_eligible": false,
+        "week13_ending_cash": 10163119,
+        "month6_ending_cash": 12382163,
+        "week13_minimum_cash": 6500000,
+        "net_new_borrowing": 0,
+        "refinanced_principal": 50000000,
+        "maximum_monthly_debt_service": 1501841,
+        "total_interest_through_maturity": 15743722,
+        "confirmation_item_count": 2
+      },
+      "passed": true
+    },
+    {
+      "persona_id": "P03",
+      "name": "상권 하락·현금 부족·기존 부채",
+      "input_sha256": "b3b472ac11612393520e10915aa65df3184c1db4a2f881618338ae3a841bf885",
+      "screen_step_count": 4,
+      "sample_notice": "실제 사업장이 아닌 검증용 가상 사업장입니다.",
+      "external_scenario_source": "모델자료 없음 시 직접 입력 Fallback",
+      "retrieval_mode": "bm25_fallback",
+      "embedding_attempts": 0,
+      "candidate_count": 6,
+      "staged_question_count": 20,
+      "selected_goal": "최장생존",
+      "top_alternative_id": "cost_reduction_5",
+      "ranking_trace": [
+        "cost_reduction_5",
+        "no_action"
+      ],
+      "no_action": {
+        "alternative_id": "no_action",
+        "candidate_state": "지금 비교 가능",
+        "ranking_eligible": true,
+        "week13_ending_cash": -6670655,
+        "month6_ending_cash": -15557048,
+        "week13_minimum_cash": -9750655,
+        "net_new_borrowing": 0,
+        "refinanced_principal": 0,
+        "maximum_monthly_debt_service": 791803,
+        "total_interest_through_maturity": 9300006,
+        "confirmation_item_count": 0
+      },
+      "focus_alternative": {
+        "alternative_id": "cost_reduction_5",
+        "candidate_state": "지금 비교 가능",
+        "ranking_eligible": true,
+        "week13_ending_cash": -5943155,
+        "month6_ending_cash": -14102048,
+        "week13_minimum_cash": -9023155,
+        "net_new_borrowing": 0,
+        "refinanced_principal": 0,
+        "maximum_monthly_debt_service": 791803,
+        "total_interest_through_maturity": 9300006,
+        "confirmation_item_count": 0
+      },
+      "graph_metric_match": true,
+      "raw_internal_identifier_exposed": false,
+      "passed": true
+    },
+    {
+      "persona_id": "P04",
+      "name": "사후환급 지급 지연",
+      "input_sha256": "29c237531ecc7297b09ed968d0a5d7c48bd11744697667a40d8631b59bbb43a1",
+      "screen_step_count": 4,
+      "sample_notice": "실제 사업장이 아닌 검증용 가상 사업장입니다.",
+      "external_scenario_source": "모델자료 없음 시 직접 입력 Fallback",
+      "retrieval_mode": "bm25_fallback",
+      "embedding_attempts": 0,
+      "candidate_count": 6,
+      "staged_question_count": 17,
+      "selected_goal": "빠른실행",
+      "top_alternative_id": "cost_reduction_5",
+      "ranking_trace": [
+        "cost_reduction_5",
+        "no_action"
+      ],
+      "no_action": {
+        "alternative_id": "no_action",
+        "candidate_state": "지금 비교 가능",
+        "ranking_eligible": true,
+        "week13_ending_cash": -6670655,
+        "month6_ending_cash": -15557048,
+        "week13_minimum_cash": -9750655,
+        "net_new_borrowing": 0,
+        "refinanced_principal": 0,
+        "maximum_monthly_debt_service": 791803,
+        "total_interest_through_maturity": 9300006,
+        "confirmation_item_count": 0
+      },
+      "focus_alternative": {
+        "alternative_id": "track2_reimbursement",
+        "candidate_state": "확인 후 비교",
+        "ranking_eligible": false,
+        "week13_ending_cash": -7420655,
+        "month6_ending_cash": -16307048,
+        "week13_minimum_cash": -12600655,
+        "net_new_borrowing": 0,
+        "refinanced_principal": 0,
+        "maximum_monthly_debt_service": 791803,
+        "total_interest_through_maturity": 9300006,
+        "confirmation_item_count": 2
+      },
+      "graph_metric_match": true,
+      "raw_internal_identifier_exposed": false,
+      "passed": true
+    },
+    {
+      "persona_id": "P05",
+      "name": "단계형 확인 후 동적 기업지원",
+      "input_sha256": "68a137b54342c8895323d1db09bba37bc90b35a72b6bab858e31bff9dc65be2b",
+      "screen_step_count": 4,
+      "sample_notice": "실제 사업장이 아닌 검증용 가상 사업장입니다.",
+      "external_scenario_source": "모델자료 없음 시 직접 입력 Fallback",
+      "retrieval_mode": "bm25_fallback",
+      "embedding_attempts": 0,
+      "candidate_count": 6,
+      "staged_question_count": 15,
+      "selected_goal": "최소부채",
+      "top_alternative_id": "cost_reduction_5",
+      "ranking_trace": [
+        "cost_reduction_5",
+        "no_action"
+      ],
+      "no_action": {
+        "alternative_id": "no_action",
+        "candidate_state": "지금 비교 가능",
+        "ranking_eligible": true,
+        "week13_ending_cash": -6670655,
+        "month6_ending_cash": -15557048,
+        "week13_minimum_cash": -9750655,
+        "net_new_borrowing": 0,
+        "refinanced_principal": 0,
+        "maximum_monthly_debt_service": 791803,
+        "total_interest_through_maturity": 9300006,
+        "confirmation_item_count": 0
+      },
+      "focus_alternative": {
+        "alternative_id": "cost_reduction_5",
+        "candidate_state": "지금 비교 가능",
+        "ranking_eligible": true,
+        "week13_ending_cash": -5943155,
+        "month6_ending_cash": -14102048,
+        "week13_minimum_cash": -9023155,
+        "net_new_borrowing": 0,
+        "refinanced_principal": 0,
+        "maximum_monthly_debt_service": 791803,
+        "total_interest_through_maturity": 9300006,
+        "confirmation_item_count": 0
+      },
+      "graph_metric_match": true,
+      "raw_internal_identifier_exposed": false,
+      "dynamic_workflow": {
+        "retrieval_mode": "bm25",
+        "retrieved_policy_ids": [
+          "POL_SEOUL_FAMILY_FRIENDLY_EMPLOYER_2026",
+          "POL_SEMAS_EMPLOYMENT_INSURANCE_2026",
+          "POL_SEOUL_PRIVATE_CHILDCARE_2026",
+          "POL_SEMAS_STABILITY_VOUCHER_2026",
+          "POL_SEMAS_RECHALLENGE_2026"
+        ],
+        "target_policy_retrieved": true,
+        "staged_question_fields": [
+          "family_employer_restriction_absent",
+          "employment_insurance_workplace"
+        ],
+        "completed_eligibility_status": "입력 기준 적격 후보",
+        "completed_candidate_state": "지금 비교 가능",
+        "dynamic_alternative_id": "dynamic_pol_seoul_family_friendly_employer_2026",
+        "dynamic_support_amount": 900000,
+        "dynamic_week13_minimum_cash": -8850655,
+        "dynamic_ranking_eligible": true,
+        "ranking_trace": {
+          "최소부채": [
+            "cost_reduction_5",
+            "dynamic_pol_seoul_family_friendly_employer_2026",
+            "no_action"
+          ],
+          "최장생존": [
+            "cost_reduction_5",
+            "dynamic_pol_seoul_family_friendly_employer_2026",
+            "no_action"
+          ],
+          "최소상환": [
+            "cost_reduction_5",
+            "dynamic_pol_seoul_family_friendly_employer_2026",
+            "no_action"
+          ],
+          "빠른실행": [
+            "cost_reduction_5",
+            "no_action",
+            "dynamic_pol_seoul_family_friendly_employer_2026"
+          ]
+        },
+        "passed": true
+      },
+      "passed": true
+    },
+    {
+      "persona_id": "P06",
+      "name": "명확한 자격 부적격",
+      "input_sha256": "7fc2b7be324917348d8d258a121f266317f6e6375cb3275247ed3e5792c8b1ce",
+      "screen_step_count": 4,
+      "sample_notice": "실제 사업장이 아닌 검증용 가상 사업장입니다.",
+      "external_scenario_source": "모델자료 없음 시 직접 입력 Fallback",
+      "retrieval_mode": "bm25_fallback",
+      "embedding_attempts": 0,
+      "candidate_count": 6,
+      "staged_question_count": 14,
+      "selected_goal": "최소부채",
+      "top_alternative_id": "cost_reduction_5",
+      "ranking_trace": [
+        "cost_reduction_5",
+        "no_action"
+      ],
+      "no_action": {
+        "alternative_id": "no_action",
+        "candidate_state": "지금 비교 가능",
+        "ranking_eligible": true,
+        "week13_ending_cash": 12335136,
+        "month6_ending_cash": 13614596,
+        "week13_minimum_cash": 9000000,
+        "net_new_borrowing": 0,
+        "refinanced_principal": 0,
+        "maximum_monthly_debt_service": 424324,
+        "total_interest_through_maturity": 1900004,
+        "confirmation_item_count": 0
+      },
+      "focus_alternative": {
+        "alternative_id": "cost_reduction_5",
+        "candidate_state": "지금 비교 가능",
+        "ranking_eligible": true,
+        "week13_ending_cash": 13010136,
+        "month6_ending_cash": 14964596,
+        "week13_minimum_cash": 9050000,
+        "net_new_borrowing": 0,
+        "refinanced_principal": 0,
+        "maximum_monthly_debt_service": 424324,
+        "total_interest_through_maturity": 1900004,
+        "confirmation_item_count": 0
+      },
+      "graph_metric_match": true,
+      "raw_internal_identifier_exposed": false,
+      "eligibility_probe": {
+        "policy_id": "POL_SEOUL_YELLOW_UMBRELLA_2026",
+        "policy_version": "2026-08-12",
+        "eligibility_status": "부적격",
+        "availability_status": "기준일상 접수 가능",
+        "candidate_state": "제외",
+        "reason_summary": "연매출 3억원 이하",
+        "items_to_confirm": [],
+        "rule_results": [
+          {
+            "condition": "기업 규모",
+            "result": "pass",
+            "reason": "소상공인"
+          },
+          {
+            "condition": "연매출 3억원 이하",
+            "result": "fail",
+            "reason": "no"
+          },
+          {
+            "condition": "노란우산 신규 가입",
+            "result": "pass",
+            "reason": "yes"
+          }
+        ],
+        "as_of_date": "2026-08-17",
+        "event_status": "restricted_savings_not_business_cash"
+      },
+      "passed": true
+    },
+    {
+      "persona_id": "P07",
+      "name": "자격 충족·접수 종료",
+      "input_sha256": "8970a12174bee5027583688af19335476b9e1eaa4b7d4bcefb033c9dc3f53270",
+      "screen_step_count": 4,
+      "sample_notice": "실제 사업장이 아닌 검증용 가상 사업장입니다.",
+      "external_scenario_source": "모델자료 없음 시 직접 입력 Fallback",
+      "retrieval_mode": "bm25_fallback",
+      "embedding_attempts": 0,
+      "candidate_count": 6,
+      "staged_question_count": 14,
+      "selected_goal": "최소부채",
+      "top_alternative_id": "cost_reduction_5",
+      "ranking_trace": [
+        "cost_reduction_5",
+        "no_action"
+      ],
+      "no_action": {
+        "alternative_id": "no_action",
+        "candidate_state": "지금 비교 가능",
+        "ranking_eligible": true,
+        "week13_ending_cash": 12335136,
+        "month6_ending_cash": 13614596,
+        "week13_minimum_cash": 9000000,
+        "net_new_borrowing": 0,
+        "refinanced_principal": 0,
+        "maximum_monthly_debt_service": 424324,
+        "total_interest_through_maturity": 1900004,
+        "confirmation_item_count": 0
+      },
+      "focus_alternative": {
+        "alternative_id": "cost_reduction_5",
+        "candidate_state": "지금 비교 가능",
+        "ranking_eligible": true,
+        "week13_ending_cash": 13010136,
+        "month6_ending_cash": 14964596,
+        "week13_minimum_cash": 9050000,
+        "net_new_borrowing": 0,
+        "refinanced_principal": 0,
+        "maximum_monthly_debt_service": 424324,
+        "total_interest_through_maturity": 1900004,
+        "confirmation_item_count": 0
+      },
+      "graph_metric_match": true,
+      "raw_internal_identifier_exposed": false,
+      "eligibility_probe": {
+        "policy_id": "POL_SEOUL_PRIVATE_CHILDCARE_2026",
+        "policy_version": "2026-05-26-3rd",
+        "eligibility_status": "입력 기준 적격 후보",
+        "availability_status": "접수기간 종료",
+        "candidate_state": "제외",
+        "reason_summary": "입력한 조건이 검수 Rule과 일치합니다.",
+        "items_to_confirm": [],
+        "rule_results": [
+          {
+            "condition": "기업 규모",
+            "result": "pass",
+            "reason": "소상공인"
+          },
+          {
+            "condition": "정책자금 융자제외업종 비해당",
+            "result": "pass",
+            "reason": "no"
+          },
+          {
+            "condition": "사업장·거주지·자녀 서울 요건",
+            "result": "pass",
+            "reason": "yes"
+          },
+          {
+            "condition": "지원 아동 연령",
+            "result": "pass",
+            "reason": "yes"
+          },
+          {
+            "condition": "동일사업 기존 이용 비해당",
+            "result": "pass",
+            "reason": "yes"
+          },
+          {
+            "condition": "상시근로자 5명 미만",
+            "result": "pass",
+            "reason": "1"
+          }
+        ],
+        "as_of_date": "2026-08-17",
+        "event_status": "service_subsidy_not_business_cash"
+      },
+      "passed": true
+    },
+    {
+      "persona_id": "P08",
+      "name": "Embedding 2회 실패·BM25 전환·오류 입력",
+      "input_sha256": "abadb07929a7dfd7a220eef4dbab386213a2fafd371348428a7b22fe711fffd7",
+      "screen_step_count": 4,
+      "sample_notice": "실제 사업장이 아닌 검증용 가상 사업장입니다.",
+      "external_scenario_source": "모델자료 없음 시 직접 입력 Fallback",
+      "retrieval_mode": "bm25_fallback",
+      "embedding_attempts": 2,
+      "candidate_count": 6,
+      "staged_question_count": 15,
+      "selected_goal": "최소부채",
+      "top_alternative_id": "cost_reduction_5",
+      "ranking_trace": [
+        "cost_reduction_5",
+        "no_action"
+      ],
+      "no_action": {
+        "alternative_id": "no_action",
+        "candidate_state": "지금 비교 가능",
+        "ranking_eligible": true,
+        "week13_ending_cash": -6670655,
+        "month6_ending_cash": -15557048,
+        "week13_minimum_cash": -9750655,
+        "net_new_borrowing": 0,
+        "refinanced_principal": 0,
+        "maximum_monthly_debt_service": 791803,
+        "total_interest_through_maturity": 9300006,
+        "confirmation_item_count": 0
+      },
+      "focus_alternative": {
+        "alternative_id": "cost_reduction_5",
+        "candidate_state": "지금 비교 가능",
+        "ranking_eligible": true,
+        "week13_ending_cash": -5943155,
+        "month6_ending_cash": -14102048,
+        "week13_minimum_cash": -9023155,
+        "net_new_borrowing": 0,
+        "refinanced_principal": 0,
+        "maximum_monthly_debt_service": 791803,
+        "total_interest_through_maturity": 9300006,
+        "confirmation_item_count": 0
+      },
+      "graph_metric_match": true,
+      "raw_internal_identifier_exposed": false,
+      "invalid_input": {
+        "status_code": 422,
+        "safe_error_shape": true
+      },
+      "passed": true
+    }
+  ],
+  "retrieval_results": [
+    {
+      "case_id": "fund-01",
+      "policy_id": "POL_SEOUL_FUND_2026",
+      "query": "서울시 중소기업육성자금 운전자금 저리 융자",
+      "retrieval_mode": "bm25",
+      "rank": 1,
+      "hit_at_5": true,
+      "retrieved_policy_ids": [
+        "POL_SEOUL_FUND_2026",
+        "POL_SEMAS_RECHALLENGE_2026",
+        "POL_SEMAS_REFINANCE_2026",
+        "POL_SEOUL_FAMILY_FRIENDLY_EMPLOYER_2026",
+        "POL_SEOUL_IEUM_SAVINGS_2026"
+      ]
+    },
+    {
+      "case_id": "fund-02",
+      "policy_id": "POL_SEOUL_FUND_2026",
+      "query": "서울에서 시설을 고치고 운영자금도 빌릴 수 있는 자금",
+      "retrieval_mode": "bm25",
+      "rank": 3,
+      "hit_at_5": true,
+      "retrieved_policy_ids": [
+        "POL_SEMAS_RECHALLENGE_2026",
+        "POL_SEMAS_REFINANCE_2026",
+        "POL_SEOUL_FUND_2026",
+        "POL_SEOUL_CLOSURE_2026",
+        "POL_SEOUL_IEUM_SAVINGS_2026"
+      ]
+    },
+    {
+      "case_id": "crisis-01",
+      "policy_id": "POL_SEOUL_CRISIS_TRACK2_2026H2",
+      "query": "위기 소상공인 Track2 매출 감소 점포 비용지원",
+      "retrieval_mode": "bm25",
+      "rank": 1,
+      "hit_at_5": true,
+      "retrieved_policy_ids": [
+        "POL_SEOUL_CRISIS_TRACK2_2026H2",
+        "POL_SEMAS_RECHALLENGE_2026",
+        "POL_SEMAS_REFINANCE_2026",
+        "POL_SEOUL_CLOSURE_2026",
+        "POL_SEOUL_DIGITAL_MIDLIFE_2026H2"
+      ]
+    },
+    {
+      "case_id": "crisis-02",
+      "policy_id": "POL_SEOUL_CRISIS_TRACK2_2026H2",
+      "query": "매출이 줄어 임대료가 힘든 서울 점포 사후정산",
+      "retrieval_mode": "bm25",
+      "rank": 3,
+      "hit_at_5": true,
+      "retrieved_policy_ids": [
+        "POL_SEOUL_ZERO_MARKET_2026_2",
+        "POL_SEOUL_CLOSURE_2026",
+        "POL_SEOUL_CRISIS_TRACK2_2026H2",
+        "POL_JUNGGU_CUSTOM_SUPPORT_2026",
+        "POL_SEOUL_FAMILY_FRIENDLY_EMPLOYER_2026"
+      ]
+    },
+    {
+      "case_id": "closure-01",
+      "policy_id": "POL_SEOUL_CLOSURE_2026",
+      "query": "서울 소상공인 폐업지원 점포 철거비",
+      "retrieval_mode": "bm25",
+      "rank": 2,
+      "hit_at_5": true,
+      "retrieved_policy_ids": [
+        "POL_SEOUL_CRISIS_TRACK2_2026H2",
+        "POL_SEOUL_CLOSURE_2026",
+        "POL_SEOUL_DIGITAL_MIDLIFE_2026H2",
+        "POL_SEOUL_PRIVATE_CHILDCARE_2026",
+        "POL_SEOUL_ZERO_MARKET_2026_2"
+      ]
+    },
+    {
+      "case_id": "closure-02",
+      "policy_id": "POL_SEOUL_CLOSURE_2026",
+      "query": "가게를 접으면서 정리 비용과 취업 준비 지원",
+      "retrieval_mode": "bm25",
+      "rank": 1,
+      "hit_at_5": true,
+      "retrieved_policy_ids": [
+        "POL_SEOUL_CLOSURE_2026",
+        "POL_SEOUL_CRISIS_TRACK2_2026H2",
+        "POL_SEMAS_RECHALLENGE_2026",
+        "POL_SEMAS_REFINANCE_2026",
+        "POL_SEOUL_DIGITAL_MIDLIFE_2026H2"
+      ]
+    },
+    {
+      "case_id": "digital-01",
+      "policy_id": "POL_SEOUL_DIGITAL_MIDLIFE_2026H2",
+      "query": "중장년 소상공인 디지털전환 온라인 마케팅",
+      "retrieval_mode": "bm25",
+      "rank": 1,
+      "hit_at_5": true,
+      "retrieved_policy_ids": [
+        "POL_SEOUL_DIGITAL_MIDLIFE_2026H2",
+        "POL_SEOUL_CRISIS_TRACK2_2026H2",
+        "POL_SEOUL_CLOSURE_2026",
+        "POL_JUNGGU_CUSTOM_SUPPORT_2026",
+        "POL_SEMAS_RECHALLENGE_2026"
+      ]
+    },
+    {
+      "case_id": "digital-02",
+      "policy_id": "POL_SEOUL_DIGITAL_MIDLIFE_2026H2",
+      "query": "마흔 넘은 사장 온라인 판매 홍보 교육",
+      "retrieval_mode": "bm25",
+      "rank": 1,
+      "hit_at_5": true,
+      "retrieved_policy_ids": [
+        "POL_SEOUL_DIGITAL_MIDLIFE_2026H2",
+        "POL_SEOUL_ZERO_MARKET_2026_2",
+        "POL_JUNGGU_CUSTOM_SUPPORT_2026",
+        "POL_SEOUL_CLOSURE_2026",
+        "POL_SEOUL_CRISIS_TRACK2_2026H2"
+      ]
+    },
+    {
+      "case_id": "zero-01",
+      "policy_id": "POL_SEOUL_ZERO_MARKET_2026_2",
+      "query": "서울제로마켓 다회용기 리필스테이션",
+      "retrieval_mode": "bm25",
+      "rank": 1,
+      "hit_at_5": true,
+      "retrieved_policy_ids": [
+        "POL_SEOUL_ZERO_MARKET_2026_2",
+        "POL_SEOUL_CRISIS_TRACK2_2026H2",
+        "POL_SEOUL_DIGITAL_MIDLIFE_2026H2",
+        "POL_SEMAS_RECHALLENGE_2026",
+        "POL_SEMAS_REFINANCE_2026"
+      ]
+    },
+    {
+      "case_id": "zero-02",
+      "policy_id": "POL_SEOUL_ZERO_MARKET_2026_2",
+      "query": "친환경 포장 무포장 판매 매장 지원",
+      "retrieval_mode": "bm25",
+      "rank": 1,
+      "hit_at_5": true,
+      "retrieved_policy_ids": [
+        "POL_SEOUL_ZERO_MARKET_2026_2",
+        "POL_JUNGGU_CUSTOM_SUPPORT_2026",
+        "POL_SEOUL_CRISIS_TRACK2_2026H2",
+        "POL_SEOUL_DIGITAL_MIDLIFE_2026H2",
+        "POL_SEMAS_RECHALLENGE_2026"
+      ]
+    },
+    {
+      "case_id": "safety-01",
+      "policy_id": "POL_SEOUL_SAFETY_TEST_2026H2",
+      "query": "서울 소상공인 어린이제품 안전검사 비용",
+      "retrieval_mode": "bm25",
+      "rank": 1,
+      "hit_at_5": true,
+      "retrieved_policy_ids": [
+        "POL_SEOUL_SAFETY_TEST_2026H2",
+        "POL_SEMAS_RECHALLENGE_2026",
+        "POL_SEMAS_REFINANCE_2026",
+        "POL_SEOUL_PRIVATE_CHILDCARE_2026",
+        "POL_SEMAS_EMPLOYMENT_INSURANCE_2026"
+      ]
+    },
+    {
+      "case_id": "safety-02",
+      "policy_id": "POL_SEOUL_SAFETY_TEST_2026H2",
+      "query": "생활용품 제조 유통 안전 인증 시험 지원",
+      "retrieval_mode": "bm25",
+      "rank": 1,
+      "hit_at_5": true,
+      "retrieved_policy_ids": [
+        "POL_SEOUL_SAFETY_TEST_2026H2",
+        "POL_SEOUL_DIGITAL_MIDLIFE_2026H2",
+        "POL_SEOUL_CLOSURE_2026",
+        "POL_SEOUL_CRISIS_TRACK2_2026H2",
+        "POL_JUNGGU_CUSTOM_SUPPORT_2026"
+      ]
+    },
+    {
+      "case_id": "restart-01",
+      "policy_id": "POL_SEOUL_RESTART_2026",
+      "query": "서울형 다시서기 프로젝트 성실실패자",
+      "retrieval_mode": "bm25",
+      "rank": 1,
+      "hit_at_5": true,
+      "retrieved_policy_ids": [
+        "POL_SEOUL_RESTART_2026",
+        "POL_SEOUL_FUND_2026",
+        "POL_SEOUL_CRISIS_TRACK2_2026H2",
+        "POL_SEOUL_DIGITAL_MIDLIFE_2026H2",
+        "POL_SEOUL_CLOSURE_2026"
+      ]
+    },
+    {
+      "case_id": "restart-02",
+      "policy_id": "POL_SEOUL_RESTART_2026",
+      "query": "성실실패자 재창업 초기자금과 재기 지원",
+      "retrieval_mode": "bm25",
+      "rank": 2,
+      "hit_at_5": true,
+      "retrieved_policy_ids": [
+        "POL_SEOUL_FUND_2026",
+        "POL_SEOUL_RESTART_2026",
+        "POL_SEMAS_RECHALLENGE_2026",
+        "POL_SEMAS_REFINANCE_2026",
+        "POL_SEOUL_CRISIS_TRACK2_2026H2"
+      ]
+    },
+    {
+      "case_id": "refinance-01",
+      "policy_id": "POL_SEMAS_REFINANCE_2026",
+      "query": "소상공인 정책자금 대환대출 고금리 4.5%",
+      "retrieval_mode": "bm25",
+      "rank": 2,
+      "hit_at_5": true,
+      "retrieved_policy_ids": [
+        "POL_SEMAS_RECHALLENGE_2026",
+        "POL_SEMAS_REFINANCE_2026",
+        "POL_SEMAS_EMPLOYMENT_INSURANCE_2026",
+        "POL_SEOUL_PRIVATE_CHILDCARE_2026",
+        "POL_SEMAS_STABILITY_VOUCHER_2026"
+      ]
+    },
+    {
+      "case_id": "refinance-02",
+      "policy_id": "POL_SEMAS_REFINANCE_2026",
+      "query": "이자가 비싼 기존 빚을 장기 저금리로 갈아타기",
+      "retrieval_mode": "bm25",
+      "rank": 2,
+      "hit_at_5": true,
+      "retrieved_policy_ids": [
+        "POL_SEMAS_RECHALLENGE_2026",
+        "POL_SEMAS_REFINANCE_2026",
+        "POL_SEOUL_IEUM_SAVINGS_2026",
+        "POL_SEMAS_EMPLOYMENT_INSURANCE_2026",
+        "POL_SEOUL_CRISIS_TRACK2_2026H2"
+      ]
+    },
+    {
+      "case_id": "rechallenge-01",
+      "policy_id": "POL_SEMAS_RECHALLENGE_2026",
+      "query": "소상공인 재도전특별자금 재창업 채무조정",
+      "retrieval_mode": "bm25",
+      "rank": 1,
+      "hit_at_5": true,
+      "retrieved_policy_ids": [
+        "POL_SEMAS_RECHALLENGE_2026",
+        "POL_SEMAS_REFINANCE_2026",
+        "POL_SEOUL_FUND_2026",
+        "POL_SEOUL_RESTART_2026",
+        "POL_SEOUL_CLOSURE_2026"
+      ]
+    },
+    {
+      "case_id": "rechallenge-02",
+      "policy_id": "POL_SEMAS_RECHALLENGE_2026",
+      "query": "폐업 후 재창업한 성실상환 소상공인 운전자금",
+      "retrieval_mode": "bm25",
+      "rank": 1,
+      "hit_at_5": true,
+      "retrieved_policy_ids": [
+        "POL_SEMAS_RECHALLENGE_2026",
+        "POL_SEMAS_REFINANCE_2026",
+        "POL_SEOUL_RESTART_2026",
+        "POL_SEOUL_FUND_2026",
+        "POL_SEMAS_EMPLOYMENT_INSURANCE_2026"
+      ]
+    },
+    {
+      "case_id": "voucher-01",
+      "policy_id": "POL_SEMAS_STABILITY_VOUCHER_2026",
+      "query": "소상공인 경영안정 바우처 공과금 4대 보험료",
+      "retrieval_mode": "bm25",
+      "rank": 1,
+      "hit_at_5": true,
+      "retrieved_policy_ids": [
+        "POL_SEMAS_STABILITY_VOUCHER_2026",
+        "POL_SEOUL_FAMILY_FRIENDLY_EMPLOYER_2026",
+        "POL_SEOUL_CLOSURE_2026",
+        "POL_SEMAS_EMPLOYMENT_INSURANCE_2026",
+        "POL_SEOUL_CRISIS_TRACK2_2026H2"
+      ]
+    },
+    {
+      "case_id": "voucher-02",
+      "policy_id": "POL_SEMAS_STABILITY_VOUCHER_2026",
+      "query": "전기요금 보험료 같은 고정비 부담 지원",
+      "retrieval_mode": "bm25",
+      "rank": 1,
+      "hit_at_5": true,
+      "retrieved_policy_ids": [
+        "POL_SEMAS_STABILITY_VOUCHER_2026",
+        "POL_SEOUL_PRIVATE_CHILDCARE_2026",
+        "POL_SEMAS_EMPLOYMENT_INSURANCE_2026",
+        "POL_SEOUL_HOSPITAL_LIVING_EXPENSE_2026",
+        "POL_SEOUL_CLOSURE_2026"
+      ]
+    }
+  ],
+  "gate_passed_local": true
+}

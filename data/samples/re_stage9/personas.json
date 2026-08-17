@@ -1,0 +1,63 @@
+[
+  {
+    "persona_id": "P01",
+    "name": "상권 하락·낮은 부채",
+    "coverage": ["상권 하락", "낮은 부채", "상세 일정", "가상 사업장 표시"],
+    "comparison_request": {"sample_id": "declining_low_debt", "direct_shock_13_week_percent": -12, "direct_shock_6_month_percent": -18, "goal": "최소부채"}
+  },
+  {
+    "persona_id": "P02",
+    "name": "안정 상권·높은 상환부담",
+    "coverage": ["고부채", "공식 한도 부분대환", "잔여 기존부채"],
+    "comparison_request": {"sample_id": "stable_high_debt", "direct_shock_13_week_percent": 0, "direct_shock_6_month_percent": 0, "goal": "최소상환"}
+  },
+  {
+    "persona_id": "P03",
+    "name": "상권 하락·현금 부족·기존 부채",
+    "coverage": ["13주 현금 부족", "기존 부채", "무대응 비교"],
+    "comparison_request": {"sample_id": "declining_cash_shortage", "direct_shock_13_week_percent": -12, "direct_shock_6_month_percent": -18, "goal": "최장생존"}
+  },
+  {
+    "persona_id": "P04",
+    "name": "사후환급 지급 지연",
+    "coverage": ["사후환급", "선지출", "지급 지연", "빠른 실행"],
+    "comparison_request": {"sample_id": "declining_cash_shortage", "direct_shock_13_week_percent": -12, "direct_shock_6_month_percent": -18, "goal": "빠른실행"},
+    "focus_alternative_id": "track2_reimbursement"
+  },
+  {
+    "persona_id": "P05",
+    "name": "단계형 확인 후 동적 기업지원",
+    "coverage": ["Hybrid 후보", "단계형 자격질문", "검수 Event", "동적 대안", "RE7 순위 Trace"],
+    "comparison_request": {"sample_id": "declining_cash_shortage", "direct_shock_13_week_percent": -12, "direct_shock_6_month_percent": -18, "goal": "최소부채"},
+    "dynamic_workflow": {
+      "query": "육아휴직을 보낸 직원의 사업주 지원금",
+      "policy_id": "POL_SEOUL_FAMILY_FRIENDLY_EMPLOYER_2026",
+      "partial_profile": {"business_scale": "중소기업", "policy_answers": {"family_leave_requirement_met": "yes"}},
+      "complete_profile": {"business_scale": "중소기업", "policy_answers": {"family_leave_requirement_met": "yes", "family_employer_restriction_absent": "yes", "employment_insurance_workplace": "yes"}},
+      "approved_support_amount": 900000,
+      "payment_date": "2026-10-20"
+    }
+  },
+  {
+    "persona_id": "P06",
+    "name": "명확한 자격 부적격",
+    "coverage": ["부적격", "실행 후보 제외"],
+    "comparison_request": {"sample_id": "declining_low_debt", "direct_shock_13_week_percent": -5, "direct_shock_6_month_percent": -8, "goal": "최소부채"},
+    "eligibility_probe": {"policy_ids": ["POL_SEOUL_YELLOW_UMBRELLA_2026"], "profile": {"business_scale": "소상공인", "policy_answers": {"annual_sales_le_300m": "no", "new_yellow_umbrella_member": "yes"}}}
+  },
+  {
+    "persona_id": "P07",
+    "name": "자격 충족·접수 종료",
+    "coverage": ["접수 종료", "자격과 가용성 분리", "실행 후보 제외"],
+    "comparison_request": {"sample_id": "declining_low_debt", "direct_shock_13_week_percent": -5, "direct_shock_6_month_percent": -8, "goal": "최소부채"},
+    "eligibility_probe": {"policy_ids": ["POL_SEOUL_PRIVATE_CHILDCARE_2026"], "profile": {"business_scale": "소상공인", "employee_count": 1, "policy_loan_restricted_industry": "no", "policy_answers": {"childcare_seoul_household": "yes", "childcare_child_age_met": "yes", "childcare_no_prior_support": "yes"}}}
+  },
+  {
+    "persona_id": "P08",
+    "name": "Embedding 2회 실패·BM25 전환·오류 입력",
+    "coverage": ["Embedding 최대 2회", "BM25 Fallback", "잘못된 입력", "외부모델 없는 직접 충격 Fallback"],
+    "comparison_request": {"sample_id": "declining_cash_shortage", "direct_shock_13_week_percent": -12, "direct_shock_6_month_percent": -18, "goal": "최소부채"},
+    "force_embedding_retry_failure": true,
+    "invalid_request": {"quick_input": {"reference_date": "2026-09-01", "opening_cash": -1, "safe_cash_threshold": 2000000, "monthly_revenue": 3500000, "revenue_timing": "month_end", "monthly_rent": 1500000, "monthly_labor_cost": 2200000, "monthly_variable_cost": 900000, "expense_timing": "early", "total_loan_balance": 0, "annual_interest_rate_percent": 0, "remaining_term_months": 60, "debt_timing": "early"}}
+  }
+]

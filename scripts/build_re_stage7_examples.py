@@ -19,6 +19,7 @@ from src.cashflow.schemas import CashEvent, DetailedCashflowInput, LoanInput, Si
 from src.policy import (
     GrantScenario,
     LoanScenario,
+    PolicyCatalog,
     RefinanceScenario,
     convert_grant,
     convert_loan,
@@ -187,9 +188,21 @@ def build_hero(
     refinance = None
     if hero.loans:
         existing = hero.loans[0]
+        refinance_profile = PolicyCatalog().get(
+            "POL_SEMAS_REFINANCE_2026", "SEMAS_REFINANCE"
+        )
+        assert refinance_profile.maximum_amount is not None
+        refinanced_principal = min(
+            existing.principal, refinance_profile.maximum_amount
+        )
+        refinanced_segment = existing.model_copy(
+            update={
+                "principal": refinanced_principal,
+            }
+        )
         replacement = LoanInput(
             loan_id="replacement-refinance",
-            principal=existing.principal,
+            principal=refinanced_principal,
             annual_interest_rate_percent=4.5,
             repayment_method="equal_principal",
             payment_day=5,
@@ -201,7 +214,7 @@ def build_hero(
                 event_id="SEMAS_REFINANCE",
                 scenario_status="assumed_approved",
                 execution_date=hero.reference_date,
-                existing_refinanced_loan=existing,
+                existing_refinanced_loan=refinanced_segment,
                 replacement_loan=replacement,
             )
         )

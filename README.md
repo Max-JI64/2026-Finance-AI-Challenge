@@ -6,7 +6,7 @@ https://daker.ai/public/hackathons/2026-finance-ai-challenge
 
 서울 소상공인이 **정책 지원 전후의 13주 현금과 6개월 부채**를 같은 일정에서 비교하는 MVP입니다. 무대응, 비용절감, 비차입 지원, 대환, 신규 정책자금, 복합안을 함께 계산하고 공식 근거와 실행계획을 제공합니다.
 
-현재 **Stage 0~6과 RE Stage 1~8.1**을 완료했습니다. RE8.1은 FastAPI 통합 API, 실제 사용자용 4단계 화면, 자치구→행정동→상권으로 좁히는 서울시 상권 지도, 만원 단위 최근 3~12개월 재무 입력, 5개 빠른 시연, SQLite 로컬 RAG, GPT-5.6 Luna 설명 Fallback을 포함합니다. 개인 매출·폐업·승인확률은 예측하지 않습니다.
+현재 **Stage 0~6과 RE Stage 1~8.2**를 완료했고 RE9 로컬 제출준비 QA를 통과했습니다. FastAPI 4단계 화면, 서울 상권 지도, 최근 3~12개월 재무 입력, 17개 정책 Hybrid 후보발굴, 단계형 자격질문, 검수 Event 동적 대안, 결정론 순위와 GPT-5.6 Luna 설명 Fallback을 포함합니다. 가상 페르소나 8/8과 대표 10개 정책 검색 20/20을 재현했으며, 외부 배포 URL과 운영계정 QA는 아직 완료하지 않았습니다. 개인 매출·폐업·승인확률은 예측하지 않습니다.
 
 ## 예측 범위
 
@@ -110,4 +110,4 @@ config/              경로·임계값·가중치·시드
 & 'C:\Program Files\Python313\python.exe' -m pytest
 ```
 
-RE8.1 API·기능·검증·Manifest는 `reports/re_stage8/`에 기록합니다.
+RE8 API·기능 검증은 `reports/re_stage8/`, RE8.2 Hybrid 계약은 `reports/re_stage8_2/`, RE9 로컬 QA·기능명세·Runbook은 `reports/re_stage9/`에 기록합니다.

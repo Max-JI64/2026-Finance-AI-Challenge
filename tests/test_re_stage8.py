@@ -77,6 +77,27 @@ def test_direct_shock_and_goal_change_recompute_result() -> None:
     assert recovery["comparison_result"]["selected_goal"] == "최장생존"
 
 
+def test_high_debt_sample_uses_official_partial_refinance_cap() -> None:
+    response = client.post(
+        "/api/v1/alternatives/compare",
+        json=sample_request(sample_id="stable_high_debt"),
+    )
+    assert response.status_code == 200
+    payload = response.json()
+    refinance = next(
+        item
+        for item in payload["intervention_results"]
+        if item["alternative_id"] == "refinance"
+    )
+    assert refinance["metrics"]["refinanced_principal"] == 50_000_000
+    assert refinance["metrics"]["net_new_borrowing"] == 0
+    assert any(
+        item["field"] == "existing_refinanced_loan"
+        and "부분대환" in item["reason"]
+        for item in refinance["assumption_ledger"]
+    )
+
+
 def test_quick_input_runs_full_comparison_and_allows_zero_existing_debt() -> None:
     quick = {
         "reference_date": "2026-09-01",

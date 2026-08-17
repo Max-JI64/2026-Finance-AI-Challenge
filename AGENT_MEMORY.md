@@ -5,9 +5,9 @@
 
 ## Project snapshot
 
-- Last updated: 2026-08-17T13:54+09:00
+- Last updated: 2026-08-17T14:24+09:00
 - Purpose: Build a working Seoul small-business policy-finance impact simulator whose hero compares 13-week survival and 6-month debt consequences across no action and representative interventions, using area-industry stress scenarios, schedule-based cash flow, official policy terms, and evidence-grounded AI explanations without causal-effect or personal-sales claims.
-- Important paths: `프로젝트 계획서.md` is the main MVP plan; `MVP 단계별 구현 체크리스트.md` is the execution and completion-gate document; `src/cashflow/` and `src/policy/` hold the completed RE3-RE4 engines; `config/re_stage5.yaml` and `reports/re_stage5/` hold the completed aggregate scenario model evidence; `src/policy/eligibility.py`, `src/rag/`, and `reports/re_stage6/` hold RE6; `src/recommendation/` and `reports/re_stage7/` hold the RE7 decision engine; `app/`, `src/integration/re_stage8.py`, `src/policy/discovery.py`, `src/policy/re_stage8_2_events.py`, `src/rag/hybrid_search.py`, `config/re_stage8.yaml`, and `reports/re_stage8_2/` hold the completed RE8.2 integration; `data/raw_re/향후 데이터 다운로드 가이드.md` is the acquisition guide.
+- Important paths: `프로젝트 계획서.md` is the main MVP plan; `MVP 단계별 구현 체크리스트.md` is the execution and completion-gate document; `src/cashflow/` and `src/policy/` hold the completed RE3-RE4 engines; `config/re_stage5.yaml` and `reports/re_stage5/` hold the completed aggregate scenario model evidence; `src/policy/eligibility.py`, `src/rag/`, and `reports/re_stage6/` hold RE6; `src/recommendation/` and `reports/re_stage7/` hold the RE7 decision engine; `app/`, `src/integration/re_stage8.py`, `src/policy/discovery.py`, `src/policy/re_stage8_2_events.py`, `src/rag/hybrid_search.py`, `config/re_stage8.yaml`, and `reports/re_stage8_2/` hold the completed RE8.2 integration; `reports/re_stage9/`, `output/pdf/RE9_기능명세서.pdf`, `Dockerfile`, and `requirements-runtime.txt` hold the RE9 local submission package; `data/raw_re/향후 데이터 다운로드 가이드.md` is the acquisition guide.
 
 ## Durable decisions
 
@@ -20,10 +20,17 @@
 
 - `decision:implementation-checklist`
   - Created: 2026-08-14T20:21+09:00
-  - Updated: 2026-08-17T13:54+09:00
+  - Updated: 2026-08-17T14:24+09:00
   - Status: active
-  - Content: The checklist records completed Stage 0-6 and RE Stage 1-8.2 with Gate evidence. RE8.2 passed after user approval of Hybrid-large 3072D, seven exact de-identified discovery fields, staged eligibility questions, a 40-case evaluation contract, five-second timeout, and at most two Embedding attempts before BM25 fallback. RE9 is now the next stage.
-  - Evidence: `MVP 단계별 구현 체크리스트.md`, `프로젝트 계획서.md`, and Gate evidence under `reports/re_stage1/` through `reports/re_stage8_2/`.
+  - Content: The checklist records completed Stage 0-6 and RE Stage 1-8.2 with Gate evidence. RE9 local QA is complete with eight personas, twenty representative-policy retrieval cases, submission documents, and deployment-neutral packaging, while the full RE9 Gate remains open until a public URL, deployment-account checks, restart reproduction, and live DOM QA pass.
+  - Evidence: `MVP 단계별 구현 체크리스트.md`, `프로젝트 계획서.md`, Gate evidence under `reports/re_stage1/` through `reports/re_stage9/`, and `output/pdf/RE9_기능명세서.pdf`.
+
+- `decision:re-stage9-local-submission-package`
+  - Created: 2026-08-17T14:24+09:00
+  - Updated: 2026-08-17T14:24+09:00
+  - Status: active
+  - Content: The user approved partial refinancing for the 80 million won high-debt persona: refinance only the official 50 million won cap and retain the remaining 30 million won on its original schedule. RE9 local QA passed 8/8 personas, 20/20 BM25 official-evidence cases, zero prohibited positive claims, two-attempt Embedding fallback, safe invalid-input handling, and 149 project tests; screenshot image analysis was not performed by user request.
+  - Evidence: `scripts/build_re_stage7_examples.py`, `data/samples/re_stage9/`, `scripts/build_re_stage9_evidence.py`, `tests/test_re_stage9.py`, `reports/re_stage9/manifest.json`, and `output/pdf/RE9_기능명세서.pdf`.
 
 - `decision:policy-source-hierarchy`
   - Created: 2026-08-15T21:23+09:00
@@ -418,12 +425,19 @@
 ## Current handoff
 
 - `handoff:current`
-  - Updated: 2026-08-17T13:54+09:00
-  - Current state: RE8.2 is complete and Gate-passed with 17 policies, 817 Markdown chunks, large 3072D Hybrid runtime, staged Rule questions, reviewed Event boundaries, dynamic RE7 alternatives, a frozen 40-case oracle, final Manifest, and local browser QA.
-  - Next step: Begin RE9 deployment and submission QA only when requested; verify the deployment account's Usage tier and API key, reproduce the eight synthetic personas including Hybrid fallback, and align final documents with the live URL.
-  - Blockers: No RE8.2 blocker. Industrial-accident insurance remains outside the frozen 17-policy set until the user supplies the correct Markdown and explicitly expands scope.
+  - Updated: 2026-08-17T14:24+09:00
+  - Current state: RE9 local submission preparation is complete: the approved 50 million won partial refinance works, eight frozen personas pass 8/8, ten representative policies pass 20/20 BM25 evidence retrieval, all 149 tests pass, the three-page functional-spec PDF passes text/font/section QA, and the 14-output Manifest has no hash mismatch. Gate RE9 remains open.
+  - Next step: Obtain the user's deployment platform/account choice, deploy the prepared Docker contract, verify the production Usage tier and keys, public URL and submission-period access, restart P01/P03/P08 reproduction, and desktop/mobile DOM state without screenshot image analysis.
+  - Blockers: External deployment is not authorized until the user selects a platform and accepts its account/cost implications. Local Docker CLI and an automation browser are unavailable, so container Build and live DOM QA remain unverified; industrial-accident insurance remains outside the frozen 17-policy set.
 
 ## Session log
+
+- `session:20260817-1402`
+  - Started: 2026-08-17T14:02+09:00
+  - Last activity: 2026-08-17T14:24+09:00
+  - Focus: Complete RE9 local submission preparation, including the approved partial refinance, frozen personas, retrieval QA, deployment package, and submission documents.
+  - Updated keys: `decision:implementation-checklist`, `decision:re-stage9-local-submission-package`, `handoff:current`
+  - Summary: Implemented the approved 50 million won partial-refinance segment while retaining 30 million won on the existing schedule; built and froze eight persona inputs, traces, hashes, and twenty retrieval cases; created a Docker contract, Runbook, QA report, presentation evidence, final proposal, and three-page functional-spec PDF. Local QA passed 8/8, 20/20, zero prohibited claims, 149 tests, PDF structure checks, JavaScript syntax, and 14/14 Manifest hashes; Docker Build and browser DOM QA remain unverified because their local tools are unavailable, and no screenshot image analysis was performed.
 
 - `session:20260817-1318`
   - Started: 2026-08-17T13:18+09:00

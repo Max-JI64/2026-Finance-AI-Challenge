@@ -1,0 +1,76 @@
+{
+  "contract_version": "re9-v1",
+  "status": "local_qa_complete_external_deployment_pending",
+  "gate_passed_local": true,
+  "gate_passed_re9": false,
+  "external_blockers": [
+    "deployment platform and account approval",
+    "public URL and submission-period availability",
+    "deployment account Usage tier and production API key",
+    "live mobile and desktop DOM QA",
+    "demo-day current policy status and official-link recheck"
+  ],
+  "local_limits": [
+    "Docker CLI is not installed, so the container image was not built locally",
+    "No automation browser was connected, so local browser DOM QA was not rerun",
+    "Screenshot image analysis was excluded by user request"
+  ],
+  "outputs": [
+    {
+      "path": "reports/re_stage9/persona_oracle.json",
+      "sha256": "f0243e09e97997b83cde1926e3bc524c5f6534cf31d9e5f38d7141c880f3c9f4"
+    },
+    {
+      "path": "reports/re_stage9/persona_summary.csv",
+      "sha256": "10a445f051deca9b194a2a23eb56822d8342e7a8e140826fec9a0670c49d7fbd"
+    },
+    {
+      "path": "reports/re_stage9/retrieval_20_cases.csv",
+      "sha256": "2aec63437ae61aca6e9313f629e6b23add5fae9a90fae2efca5bc3ce54b85b2f"
+    },
+    {
+      "path": "reports/re_stage9/verification.md",
+      "sha256": "1d53b7e90c516c10ae2d9adeca4d0f3d6efbf3e9494528b09ef3889155a20a8e"
+    },
+    {
+      "path": "reports/re_stage9/functional_spec.md",
+      "sha256": "310a15f16f3d1402ff7431f30df68b6ab01fa1b80834ef1363d5469cfe8ec867"
+    },
+    {
+      "path": "reports/re_stage9/functional_spec_pdf_qa.json",
+      "sha256": "a99a74870894f3119eb0bb4d5bd486e5b3678498a4d9c081b2fb7b4ee840222e"
+    },
+    {
+      "path": "reports/re_stage9/deployment_runbook.md",
+      "sha256": "fb5cb26889c8dd86456d4a9dff98d75278661120dc350f2d56a8a8df9a825f62"
+    },
+    {
+      "path": "reports/re_stage9/final_qa_report.md",
+      "sha256": "0c3dc690a95a3d62837cba347c8055fc25ca43b16f6fe9460fb0f151b3333bb4"
+    },
+    {
+      "path": "reports/re_stage9/presentation_evidence.md",
+      "sha256": "7aee97911732fb0712a9b929abf143bdb290451941b54346b867bf270e337881"
+    },
+    {
+      "path": "reports/re_stage9/기획서_제출본.md",
+      "sha256": "f0021047817817576b83be63d4c5fa884b924a3906de822122e5e431386a7b66"
+    },
+    {
+      "path": "output/pdf/RE9_기능명세서.pdf",
+      "sha256": "18a88aed9edc81d4b73b120962d6c62b64435f793c0ed03a72e0e40173c1d6ba"
+    },
+    {
+      "path": "프로젝트 계획서.md",
+      "sha256": "8d836d11c344a9c98939c05e572bbe3abd57f73b2cf4cfcc792a4250e529a687"
+    },
+    {
+      "path": "MVP 단계별 구현 체크리스트.md",
+      "sha256": "59c2d94af244fe198a6322e1a63f492df96d7d93ddd75b7f6f35ee86565e0113"
+    },
+    {
+      "path": "README.md",
+      "sha256": "fea6e479f6c8865468c9beebcfc686228e477ee26236f24617297fce1a018bb0"
+    }
+  ]
+}

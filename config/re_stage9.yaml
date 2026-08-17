@@ -1,0 +1,27 @@
+contract_version: re9-v1
+as_of_date: 2026-08-17
+service_name: 정책금융 영향 시뮬레이터
+deployment:
+  status: awaiting_platform_and_account_approval
+  health_path: /health
+  start_command: uvicorn app.main:app --host 0.0.0.0 --port ${PORT}
+  required_environment:
+    - OPENAI_API_KEY
+    - OPENAI_MODEL
+    - OPENAI_EMBEDDING_MODEL
+  secret_policy: environment_only
+  log_policy: no_request_body_no_user_amount_no_policy_question
+qa:
+  persona_count: 8
+  expected_persona_pass_count: 8
+  representative_policy_count: 10
+  retrieval_questions_per_policy: 2
+  prohibited_claim_count: 0
+  screenshot_image_analysis: false
+  browser_state_qa: dom_and_computed_layout_only
+  embedding_timeout_seconds: 5
+  embedding_max_attempts: 2
+  embedding_fallback: bm25
+gate:
+  local_status: in_progress
+  external_url_status: pending_user_deployment_decision

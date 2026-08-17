@@ -1,0 +1,9 @@
+﻿persona_id,name,input_sha256,selected_goal,top_alternative_id,retrieval_mode,embedding_attempts,candidate_count,staged_question_count,graph_metric_match,passed
+P01,상권 하락·낮은 부채,fa0db34b656d510bb2226fc0a2f61f8daf1762725672aab2a2bd4d4e2fe070e8,최소부채,cost_reduction_5,bm25_fallback,0,6,14,True,True
+P02,안정 상권·높은 상환부담,65b7934026e85a68d9c5800ba679f402ea2188f998ef5d45eddf1ba907e9a937,최소상환,cost_reduction_5,bm25_fallback,0,6,14,True,True
+P03,상권 하락·현금 부족·기존 부채,b3b472ac11612393520e10915aa65df3184c1db4a2f881618338ae3a841bf885,최장생존,cost_reduction_5,bm25_fallback,0,6,20,True,True
+P04,사후환급 지급 지연,29c237531ecc7297b09ed968d0a5d7c48bd11744697667a40d8631b59bbb43a1,빠른실행,cost_reduction_5,bm25_fallback,0,6,17,True,True
+P05,단계형 확인 후 동적 기업지원,68a137b54342c8895323d1db09bba37bc90b35a72b6bab858e31bff9dc65be2b,최소부채,cost_reduction_5,bm25_fallback,0,6,15,True,True
+P06,명확한 자격 부적격,7fc2b7be324917348d8d258a121f266317f6e6375cb3275247ed3e5792c8b1ce,최소부채,cost_reduction_5,bm25_fallback,0,6,14,True,True
+P07,자격 충족·접수 종료,8970a12174bee5027583688af19335476b9e1eaa4b7d4bcefb033c9dc3f53270,최소부채,cost_reduction_5,bm25_fallback,0,6,14,True,True
+P08,Embedding 2회 실패·BM25 전환·오류 입력,abadb07929a7dfd7a220eef4dbab386213a2fafd371348428a7b22fe711fffd7,최소부채,cost_reduction_5,bm25_fallback,2,6,15,True,True

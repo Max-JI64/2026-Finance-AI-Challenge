@@ -1,0 +1,22 @@
+[
+  {"case_id":"fund-01","policy_id":"POL_SEOUL_FUND_2026","query":"서울시 중소기업육성자금 운전자금 저리 융자"},
+  {"case_id":"fund-02","policy_id":"POL_SEOUL_FUND_2026","query":"서울에서 시설을 고치고 운영자금도 빌릴 수 있는 자금"},
+  {"case_id":"crisis-01","policy_id":"POL_SEOUL_CRISIS_TRACK2_2026H2","query":"위기 소상공인 Track2 매출 감소 점포 비용지원"},
+  {"case_id":"crisis-02","policy_id":"POL_SEOUL_CRISIS_TRACK2_2026H2","query":"매출이 줄어 임대료가 힘든 서울 점포 사후정산"},
+  {"case_id":"closure-01","policy_id":"POL_SEOUL_CLOSURE_2026","query":"서울 소상공인 폐업지원 점포 철거비"},
+  {"case_id":"closure-02","policy_id":"POL_SEOUL_CLOSURE_2026","query":"가게를 접으면서 정리 비용과 취업 준비 지원"},
+  {"case_id":"digital-01","policy_id":"POL_SEOUL_DIGITAL_MIDLIFE_2026H2","query":"중장년 소상공인 디지털전환 온라인 마케팅"},
+  {"case_id":"digital-02","policy_id":"POL_SEOUL_DIGITAL_MIDLIFE_2026H2","query":"마흔 넘은 사장 온라인 판매 홍보 교육"},
+  {"case_id":"zero-01","policy_id":"POL_SEOUL_ZERO_MARKET_2026_2","query":"서울제로마켓 다회용기 리필스테이션"},
+  {"case_id":"zero-02","policy_id":"POL_SEOUL_ZERO_MARKET_2026_2","query":"친환경 포장 무포장 판매 매장 지원"},
+  {"case_id":"safety-01","policy_id":"POL_SEOUL_SAFETY_TEST_2026H2","query":"서울 소상공인 어린이제품 안전검사 비용"},
+  {"case_id":"safety-02","policy_id":"POL_SEOUL_SAFETY_TEST_2026H2","query":"생활용품 제조 유통 안전 인증 시험 지원"},
+  {"case_id":"restart-01","policy_id":"POL_SEOUL_RESTART_2026","query":"서울형 다시서기 프로젝트 성실실패자"},
+  {"case_id":"restart-02","policy_id":"POL_SEOUL_RESTART_2026","query":"성실실패자 재창업 초기자금과 재기 지원"},
+  {"case_id":"refinance-01","policy_id":"POL_SEMAS_REFINANCE_2026","query":"소상공인 정책자금 대환대출 고금리 4.5%"},
+  {"case_id":"refinance-02","policy_id":"POL_SEMAS_REFINANCE_2026","query":"이자가 비싼 기존 빚을 장기 저금리로 갈아타기"},
+  {"case_id":"rechallenge-01","policy_id":"POL_SEMAS_RECHALLENGE_2026","query":"소상공인 재도전특별자금 재창업 채무조정"},
+  {"case_id":"rechallenge-02","policy_id":"POL_SEMAS_RECHALLENGE_2026","query":"폐업 후 재창업한 성실상환 소상공인 운전자금"},
+  {"case_id":"voucher-01","policy_id":"POL_SEMAS_STABILITY_VOUCHER_2026","query":"소상공인 경영안정 바우처 공과금 4대 보험료"},
+  {"case_id":"voucher-02","policy_id":"POL_SEMAS_STABILITY_VOUCHER_2026","query":"전기요금 보험료 같은 고정비 부담 지원"}
+]
