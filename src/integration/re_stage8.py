@@ -87,6 +87,19 @@ HERO_POLICY_BY_ALTERNATIVE = {
     },
 }
 
+FINANCIAL_POLICY_NEEDS = {
+    "POL_SEOUL_FUND_2026": "현금 확보",
+    "POL_SEOUL_CRISIS_TRACK2_2026H2": "현금 확보",
+    "POL_SEMAS_STABILITY_VOUCHER_2026": "현금 확보",
+    "POL_SEMAS_REFINANCE_2026": "대출 부담 완화",
+    "POL_SEMAS_RECHALLENGE_2026": "대출 부담 완화",
+    "POL_SEMAS_EMPLOYMENT_INSURANCE_2026": "운영비 절감",
+    "POL_SEOUL_DIGITAL_MIDLIFE_2026H2": "운영비 절감",
+    "POL_SEOUL_ZERO_MARKET_2026_2": "운영비 절감",
+    "POL_SEOUL_CLOSURE_2026": "재기·전환",
+    "POL_SEOUL_RESTART_2026": "재기·전환",
+}
+
 
 class StrictModel(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
@@ -305,14 +318,6 @@ def _situation_summary(
         labels.append("안전현금 부족")
     else:
         labels.append("단기 현금 유지")
-    labels.append(
-        {
-            UserGoal.MINIMUM_DEBT: "신규 부채 최소화 우선",
-            UserGoal.LONGEST_SURVIVAL: "현금 생존기간 우선",
-            UserGoal.MINIMUM_REPAYMENT: "월 상환부담 최소화 우선",
-            UserGoal.FAST_EXECUTION: "지원 효과가 시작되는 시점 우선",
-        }[request.goal]
-    )
     return ". ".join(labels), labels
 
 
@@ -334,6 +339,7 @@ def _discover_policies(
     embedding_model, retrieval_mode = _retrieval_runtime()
     outcome = search.search(
         summary,
+        policy_ids=set(FINANCIAL_POLICY_NEEDS),
         as_of=BASE_AS_OF,
         district=district or None,
         top_k=6,
@@ -356,6 +362,7 @@ def _discover_policies(
                 "policy_id": item.chunk.policy_id,
                 "policy_name": policy["policy_name"],
                 "policy_version": policy["policy_version"],
+                "need_group": FINANCIAL_POLICY_NEEDS[item.chunk.policy_id],
                 "matched_section": item.chunk.page_or_section,
                 "match_explanation": item.chunk.text[:240],
                 "official_url": policy["official_url"],
@@ -654,6 +661,15 @@ def compare_sample(request: SampleCompareRequest) -> dict[str, Any]:
             "goal_meaning": ranking.meaning,
             "ordered_alternative_ids": ranking.ordered_alternative_ids,
             "top_alternative_id": ranking.top_alternative_id,
+            "goal_rankings": {
+                item.goal.value: {
+                    "goal_meaning": item.meaning,
+                    "ordered_alternative_ids": item.ordered_alternative_ids,
+                    "top_alternative_id": item.top_alternative_id,
+                    "fallback_used": item.fallback_used,
+                }
+                for item in result.rankings
+            },
             "pareto_frontier_ids": result.pareto_frontier_ids,
         },
         execution_plan=[item.model_dump(mode="json") for item in result.execution_plans],
@@ -720,6 +736,7 @@ def ask_policy(request: PolicyQuestionRequest) -> dict[str, Any]:
         outcome = search.search(
             retrieval_query,
             policy_id=request.policy_id,
+            policy_ids=set(FINANCIAL_POLICY_NEEDS) if search_all_policies else None,
             policy_version=request.policy_version,
             as_of=request.as_of,
             top_k=6 if search_all_policies else 4,
@@ -779,8 +796,13 @@ def ask_policy(request: PolicyQuestionRequest) -> dict[str, Any]:
         )()
         public_evidence = []
         discovered_policies = []
+    answer = _policy_chat_answer_with_guidance(
+        explanation.answer,
+        sanitized_question,
+        [item.chunk.policy_id for item in evidence] if "evidence" in locals() else [],
+    )
     return envelope(
-        answer=explanation.answer,
+        answer=answer,
         answer_source=explanation.source,
         explanation_model=explanation.model,
         fact_lock_status=explanation.fact_lock_status,
@@ -797,7 +819,46 @@ def ask_policy(request: PolicyQuestionRequest) -> dict[str, Any]:
     )
 
 
+ELIGIBILITY_QUESTION_TERMS = (
+    "지원받을 수", "지원 받을 수", "지원 가능", "받을 수 있", "신청할 수", "신청 가능", "대상인가", "대상인지", "자격",
+)
+
+
+def _policy_chat_answer_with_guidance(
+    answer: str, question: str, policy_ids: list[str]
+) -> str:
+    """Add actionable, policy-specific checks to eligibility questions."""
+
+    if not any(term in question.replace("?", "") for term in ELIGIBILITY_QUESTION_TERMS):
+        return answer
+    unique_policy_ids = list(dict.fromkeys(policy_ids))
+    questions = staged_questions(unique_policy_ids, SessionEligibilityProfile())
+    labels = [item["label"] for item in questions[:4]]
+    if not labels:
+        labels = ["사업장 소재지", "업종과 기업 규모", "최근 연매출", "현재 영업 여부"]
+    checks = "\n".join(f"- {label}" for label in labels)
+    guidance = (
+        f"확인을 위해 알려주세요:\n{checks}\n"
+        "이 정보를 알려주시면 공식 조건과 대조해 확인된 조건과 남은 조건을 나눠 안내할 수 있습니다. "
+        "최종 자격과 현재 접수 가능 여부는 공고와 담당기관에서 확인해야 합니다."
+    )
+    base = answer.rstrip()[: max(0, 1198 - len(guidance))]
+    return f"{base}\n\n{guidance}" if base else guidance
+
+
 POLICY_CHAT_QUERY_EXPANSIONS = (
+    (
+        ("대출", "이자", "상환", "빚"),
+        "대환대출 정책자금 융자 금리 상환부담 채무조정 소상공인",
+    ),
+    (
+        ("현금", "자금", "매출", "유동성"),
+        "운영자금 긴급자금 현금부족 매출감소 경영안정 소상공인",
+    ),
+    (
+        ("운영비", "고정비", "비용", "보험료"),
+        "운영비 고정비 비용절감 고용보험료 지원 환급 소상공인",
+    ),
     (
         ("아프", "질병", "부상", "입원", "병원", "건강검진", "치료"),
         "입원 입원 입원 생활비 생활비 생활비 질병 질병 부상 입원연계 외래진료 건강검진 소득공백",

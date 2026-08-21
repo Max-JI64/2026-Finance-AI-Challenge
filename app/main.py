@@ -52,7 +52,10 @@ async def enforce_request_size(request: Request, call_next):
             status_code=413,
             content={"error": "request_too_large", "message": "요청 크기는 2MB 이하여야 합니다."},
         )
-    return await call_next(request)
+    response = await call_next(request)
+    if request.url.path == "/" or request.url.path.startswith("/static/"):
+        response.headers["Cache-Control"] = "no-store"
+    return response
 
 
 @app.exception_handler(RequestValidationError)

@@ -7,7 +7,7 @@
   <title>서울 소상공인 현금흐름 진단</title>
   <link rel="preconnect" href="https://unpkg.com">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link rel="stylesheet" href="/static/styles.css">
+  <link rel="stylesheet" href="/static/styles.css?v=re8.3-010.3">
 </head>
 <body>
   <header class="site-header">
@@ -98,50 +98,45 @@
         <div class="screen-actions"><button class="secondary" data-step="business">이전</button><button class="primary" id="run-diagnosis">현금 진단 보기</button></div>
       </section>
       <section class="screen" id="diagnosis" aria-labelledby="diagnosis-title">
-        <header class="section-heading"><p class="eyebrow">3단계</p><h1 id="diagnosis-title">앞으로 13주, 현금이 버틸 수 있을까요?</h1><p>선택한 상권과 업종의 상황을 적용해 현금이 부족해지는 시점과 필요한 안전현금을 확인합니다.</p></header>
-        <section class="scenario-panel" aria-labelledby="scenario-title">
-          <div class="input-section-heading"><div><h2 id="scenario-title">선택한 상권의 매출 변화 범위</h2><p>선택한 상권·업종의 과거 흐름에서 계산한 세 가지 범위입니다. 내 점포의 매출 예측이나 직접 고르는 경기 전망이 아닙니다.</p></div><span id="model-period" class="status-badge">기준자료 확인 중</span></div>
+        <header class="section-heading"><p class="eyebrow">3단계</p><h1 id="diagnosis-title">앞으로 13주, 현금이 버틸 수 있을까요?</h1><p>선택한 상권과 업종의 상황을 적용해 현금이 부족해지는 시점과 앞으로 28일 필요현금을 확인합니다.</p></header>
+        <section class="scenario-panel" id="scenario-panel" aria-labelledby="scenario-title">
+          <div class="input-section-heading"><div><h2 id="scenario-title">현금흐름에 적용할 매출 변화 범위</h2><p>한 범위를 선택하면 3단계 진단과 4단계 대안 비교에 같은 조건이 적용됩니다.</p></div></div>
           <div class="scenario-options" id="scenario-options">
             <label><input type="radio" name="market-scenario" value="downside"><span><strong>하방 범위</strong><small>계산된 범위 중 매출 감소가 가장 큰 경우</small><b>확인 중</b></span></label>
             <label><input type="radio" name="market-scenario" value="central" checked><span><strong>기준 범위</strong><small>계산된 세 범위의 중앙값을 적용한 경우</small><b>확인 중</b></span></label>
             <label><input type="radio" name="market-scenario" value="recovery"><span><strong>회복 범위</strong><small>계산된 범위 중 매출 감소가 작거나 회복하는 경우</small><b>확인 중</b></span></label>
           </div>
-          <div class="model-period-help"><strong>기준자료가 뜻하는 것</strong><p id="model-period-help">선택한 상권·업종의 마지막 집계시점을 확인하고 있습니다.</p></div>
           <p class="field-help">각 카드의 13주·6개월 값은 선택한 상권·업종 전체의 전년 같은 기간 대비 매출 변화율입니다.</p>
+          <p class="scenario-application-status" id="scenario-application-status" aria-live="polite">기준 범위를 적용했습니다. 아래 진단과 4단계 대안 비교가 이 범위로 계산됩니다.</p>
         </section>
         <div id="diagnosis-empty" class="empty-state"><h2>재무 입력을 완료해 주세요</h2><p>현금 진단을 계산하면 이곳에 결과가 표시됩니다.</p><button class="primary" data-step="finance">재무 입력으로 이동</button></div>
         <div id="diagnosis-result" hidden tabindex="-1">
           <div class="metric-strip diagnosis-metrics" id="diagnosis-metrics"></div>
-          <section class="chart-panel"><div class="chart-heading"><div><h2>세 가지 상권 범위의 13주 현금 비교</h2><p>진하게 표시된 선이 현재 선택한 범위입니다. 안전현금 아래로 내려가는 시점을 함께 비교하세요.</p></div><div class="chart-legend scenario-chart-legend" id="scenario-chart-legend"></div></div><canvas id="baseline-chart" width="1100" height="520" aria-label="세 가지 상권 범위의 13주 예상 현금 잔액 비교 그래프"></canvas></section>
-          <div class="explanation-grid"><article><h2>안전현금이란?</h2><p>앞으로 28일 안에 예정된 필수 비용과 대출 상환금을 합친 금액입니다. 실제 결제 일정이 바뀌면 함께 달라집니다.</p></article><article><h2>6개월 뒤에는?</h2><dl id="six-month-summary"></dl></article></div>
-          <label class="assumption-check"><input id="conditional-assumption" type="checkbox" checked><span>추가 확인이 필요한 정책도 가정해서 비교하기</span></label>
+          <section class="chart-panel"><div class="chart-heading"><div><h2>세 가지 상권 범위의 13주 현금 비교</h2><p>노란색은 필요현금 미달 구간이고, 0원 아래는 현금 적자 구간입니다.</p></div><div class="chart-legend scenario-chart-legend" id="scenario-chart-legend"></div></div><button type="button" class="safe-cash-guide" id="safe-cash-help" aria-haspopup="dialog" aria-controls="safe-cash-dialog"><strong>앞으로 28일 필요현금</strong><span>앞으로 28일의 필수 비용과 대출 상환금</span><em>자세히</em></button><canvas id="baseline-chart" width="1100" height="520" aria-label="세 가지 상권 범위의 13주 예상 현금 잔액 비교 그래프. 노란색은 필요현금 미달 구간이고 0원 아래는 현금 적자 구간입니다."></canvas></section>
+          <div class="explanation-grid explanation-grid--single"><article><h2>6개월 뒤에는?</h2><dl id="six-month-summary"></dl></article></div>
         </div>
-        <div class="screen-actions"><button class="secondary" data-step="finance">입력 수정</button><button class="primary" id="diagnosis-next" disabled>대안 비교하기</button></div>
+        <div class="screen-actions"><button class="secondary" data-step="finance">재무 입력 수정</button><button class="primary" id="diagnosis-next" disabled>대안 비교하기</button></div>
       </section>
       <section class="screen" id="decision" aria-labelledby="decision-title">
         <header class="section-heading"><p class="eyebrow">4단계</p><h1 id="decision-title">내 상황에 맞는 대안을 비교하세요</h1><p>현금만 늘리는 안이 아니라 새로 생기는 빚과 매달 갚을 금액까지 함께 비교합니다.</p></header>
-        <fieldset class="goal-selector"><legend>지금 가장 중요한 목표</legend>
-          <label><input type="radio" name="goal" value="최소부채" checked><span><strong>빚을 덜 늘리기</strong><small>새로 생기는 부채가 적은 순서</small></span></label>
-          <label><input type="radio" name="goal" value="최장생존"><span><strong>현금을 오래 유지하기</strong><small>현금 고갈을 늦추는 순서</small></span></label>
-          <label><input type="radio" name="goal" value="최소상환"><span><strong>매달 갚는 돈 줄이기</strong><small>월 최대 상환액이 적은 순서</small></span></label>
-          <label><input type="radio" name="goal" value="빠른실행"><span><strong>효과가 빨리 반영되는 안</strong><small>비용 절감·지원금·대출 효과가 시작되는 시점이 빠른 순서</small></span></label>
+        <button type="button" class="active-scenario-link" id="active-scenario-link"><span>적용 중</span><strong id="decision-scenario-status">기준 범위</strong><small id="decision-scenario-help">선택한 범위가 3단계 진단과 4단계 대안에 적용됩니다.</small><em>범위 변경</em></button>
+        <fieldset class="goal-selector"><legend><strong>네 가지 기준별 비교 결과</strong><small>각 기준의 1순위를 한눈에 보고, 원하는 기준을 누르면 아래 대안 카드가 그 순서로 정렬됩니다.</small></legend>
+          <label><input type="radio" name="goal" value="최소부채" checked><span><strong>빚을 덜 늘리기</strong><small>새로 생기는 부채가 적은 순서</small><span class="goal-result"><em>1순위</em><b data-goal-top="최소부채">계산 전</b><small data-goal-value="최소부채"></small></span></span></label>
+          <label><input type="radio" name="goal" value="최장생존"><span><strong>현금을 오래 유지하기</strong><small>현금 고갈을 늦추는 순서</small><span class="goal-result"><em>1순위</em><b data-goal-top="최장생존">계산 전</b><small data-goal-value="최장생존"></small></span></span></label>
+          <label><input type="radio" name="goal" value="최소상환"><span><strong>매달 갚는 돈 줄이기</strong><small>월 최대 상환액이 적은 순서</small><span class="goal-result"><em>1순위</em><b data-goal-top="최소상환">계산 전</b><small data-goal-value="최소상환"></small></span></span></label>
+          <label><input type="radio" name="goal" value="빠른실행"><span><strong>효과가 빨리 반영되는 안</strong><small>효과 시작이 빠른 순서</small><span class="goal-result"><em>1순위</em><b data-goal-top="빠른실행">계산 전</b><small data-goal-value="빠른실행"></small></span></span></label>
         </fieldset>
         <div id="decision-empty" class="empty-state"><h2>먼저 현금 진단이 필요합니다</h2><button class="primary" data-step="finance">재무 입력으로 이동</button></div>
         <div id="decision-result" hidden>
           <section id="ranking-notice" class="ranking-notice" role="status" aria-live="polite" hidden></section>
           <div id="alternative-cards" class="alternative-cards"></div>
           <section class="policy-discovery" aria-labelledby="policy-discovery-title">
-            <div class="section-heading compact"><p class="eyebrow">상황 기반 정책발굴</p><h2 id="policy-discovery-title">입력한 상황에서 함께 확인할 정책</h2><p>상권·업종·매출 흐름·현금 부족·고정비·대출 부담을 범주로 바꿔 전체 정책 문서에서 후보를 찾습니다. 아래 후보는 승인이나 자격 확정이 아닙니다.</p></div>
-            <div id="situation-labels" class="situation-labels"></div>
+            <div class="section-heading compact"><p class="eyebrow">상황 기반 금융정책</p><h2 id="policy-discovery-title">필요에 따라 확인할 금융 정책</h2><p>사업체 현금과 부채에 직접 연결되는 정책만 필요별로 나눠 보여줍니다. 아래 내용은 승인이나 자격 확정이 아닙니다.</p></div>
+            <div class="situation-query"><strong>정책을 찾는 데 사용한 점포 조건</strong><div id="situation-labels" class="situation-labels"></div></div>
             <div id="policy-discovery-status" class="field-help"></div>
-            <section id="staged-question-panel" class="staged-question-panel" hidden>
-              <div><h3>후보에 필요한 조건만 확인</h3><p>모르면 그대로 두어도 됩니다. 답은 현재 페이지에서만 사용하며, 공식 자격판정은 검수된 Rule이 담당합니다.</p></div>
-              <div id="staged-questions" class="staged-questions"></div>
-              <button id="apply-staged-answers" type="button" class="primary">조건·금융값 반영해 다시 비교</button>
-            </section>
             <div id="policy-discovery-cards" class="policy-discovery-cards"></div>
           </section>
-          <section class="chart-panel comparison-panel"><div class="chart-heading"><div><h2 id="selected-chart-title">모든 대안의 13주 현금 비교</h2><p>초록색이 현재 선택한 대안입니다. 회색 선이나 아래 이름을 누르면 선택이 바뀝니다.</p></div></div><div id="comparison-legend" class="comparison-legend" aria-label="비교 그래프 대안 선택"></div><canvas id="comparison-chart" width="1100" height="520" aria-label="모든 대안의 현금 잔액 비교"></canvas></section>
+          <section class="chart-panel comparison-panel"><div class="chart-heading"><div><h2 id="selected-chart-title">모든 대안의 13주 현금 비교</h2><p>초록색은 선택한 대안입니다. 선이나 범례를 눌러 비교하세요.</p></div></div><div class="comparison-status-guide" aria-label="대안 상태 설명"><span class="is-ready">바로 비교 가능</span><span class="is-check">자격·접수 추가 확인</span></div><div id="comparison-legend" class="comparison-legend" aria-label="비교 그래프 대안 선택"></div><canvas id="comparison-chart" width="1100" height="520" aria-label="모든 대안의 현금 잔액 비교. 노란색은 필요현금 미달 구간이고 0원 아래는 현금 적자 구간입니다."></canvas></section>
           <details class="detail-table"><summary>모든 수치 한 번에 보기</summary><div class="table-wrap"><table><thead><tr><th>현재 목표 순위</th><th>대안</th><th>13주 뒤 현금</th><th>6개월 뒤 현금</th><th>신규부채</th><th>월 최대상환</th><th>총이자</th><th>확인할 조건</th></tr></thead><tbody id="comparison-body"></tbody></table></div></details>
           <section id="qa-section" class="qa-panel" aria-labelledby="qa-title">
             <div class="section-heading compact"><p class="eyebrow">공식 공고 기반 상담</p><h2 id="qa-title">정책 상담 채팅</h2><p>추천 목록에 없던 정책도 전체 공고에서 찾아 안내합니다. 숫자·식별정보 패턴은 외부 전송 전에 제거하며 대화는 이 페이지를 떠나면 사라집니다. OpenAI 기본 악용 모니터링 로그에는 최대 30일 포함될 수 있습니다.</p></div>
@@ -149,8 +144,8 @@
             <div id="chat-thread" class="chat-thread" role="log" aria-live="polite" aria-relevant="additions">
               <article class="chat-message chat-message--assistant"><div class="chat-avatar" aria-hidden="true">AI</div><div class="chat-bubble"><strong>정책 상담</strong><p>현재 상황을 편하게 말씀해 주세요. 관련 정책과 확인할 조건을 공식 공고에서 찾아드릴게요.</p></div></article>
             </div>
-            <details class="qa-prompt-presets"><summary>발표용 질문 예시 보기</summary><div class="qa-prompt-grid"><button type="button" data-question-example="요즘 아파서 며칠 가게를 쉬어야 하는데 생활비를 지원받을 정책이 있나요?">아파서 쉬어야 할 때</button><button type="button" data-question-example="아이를 돌보느라 영업시간을 줄여야 하는데 받을 수 있는 지원이 있나요?">아이 돌봄이 필요할 때</button><button type="button" data-question-example="이 정책은 누구에게 무엇을 지원하나요?">지원 내용</button><button type="button" data-question-example="신청 전에 확인할 조건과 준비해야 할 서류는 무엇인가요?">조건과 서류</button><button type="button" data-question-example="다른 지원정책과 함께 신청하거나 지원받을 수 있나요?">다른 정책 함께 찾기</button></div></details>
-            <div class="chat-composer"><label for="chat-question" class="sr-only">정책 질문</label><textarea id="chat-question" maxlength="500" rows="2" placeholder="예: 제가 아파서 가게를 쉬면 받을 수 있는 지원이 있나요?"></textarea><button class="primary" id="chat-send" type="button">보내기</button></div>
+            <details class="qa-prompt-presets"><summary>금융정책 질문 예시 보기</summary><div class="qa-prompt-grid"><button type="button" data-question-example="현재 대출의 이자와 월 상환 부담을 줄일 수 있는 정책이 있나요?">대출 부담 줄이기</button><button type="button" data-question-example="13주 안에 현금이 부족할 때 확인할 운영자금 정책이 있나요?">현금 부족 대비</button><button type="button" data-question-example="임차료나 보험료 같은 운영비 부담을 낮출 지원이 있나요?">운영비 절감</button><button type="button" data-question-example="폐업이나 재창업을 준비할 때 활용할 금융 지원이 있나요?">재기·재창업</button><button type="button" data-question-example="이 금융정책을 신청하기 전에 확인할 조건과 서류는 무엇인가요?">조건과 서류</button></div></details>
+            <div class="chat-composer"><label for="chat-question" class="sr-only">정책 질문</label><textarea id="chat-question" maxlength="500" rows="2" placeholder="예: 대출 이자와 월 상환 부담을 줄일 정책이 있나요?"></textarea><button class="primary" id="chat-send" type="button">보내기</button></div>
             <p class="chat-privacy">최대 5회 · 서비스 화면의 대화 기록은 새로고침하거나 페이지를 떠나면 삭제 · AI 응답 생성을 위한 OpenAI API 처리 정책은 별도 적용</p>
           </section>
         </div>
@@ -158,9 +153,11 @@
       </section>
     </div>
   </main>
+  <dialog id="safe-cash-dialog" class="alternative-dialog assumption-dialog" aria-labelledby="safe-cash-dialog-title"><button class="dialog-close" id="safe-cash-close" aria-label="닫기">×</button><p class="eyebrow">현금 기준 안내</p><h2 id="safe-cash-dialog-title">28일 필요현금이란?</h2><p>앞으로 28일 안에 예정된 필수 비용과 대출 상환금을 합친 금액입니다. 현금이 이 기준보다 적으면 필수 지출을 감당하기 어려울 수 있습니다.</p><p class="notice">노란색은 현금이 남아 있지만 필요현금에는 못 미치는 구간입니다. 0원 아래는 별도의 현금 적자 구간이며, 결제일이나 상환 일정이 바뀌면 필요현금도 달라집니다.</p><div class="dialog-actions"><button type="button" class="primary" id="safe-cash-confirm">확인</button></div></dialog>
   <dialog id="alternative-dialog" class="alternative-dialog"><button class="dialog-close" id="dialog-close" aria-label="닫기">×</button><div id="dialog-content"></div><div class="dialog-actions"><button class="primary" id="dialog-ai">이 정책 질문하기</button></div></dialog>
+  <div class="loading-overlay" id="global-loading" role="status" aria-live="assertive" aria-busy="true" hidden><div class="loading-card"><span class="loading-spinner" aria-hidden="true"></span><strong id="global-loading-title">현금흐름을 계산하고 있습니다</strong><p id="global-loading-message">잠시만 기다려 주세요.</p><time id="global-loading-elapsed" role="timer" aria-live="off">경과 시간 0초</time></div></div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script src="/static/app.js" defer></script>
+  <script src="/static/app.js?v=re8.3-010.3" defer></script>
 </body>
 </html>

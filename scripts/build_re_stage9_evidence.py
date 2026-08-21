@@ -419,6 +419,7 @@ def main() -> None:
         REPORT_DIR / "final_qa_report.md",
         REPORT_DIR / "presentation_evidence.md",
         REPORT_DIR / "기획서_제출본.md",
+        PROJECT_ROOT / "reports/re_stage8_3/service_review_log.md",
         PROJECT_ROOT / "output/pdf/RE9_기능명세서.pdf",
         PROJECT_ROOT / "프로젝트 계획서.md",
         PROJECT_ROOT / "MVP 단계별 구현 체크리스트.md",
@@ -435,13 +436,14 @@ def main() -> None:
         REPORT_DIR / "manifest.json",
         {
             "contract_version": "re9-v1",
-            "status": "local_qa_complete_external_deployment_pending"
+            "status": "local_qa_baseline_passed_re_stage8_3_revision_pending"
             if oracle["gate_passed_local"]
             else "local_qa_failed",
             "gate_passed_local": oracle["gate_passed_local"],
             "gate_passed_re9": False,
             "external_blockers": [
-                "deployment platform and account approval",
+                "RE8.3 user review completion and explicit modification-complete approval",
+                "free-only deployment platform and separate deployment approval",
                 "public URL and submission-period availability",
                 "deployment account Usage tier and production API key",
                 "live mobile and desktop DOM QA",

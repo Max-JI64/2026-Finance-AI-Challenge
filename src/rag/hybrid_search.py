@@ -149,6 +149,7 @@ class HybridPolicySearchIndex:
         query: str,
         *,
         policy_id: str | None = None,
+        policy_ids: set[str] | None = None,
         policy_version: str | None = None,
         as_of: date | None = None,
         district: str | None = None,
@@ -167,6 +168,8 @@ class HybridPolicySearchIndex:
             as_of=as_of,
             district=district,
         )
+        if policy_ids is not None:
+            chunks = [chunk for chunk in chunks if chunk.policy_id in policy_ids]
         chunk_by_id = {item.chunk_id: item for item in chunks}
         bm25_scores = self._bm25(query, chunks) if mode in {"bm25", "hybrid"} else {}
         bm25_order = sorted(bm25_scores, key=lambda key: (-bm25_scores[key], key))

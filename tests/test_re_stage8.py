@@ -8,7 +8,8 @@ from fastapi.testclient import TestClient
 from app.main import app
 from src.cashflow.quick_mode import QuickModeInput, build_quick_schedules
 from src.rag.local_db import DATABASE_PATH, SQLitePolicySearchIndex
-from src.rag.luna_client import explain_with_luna
+from src.integration.re_stage8 import _policy_chat_answer_with_guidance
+from src.rag.luna_client import _plain_text_answer, explain_with_luna
 
 
 client = TestClient(app)
@@ -58,6 +59,16 @@ def test_sample_comparison_is_deterministic_and_numbers_agree() -> None:
     assert no_action["weekly_13"][-1]["closing_cash"] == no_action["metrics"]["week13_ending_cash"]
     assert no_action["monthly_6"][-1]["closing_cash"] == no_action["metrics"]["month6_ending_cash"]
     assert left["comparison_result"]["selected_goal"] == "최소부채"
+    assert set(left["comparison_result"]["goal_rankings"]) == {
+        "최소부채",
+        "최장생존",
+        "최소상환",
+        "빠른실행",
+    }
+    assert all(
+        ranking["top_alternative_id"] is not None
+        for ranking in left["comparison_result"]["goal_rankings"].values()
+    )
     assert left["sample"]["is_synthetic"] is True
 
 
@@ -75,6 +86,25 @@ def test_direct_shock_and_goal_change_recompute_result() -> None:
     recovery_no_action = next(item for item in recovery["intervention_results"] if item["alternative_id"] == "no_action")
     assert recovery_no_action["metrics"]["week13_ending_cash"] > base_no_action["metrics"]["week13_ending_cash"]
     assert recovery["comparison_result"]["selected_goal"] == "최장생존"
+
+
+def test_policy_candidates_depend_on_store_inputs_not_goal() -> None:
+    minimum_debt = client.post(
+        "/api/v1/alternatives/compare",
+        json=sample_request(goal="최소부채"),
+    ).json()
+    minimum_repayment = client.post(
+        "/api/v1/alternatives/compare",
+        json=sample_request(goal="최소상환"),
+    ).json()
+
+    left = minimum_debt["policy_discovery"]
+    right = minimum_repayment["policy_discovery"]
+    assert [item["policy_id"] for item in left["candidates"]] == [
+        item["policy_id"] for item in right["candidates"]
+    ]
+    assert left["situation_labels"] == right["situation_labels"]
+    assert all("우선" not in label for label in left["situation_labels"])
 
 
 def test_high_debt_sample_uses_official_partial_refinance_cap() -> None:
@@ -435,6 +465,25 @@ def test_luna_fact_lock_accepts_grounded_answer_and_discards_new_number(monkeypa
     assert discarded.fact_lock_status == "discarded"
 
 
+def test_policy_chat_plain_text_and_eligibility_guidance() -> None:
+    broken = "## 지원 조건 | 항목 | 상태 |\n|---|---|\n| 매출 | 확인 필요 |"
+    normalized = _plain_text_answer(broken)
+    assert "##" not in normalized
+    assert "|" not in normalized
+    assert "지원 조건 · 항목 · 상태" in normalized
+
+    guided = _policy_chat_answer_with_guidance(
+        "현재 제공된 근거만으로는 지원 대상 여부를 확인할 수 없습니다.",
+        "이걸 내가 지원 받을 수 있어?",
+        ["POL_SEOUL_CRISIS_TRACK2_2026H2"],
+    )
+    assert "확인을 위해 알려주세요:" in guided
+    assert "공식 확인서 기준 기업 규모" in guided
+    assert "사업자등록증상 개업일" in guided
+    assert "최종 자격" in guided
+    assert len(_policy_chat_answer_with_guidance("가" * 1200, "지원 가능해?", [])) <= 1200
+
+
 def test_validation_response_does_not_echo_sensitive_input() -> None:
     marker = "991122-sensitive-marker"
     response = client.post(
@@ -507,6 +556,114 @@ def test_map_keeps_level_layers_and_permanent_group_labels() -> None:
     assert "map-circle-label" in styles
     for retired_color in ("#a83b23", "#ee6b45", "#b93961", "#ef7898", "#8f2046", "#ba3159", "#d94772", "#f48ba8"):
         assert retired_color not in javascript
+
+
+def test_diagnosis_and_decision_review_changes_are_wired() -> None:
+    html = client.get("/").text
+    javascript = client.get("/static/app.js").text
+    styles = client.get("/static/styles.css").text
+
+    assert "기준자료가 뜻하는 것" not in html
+    assert 'id="model-period"' not in html
+    assert 'byId("model-period")' not in javascript
+    assert "한 범위를 선택하면 3단계 진단과 4단계 대안 비교에 같은 조건이 적용됩니다." in html
+    assert "재무 입력 수정" in html
+    assert '.metric.is-scenario-sensitive{box-shadow:none;background:var(--surface)}' in styles
+    assert ".metric.is-scenario-sensitive strong,.explanation-grid dd.is-scenario-sensitive" in styles
+    assert 'ctx.fillText("28일 필요현금 미달 구간"' in javascript
+    assert 'ctx.fillText("현금 적자 구간"' in javascript
+    assert javascript.index('series.forEach((item) =>') < javascript.index('ctx.fillText("현금 적자 구간"')
+    assert "item.values.findIndex((value) => value < 0)" not in javascript
+    assert "ctx.arc(point.x, point.y, 5" not in javascript
+    assert 'ctx.fillText("0만원"' in javascript
+    assert "ctx.moveTo(pad.left, y(safeCash))" not in javascript
+    assert 'data-select-scenario="${escapeHtml(item.scenario)}"' in javascript
+    assert 'drawChart(byId("baseline-chart"), scenarioSeries, state.data.safe_cash.suggested_amount, true)' in javascript
+    assert 'byId("baseline-chart").addEventListener("click", selectScenarioChartLine)' in javascript
+    assert 'byId("baseline-chart").addEventListener("pointermove", hoverScenarioChartLine)' in javascript
+    assert '#baseline-chart{cursor:default}' in styles
+    assert '.scenario-options label:hover span' in styles
+    assert '.scenario-chart-legend button:hover' in styles
+    assert "goal: state.goal, assume_conditional: true" in javascript
+    assert 'id="conditional-assumption"' not in html
+    assert 'id="conditional-assumption-dialog"' not in html
+    assert '/static/styles.css?v=re8.3-010.3' in html
+    assert '/static/app.js?v=re8.3-010.3' in html
+    assert "policyCardSummaries" in javascript
+    assert "item.reason_summary || item.match_explanation" not in javascript
+    assert "<small>${escapeHtml(item.simulation_readiness)}</small>" not in javascript
+    assert "자영업자 고용보험료의 50~80%를 최대 5년간 지원합니다." in javascript
+    assert 'id="global-loading"' in html
+    assert 'class="loading-spinner"' in html
+    assert 'id="global-loading-elapsed"' in html
+    assert 'aria-live="off">경과 시간 0초' in html
+    assert "function showLoading(" in javascript
+    assert "function hideLoading(" in javascript
+    assert "function updateLoadingElapsed(" in javascript
+    assert "window.setInterval(updateLoadingElapsed, 1000)" in javascript
+    assert "window.clearInterval(loadingTimer)" in javascript
+    assert 'showLoading("세 가지 매출 변화 범위의 현금흐름을 계산하고 있습니다.")' in javascript
+    assert 'showLoading("발표용 가게 정보를 채우고 현금흐름을 미리 계산하고 있습니다.")' not in javascript
+    assert 'await runComparison("diagnosis", false, false)' not in javascript
+    assert 'selectArea(area.code, false, false, true, false)' in javascript
+    assert "2단계에서 현금 진단 보기를 누르면 계산을 시작합니다." in javascript
+    assert 'byId("run-diagnosis").addEventListener("click", () => runComparison("diagnosis"))' in javascript
+    assert ".loading-overlay{position:fixed;inset:0;z-index:2000" in styles
+    assert "@keyframes loading-spin" in styles
+    assert "붉은 점" not in html
+    assert 'id="safe-cash-help"' in html
+    assert 'id="safe-cash-dialog"' in html
+    assert "28일 필요현금이란?" in html
+    assert "안전현금은 왜 필요한가요?" not in html
+    assert '["앞으로 28일 필요현금", compactMoney(safeCash)' in javascript
+    assert ".safe-cash-guide{" in styles
+    assert 'byId("safe-cash-help").addEventListener("click"' in javascript
+    assert '"안전현금 아래"' not in javascript
+    assert '"현금 부족 예상", firstBelowZero(weekly)' not in javascript
+    assert ".metric-strip.diagnosis-metrics{grid-template-columns:repeat(3" in styles
+    assert "상권 범위와 무관한 입력값" not in javascript
+    assert "선택 범위에서 0원 이상 유지" not in javascript
+    assert "Promise.all(Object.keys(scenarioLabels)" in javascript
+    assert "state.scenarioResults[id]" in javascript
+    assert 'id="staged-question-panel"' not in html
+    assert 'id="apply-staged-answers"' not in html
+    assert "renderStagedQuestions" not in javascript
+    assert "필요에 따라 확인할 금융 정책" in html
+    assert "financialPolicyNeeds" in javascript
+    for group in ("현금 확보", "대출 부담 완화", "운영비 절감", "재기·전환"):
+        assert group in javascript
+    assert "금융정책 질문 예시 보기" in html
+    assert "아파서 쉬어야 할 때" not in html
+    assert "아이 돌봄이 필요할 때" not in html
+    assert ".goal-selector label:hover span" in styles
+    assert ".alternative-card:hover" in styles
+    assert ".comparison-legend button:hover" in styles
+    assert '#comparison-chart{cursor:default}' in styles
+    assert 'byId("comparison-chart").addEventListener("pointermove", hoverComparisonChartLine)' in javascript
+    assert "(max - min) * .12" in javascript
+    assert "negativeGuideCount = negativeSpan >= 150 ? 2 : 1" in javascript
+    assert "goal_rankings" in javascript
+    assert '정책 후보는 위 점포 조건으로 찾습니다."' in javascript
+    assert "비교 기준을 바꿔도 목록은 그대로 유지됩니다." not in javascript
+    assert "syncPolicySearchToAlternative(id)" in javascript
+    assert "normalizeChatText(content)" in javascript
+    assert "현금흐름에 적용할 매출 변화 범위" in html
+    assert 'id="scenario-application-status"' in html
+    assert 'id="active-scenario-link"' in html
+    assert "updateScenarioApplicationStatus" in javascript
+    assert "const selectedBeforeGoalChange = state.selectedAlternative" in javascript
+    assert "selectionStillAvailable ? selectedBeforeGoalChange" in javascript
+    assert 'runComparison("decision")' not in javascript
+    assert "바로 비교 가능" in html
+    assert "자격·접수 추가 확인" in html
+    assert "alternativeReadiness" in javascript
+    assert "네 가지 기준별 비교 결과" in html
+    assert 'data-goal-top="최소부채"' in html
+    assert 'data-goal-top="최장생존"' in html
+    assert 'data-goal-top="최소상환"' in html
+    assert 'data-goal-top="빠른실행"' in html
+    assert "renderGoalResults" in javascript
+    assert "정책을 찾는 데 사용한 점포 조건" in html
 
 
 def test_request_size_limit() -> None:

@@ -14,7 +14,7 @@ from src.policy.discovery import DiscoveryEligibilityEngine, staged_questions
 from src.policy.eligibility import SessionEligibilityProfile
 from src.policy.re_stage8_2_events import DynamicPolicyScenario, build_dynamic_policy_plan
 from src.policy.schemas import ValueSource
-from src.integration.re_stage8 import _sanitize_external_text
+from src.integration.re_stage8 import FINANCIAL_POLICY_NEEDS, _sanitize_external_text
 from src.integration.re_stage8 import SampleCompareRequest, _dynamic_policy_alternatives, _load_sample
 from scripts.build_re_stage7_examples import build_hero
 
@@ -82,23 +82,24 @@ def test_new_policy_markdown_and_official_links_are_in_database() -> None:
     assert rows == expected
 
 
-def test_chat_can_discover_sick_leave_policy_outside_recommended_set(monkeypatch) -> None:
+def test_chat_default_search_stays_within_business_finance_scope(monkeypatch) -> None:
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     monkeypatch.delenv("OPENAI_EMBEDDING_MODEL", raising=False)
     response = client.post(
         "/api/v1/ai/ask",
         json={
             "policy_id": None,
-            "question": "요즘 아파서 며칠 가게를 쉬어야 하는데 생활비 지원이 있나요?",
+            "question": "현재 대출의 이자와 월 상환 부담을 줄일 정책이 있나요?",
             "history": [],
         },
     )
     assert response.status_code == 200
     payload = response.json()
-    expected_url = "https://news.seoul.go.kr/economy/archives/508129"
-    assert payload["discovered_policies"][0]["policy_id"] == "POL_SEOUL_HOSPITAL_LIVING_EXPENSE_2026"
-    assert payload["discovered_policies"][0]["official_url"] == expected_url
-    assert expected_url in {item["source_url"] for item in payload["official_evidence"]}
+    discovered_ids = {item["policy_id"] for item in payload["discovered_policies"]}
+    assert discovered_ids
+    assert discovered_ids <= set(FINANCIAL_POLICY_NEEDS)
+    assert "POL_SEOUL_HOSPITAL_LIVING_EXPENSE_2026" not in discovered_ids
+    assert "POL_SEOUL_PRIVATE_CHILDCARE_2026" not in discovered_ids
 
 
 def test_chat_rejects_more_than_five_user_questions(monkeypatch) -> None:
@@ -151,9 +152,11 @@ def test_compare_exposes_policy_discovery_without_raw_amounts(monkeypatch) -> No
     assert discovery["retrieval_mode"] == "bm25_fallback"
     assert len(discovery["candidates"]) == 6
     assert all(item["official_url"].startswith("https://") for item in discovery["candidates"])
+    assert {item["policy_id"] for item in discovery["candidates"]} <= set(FINANCIAL_POLICY_NEEDS)
+    assert all(item["need_group"] in set(FINANCIAL_POLICY_NEEDS.values()) for item in discovery["candidates"])
     labels = " ".join(discovery["situation_labels"])
     assert "원" not in labels
-    assert "신규 부채 최소화 우선" in labels
+    assert "우선" not in labels
 
 
 def test_embedding_retries_only_once_then_fails(monkeypatch) -> None:

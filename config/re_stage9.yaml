@@ -2,7 +2,10 @@ contract_version: re9-v1
 as_of_date: 2026-08-17
 service_name: 정책금융 영향 시뮬레이터
 deployment:
-  status: awaiting_platform_and_account_approval
+  status: paused_for_re_stage8_3_user_review
+  external_deployment_authorized: false
+  cost_policy: free_only
+  platform_selection_status: deferred_until_re_stage8_3_gate
   health_path: /health
   start_command: uvicorn app.main:app --host 0.0.0.0 --port ${PORT}
   required_environment:
@@ -18,10 +21,10 @@ qa:
   retrieval_questions_per_policy: 2
   prohibited_claim_count: 0
   screenshot_image_analysis: false
-  browser_state_qa: dom_and_computed_layout_only
+  browser_state_qa: user_direct_review_no_screenshot_image_analysis
   embedding_timeout_seconds: 5
   embedding_max_attempts: 2
   embedding_fallback: bm25
 gate:
-  local_status: in_progress
-  external_url_status: pending_user_deployment_decision
+  local_status: baseline_passed_revision_pending
+  external_url_status: blocked_until_re_stage8_3_and_separate_user_approval

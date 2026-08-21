@@ -5,7 +5,7 @@
 
 ## Project snapshot
 
-- Last updated: 2026-08-17T14:24+09:00
+- Last updated: 2026-08-21T11:28+09:00
 - Purpose: Build a working Seoul small-business policy-finance impact simulator whose hero compares 13-week survival and 6-month debt consequences across no action and representative interventions, using area-industry stress scenarios, schedule-based cash flow, official policy terms, and evidence-grounded AI explanations without causal-effect or personal-sales claims.
 - Important paths: `프로젝트 계획서.md` is the main MVP plan; `MVP 단계별 구현 체크리스트.md` is the execution and completion-gate document; `src/cashflow/` and `src/policy/` hold the completed RE3-RE4 engines; `config/re_stage5.yaml` and `reports/re_stage5/` hold the completed aggregate scenario model evidence; `src/policy/eligibility.py`, `src/rag/`, and `reports/re_stage6/` hold RE6; `src/recommendation/` and `reports/re_stage7/` hold the RE7 decision engine; `app/`, `src/integration/re_stage8.py`, `src/policy/discovery.py`, `src/policy/re_stage8_2_events.py`, `src/rag/hybrid_search.py`, `config/re_stage8.yaml`, and `reports/re_stage8_2/` hold the completed RE8.2 integration; `reports/re_stage9/`, `output/pdf/RE9_기능명세서.pdf`, `Dockerfile`, and `requirements-runtime.txt` hold the RE9 local submission package; `data/raw_re/향후 데이터 다운로드 가이드.md` is the acquisition guide.
 
@@ -20,10 +20,10 @@
 
 - `decision:implementation-checklist`
   - Created: 2026-08-14T20:21+09:00
-  - Updated: 2026-08-17T14:24+09:00
+  - Updated: 2026-08-17T14:33+09:00
   - Status: active
-  - Content: The checklist records completed Stage 0-6 and RE Stage 1-8.2 with Gate evidence. RE9 local QA is complete with eight personas, twenty representative-policy retrieval cases, submission documents, and deployment-neutral packaging, while the full RE9 Gate remains open until a public URL, deployment-account checks, restart reproduction, and live DOM QA pass.
-  - Evidence: `MVP 단계별 구현 체크리스트.md`, `프로젝트 계획서.md`, Gate evidence under `reports/re_stage1/` through `reports/re_stage9/`, and `output/pdf/RE9_기능명세서.pdf`.
+  - Content: The checklist records completed Stage 0-6 and RE Stage 1-8.2 with Gate evidence. RE8.3 is now the active user-directed service review and revision cycle; the existing RE9 8-persona and 20-case package is a pre-revision baseline, and external deployment is paused until the user explicitly closes RE8.3 and separately approves a free-only platform.
+  - Evidence: `MVP 단계별 구현 체크리스트.md`, `프로젝트 계획서.md`, `reports/re_stage8_3/service_review_log.md`, Gate evidence under `reports/re_stage1/` through `reports/re_stage9/`, and `config/re_stage9.yaml`.
 
 - `decision:re-stage9-local-submission-package`
   - Created: 2026-08-17T14:24+09:00
@@ -31,6 +31,76 @@
   - Status: active
   - Content: The user approved partial refinancing for the 80 million won high-debt persona: refinance only the official 50 million won cap and retain the remaining 30 million won on its original schedule. RE9 local QA passed 8/8 personas, 20/20 BM25 official-evidence cases, zero prohibited positive claims, two-attempt Embedding fallback, safe invalid-input handling, and 149 project tests; screenshot image analysis was not performed by user request.
   - Evidence: `scripts/build_re_stage7_examples.py`, `data/samples/re_stage9/`, `scripts/build_re_stage9_evidence.py`, `tests/test_re_stage9.py`, `reports/re_stage9/manifest.json`, and `output/pdf/RE9_기능명세서.pdf`.
+
+- `decision:re-stage8-3-user-review-cycle`
+  - Created: 2026-08-17T14:33+09:00
+  - Updated: 2026-08-17T14:33+09:00
+  - Status: active
+  - Content: External deployment is paused while the user directly reviews the local service and identifies changes. Each request is logged with a stable ID, desired result, acceptance criteria, implementation evidence, and user recheck; Gate RE8.3 closes only after the user explicitly says revisions are complete. Screenshot and image analysis remain excluded. Any later hosting must use a sustained free tier and still requires separate platform and deployment approval.
+  - Evidence: `reports/re_stage8_3/service_review_log.md`, `MVP 단계별 구현 체크리스트.md`, `프로젝트 계획서.md`, `config/re_stage9.yaml`, and `reports/re_stage9/deployment_runbook.md`.
+
+- `decision:conditional-policy-ui-placement`
+  - Created: 2026-08-21T08:52+09:00
+  - Updated: 2026-08-21T09:18+09:00
+  - Status: active
+  - Content: Step 3 cash diagnosis has no conditional-policy control. Step 4 always restores the six original comparison alternatives, labels unconfirmed policy effects as assumptions, and excludes those alternatives from recommendation rankings; there is no extra toggle or questionnaire blocking the comparison.
+  - Evidence: User correction in RE8.3-002; `app/static/index.html`, `app/static/app.js`, `src/integration/re_stage8.py`, and focused tests.
+
+- `decision:financial-policy-service-scope`
+  - Created: 2026-08-21T09:18+09:00
+  - Updated: 2026-08-21T09:18+09:00
+  - Status: active
+  - Content: Default step-4 discovery and all-policy chat are limited to 10 policies whose effects directly concern business cash, debt, operating cost, or restart. Hospital living expense, private childcare, restricted savings, effects outside six months, closed programs, and financially unverified programs remain in the 17-policy audit database but are hidden from the default service flow.
+  - Evidence: `대회개요.md`, `FINANCIAL_POLICY_NEEDS` in `src/integration/re_stage8.py`, `app/static/app.js`, and `tests/test_re_stage8_2.py`.
+
+- `decision:goal-ranking-precompute`
+  - Created: 2026-08-21T09:45+09:00
+  - Updated: 2026-08-21T10:38+09:00
+  - Status: active
+  - Content: Each scenario response exposes all four deterministic goal rankings already produced by RE7. Step 4 shows the first alternative and key metric inside all four result cards; selecting a criterion only reorders alternatives and the table locally, while preserving the user's selected alternative, graph/card emphasis, and linked policy-chat scope whenever that alternative remains available.
+  - Evidence: `src/integration/re_stage8.py`, `app/static/app.js`, `tests/test_re_stage8.py`, and live `127.0.0.1:8000` comparison response with four goal keys.
+
+- `decision:policy-discovery-goal-independence`
+  - Created: 2026-08-21T10:02+09:00
+  - Updated: 2026-08-21T10:02+09:00
+  - Status: active
+  - Content: Step-4 policy discovery depends on store inputs such as area, industry, sales, costs, debt, and cash risk, but not on the four alternative-ordering goals. With the same store inputs, changing a goal must preserve candidate IDs and situation labels.
+  - Evidence: User approval in RE8.3-003; `_situation_summary` in `src/integration/re_stage8.py`, the policy-search explanation in `app/static/app.js`, focused regression tests, and live paired goal requests.
+
+- `decision:policy-chat-actionable-plain-text`
+  - Created: 2026-08-21T10:24+09:00
+  - Updated: 2026-08-21T10:24+09:00
+  - Status: active
+  - Content: Step-4 alternative selection synchronizes the policy-chat scope: no-action and cost-only choices use all financial policies, while directly linked policy alternatives select that policy. Eligibility questions must name missing policy checks and the next action rather than stop at indeterminate; Luna output is constrained and normalized to plain text on both server and client.
+  - Evidence: `app/static/app.js`, `src/integration/re_stage8.py`, `src/rag/luna_client.py`, `tests/test_re_stage8.py`, and static asset version `re8.3-005.1`.
+
+- `decision:market-scenario-cross-step-continuity`
+  - Created: 2026-08-21T10:38+09:00
+  - Updated: 2026-08-21T10:38+09:00
+  - Status: active
+  - Content: The step-3 market-sales range is the calculation assumption for both the current cash diagnosis and every step-4 alternative. Both screens show the active range and 13-week rate, and the step-4 status returns directly to the step-3 selector for changes.
+  - Evidence: `app/static/index.html`, `app/static/app.js`, `app/static/styles.css`, `tests/test_re_stage8.py`, and static asset version `re8.3-006.1`.
+
+- `decision:cash-threshold-user-language`
+  - Created: 2026-08-21T10:56+09:00
+  - Updated: 2026-08-21T11:04+09:00
+  - Status: active
+  - Content: User-facing `안전현금` is `앞으로 28일 필요현금`, a single minimum threshold equal to upcoming essential costs and debt payments. The yellow 0-to-threshold band is `28일 필요현금 미달 구간`; the unfilled area below zero is `현금 적자 구간`. No point marker or additional negative-zone fill is used, and both band labels render after chart lines so the text remains in front.
+  - Evidence: `app/static/index.html`, `app/static/app.js`, `tests/test_re_stage8.py`, and static asset version `re8.3-008.2`; the internal `safe_cash` calculation contract is unchanged.
+
+- `decision:policy-card-content-hierarchy`
+  - Created: 2026-08-21T11:12+09:00
+  - Updated: 2026-08-21T11:12+09:00
+  - Status: active
+  - Content: Step-4 policy cards show eligibility and application readiness only in the existing top badge. The body no longer repeats generic readiness or Event/simulation phrases; it shows one policy-specific sentence describing the core support from the reviewed local notice.
+  - Evidence: `app/static/app.js`, `tests/test_re_stage8.py`, the reviewed local policy Markdown files under `data/raw_re/policy/`, and static asset version `re8.3-009.1`.
+
+- `decision:comparison-loading-feedback`
+  - Created: 2026-08-21T11:23+09:00
+  - Updated: 2026-08-21T11:28+09:00
+  - Status: active
+  - Content: The centered blocking loading overlay appears only after the step-2 `현금 진단 보기` action passes validation and remains through market-range retrieval plus all three cash comparisons. It displays actual elapsed time from `경과 시간 0초`, updates once per second without repeated screen-reader announcements, and clears and resets on success or failure. Presentation presets fill inputs and invalidate prior results but perform no range fetch or comparison until that same step-2 action.
+  - Evidence: `app/static/index.html`, `app/static/styles.css`, `app/static/app.js`, `tests/test_re_stage8.py`, and static asset version `re8.3-010.3`.
 
 - `decision:policy-source-hierarchy`
   - Created: 2026-08-15T21:23+09:00
@@ -300,6 +370,13 @@
 
 ## Working conventions
 
+- `convention:image-analysis-contact-sheets`
+  - Created: 2026-08-21T08:13+09:00
+  - Updated: 2026-08-21T08:13+09:00
+  - Status: active
+  - Content: Whenever image analysis is authorized and needed, resize every source image to 50% of both width and height, combine at most four resized images into one contact sheet, and analyze the contact sheet. For more than four images, create additional sheets in groups of four. This workflow does not itself authorize image analysis in scopes where it remains explicitly excluded.
+  - Evidence: User instruction on 2026-08-21.
+
 - `convention:plan-source-preservation`
   - Created: 2026-08-14T19:55+09:00
   - Updated: 2026-08-14T19:55+09:00
@@ -425,12 +502,47 @@
 ## Current handoff
 
 - `handoff:current`
-  - Updated: 2026-08-17T14:24+09:00
-  - Current state: RE9 local submission preparation is complete: the approved 50 million won partial refinance works, eight frozen personas pass 8/8, ten representative policies pass 20/20 BM25 evidence retrieval, all 149 tests pass, the three-page functional-spec PDF passes text/font/section QA, and the 14-output Manifest has no hash mismatch. Gate RE9 remains open.
-  - Next step: Obtain the user's deployment platform/account choice, deploy the prepared Docker contract, verify the production Usage tier and keys, public URL and submission-period access, restart P01/P03/P08 reproduction, and desktop/mobile DOM state without screenshot image analysis.
-  - Blockers: External deployment is not authorized until the user selects a platform and accepts its account/cost implications. Local Docker CLI and an automation browser are unavailable, so container Build and live DOM QA remain unverified; industrial-accident insurance remains outside the frozen 17-policy set.
+  - Updated: 2026-08-21T11:28+09:00
+  - Current state: The user ended this RE8.3 revision session after `RE8.3-001` through `RE8.3-010`. The latest step-2 diagnosis action shows a centered loading overlay with actual elapsed seconds while market ranges and all three comparisons run; presentation presets only fill inputs, clear stale results, and wait for the step-2 action. Static asset `re8.3-010.3`, live HTTP checks, JavaScript syntax, whitespace checks, and 46 focused tests pass.
+  - Next step: In a new session, read this memory and `reports/re_stage8_3/service_review_log.md`, start from static asset `re8.3-010.3`, and continue only the user's next review request. If visual acceptance is requested, first recheck the step-2 loading overlay and elapsed timer for both manual and preset-filled inputs.
+  - Blockers: Gate RE9 cannot resume until Gate RE8.3 closes and the user separately approves a viable sustained-free platform and external deployment. Screenshot and image analysis remain excluded; industrial-accident insurance remains outside the frozen 17-policy set.
 
 ## Session log
+
+- `session:20260821-0729`
+  - Started: 2026-08-21T07:29+09:00
+  - Last activity: 2026-08-21T11:28+09:00
+  - Focus: Prepare RE8.3 review, record the image-analysis convention, and implement the user-annotated step-3 and step-4 revisions.
+  - Updated keys: `decision:conditional-policy-ui-placement`, `decision:financial-policy-service-scope`, `decision:goal-ranking-precompute`, `decision:policy-discovery-goal-independence`, `decision:policy-chat-actionable-plain-text`, `decision:market-scenario-cross-step-continuity`, `decision:cash-threshold-user-language`, `decision:policy-card-content-hierarchy`, `decision:comparison-loading-feedback`, `handoff:current`, `convention:image-analysis-contact-sheets`
+  - Summary: Finally closed by user request after RE8.3-001 through RE8.3-010. The final change adds an actual elapsed-seconds display to the accessible centered loading overlay used by the step-2 diagnosis action for both manual and preset-filled inputs; preset selection itself performs no range fetch or comparison and clears stale results. Live HTTP checks, JavaScript syntax, whitespace, and 46 focused tests passed; no external API, model, policy source, raw data, image analysis, or deployment action occurred.
+
+- `session:20260821-0726`
+  - Started: 2026-08-21T07:26+09:00
+  - Last activity: 2026-08-21T07:26+09:00
+  - Focus: Begin RE8.3 with a read-only repository, contract, review-ledger, environment, route, and health readiness check.
+  - Updated keys: `handoff:current`
+  - Summary: Confirmed all requested core artifacts exist, Gate RE8.3 remains open, no actual modification ID exists, static HTML/CSS/JS and FastAPI routes are connected, and the rebuilt `.venv` returns HTTP 200 from `/health`; no source, test, model, policy, data, RAG, deployment, screenshot, image, or external API action occurred.
+
+- `session:20260821-0717`
+  - Started: 2026-08-21T07:17+09:00
+  - Last activity: 2026-08-21T07:17+09:00
+  - Focus: Rebuild the local Python environment and prepare an exact fresh-session prompt for RE8.3 web-service revisions.
+  - Updated keys: `handoff:current`
+  - Summary: Confirmed the old project `.venv` lacked Uvicorn, removed it at the user's request, and supplied clean rebuild commands after sandboxed venv creation failed. Mapped the current frontend, FastAPI integration, cash-flow, frozen LightGBM inference, policy rules and events, recommendation, Hybrid RAG, processed data, configuration, review ledger, and focused tests for the next session; no service source or contract was changed.
+
+- `session:20260817-2045`
+  - Started: 2026-08-17T20:45+09:00
+  - Last activity: 2026-08-17T23:46+09:00
+  - Focus: Choose a low-usage, precise feedback channel for RE8.3 UI and server revisions.
+  - Updated keys: `handoff:current`
+  - Summary: Verified the current RE8.3 contract and local run route, then clarified that image analysis is unnecessary for functional and server validation but is needed if Codex must independently judge rendered layout; text-only review can keep visual acceptance with the user. No service code, checklist, review ledger, model, policy scope, or deployment state was changed.
+
+- `session:20260817-1433`
+  - Started: 2026-08-17T14:33+09:00
+  - Last activity: 2026-08-17T14:33+09:00
+  - Focus: Pause deployment and establish a user-directed local service review and revision stage before RE9.
+  - Updated keys: `decision:implementation-checklist`, `decision:re-stage8-3-user-review-cycle`, `handoff:current`
+  - Summary: Added RE Stage 8.3 and its change ledger, made explicit user recheck and revision-complete approval the Gate, paused all external deployment, restricted future hosting to a sustained free tier, and reclassified existing RE9 QA as a pre-revision baseline. No platform account, public URL, screenshot analysis, service code, model, or policy logic was changed.
 
 - `session:20260817-1402`
   - Started: 2026-08-17T14:02+09:00

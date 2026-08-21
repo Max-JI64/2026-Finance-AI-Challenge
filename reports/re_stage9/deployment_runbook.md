@@ -3,18 +3,26 @@
 ## 현재 상태
 
 - 로컬 배포 패키지: 준비 완료
-- 외부 플랫폼·계정·공개 URL: 사용자 결정 대기
+- 외부 배포: 사용자 요청으로 중단
+- 현재 단계: RE Stage 8.3 사용자 직접 서비스 검토·수정
+- 외부 플랫폼·계정·공개 URL: RE8.3 종료 뒤 별도 결정
+- 비용 기준: 지속 무료 요금제만 허용
 - RE9 전체 Gate: 미통과
 - Health Check: `GET /health`
 - 실행 명령: `uvicorn app.main:app --host 0.0.0.0 --port ${PORT}`
 
 ## 배포 전 준비
 
-1. 사용자가 배포 플랫폼과 계정을 선택하고 외부 배포를 명시적으로 승인한다.
-2. 저장소 또는 빌드 컨텍스트에 `.env`가 포함되지 않았는지 확인한다.
-3. 플랫폼 Secret에 `OPENAI_API_KEY`, `OPENAI_MODEL=gpt-5.6-luna`, `OPENAI_EMBEDDING_MODEL=text-embedding-3-large`를 설정한다.
-4. 배포계정의 실제 Usage tier와 Embeddings·Responses API 사용 가능 여부를 확인한다.
-5. `requirements-runtime.txt` 또는 `Dockerfile`로 빌드한다. 개발·학습 전용 패키지는 운영 이미지에 포함하지 않는다.
+1. Gate RE8.3을 통과하고 사용자가 `수정 완료`를 명시적으로 승인한다.
+2. 지속 무료 요금제 후보의 메모리, 절전·Cold Start, Docker Build, 공개 HTTPS URL, Secret, 무료 유지기간을 비교한다.
+3. 결제수단 요구, 무료 한도 초과 자동 과금 또는 유료 전환 가능성이 있으면 실행 전에 멈추고 사용자에게 알린다.
+4. 사용자가 무료 플랫폼과 계정을 선택하고 외부 배포를 별도로 승인한다.
+5. 저장소 또는 빌드 컨텍스트에 `.env`가 포함되지 않았는지 확인한다.
+6. 플랫폼 Secret에 `OPENAI_API_KEY`, `OPENAI_MODEL=gpt-5.6-luna`, `OPENAI_EMBEDDING_MODEL=text-embedding-3-large`를 설정한다.
+7. 배포계정의 실제 Usage tier와 Embeddings·Responses API 사용 가능 여부를 확인한다.
+8. `requirements-runtime.txt` 또는 `Dockerfile`로 빌드한다. 개발·학습 전용 패키지는 운영 이미지에 포함하지 않는다.
+
+이 Runbook은 준비 문서이며, 현재는 어떤 플랫폼에도 계정 연결·빌드·배포·공개 URL 생성을 수행하지 않는다.
 
 ## 배포 명령
 
@@ -51,7 +59,9 @@ Run:   docker run --rm -p 8000:8000 --env-file <운영자 전용 환경파일> p
 
 ## 미완료 운영 항목
 
-- 플랫폼·계정 선택
+- Gate RE8.3 완료와 사용자 수정 종료 승인
+- 지속 무료 플랫폼 비교·선택
+- 별도 외부 배포 승인
 - 공개 URL 발급 및 제출기간 접근 보장
 - 운영 API 키·Usage tier 확인
 - 공개 URL 재시작 검증

@@ -58,7 +58,32 @@ def _fallback_answer(results: list[SearchResult]) -> str:
     if not results:
         return "현재 로컬 공식 근거에서 답변할 내용을 찾지 못했습니다. 공식 공고와 신청기관에 확인해 주세요."
     excerpts = [item.chunk.text.strip().replace("\n", " ")[:180] for item in results[:2]]
-    return "로컬 공식 근거 요약: " + " ".join(excerpts)
+    return _plain_text_answer("로컬 공식 근거 요약: " + " ".join(excerpts))
+
+
+def _plain_text_answer(value: str) -> str:
+    """Normalize unstable Markdown into safe, readable plain text."""
+
+    text = value.replace("\r\n", "\n").replace("\r", "\n")
+    text = re.sub(r"(?m)^\s{0,3}#{1,6}\s*", "", text)
+    text = re.sub(r"\s+#{1,6}\s+", "\n", text)
+    text = re.sub(
+        r"(?m)^\s*\|?\s*:?-{3,}:?(?:\s*\|\s*:?-{3,}:?)+\s*\|?\s*$",
+        "",
+        text,
+    )
+    rows: list[str] = []
+    for line in text.splitlines():
+        stripped = line.strip()
+        if "|" in stripped:
+            cells = [cell.strip() for cell in stripped.strip("|").split("|") if cell.strip()]
+            stripped = " · ".join(cells)
+        rows.append(stripped)
+    text = "\n".join(rows)
+    text = re.sub(r"\*\*([^*]+)\*\*", r"\1", text)
+    text = re.sub(r"__([^_]+)__", r"\1", text)
+    text = re.sub(r"`([^`]+)`", r"\1", text)
+    return re.sub(r"\n{3,}", "\n\n", text).strip()
 
 
 def _extract_output_text(payload: dict[str, Any]) -> str:
@@ -117,7 +142,9 @@ def explain_with_luna(
             "질문과 관련된 다른 정책이 근거에 있으면 정책명을 밝혀 함께 안내하세요. "
             "계산, 자격, 순위, 승인 가능성을 만들거나 바꾸지 마세요. "
             "URL과 Markdown 링크는 화면이 별도로 표시하므로 답변 본문에 쓰지 마세요. "
-            "모르면 확인 불가라고 답하고 공식기관 재확인을 안내하세요. 답변은 한국어 5문장 이내로 작성하세요."
+            "Markdown 제목, 표, 코드블록을 쓰지 말고 일반 텍스트와 줄바꿈만 사용하세요. "
+            "지원 대상인지 묻는 질문에 정보가 부족하면 확인 불가로 끝내지 말고, 근거상 확인할 항목과 다음 행동을 구체적으로 안내하세요. "
+            "답변은 한국어 5문장 이내로 작성하세요."
         ),
         "input": json.dumps(
             {
@@ -136,7 +163,7 @@ def explain_with_luna(
                 json=request,
             )
             response.raise_for_status()
-            answer = _extract_output_text(response.json())
+            answer = _plain_text_answer(_extract_output_text(response.json()))
         _validate_answer(answer, results)
         return ExplanationResult(answer, "openai", model, "passed")
     except (httpx.HTTPError, ValueError, KeyError, TypeError, json.JSONDecodeError) as exc:

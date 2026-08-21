@@ -1,6 +1,7 @@
 const state = {
   data: null, areaPoints: [], industries: [], selectedArea: null, selectedDong: "",
   marketScenarios: null, scenario: "central", goal: "최소부채", selectedAlternative: null,
+  scenarioResults: {}, scenarioCacheKey: "", hoveredScenario: null, hoveredAlternative: null,
   revenueMonths: 6, mapLevel: "district", map: null, circleLayer: null, circles: new Map(),
   visibleDongDistrict: "", visibleAreaScope: "", policies: [], chatMessages: [], chatTurns: 0,
   eligibilityAnswers: {}, policyScenarioValues: {},
@@ -17,6 +18,30 @@ const compactMoney = (value) => {
 };
 const safeUrl = (value) => { try { const parsed = new URL(value); return ["https:", "http:"].includes(parsed.protocol) ? escapeHtml(parsed.href) : "#"; } catch { return "#"; } };
 const scenarioLabels = { downside: "하방 범위", central: "기준 범위", recovery: "회복 범위" };
+const financialPolicyNeeds = {
+  POL_SEOUL_FUND_2026: "현금 확보",
+  POL_SEOUL_CRISIS_TRACK2_2026H2: "현금 확보",
+  POL_SEMAS_STABILITY_VOUCHER_2026: "현금 확보",
+  POL_SEMAS_REFINANCE_2026: "대출 부담 완화",
+  POL_SEMAS_RECHALLENGE_2026: "대출 부담 완화",
+  POL_SEMAS_EMPLOYMENT_INSURANCE_2026: "운영비 절감",
+  POL_SEOUL_DIGITAL_MIDLIFE_2026H2: "운영비 절감",
+  POL_SEOUL_ZERO_MARKET_2026_2: "운영비 절감",
+  POL_SEOUL_CLOSURE_2026: "재기·전환",
+  POL_SEOUL_RESTART_2026: "재기·전환",
+};
+const policyCardSummaries = {
+  POL_SEOUL_FUND_2026: "운전자금과 시설자금을 융자해 사업 운영에 필요한 자금을 마련합니다.",
+  POL_SEOUL_CRISIS_TRACK2_2026H2: "경영진단과 맞춤 컨설팅, 개선 또는 정리 비용을 최대 300만원 지원합니다.",
+  POL_SEMAS_STABILITY_VOUCHER_2026: "공과금과 4대 보험료 등 고정비에 사용할 수 있는 바우처를 지원합니다.",
+  POL_SEMAS_REFINANCE_2026: "고금리 대출을 장기 저금리 정책자금으로 전환해 상환 부담을 낮춥니다.",
+  POL_SEMAS_RECHALLENGE_2026: "재창업 또는 채무조정 소상공인에게 사업 재도전용 정책자금을 융자합니다.",
+  POL_SEMAS_EMPLOYMENT_INSURANCE_2026: "자영업자 고용보험료의 50~80%를 최대 5년간 지원합니다.",
+  POL_SEOUL_DIGITAL_MIDLIFE_2026H2: "디지털 교육과 컨설팅, 솔루션 도입비를 최대 300만원 지원합니다.",
+  POL_SEOUL_ZERO_MARKET_2026_2: "다회용기와 무포장 운영에 필요한 물품, 홍보, 시설 임차비를 지원합니다.",
+  POL_SEOUL_CLOSURE_2026: "폐업 예정 점포에 사업정리 컨설팅, 비용지원, 전직 연계를 제공합니다.",
+  POL_SEOUL_RESTART_2026: "재도전 소상공인에게 교육, 컨설팅, 저금리 대출보증과 재도전 자금을 지원합니다.",
+};
 const industryMajorLabels = { CS1: "외식업", CS2: "서비스업", CS3: "소매업" };
 const policyNames = {
   POL_SEOUL_CRISIS_TRACK2_2026H2: "위기 소상공인 지원",
@@ -33,7 +58,7 @@ const alternativeDescriptions = {
   track2_reimbursement: "지원비가 지급된다는 조건으로 지급 전후 현금 변화를 계산합니다.",
   refinance: "현재 대출을 더 낮은 금리와 긴 상환기간으로 바꾼 경우를 계산합니다.",
   emergency_loan: "서울시 정책자금을 추가로 빌렸을 때 현금과 상환 부담을 함께 계산합니다.",
-  combined_safe_cash: "비용 절감과 가능한 정책수단을 함께 적용해 안전현금을 확보하는 경우입니다.",
+  combined_safe_cash: "비용 절감과 가능한 정책수단을 함께 적용해 앞으로 28일 필요현금을 확보하는 경우입니다.",
 };
 const goalPresentations = {
   최소부채: { label: "빚을 덜 늘리기", metric: "새로 생기는 빚" },
@@ -59,6 +84,30 @@ const presentationPresets = {
 function toast(message) {
   const node = byId("toast"); node.textContent = message; node.classList.add("is-visible");
   window.setTimeout(() => node.classList.remove("is-visible"), 3000);
+}
+
+let loadingDepth = 0, loadingStartedAt = 0, loadingTimer = null;
+function updateLoadingElapsed() {
+  const elapsedSeconds = Math.max(0, Math.floor((Date.now() - loadingStartedAt) / 1000));
+  byId("global-loading-elapsed").textContent = `경과 시간 ${elapsedSeconds.toLocaleString("ko-KR")}초`;
+}
+function showLoading(message = "잠시만 기다려 주세요.") {
+  if (loadingDepth === 0) {
+    loadingStartedAt = Date.now();
+    updateLoadingElapsed();
+    loadingTimer = window.setInterval(updateLoadingElapsed, 1000);
+  }
+  loadingDepth += 1;
+  byId("global-loading-message").textContent = message;
+  byId("global-loading").hidden = false;
+  document.body.setAttribute("aria-busy", "true");
+}
+function hideLoading() {
+  loadingDepth = Math.max(0, loadingDepth - 1);
+  if (loadingDepth) return;
+  window.clearInterval(loadingTimer); loadingTimer = null; loadingStartedAt = 0;
+  byId("global-loading").hidden = true;
+  document.body.removeAttribute("aria-busy");
 }
 
 async function api(path, options = {}) {
@@ -310,7 +359,7 @@ function resetMapToSeoul(fit = true) {
   byId("district-select").value = ""; byId("area-search").value = ""; populateDongs(""); clearSelectedArea(); refreshAreaList(); renderDistrictCircles(fit);
 }
 
-function selectArea(code, fromMap = false, refreshResults = true, focusMap = true) {
+function selectArea(code, fromMap = false, refreshResults = true, focusMap = true, loadScenario = true) {
   const item = state.areaPoints.find((area) => area.code === String(code));
   if (!item) return;
   state.selectedArea = item; byId("district-select").value = item.district; populateDongs(item.district, item.administrative_dong); byId("area-search").value = "";
@@ -320,7 +369,7 @@ function selectArea(code, fromMap = false, refreshResults = true, focusMap = tru
   const circle = state.circles.get(item.code);
   if (focusMap && state.map && circle) { state.map.flyTo([item.latitude, item.longitude], 17, { duration: fromMap ? .35 : .6 }); if (fromMap) circle.openPopup(); }
   updateSummary();
-  if (refreshResults) refreshComparisonForMarketChange(); else loadMarketScenarios();
+  if (refreshResults) refreshComparisonForMarketChange(); else if (loadScenario) loadMarketScenarios();
 }
 
 function industryMajor(code) { return String(code || "").slice(0, 3); }
@@ -333,7 +382,7 @@ function populateIndustries(major, selected = "") {
 
 async function loadCatalogs() {
   const [areas, industries, policies] = await Promise.all([api("/api/v1/catalog/area-map"), api("/api/v1/catalog/industries"), api("/api/v1/catalog/policies")]);
-  state.areaPoints = areas.items; state.industries = industries.items; state.policies = policies.items;
+  state.areaPoints = areas.items; state.industries = industries.items; state.policies = policies.items.filter((item) => Object.hasOwn(financialPolicyNeeds, item.policy_id));
   state.policies.forEach((item) => { policyNames[item.policy_id] = item.policy_name; });
   byId("qa-policy").innerHTML = `<option value="">전체 정책에서 찾기</option>${state.policies.map((item) => `<option value="${escapeHtml(item.policy_id)}">${escapeHtml(item.policy_name)}</option>`).join("")}`;
   const districts = [...new Set(state.areaPoints.map((item) => item.district))].sort((a, b) => a.localeCompare(b, "ko"));
@@ -408,35 +457,46 @@ function policyScenarioPayload() {
 
 async function loadMarketScenarios() {
   if (!state.selectedArea || !byId("industry-select").value) return;
-  byId("model-period").textContent = "기준자료 확인 중";
-  byId("model-period-help").textContent = "선택한 상권·업종의 마지막 집계시점을 확인하고 있습니다.";
   try {
     const payload = await api(`/api/v1/market-scenarios/${encodeURIComponent(state.selectedArea.code)}/${encodeURIComponent(byId("industry-select").value)}`);
     state.marketScenarios = payload.market_scenario;
     const nodes = document.querySelectorAll("#scenario-options label");
     if (state.marketScenarios.available) {
       ["downside", "central", "recovery"].forEach((name, index) => { const item = state.marketScenarios.scenarios[name]; nodes[index].querySelector("b").textContent = `13주 ${formatPercent(item.thirteen_week_percent)} · 6개월 ${formatPercent(item.six_month_percent)}`; });
-      const period = String(state.marketScenarios.reference_period);
-      const periodLabel = period.length === 5 ? `${period.slice(0, 4)}년 ${period.slice(4)}분기` : period;
-      byId("model-period").textContent = `모델 입력 기준 · ${periodLabel}`;
-      byId("model-period-help").textContent = `${periodLabel}까지 집계된 상권·업종 자료를 모델 입력으로 사용해 이후 13주와 6개월의 변화 범위를 계산합니다. 현재 실시간 자료나 내 점포 실적을 뜻하지 않습니다.`;
-    } else { nodes.forEach((node) => node.querySelector("b").textContent = "집계자료 없음"); byId("model-period").textContent = "모델 자료 없음"; byId("model-period-help").textContent = "선택한 조합의 모델 입력자료가 없어 상권 변화율 0%로 계산합니다."; }
-  } catch { state.marketScenarios = null; byId("model-period").textContent = "기준자료 불러오기 실패"; byId("model-period-help").textContent = "상권 변화율을 불러오지 못해 입력한 재무정보만으로 계산합니다."; }
+    } else { nodes.forEach((node) => node.querySelector("b").textContent = "집계자료 없음"); }
+  } catch {
+    state.marketScenarios = null;
+    document.querySelectorAll("#scenario-options label").forEach((node) => { node.querySelector("b").textContent = "변화 범위 불러오기 실패"; });
+  }
+  updateScenarioApplicationStatus();
 }
 function formatPercent(value) { return `${Number(value) > 0 ? "+" : ""}${Number(value).toLocaleString("ko-KR", { maximumFractionDigits: 1 })}%`; }
+
+function selectedScenarioSummary() {
+  const modelScenario = state.marketScenarios?.scenarios?.[state.scenario];
+  const comparedScenario = scenarioComparison().find((item) => item.scenario === state.scenario);
+  const percent = modelScenario?.thirteen_week_percent ?? comparedScenario?.thirteen_week_percent;
+  return `${scenarioLabels[state.scenario]}${percent == null ? "" : ` · 13주 ${formatPercent(percent)}`}`;
+}
+
+function updateScenarioApplicationStatus() {
+  const summary = selectedScenarioSummary();
+  byId("scenario-application-status").textContent = `${summary}를 적용했습니다. 아래 진단과 4단계 대안 비교가 이 범위로 계산됩니다.`;
+  byId("decision-scenario-status").textContent = summary;
+  byId("decision-scenario-help").textContent = state.data ? "3단계에서 선택한 범위로 모든 대안을 계산했습니다." : "선택한 범위가 3단계 진단과 4단계 대안에 적용됩니다.";
+}
 
 async function refreshComparisonForMarketChange() {
   await loadMarketScenarios();
   if (state.data) await runComparison("diagnosis", false);
 }
 
-async function runComparison(next = "diagnosis", navigate = true) {
-  try { validateBusiness(); validateFinance(); } catch (error) { toast(error.message); return false; }
+function comparisonRequest(scenario = state.scenario) {
   const loanBalance = moneyInputValue("loan-balance");
-  const body = {
-    area_code: state.selectedArea.code, industry_code: byId("industry-select").value, market_scenario: state.scenario,
+  return {
+    area_code: state.selectedArea.code, industry_code: byId("industry-select").value, market_scenario: scenario,
     direct_shock_13_week_percent: 0, direct_shock_6_month_percent: 0, safe_cash_override: null,
-    goal: state.goal, assume_conditional: byId("conditional-assumption").checked,
+    goal: state.goal, assume_conditional: true,
     quick_input: {
       reference_date: referenceDate(), opening_cash: moneyInputValue("opening-cash"), safe_cash_threshold: 0,
       recent_monthly_revenues: revenueValues(true), revenue_timing: byId("revenue-timing").value,
@@ -450,14 +510,42 @@ async function runComparison(next = "diagnosis", navigate = true) {
     eligibility_profile: eligibilityProfilePayload(),
     policy_scenarios: policyScenarioPayload(),
   };
+}
+
+function comparisonCacheKey(body) {
+  return JSON.stringify({ ...body, market_scenario: "all", goal: "all" });
+}
+
+function applyGoalRanking(data, goal = state.goal) {
+  const ranking = data?.comparison_result?.goal_rankings?.[goal];
+  if (!ranking) return data;
+  Object.assign(data.comparison_result, ranking, { selected_goal: goal });
+  return data;
+}
+
+async function runComparison(next = "diagnosis", navigate = true, manageLoading = true) {
+  try { validateBusiness(); validateFinance(); } catch (error) { toast(error.message); return false; }
+  const body = comparisonRequest();
+  const cacheKey = comparisonCacheKey(body);
   const button = next === "diagnosis" ? byId("run-diagnosis") : byId("diagnosis-next");
-  const original = button.textContent; button.disabled = true; button.textContent = "계산 중";
+  const original = button.textContent; button.disabled = true; button.textContent = "3개 범위 계산 중";
+  if (manageLoading) showLoading("세 가지 매출 변화 범위의 현금흐름을 계산하고 있습니다.");
   try {
-    state.data = await api("/api/v1/alternatives/compare", { method: "POST", body: JSON.stringify(body) });
+    await loadMarketScenarios();
+    if (state.scenarioCacheKey !== cacheKey || !state.scenarioResults[state.scenario]) {
+      const entries = await Promise.all(Object.keys(scenarioLabels).map(async (scenario) => [
+        scenario,
+        await api("/api/v1/alternatives/compare", { method: "POST", body: JSON.stringify({ ...body, market_scenario: scenario }) }),
+      ]));
+      state.scenarioResults = Object.fromEntries(entries.map(([scenario, result]) => [scenario, applyGoalRanking(result)]));
+      state.scenarioCacheKey = cacheKey;
+    }
+    state.data = applyGoalRanking(state.scenarioResults[state.scenario]);
     state.selectedAlternative = state.data.comparison_result.top_alternative_id;
+    syncPolicySearchToAlternative(state.selectedAlternative);
     renderResults(); updateSummary(); if (navigate) showStep(next); return true;
   } catch (error) { toast(error.message); return false; }
-  finally { button.disabled = false; button.textContent = original; }
+  finally { if (manageLoading) hideLoading(); button.disabled = false; button.textContent = original; }
 }
 
 async function applyPreset(id) {
@@ -465,16 +553,21 @@ async function applyPreset(id) {
   const area = state.areaPoints.find((item) => item.code === "3001491") || state.areaPoints[0];
   const industry = state.industries.find((item) => item.code === "CS100001") || state.industries[0];
   if (!preset || !area || !industry) return toast("준비된 가게 상황을 불러오지 못했습니다.");
-  selectArea(area.code, false, false);
+  state.data = null; state.marketScenarios = null; state.scenarioResults = {}; state.scenarioCacheKey = ""; state.selectedAlternative = null;
+  byId("diagnosis-empty").hidden = false; byId("diagnosis-result").hidden = true; byId("decision-empty").hidden = false; byId("decision-result").hidden = true; byId("diagnosis-next").disabled = true;
+  document.querySelectorAll("[data-goal-top]").forEach((node) => { node.textContent = "계산 전"; });
+  document.querySelectorAll("[data-goal-value]").forEach((node) => { node.textContent = ""; });
+  document.querySelectorAll("#scenario-options label b").forEach((node) => { node.textContent = "확인 중"; });
+  selectArea(area.code, false, false, true, false);
   const major = industryMajor(industry.code); byId("industry-major-select").value = major; populateIndustries(major, industry.code);
   state.revenueMonths = preset.revenues.length; renderRevenueMonths(preset.revenues);
   [["opening-cash", preset.cash], ["monthly-rent", preset.rent], ["monthly-labor", preset.labor], ["monthly-purchase", preset.purchase], ["loan-balance", preset.loan], ["loan-rate", preset.rate], ["loan-term", preset.term]].forEach(([field, value]) => { byId(field).value = value; });
   byId("revenue-timing").value = "daily"; byId("expense-timing").value = "early"; byId("debt-timing").value = "late";
   state.scenario = "central"; document.querySelector('input[name="market-scenario"][value="central"]').checked = true;
   document.querySelectorAll("[data-preset]").forEach((node) => node.classList.toggle("is-selected", node.dataset.preset === id));
-  byId("preset-status").textContent = "6개월 재무정보를 채웠습니다. 아래 사업장을 확인한 뒤 재무 입력과 현금 진단을 순서대로 볼 수 있습니다.";
-  updateSummary(); await loadMarketScenarios(); await runComparison("diagnosis", false);
-  toast("6개월 입력을 채웠습니다. 현재 화면에서 다음 단계로 진행하세요.");
+  byId("preset-status").textContent = "6개월 재무정보를 채웠습니다. 2단계에서 현금 진단 보기를 누르면 계산을 시작합니다.";
+  updateScenarioApplicationStatus(); updateSummary();
+  toast("6개월 입력을 채웠습니다. 재무 입력에서 현금 진단을 시작하세요.");
 }
 
 async function runCsvBaseline() {
@@ -488,86 +581,70 @@ async function runCsvBaseline() {
   } catch (error) { byId("csv-status").textContent = error.message; }
 }
 
-function firstBelowSafe(weekly, safeCash) { const found = weekly.find((item) => item.closing_cash < safeCash); return found ? `${found.period}주차 (${found.end_date})` : "13주 내 없음"; }
 function scenarioComparison() { return state.data?.market_scenario_comparison || []; }
 function scenarioValuesDiffer(selector) { const values = scenarioComparison().map(selector); return new Set(values.map((value) => String(value))).size > 1; }
 function renderResults() {
   byId("diagnosis-empty").hidden = true; byId("diagnosis-result").hidden = false; byId("decision-empty").hidden = true; byId("decision-result").hidden = false; byId("diagnosis-next").disabled = false;
   const inputBaseline = state.data.baseline_cashflow;
   const baselineAlternative = state.data.intervention_results.find((item) => item.alternative_id === "no_action" && item.metrics);
-  const weekly = baselineAlternative?.weekly_13 || inputBaseline.weekly_13;
   const week13EndingCash = baselineAlternative?.metrics?.week13_ending_cash ?? inputBaseline.weekly_summary.ending_cash;
   const month6EndingCash = baselineAlternative?.metrics?.month6_ending_cash ?? inputBaseline.monthly_summary.ending_cash;
   const safeCash = state.data.safe_cash.suggested_amount;
-  const safeDateChanges = scenarioValuesDiffer((item) => firstBelowSafe(item.weekly_13, safeCash));
+  updateScenarioApplicationStatus();
   const week13Changes = scenarioValuesDiffer((item) => item.week13_ending_cash);
   const month6Changes = scenarioValuesDiffer((item) => item.month6_ending_cash);
   const metrics = [
-    ["현재 보유 현금", compactMoney(inputBaseline.weekly_13[0]?.opening_cash ?? state.data.baseline_input.opening_cash), "상권 범위와 무관한 입력값", false],
-    ["필요한 안전현금", compactMoney(safeCash), "향후 28일 필수 지출이라 범위 선택과 무관", false],
-    ["안전현금 아래", firstBelowSafe(weekly, safeCash), "선택한 상권 범위에 따라 달라짐", safeDateChanges],
-    ["13주 뒤 현금", compactMoney(week13EndingCash), week13EndingCash < 0 ? "선택 범위에서 현금 부족 예상" : "선택 범위에서 0원 이상 유지", week13Changes],
+    ["현재 보유 현금", compactMoney(inputBaseline.weekly_13[0]?.opening_cash ?? state.data.baseline_input.opening_cash), "", false],
+    ["앞으로 28일 필요현금", compactMoney(safeCash), "", false],
+    ["13주 뒤 현금", compactMoney(week13EndingCash), "", week13Changes],
   ];
-  byId("diagnosis-metrics").innerHTML = metrics.map(([label, value, note, changes]) => `<div class="metric ${changes ? "is-scenario-sensitive" : "is-fixed"}"><span>${label}</span><strong>${escapeHtml(value)}</strong><small>${escapeHtml(note)}</small></div>`).join("");
-  byId("six-month-summary").innerHTML = `<dt class="${month6Changes ? "is-scenario-sensitive" : ""}">현금 잔액</dt><dd class="${month6Changes ? "is-scenario-sensitive" : ""}">${compactMoney(month6EndingCash)}</dd><dt>남은 대출</dt><dd>${compactMoney(inputBaseline.debt_summary.remaining_principal_at_6_months)}</dd><dt>만기까지 총이자</dt><dd>${compactMoney(baselineAlternative?.metrics?.total_interest_through_maturity ?? inputBaseline.debt_summary.total_interest_through_maturity)}</dd>`;
+  byId("diagnosis-metrics").innerHTML = metrics.map(([label, value, note, changes]) => `<div class="metric ${changes ? "is-scenario-sensitive" : "is-fixed"}"><span>${label}</span><strong>${escapeHtml(value)}</strong>${note ? `<small>${escapeHtml(note)}</small>` : ""}</div>`).join("");
+  byId("six-month-summary").innerHTML = `<dt>현금 잔액</dt><dd class="${month6Changes ? "is-scenario-sensitive" : ""}">${compactMoney(month6EndingCash)}</dd><dt>남은 대출</dt><dd>${compactMoney(inputBaseline.debt_summary.remaining_principal_at_6_months)}</dd><dt>만기까지 총이자</dt><dd>${compactMoney(baselineAlternative?.metrics?.total_interest_through_maturity ?? inputBaseline.debt_summary.total_interest_through_maturity)}</dd>`;
   renderAlternatives(); renderPolicyDiscovery(); renderCharts();
 }
 
 function renderPolicyDiscovery() {
   const discovery = state.data?.policy_discovery;
   if (!discovery) return;
-  byId("situation-labels").innerHTML = (discovery.situation_labels || []).map((label) => `<span>${escapeHtml(label)}</span>`).join("");
-  const mode = discovery.retrieval_mode === "hybrid" ? `Hybrid AI 검색 · ${discovery.embedding_model}` : discovery.retrieval_mode === "bm25_fallback" ? "Embedding 2회 실패 · 정확어 검색으로 계속" : "정확어 검색";
-  byId("policy-discovery-status").textContent = `${mode}. ${discovery.privacy || ""}`;
-  const hasScenarioInputs = (discovery.candidates || []).some((item) => item.candidate_state !== "제외" && ["reviewed_event_requires_grade", "reviewed_event_requires_amount_date"].includes(item.event_status));
-  renderStagedQuestions(discovery.staged_questions || [], hasScenarioInputs);
-  byId("policy-discovery-cards").innerHTML = (discovery.candidates || []).map((item) => `<article class="policy-discovery-card"><div><span class="policy-readiness">${escapeHtml(item.eligibility_readiness)}</span><h3>${escapeHtml(item.policy_name)}</h3><p class="matched-section">찾은 근거: ${escapeHtml(item.matched_section)}</p><p>${escapeHtml(String(item.match_explanation || "").replace(/[#|>*_]/g, " ").replace(/\s+/g, " "))}</p><small>${escapeHtml(item.simulation_readiness)}</small>${renderPolicyScenarioInputs(item)}</div><div class="policy-card-actions"><a href="${safeUrl(item.official_url)}" target="_blank" rel="noreferrer">공고 보기</a><button type="button" class="primary" data-ask-policy="${escapeHtml(item.policy_id)}">이 정책 질문하기</button></div></article>`).join("") || '<p class="field-help">현재 입력에서 추가 정책 후보를 찾지 못했습니다.</p>';
-  bindPolicyScenarioInputs();
-}
-
-function renderStagedQuestions(questions, hasScenarioInputs = false) {
-  const panel = byId("staged-question-panel");
-  panel.hidden = !questions.length && !hasScenarioInputs;
-  byId("staged-questions").innerHTML = questions.map((item) => {
-    const value = state.eligibilityAnswers[item.field] ?? "";
-    const control = item.input_type === "date" ? `<input type="date" data-eligibility-field="${escapeHtml(item.field)}" value="${escapeHtml(value)}">` : item.input_type === "number" ? `<input type="number" min="0" max="10000" step="1" data-eligibility-field="${escapeHtml(item.field)}" value="${escapeHtml(value)}" placeholder="모르면 비워두기">` : `<select data-eligibility-field="${escapeHtml(item.field)}"><option value="">모름</option>${(item.options || []).filter((option) => option.value !== "unknown").map((option) => `<option value="${escapeHtml(option.value)}" ${value === option.value ? "selected" : ""}>${escapeHtml(option.label)}</option>`).join("")}</select>`;
-    return `<div class="staged-question"><label>${escapeHtml(item.label)}</label>${control}<small>${escapeHtml(item.reason)} ${escapeHtml(item.impact)}</small></div>`;
-  }).join("");
-  document.querySelectorAll("[data-eligibility-field]").forEach((node) => node.addEventListener("change", () => { state.eligibilityAnswers[node.dataset.eligibilityField] = node.value; }));
-}
-
-function renderPolicyScenarioInputs(item) {
-  if (item.candidate_state === "제외") return "";
-  const saved = state.policyScenarioValues[item.policy_id] || {};
-  if (item.event_status === "reviewed_event_requires_grade") return `<div class="policy-scenario-inputs" data-policy-scenario="${escapeHtml(item.policy_id)}"><label>고용보험 가입등급<select data-scenario-key="grade"><option value="">선택</option>${[1,2,3,4,5,6,7].map((grade) => `<option value="${grade}" ${String(saved.grade) === String(grade) ? "selected" : ""}>${grade}등급</option>`).join("")}</select></label><label>보험료가 현재 월지출에 포함됐나요?<select data-scenario-key="inBaseline"><option value="">모름</option><option value="true" ${saved.inBaseline === "true" ? "selected" : ""}>예</option><option value="false" ${saved.inBaseline === "false" ? "selected" : ""}>아니오</option></select></label></div>`;
-  if (item.event_status === "reviewed_event_requires_amount_date") return `<div class="policy-scenario-inputs" data-policy-scenario="${escapeHtml(item.policy_id)}"><label>실제 신청금액<input type="number" min="1" max="450" step="1" data-scenario-key="amount" value="${escapeHtml(saved.amount || "")}" placeholder="만원"></label><label>공고 차수 지급예정일<input type="date" data-scenario-key="paymentDate" value="${escapeHtml(saved.paymentDate || "")}"></label></div>`;
-  return "";
-}
-
-function bindPolicyScenarioInputs() {
-  document.querySelectorAll("[data-policy-scenario]").forEach((group) => {
-    const policyId = group.dataset.policyScenario;
-    state.policyScenarioValues[policyId] ||= {};
-    group.querySelectorAll("[data-scenario-key]").forEach((node) => node.addEventListener("change", () => { state.policyScenarioValues[policyId][node.dataset.scenarioKey] = node.value; }));
-  });
+  byId("situation-labels").innerHTML = (discovery.situation_labels || []).map((label) => `<span>${escapeHtml(humanizeText(label))}</span>`).join("");
+  byId("policy-discovery-status").textContent = "정책 후보는 위 점포 조건으로 찾습니다.";
+  const candidates = (discovery.candidates || []).filter((item) => Object.hasOwn(financialPolicyNeeds, item.policy_id));
+  const groupOrder = ["현금 확보", "대출 부담 완화", "운영비 절감", "재기·전환"];
+  const card = (item) => `<article class="policy-discovery-card"><div><span class="policy-readiness">${escapeHtml(item.eligibility_readiness)}</span><h4>${escapeHtml(item.policy_name)}</h4><p>${escapeHtml(policyCardSummaries[item.policy_id] || humanizeText(item.match_explanation || "정책의 지원 내용을 공식 공고에서 확인해 주세요."))}</p></div><div class="policy-card-actions"><a href="${safeUrl(item.official_url)}" target="_blank" rel="noreferrer">공고 보기</a><button type="button" class="primary" data-ask-policy="${escapeHtml(item.policy_id)}">이 정책 질문하기</button></div></article>`;
+  byId("policy-discovery-cards").innerHTML = groupOrder.map((group) => {
+    const items = candidates.filter((item) => (item.need_group || financialPolicyNeeds[item.policy_id]) === group);
+    return items.length ? `<section class="policy-need-group"><h3>${group}</h3><div class="policy-need-list">${items.map(card).join("")}</div></section>` : "";
+  }).join("") || '<p class="field-help">현재 상황에서 바로 확인할 금융 정책을 찾지 못했습니다.</p>';
 }
 
 function humanizeText(value) {
   let text = String(value ?? "");
   Object.entries(policyNames).forEach(([id, label]) => { text = text.replaceAll(id, label); });
-  return text.replaceAll("동시수혜 공식 근거 확인 필요", "두 지원을 함께 받을 수 있는지 공식기관에 확인해 주세요").replaceAll("공식 근거 확인 필요", "최신 지원 조건을 공식기관에 확인해 주세요").replaceAll("Track2", "위기 소상공인 지원");
+  return text.replaceAll("동시수혜 공식 근거 확인 필요", "두 지원을 함께 받을 수 있는지 공식기관에 확인해 주세요").replaceAll("공식 근거 확인 필요", "최신 지원 조건을 공식기관에 확인해 주세요").replaceAll("Track2", "위기 소상공인 지원").replaceAll("안전현금", "28일 필요현금");
 }
 function alternativeNote(item, baseline) {
   if (item.alternative_id === "no_action") return "다른 대안의 효과를 비교하는 기준선입니다.";
   const delta = item.metrics.week13_ending_cash - baseline.metrics.week13_ending_cash;
   return `아무 조치도 하지 않을 때보다 13주 뒤 현금이 ${compactMoney(Math.abs(delta))} ${delta >= 0 ? "많습니다" : "적습니다"}.`;
 }
-function goalMetric(item) {
+function goalMetric(item, goal = state.goal) {
   const metrics = item.metrics;
-  if (state.goal === "최장생존") return `${metrics.survival_days_6_month}일`;
-  if (state.goal === "최소상환") return compactMoney(metrics.maximum_monthly_debt_service);
-  if (state.goal === "빠른실행") return metrics.days_to_first_effect === 0 ? "즉시 반영" : `${metrics.days_to_first_effect}일 후`;
+  if (goal === "최장생존") return `${metrics.survival_days_6_month}일`;
+  if (goal === "최소상환") return compactMoney(metrics.maximum_monthly_debt_service);
+  if (goal === "빠른실행") return metrics.days_to_first_effect === 0 ? "즉시 반영" : `${metrics.days_to_first_effect}일 후`;
   return compactMoney(metrics.net_new_borrowing);
+}
+
+function renderGoalResults() {
+  const rankings = state.data?.comparison_result?.goal_rankings || {};
+  Object.entries(goalPresentations).forEach(([goal, presentation]) => {
+    const ranking = rankings[goal];
+    const top = state.data?.intervention_results?.find((item) => item.alternative_id === ranking?.top_alternative_id && item.metrics);
+    const topNode = document.querySelector(`[data-goal-top="${goal}"]`);
+    const valueNode = document.querySelector(`[data-goal-value="${goal}"]`);
+    if (topNode) topNode.textContent = top ? humanizeText(top.label) : "비교 가능한 대안 없음";
+    if (valueNode) valueNode.textContent = top ? `${presentation.metric} ${goalMetric(top, goal)}` : "";
+  });
 }
 function orderAlternatives(alternatives) {
   const orderedIds = state.data.comparison_result.ordered_alternative_ids || [];
@@ -593,7 +670,7 @@ function renderRankingNotice(alternatives, top) {
   } else if (selected.alternative_id === top) {
     messages.push(`현재 자격이 확인된 ${eligibleCount}개 대안 중 1순위입니다.`);
   } else if (topItem) {
-    messages.push(`현재 목표의 1순위는 ${topItem.label}입니다.`);
+    messages.push(`현재 목표의 1순위는 ${humanizeText(topItem.label)}입니다.`);
   }
   if (selected.metrics.week13_minimum_cash < 0) {
     messages.push(`13주 중 현금이 최저 ${compactMoney(selected.metrics.week13_minimum_cash)}까지 내려가므로 이 대안만으로는 현금 부족을 막지 못합니다.`);
@@ -602,7 +679,7 @@ function renderRankingNotice(alternatives, top) {
   }
   const tone = selected.metrics.week13_minimum_cash < 0 ? "is-danger" : (!selected.ranking_eligible || checks.length ? "is-caution" : "is-safe");
   notice.className = `ranking-notice ${tone}`;
-  notice.innerHTML = `<div class="ranking-notice-heading"><span>현재 선택한 대안</span><strong>${escapeHtml(selected.label)}</strong></div><div class="ranking-goal"><span>${escapeHtml(goal.label)} 판단값</span><strong>${escapeHtml(goal.metric)} ${escapeHtml(goalMetric(selected))}</strong></div><p>${messages.map(escapeHtml).join(" ")}</p>${checks.length ? `<div class="ranking-checks"><strong>이 대안에서 확인할 사항</strong><ul>${checks.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div>` : ""}`;
+  notice.innerHTML = `<div class="ranking-notice-heading"><span>현재 선택한 대안</span><strong>${escapeHtml(humanizeText(selected.label))}</strong></div><div class="ranking-goal"><span>${escapeHtml(goal.label)} 판단값</span><strong>${escapeHtml(goal.metric)} ${escapeHtml(goalMetric(selected))}</strong></div><p>${messages.map(escapeHtml).join(" ")}</p>${checks.length ? `<div class="ranking-checks"><strong>이 대안에서 확인할 사항</strong><ul>${checks.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div>` : ""}`;
   notice.hidden = false;
 }
 function renderAlternatives() {
@@ -612,9 +689,18 @@ function renderAlternatives() {
   if (!alternatives.length) { byId("alternative-cards").innerHTML = '<div class="empty-state"><h2>현재 비교 가능한 대안이 없습니다</h2><p>공식 상담기관에서 조건을 확인해 주세요.</p></div>'; return; }
   const rankById = new Map((state.data.comparison_result.ordered_alternative_ids || []).map((id, index) => [id, index + 1]));
   const goal = goalPresentations[state.goal] || { label: state.goal, metric: "판단값" };
-  renderRankingNotice(alternatives, top);
-  byId("alternative-cards").innerHTML = alternatives.map((item) => `<article class="alternative-card ${item.alternative_id === top ? "is-top" : ""} ${!item.ranking_eligible ? "is-unranked" : ""} ${item.alternative_id === state.selectedAlternative ? "is-selected" : ""}" data-select-alternative="${escapeHtml(item.alternative_id)}" tabindex="0" aria-label="${escapeHtml(item.label)} 선택">${!item.ranking_eligible ? '<span class="ranking-status">자격 확인 전 · 추천 순위 제외</span>' : ""}<h2>${escapeHtml(item.label)}</h2><p>${escapeHtml(alternativeDescriptions[item.alternative_id] || humanizeText(item.reason_summary) || "현금과 부채 영향을 비교합니다.")}</p><div class="goal-score"><span>${escapeHtml(goal.label)} 판단값</span><strong>${escapeHtml(goal.metric)} ${escapeHtml(goalMetric(item))}</strong></div><div class="card-metrics"><div><span>13주 뒤 현금</span><strong>${compactMoney(item.metrics.week13_ending_cash)}</strong></div><div><span>6개월 뒤 현금</span><strong>${compactMoney(item.metrics.month6_ending_cash)}</strong></div><div><span>새로 생기는 빚</span><strong>${compactMoney(item.metrics.net_new_borrowing)}</strong></div><div><span>월 최대상환</span><strong>${compactMoney(item.metrics.maximum_monthly_debt_service)}</strong></div></div><p class="card-delta">${escapeHtml(alternativeNote(item, baseline))}</p><button type="button" class="primary detail-button" data-open-alternative="${escapeHtml(item.alternative_id)}">자세히 보기</button></article>`).join("");
-  byId("comparison-body").innerHTML = alternatives.map((item) => `<tr class="${item.alternative_id === top ? "is-top" : ""}"><td>${rankById.has(item.alternative_id) ? `${rankById.get(item.alternative_id)}위` : "순위 제외"}</td><td>${escapeHtml(item.label)}</td><td>${compactMoney(item.metrics.week13_ending_cash)}</td><td>${compactMoney(item.metrics.month6_ending_cash)}</td><td>${compactMoney(item.metrics.net_new_borrowing)}</td><td>${compactMoney(item.metrics.maximum_monthly_debt_service)}</td><td>${compactMoney(item.metrics.total_interest_through_maturity)}</td><td>${item.metrics.confirmation_item_count}</td></tr>`).join("");
+  renderGoalResults(); renderRankingNotice(alternatives, top);
+  byId("alternative-cards").innerHTML = alternatives.map((item) => `<article class="alternative-card ${item.alternative_id === top ? "is-top" : ""} ${!item.ranking_eligible ? "is-unranked" : ""} ${item.alternative_id === state.selectedAlternative ? "is-selected" : ""}" data-select-alternative="${escapeHtml(item.alternative_id)}" tabindex="0" aria-label="${escapeHtml(humanizeText(item.label))} 선택">${!item.ranking_eligible ? '<span class="ranking-status">자격 확인 전 · 추천 순위 제외</span>' : ""}<h2>${escapeHtml(humanizeText(item.label))}</h2><p>${escapeHtml(alternativeDescriptions[item.alternative_id] || humanizeText(item.reason_summary) || "현금과 부채 영향을 비교합니다.")}</p><div class="goal-score"><span>${escapeHtml(goal.label)} 판단값</span><strong>${escapeHtml(goal.metric)} ${escapeHtml(goalMetric(item))}</strong></div><div class="card-metrics"><div><span>13주 뒤 현금</span><strong>${compactMoney(item.metrics.week13_ending_cash)}</strong></div><div><span>6개월 뒤 현금</span><strong>${compactMoney(item.metrics.month6_ending_cash)}</strong></div><div><span>새로 생기는 빚</span><strong>${compactMoney(item.metrics.net_new_borrowing)}</strong></div><div><span>월 최대상환</span><strong>${compactMoney(item.metrics.maximum_monthly_debt_service)}</strong></div></div><p class="card-delta">${escapeHtml(alternativeNote(item, baseline))}</p><button type="button" class="primary detail-button" data-open-alternative="${escapeHtml(item.alternative_id)}">자세히 보기</button></article>`).join("");
+  byId("comparison-body").innerHTML = alternatives.map((item) => `<tr class="${item.alternative_id === top ? "is-top" : ""}"><td>${rankById.has(item.alternative_id) ? `${rankById.get(item.alternative_id)}위` : "순위 제외"}</td><td>${escapeHtml(humanizeText(item.label))}</td><td>${compactMoney(item.metrics.week13_ending_cash)}</td><td>${compactMoney(item.metrics.month6_ending_cash)}</td><td>${compactMoney(item.metrics.net_new_borrowing)}</td><td>${compactMoney(item.metrics.maximum_monthly_debt_service)}</td><td>${compactMoney(item.metrics.total_interest_through_maturity)}</td><td>${item.metrics.confirmation_item_count}</td></tr>`).join("");
+}
+
+function alternativeReadiness(item) {
+  const plan = state.data?.execution_plan?.find((entry) => entry.alternative_id === item.alternative_id);
+  const checks = [...(item.items_to_confirm || []), ...(plan?.conditions_to_check_now || [])].filter(Boolean);
+  if (!item.ranking_eligible || checks.length || Number(item.metrics?.confirmation_item_count || 0) > 0) {
+    return { className: "is-check", label: "자격·접수 추가 확인" };
+  }
+  return { className: "is-ready", label: "바로 비교 가능" };
 }
 
 function canvasSetup(canvas) {
@@ -625,35 +711,67 @@ function canvasSetup(canvas) {
 function drawChart(canvas, series, safeCash = null, interactive = false) {
   if (!canvas || !series.length || !series[0].values.length || canvas.offsetParent === null) return;
   const { context: ctx, width, height } = canvasSetup(canvas), css = getComputedStyle(document.documentElement);
-  const colors = { text: css.getPropertyValue("--muted").trim(), line: css.getPropertyValue("--line").trim(), warning: css.getPropertyValue("--warning").trim() };
+  const colors = { text: css.getPropertyValue("--muted").trim(), line: css.getPropertyValue("--line").trim(), warning: css.getPropertyValue("--warning").trim(), danger: css.getPropertyValue("--danger").trim() };
   const pad = { left: 82, right: 20, top: 30, bottom: 50 }, all = series.flatMap((item) => item.values).concat(safeCash == null ? [] : [safeCash]);
   let min = Math.min(0, ...all), max = Math.max(0, ...all); if (min === max) max += 1;
   const x = (i) => pad.left + i * (width - pad.left - pad.right) / Math.max(1, series[0].values.length - 1);
   const y = (v) => pad.top + (max - v) * (height - pad.top - pad.bottom) / (max - min);
   ctx.clearRect(0, 0, width, height); ctx.font = "12px system-ui"; ctx.fillStyle = colors.text; ctx.strokeStyle = colors.line; ctx.lineWidth = 1;
-  if (safeCash != null && safeCash > 0) { ctx.fillStyle = "rgba(180,140,35,.10)"; ctx.fillRect(pad.left, y(safeCash), width - pad.left - pad.right, Math.max(0, y(0) - y(safeCash))); ctx.strokeStyle = colors.warning; ctx.setLineDash([6, 4]); ctx.beginPath(); ctx.moveTo(pad.left, y(safeCash)); ctx.lineTo(width - pad.right, y(safeCash)); ctx.stroke(); ctx.setLineDash([]); }
-  for (let i = 0; i <= 4; i += 1) { const value = min + (max - min) * i / 4, py = y(value); ctx.strokeStyle = colors.line; ctx.beginPath(); ctx.moveTo(pad.left, py); ctx.lineTo(width - pad.right, py); ctx.stroke(); ctx.fillStyle = colors.text; ctx.fillText(`${Math.round(value / 10000).toLocaleString("ko-KR")}만`, 25, py + 4); }
+  let shortfallLabel = null;
+  if (safeCash != null && safeCash > 0) {
+    const safeTop = y(safeCash), zeroLine = y(0), bandTop = Math.min(safeTop, zeroLine), bandHeight = Math.abs(zeroLine - safeTop);
+    ctx.fillStyle = "rgba(180,140,35,.10)";
+    ctx.fillRect(pad.left, bandTop, width - pad.left - pad.right, bandHeight);
+    if (bandHeight >= 24) shortfallLabel = { x: pad.left + 10, y: bandTop + 18 };
+  }
+  const zeroTolerance = Math.max(1, (max - min) * .12);
+  const gridValues = [];
+  for (let i = 0; i <= 4; i += 1) { const value = min + (max - min) * i / 4; if (value > zeroTolerance) gridValues.push(value); }
+  if (min < 0) {
+    gridValues.push(min);
+    const negativeSpan = Math.abs(y(min) - y(0));
+    const negativeGuideCount = negativeSpan >= 150 ? 2 : 1;
+    for (let i = 1; i <= negativeGuideCount; i += 1) gridValues.push(min * i / (negativeGuideCount + 1));
+  }
+  [...new Set(gridValues.map((value) => Math.round(value)))].sort((a, b) => b - a).forEach((value) => { const py = y(value); ctx.strokeStyle = colors.line; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(pad.left, py); ctx.lineTo(width - pad.right, py); ctx.stroke(); ctx.fillStyle = colors.text; ctx.textAlign = "left"; ctx.fillText(`${Math.round(value / 10000).toLocaleString("ko-KR")}만`, 25, py + 4); });
+  const zeroY = y(0); ctx.strokeStyle = colors.text; ctx.globalAlpha = .8; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(pad.left, zeroY); ctx.lineTo(width - pad.right, zeroY); ctx.stroke(); ctx.globalAlpha = 1; ctx.fillStyle = colors.text; ctx.textAlign = "left"; ctx.font = "700 12px system-ui"; ctx.fillText("0만원", 25, zeroY + (zeroY < pad.top + 14 ? 14 : -7)); ctx.font = "12px system-ui";
   ctx.save(); ctx.translate(14, height / 2); ctx.rotate(-Math.PI / 2); ctx.fillStyle = colors.text; ctx.textAlign = "center"; ctx.fillText("현금 잔액(만원)", 0, 0); ctx.restore();
   canvas._seriesHit = [];
   series.forEach((item) => { const points = item.values.map((value, index) => ({ x: x(index), y: y(value) })); ctx.strokeStyle = item.color; ctx.globalAlpha = item.opacity ?? 1; ctx.lineWidth = item.width || 3; ctx.lineCap = "round"; ctx.setLineDash(item.dash || []); ctx.beginPath(); points.forEach((point, index) => index ? ctx.lineTo(point.x, point.y) : ctx.moveTo(point.x, point.y)); ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = 1; if (interactive && item.id) canvas._seriesHit.push({ id: item.id, points }); });
+  if (shortfallLabel) { ctx.fillStyle = colors.warning; ctx.textAlign = "left"; ctx.font = "700 12px system-ui"; ctx.fillText("28일 필요현금 미달 구간", shortfallLabel.x, shortfallLabel.y); }
+  if (min < 0 && zeroY < height - pad.bottom - 18) { ctx.fillStyle = colors.danger; ctx.textAlign = "left"; ctx.font = "700 12px system-ui"; ctx.fillText("현금 적자 구간", pad.left + 10, zeroY + 18); }
+  ctx.font = "12px system-ui";
   ctx.fillStyle = colors.text; ctx.textAlign = "center"; series[0].values.forEach((_, index) => { if (index === 0 || index === series[0].values.length - 1 || index % 2 === 0) ctx.fillText(`${index + 1}주`, x(index), height - 22); });
 }
 function renderCharts() {
   if (!state.data) return;
-  const accent = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim();
+  const styles = getComputedStyle(document.documentElement), accent = styles.getPropertyValue("--accent").trim(), hoverColor = styles.getPropertyValue("--map-accent").trim();
   const alternatives = state.data.intervention_results.filter((item) => item.metrics), baseline = alternatives.find((item) => item.alternative_id === "no_action");
   const comparisons = scenarioComparison();
-  const scenarioSeries = comparisons.length ? comparisons.map((item) => ({ id: item.scenario, label: scenarioLabels[item.scenario], color: item.scenario === state.scenario ? accent : "#7f8984", opacity: item.scenario === state.scenario ? 1 : .5, width: item.scenario === state.scenario ? 4 : 2, dash: item.scenario === "downside" ? [8, 5] : item.scenario === "recovery" ? [2, 5] : [], values: item.weekly_13.map((week) => week.closing_cash) })).sort((left, right) => Number(left.id === state.scenario) - Number(right.id === state.scenario)) : [{ label: scenarioLabels[state.scenario], color: accent, values: (baseline?.weekly_13 || state.data.baseline_cashflow.weekly_13).map((item) => item.closing_cash) }];
-  byId("scenario-chart-legend").innerHTML = (comparisons.length ? comparisons : [{ scenario: state.scenario }]).map((item) => `<span class="${item.scenario === state.scenario ? "is-selected" : ""}"><i class="scenario-line scenario-line--${escapeHtml(item.scenario)}"></i>${escapeHtml(scenarioLabels[item.scenario])}${item.thirteen_week_percent == null ? "" : ` · 13주 ${escapeHtml(formatPercent(item.thirteen_week_percent))}`}</span>`).join("");
-  drawChart(byId("baseline-chart"), scenarioSeries, state.data.safe_cash.suggested_amount);
-  const ordered = [...alternatives].sort((a, b) => Number(a.alternative_id === state.selectedAlternative) - Number(b.alternative_id === state.selectedAlternative));
-  const series = ordered.map((item) => ({ id: item.alternative_id, label: item.label, color: item.alternative_id === state.selectedAlternative ? accent : "#7f8984", opacity: item.alternative_id === state.selectedAlternative ? 1 : .48, width: item.alternative_id === state.selectedAlternative ? 4 : 1.7, values: item.weekly_13.map((week) => week.closing_cash) }));
-  byId("comparison-legend").innerHTML = alternatives.map((item) => `<button type="button" data-select-alternative="${escapeHtml(item.alternative_id)}" class="${item.alternative_id === state.selectedAlternative ? "is-selected" : ""}"><span></span>${escapeHtml(item.label)}</button>`).join("");
+  const scenarioSeries = comparisons.length ? comparisons.map((item) => {
+    const isSelected = item.scenario === state.scenario, isHovered = item.scenario === state.hoveredScenario;
+    return { id: item.scenario, label: scenarioLabels[item.scenario], color: isHovered ? hoverColor : isSelected ? accent : "#7f8984", opacity: isHovered ? 1 : isSelected ? .85 : .38, width: isHovered ? 5 : isSelected ? 4 : 2, dash: item.scenario === "downside" ? [8, 5] : item.scenario === "recovery" ? [2, 5] : [], values: item.weekly_13.map((week) => week.closing_cash) };
+  }).sort((left, right) => Number(left.id === state.scenario) + Number(left.id === state.hoveredScenario) - Number(right.id === state.scenario) - Number(right.id === state.hoveredScenario)) : [{ label: scenarioLabels[state.scenario], color: accent, values: (baseline?.weekly_13 || state.data.baseline_cashflow.weekly_13).map((item) => item.closing_cash) }];
+  byId("scenario-chart-legend").innerHTML = (comparisons.length ? comparisons : [{ scenario: state.scenario }]).map((item) => `<button type="button" data-select-scenario="${escapeHtml(item.scenario)}" class="${item.scenario === state.scenario ? "is-selected" : ""} ${item.scenario === state.hoveredScenario ? "is-hovered" : ""}"><i class="scenario-line scenario-line--${escapeHtml(item.scenario)}"></i>${escapeHtml(scenarioLabels[item.scenario])}${item.thirteen_week_percent == null ? "" : ` · 13주 ${escapeHtml(formatPercent(item.thirteen_week_percent))}`}</button>`).join("");
+  drawChart(byId("baseline-chart"), scenarioSeries, state.data.safe_cash.suggested_amount, true);
+  const ordered = [...alternatives].sort((a, b) => Number(a.alternative_id === state.selectedAlternative || a.alternative_id === state.hoveredAlternative) - Number(b.alternative_id === state.selectedAlternative || b.alternative_id === state.hoveredAlternative));
+  const series = ordered.map((item) => {
+    const isSelected = item.alternative_id === state.selectedAlternative, isHovered = item.alternative_id === state.hoveredAlternative;
+    return { id: item.alternative_id, label: humanizeText(item.label), color: isHovered ? hoverColor : isSelected ? accent : "#7f8984", opacity: isHovered ? 1 : isSelected ? .85 : .35, width: isHovered ? 5 : isSelected ? 4 : 1.7, values: item.weekly_13.map((week) => week.closing_cash) };
+  });
+  byId("comparison-legend").innerHTML = alternatives.map((item) => { const readiness = alternativeReadiness(item); return `<button type="button" data-select-alternative="${escapeHtml(item.alternative_id)}" class="${item.alternative_id === state.selectedAlternative ? "is-selected" : ""} ${item.alternative_id === state.hoveredAlternative ? "is-hovered" : ""}" aria-label="${escapeHtml(humanizeText(item.label))}, ${escapeHtml(readiness.label)}"><i class="comparison-status ${readiness.className}" aria-hidden="true"></i><span class="comparison-line"></span>${escapeHtml(humanizeText(item.label))}</button>`; }).join("");
   drawChart(byId("comparison-chart"), series, state.data.safe_cash.suggested_amount, true);
 }
 function selectAlternative(id) {
   if (!state.data?.intervention_results.some((item) => item.alternative_id === id && item.metrics)) return;
-  state.selectedAlternative = id; renderAlternatives(); renderCharts();
+  state.selectedAlternative = id; syncPolicySearchToAlternative(id); renderAlternatives(); renderCharts();
+}
+
+function syncPolicySearchToAlternative(id) {
+  const select = byId("qa-policy");
+  if (!select) return;
+  const policy = policyByAlternative[id] || "";
+  select.value = [...select.options].some((option) => option.value === policy) ? policy : "";
 }
 function pointSegmentDistance(point, a, b) {
   const dx = b.x - a.x, dy = b.y - a.y;
@@ -661,11 +779,65 @@ function pointSegmentDistance(point, a, b) {
   const t = Math.max(0, Math.min(1, ((point.x - a.x) * dx + (point.y - a.y) * dy) / (dx * dx + dy * dy)));
   return Math.hypot(point.x - (a.x + t * dx), point.y - (a.y + t * dy));
 }
-function selectChartLine(event) {
+function chartLineAt(event) {
   const canvas = event.currentTarget, rect = canvas.getBoundingClientRect(), point = { x: event.clientX - rect.left, y: event.clientY - rect.top };
   let best = { id: null, distance: 15 };
   (canvas._seriesHit || []).forEach((series) => { for (let index = 1; index < series.points.length; index += 1) { const distance = pointSegmentDistance(point, series.points[index - 1], series.points[index]); if (distance < best.distance) best = { id: series.id, distance }; } });
-  if (best.id) selectAlternative(best.id);
+  return best.id;
+}
+function selectChartLine(event) {
+  const id = chartLineAt(event);
+  if (id) selectAlternative(id);
+}
+function hoverComparisonChartLine(event) {
+  const id = chartLineAt(event);
+  if (id === state.hoveredAlternative) return;
+  state.hoveredAlternative = id;
+  renderCharts();
+}
+function clearComparisonChartHover() {
+  if (!state.hoveredAlternative) return;
+  state.hoveredAlternative = null;
+  renderCharts();
+}
+async function selectScenario(id, scrollAfter = true) {
+  if (!Object.hasOwn(scenarioLabels, id)) return;
+  state.scenario = id;
+  const radio = document.querySelector(`input[name="market-scenario"][value="${id}"]`);
+  if (radio) radio.checked = true;
+  updateScenarioApplicationStatus();
+  updateSummary();
+  if (!state.data) return;
+  let completed = false;
+  if (state.scenarioResults[id]) {
+    state.data = applyGoalRanking(state.scenarioResults[id]);
+    state.selectedAlternative = state.data.comparison_result.top_alternative_id;
+    syncPolicySearchToAlternative(state.selectedAlternative);
+    renderResults();
+    completed = true;
+  } else {
+    completed = await runComparison("diagnosis", false);
+  }
+  if (completed && scrollAfter) {
+    const result = byId("diagnosis-result");
+    result.scrollIntoView({ behavior: "smooth", block: "start" });
+    result.focus({ preventScroll: true });
+  }
+}
+function selectScenarioChartLine(event) {
+  const id = chartLineAt(event);
+  if (id && id !== state.scenario) selectScenario(id, false);
+}
+function hoverScenarioChartLine(event) {
+  const id = chartLineAt(event);
+  if (id === state.hoveredScenario) return;
+  state.hoveredScenario = id;
+  renderCharts();
+}
+function clearScenarioChartHover() {
+  if (!state.hoveredScenario) return;
+  state.hoveredScenario = null;
+  renderCharts();
 }
 
 function officialSiteName(url) {
@@ -701,7 +873,7 @@ function openAlternative(id) {
   const policy = policyByAlternative[id], plan = state.data.execution_plan?.find((entry) => entry.alternative_id === id);
   const conditions = [...(item.items_to_confirm || []), ...(plan?.conditions_to_check_now || [])].map(humanizeText).filter(Boolean);
   const planHtml = plan ? `<section class="dialog-plan"><h3>실행 전에 확인할 내용</h3><dl><dt>먼저 확인</dt><dd>${escapeHtml([...new Set(conditions)].join(", ") || "추가 확인 없음")}</dd><dt>신청기한</dt><dd>${escapeHtml(humanizeText(plan.application_deadline || "공식 공고에서 확인"))}</dd><dt>준비서류</dt><dd>${escapeHtml((plan.required_documents || []).map(humanizeText).join(", ") || "공식 공고에서 확인")}</dd><dt>지급 전 필요현금</dt><dd>${compactMoney(plan.cash_needed_before_payment)}</dd><dt>최소 신청금액</dt><dd>${compactMoney(plan.minimum_loan_amount)}</dd><dt>문의</dt><dd>${escapeHtml(humanizeText(plan.inquiry || "공식기관에서 확인"))}</dd><dt>공식 링크</dt><dd class="official-links">${officialLinks(plan.official_urls)}</dd></dl></section>` : `<section class="dialog-plan"><h3>실행 방법</h3><p>${id === "no_action" ? "별도 신청 없이 현재 조건을 유지합니다." : "별도 정책 신청 없이 월 지출 항목을 확인하고 줄일 금액을 정합니다."}</p></section>`;
-  byId("dialog-content").innerHTML = `<p class="eyebrow">대안 상세</p><h2>${escapeHtml(item.label)}</h2><p>${escapeHtml(alternativeDescriptions[id] || humanizeText(item.reason_summary))}</p><div class="dialog-metrics"><div><span>13주 뒤 현금</span><strong>${compactMoney(item.metrics.week13_ending_cash)}</strong></div><div><span>6개월 뒤 현금</span><strong>${compactMoney(item.metrics.month6_ending_cash)}</strong></div><div><span>새로 생기는 빚</span><strong>${compactMoney(item.metrics.net_new_borrowing)}</strong></div><div><span>월 최대상환</span><strong>${compactMoney(item.metrics.maximum_monthly_debt_service)}</strong></div><div><span>만기까지 총이자</span><strong>${compactMoney(item.metrics.total_interest_through_maturity)}</strong></div><div><span>확인할 조건</span><strong>${item.metrics.confirmation_item_count}개</strong></div></div>${planHtml}<p class="notice">계산 결과는 승인 가능성을 뜻하지 않습니다. 지원 금액과 지급일, 접수 가능 여부는 신청 전에 공식기관에서 확인해 주세요.</p>`;
+  byId("dialog-content").innerHTML = `<p class="eyebrow">대안 상세</p><h2>${escapeHtml(humanizeText(item.label))}</h2><p>${escapeHtml(alternativeDescriptions[id] || humanizeText(item.reason_summary))}</p><div class="dialog-metrics"><div><span>13주 뒤 현금</span><strong>${compactMoney(item.metrics.week13_ending_cash)}</strong></div><div><span>6개월 뒤 현금</span><strong>${compactMoney(item.metrics.month6_ending_cash)}</strong></div><div><span>새로 생기는 빚</span><strong>${compactMoney(item.metrics.net_new_borrowing)}</strong></div><div><span>월 최대상환</span><strong>${compactMoney(item.metrics.maximum_monthly_debt_service)}</strong></div><div><span>만기까지 총이자</span><strong>${compactMoney(item.metrics.total_interest_through_maturity)}</strong></div><div><span>확인할 조건</span><strong>${item.metrics.confirmation_item_count}개</strong></div></div>${planHtml}<p class="notice">계산 결과는 승인 가능성을 뜻하지 않습니다. 지원 금액과 지급일, 접수 가능 여부는 신청 전에 공식기관에서 확인해 주세요.</p>`;
   byId("dialog-ai").hidden = !policy; if (policy) byId("qa-policy").value = policy;
   const dialog = byId("alternative-dialog"); if (typeof dialog.showModal === "function") dialog.showModal();
 }
@@ -710,10 +882,25 @@ function appendChatMessage(role, content, extraHtml = "") {
   const thread = byId("chat-thread");
   const article = document.createElement("article");
   article.className = `chat-message chat-message--${role}`;
-  article.innerHTML = `<div class="chat-avatar" aria-hidden="true">${role === "user" ? "나" : "AI"}</div><div class="chat-bubble"><p>${escapeHtml(content)}</p>${extraHtml}</div>`;
+  const displayContent = role === "assistant" ? normalizeChatText(content) : String(content ?? "");
+  article.innerHTML = `<div class="chat-avatar" aria-hidden="true">${role === "user" ? "나" : "AI"}</div><div class="chat-bubble"><p>${escapeHtml(displayContent)}</p>${extraHtml}</div>`;
   thread.appendChild(article);
   thread.scrollTop = thread.scrollHeight;
   return article;
+}
+
+function normalizeChatText(content) {
+  return String(content ?? "")
+    .replace(/\r\n?/g, "\n")
+    .replace(/(^|\n)\s{0,3}#{1,6}\s*/g, "$1")
+    .replace(/\s+#{1,6}\s+/g, "\n")
+    .replace(/^\s*\|?\s*:?-{3,}:?(?:\s*\|\s*:?-{3,}:?)+\s*\|?\s*$/gm, "")
+    .replace(/^.*\|.*$/gm, (row) => row.split("|").map((cell) => cell.trim()).filter(Boolean).join(" · "))
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/__([^_]+)__/g, "$1")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 }
 
 function discoveredPolicyLinks(items = []) {
@@ -726,7 +913,7 @@ function updateChatLimit() {
   byId("chat-count").textContent = `${state.chatTurns} / 5회`;
   byId("chat-send").disabled = remaining === 0;
   byId("chat-question").disabled = remaining === 0;
-  byId("chat-question").placeholder = remaining === 0 ? "이번 상담의 5회 질문을 모두 사용했습니다." : "예: 제가 아파서 가게를 쉬면 받을 수 있는 지원이 있나요?";
+  byId("chat-question").placeholder = remaining === 0 ? "이번 상담의 5회 질문을 모두 사용했습니다." : "예: 대출 이자와 월 상환 부담을 줄일 정책이 있나요?";
 }
 
 async function askPolicy() {
@@ -761,6 +948,7 @@ async function askPolicy() {
 document.addEventListener("click", (event) => {
   const step = event.target.closest("[data-step]"); if (step) { event.preventDefault(); showStep(step.dataset.step); return; }
   const preset = event.target.closest("[data-preset]"); if (preset) { applyPreset(preset.dataset.preset); return; }
+  const scenario = event.target.closest("[data-select-scenario]"); if (scenario) { selectScenario(scenario.dataset.selectScenario, false); return; }
   const questionExample = event.target.closest("[data-question-example]");
   if (questionExample) {
     byId("chat-question").value = questionExample.dataset.questionExample;
@@ -790,25 +978,44 @@ byId("business-next").addEventListener("click", () => { try { validateBusiness()
 byId("add-revenue-month").addEventListener("click", () => { if (state.revenueMonths < 12) { state.revenueMonths += 1; renderRevenueMonths(); } });
 ["opening-cash", "monthly-rent", "monthly-labor", "monthly-purchase", "loan-balance"].forEach((id) => byId(id).addEventListener("input", updateSummary));
 byId("run-diagnosis").addEventListener("click", () => runComparison("diagnosis"));
-byId("apply-staged-answers").addEventListener("click", () => runComparison("decision", false));
 byId("diagnosis-next").addEventListener("click", () => showStep("decision"));
 byId("run-csv").addEventListener("click", runCsvBaseline);
+byId("baseline-chart").addEventListener("click", selectScenarioChartLine);
+byId("baseline-chart").addEventListener("pointermove", hoverScenarioChartLine);
+byId("baseline-chart").addEventListener("pointerleave", clearScenarioChartHover);
 byId("comparison-chart").addEventListener("click", selectChartLine);
-document.querySelectorAll("input[name=market-scenario]").forEach((node) => node.addEventListener("change", async () => {
-  state.scenario = node.value;
-  updateSummary();
+byId("comparison-chart").addEventListener("pointermove", hoverComparisonChartLine);
+byId("comparison-chart").addEventListener("pointerleave", clearComparisonChartHover);
+document.querySelectorAll("input[name=market-scenario]").forEach((node) => node.addEventListener("change", () => selectScenario(node.value)));
+document.querySelectorAll("input[name=goal]").forEach((node) => node.addEventListener("change", () => {
+  const selectedBeforeGoalChange = state.selectedAlternative;
+  state.goal = node.value;
+  Object.values(state.scenarioResults).forEach((result) => applyGoalRanking(result));
   if (!state.data) return;
-  const completed = await runComparison("diagnosis", false);
-  if (completed) {
-    const result = byId("diagnosis-result");
-    result.scrollIntoView({ behavior: "smooth", block: "start" });
-    result.focus({ preventScroll: true });
-  }
+  state.data = applyGoalRanking(state.scenarioResults[state.scenario] || state.data);
+  const selectionStillAvailable = state.data.intervention_results.some((item) => item.alternative_id === selectedBeforeGoalChange && item.metrics);
+  state.selectedAlternative = selectionStillAvailable ? selectedBeforeGoalChange : state.data.comparison_result.top_alternative_id;
+  syncPolicySearchToAlternative(state.selectedAlternative);
+  renderResults(); updateSummary();
 }));
-document.querySelectorAll("input[name=goal]").forEach((node) => node.addEventListener("change", () => { state.goal = node.value; if (state.data) runComparison("decision"); }));
-byId("conditional-assumption").addEventListener("change", () => { if (state.data) runComparison("diagnosis"); });
+byId("active-scenario-link").addEventListener("click", () => {
+  showStep("diagnosis");
+  window.setTimeout(() => byId("scenario-panel").scrollIntoView({ behavior: "smooth", block: "start" }), 80);
+});
 byId("chat-send").addEventListener("click", askPolicy);
 byId("chat-question").addEventListener("keydown", (event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); askPolicy(); } });
+byId("safe-cash-help").addEventListener("click", () => {
+  const dialog = byId("safe-cash-dialog");
+  if (typeof dialog.showModal === "function") dialog.showModal();
+});
+byId("safe-cash-close").addEventListener("click", () => byId("safe-cash-dialog").close());
+byId("safe-cash-confirm").addEventListener("click", () => byId("safe-cash-dialog").close());
+byId("safe-cash-dialog").addEventListener("click", (event) => {
+  const dialog = event.currentTarget;
+  const rect = dialog.getBoundingClientRect();
+  const inside = event.clientX >= rect.left && event.clientX <= rect.right && event.clientY >= rect.top && event.clientY <= rect.bottom;
+  if (!inside) dialog.close();
+});
 byId("dialog-close").addEventListener("click", () => byId("alternative-dialog").close());
 byId("dialog-ai").addEventListener("click", () => { byId("alternative-dialog").close(); byId("qa-section").scrollIntoView({ behavior: "smooth" }); byId("chat-question").focus(); });
 byId("alternative-dialog").addEventListener("click", (event) => {
@@ -823,4 +1030,5 @@ const today = new Date();
 byId("csv-reference").value = today.toISOString().slice(0, 10);
 renderRevenueMonths();
 updateChatLimit();
+updateScenarioApplicationStatus();
 loadCatalogs().catch(() => toast("상권과 업종 목록을 불러오지 못했습니다."));
