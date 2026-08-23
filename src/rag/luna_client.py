@@ -174,3 +174,75 @@ def explain_with_luna(
             "discarded",
             type(exc).__name__,
         )
+
+
+def explain_action_brief_with_luna(
+    facts: list[str],
+    results: list[SearchResult],
+    *,
+    timeout_seconds: float = 12.0,
+    transport: httpx.BaseTransport | None = None,
+) -> ExplanationResult:
+    """Rewrite deterministic comparison facts without changing their meaning."""
+
+    fallback = _plain_text_answer("\n".join(facts))
+    api_key = os.getenv("OPENAI_API_KEY", "").strip()
+    model = os.getenv("OPENAI_MODEL", DEFAULT_MODEL).strip() or DEFAULT_MODEL
+    if not api_key:
+        return ExplanationResult(fallback, "local_fallback", None, "not_called", "missing_api_key")
+    evidence = [
+        {
+            "policy_id": item.chunk.policy_id,
+            "policy_version": item.chunk.policy_version,
+            "source_url": item.chunk.source_url,
+            "page_or_section": item.chunk.page_or_section,
+            "text": item.chunk.text[:700],
+        }
+        for item in results
+    ]
+    request = {
+        "model": model,
+        "store": False,
+        "max_output_tokens": 500,
+        "instructions": (
+            "당신은 소상공인 금융 의사결정 브리프 편집기입니다. "
+            "로컬 계산 사실의 수치·순위·자격상태를 그대로 유지하고 공식 근거의 범위를 넘지 마세요. "
+            "새 계산, 새 금액, 승인 가능성, 확정 자격을 만들지 마세요. "
+            "가장 중요한 결과, 지금 확인할 조건, 다음 한 행동 순서로 한국어 5문장 이내로 쓰세요. "
+            "URL, Markdown 제목, 표, 코드블록은 쓰지 마세요."
+        ),
+        "input": json.dumps(
+            {
+                "deterministic_local_facts": facts,
+                "official_policy_evidence": evidence,
+            },
+            ensure_ascii=False,
+        ),
+    }
+    allowed_text = " ".join([*facts, *(item.chunk.text for item in results)])
+    try:
+        with httpx.Client(timeout=timeout_seconds, transport=transport) as client:
+            response = client.post(
+                RESPONSES_URL,
+                headers={"Authorization": f"Bearer {api_key}"},
+                json=request,
+            )
+            response.raise_for_status()
+            answer = _plain_text_answer(_extract_output_text(response.json()))
+        if not answer or len(answer) > 1200:
+            raise ValueError("LLM answer length is invalid")
+        if any(phrase in answer for phrase in PROHIBITED_PHRASES):
+            raise ValueError("LLM answer contains a prohibited claim")
+        allowed_numbers = set(re.findall(r"\d[\d,.%]*", allowed_text))
+        generated_numbers = set(re.findall(r"\d[\d,.%]*", answer))
+        if generated_numbers.difference(allowed_numbers):
+            raise ValueError("LLM answer introduced an unsupported number")
+        return ExplanationResult(answer, "openai", model, "passed")
+    except (httpx.HTTPError, ValueError, KeyError, TypeError, json.JSONDecodeError) as exc:
+        return ExplanationResult(
+            fallback,
+            "local_fallback",
+            model,
+            "discarded",
+            type(exc).__name__,
+        )

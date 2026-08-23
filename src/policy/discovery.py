@@ -325,16 +325,17 @@ def _new_policy_decision(
             "condition": f"사업장 소재지 {metadata['search_district']}",
             "result": "pass" if passed else "fail",
             "reason": f"선택 자치구={district or '미선택'}",
+            "field": "",
         })
     if policy_id != "POL_SEOUL_HOSPITAL_LIVING_EXPENSE_2026":
         scale = profile.business_scale
         if scale is None:
             unknown = True
-            reasons.append({"condition": "기업 규모", "result": "unknown", "reason": "공식 확인서 기준 기업 규모 확인 필요"})
+            reasons.append({"condition": "기업 규모", "result": "unknown", "reason": "공식 확인서 기준 기업 규모 확인 필요", "field": "business_scale"})
         else:
             allowed = scale in NEW_POLICY_ALLOWED_SCALES[policy_id]
             failed |= not allowed
-            reasons.append({"condition": "기업 규모", "result": "pass" if allowed else "fail", "reason": scale})
+            reasons.append({"condition": "기업 규모", "result": "pass" if allowed else "fail", "reason": scale, "field": "business_scale"})
     for field, expected, condition in NEW_POLICY_CORE_EXPECTATIONS.get(policy_id, ()):
         answer = getattr(profile, field)
         if answer is TriState.UNKNOWN:
@@ -344,7 +345,7 @@ def _new_policy_decision(
             passed = answer.value == expected
             failed |= not passed
             result = "pass" if passed else "fail"
-        reasons.append({"condition": condition, "result": result, "reason": answer.value})
+        reasons.append({"condition": condition, "result": result, "reason": answer.value, "field": field})
     for field, expected, condition in NEW_POLICY_RULES[policy_id]:
         answer = profile.policy_answers.get(field, TriState.UNKNOWN)
         if answer is TriState.UNKNOWN:
@@ -354,16 +355,16 @@ def _new_policy_decision(
             passed = answer.value == expected
             failed |= not passed
             result = "pass" if passed else "fail"
-        reasons.append({"condition": condition, "result": result, "reason": answer.value})
+        reasons.append({"condition": condition, "result": result, "reason": answer.value, "field": field})
 
     if policy_id == "POL_JUNGGU_CUSTOM_SUPPORT_2026":
         if profile.opening_date is None:
             unknown = True
-            reasons.append({"condition": "개업 후 6개월 이상", "result": "unknown", "reason": "개업일 확인 필요"})
+            reasons.append({"condition": "개업 후 6개월 이상", "result": "unknown", "reason": "개업일 확인 필요", "field": "opening_date"})
         else:
             passed = (as_of - profile.opening_date).days >= 183
             failed |= not passed
-            reasons.append({"condition": "개업 후 6개월 이상", "result": "pass" if passed else "fail", "reason": profile.opening_date.isoformat()})
+            reasons.append({"condition": "개업 후 6개월 이상", "result": "pass" if passed else "fail", "reason": profile.opening_date.isoformat(), "field": "opening_date"})
     needs_small_business_headcount = policy_id == "POL_SEMAS_EMPLOYMENT_INSURANCE_2026" or (
         policy_id == "POL_SEOUL_PRIVATE_CHILDCARE_2026"
         and profile.business_scale == "소상공인"
@@ -371,12 +372,12 @@ def _new_policy_decision(
     if needs_small_business_headcount:
         if profile.employee_count is None:
             unknown = True
-            reasons.append({"condition": "업종별 상시근로자 수 기준", "result": "unknown", "reason": "상시근로자 수 확인 필요"})
+            reasons.append({"condition": "업종별 상시근로자 수 기준", "result": "unknown", "reason": "상시근로자 수 확인 필요", "field": "employee_count"})
         else:
             threshold = 10 if (profile.industry_section or "") in {"광업", "제조업", "건설업", "운수업"} else 5
             passed = profile.employee_count < threshold
             failed |= not passed
-            reasons.append({"condition": f"상시근로자 {threshold}명 미만", "result": "pass" if passed else "fail", "reason": str(profile.employee_count)})
+            reasons.append({"condition": f"상시근로자 {threshold}명 미만", "result": "pass" if passed else "fail", "reason": str(profile.employee_count), "field": "employee_count"})
     availability = metadata["availability_as_of"]
     closed = availability == "접수기간 종료"
     if failed:
@@ -442,6 +443,8 @@ class DiscoveryEligibilityEngine:
                 ],
                 "rule_results": [
                     {
+                        "rule_id": item.rule_id,
+                        "rule_group": item.rule_group,
                         "condition": item.official_condition,
                         "result": item.result,
                         "reason": item.reason,

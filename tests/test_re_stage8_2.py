@@ -154,6 +154,8 @@ def test_compare_exposes_policy_discovery_without_raw_amounts(monkeypatch) -> No
     assert all(item["official_url"].startswith("https://") for item in discovery["candidates"])
     assert {item["policy_id"] for item in discovery["candidates"]} <= set(FINANCIAL_POLICY_NEEDS)
     assert all(item["need_group"] in set(FINANCIAL_POLICY_NEEDS.values()) for item in discovery["candidates"])
+    assert all(item["match_reason"] for item in discovery["candidates"])
+    assert all("지원 대상 확정은 아닙니다." in item["match_reason"] for item in discovery["candidates"])
     labels = " ".join(discovery["situation_labels"])
     assert "원" not in labels
     assert "우선" not in labels
@@ -256,6 +258,22 @@ def test_dynamic_events_use_user_sources_and_keep_personal_support_out() -> None
         raise AssertionError("Personal living cash must not become a business cash event")
 
 
+def test_track2_dynamic_event_requires_user_amounts_and_dates() -> None:
+    plan = build_dynamic_policy_plan(
+        DynamicPolicyScenario(
+            policy_id="POL_SEOUL_CRISIS_TRACK2_2026H2",
+            approved_support_amount=2_000_000,
+            expense_amount=2_500_000,
+            expense_date=date(2026, 9, 20),
+            payment_date=date(2026, 11, 20),
+        ),
+        reference_date=date(2026, 8, 17),
+    )
+    assert [item.amount for item in plan.events] == [2_500_000, 2_000_000]
+    assert all(item.amount_source is ValueSource.USER_INPUT for item in plan.events)
+    assert plan.calculation_status == "ready_with_user_amount_and_date"
+
+
 def test_reviewed_dynamic_event_reaches_re7_alternative_comparison() -> None:
     scenario = DynamicPolicyScenario(
         policy_id="POL_SEOUL_FAMILY_FRIENDLY_EMPLOYER_2026",
@@ -301,3 +319,164 @@ def test_external_text_sanitizer_removes_approved_sensitive_patterns() -> None:
     assert "010-1234-5678" not in sanitized
     assert "300만원" not in sanitized
     assert "이태원 관광특구" not in sanitized
+
+
+def v2_quick_request(**updates):
+    payload = {
+        "v2_mode": True,
+        "direct_shock_13_week_percent": 0,
+        "direct_shock_6_month_percent": 0,
+        "goal": "최장생존",
+        "quick_input": {
+            "reference_date": "2026-09-01",
+            "opening_cash": 5_000_000,
+            "safe_cash_threshold": 0,
+            "recent_monthly_revenues": [7_000_000, 7_600_000, 8_200_000, 8_800_000, 9_400_000, 10_000_000],
+            "revenue_timing": "daily",
+            "monthly_rent": 1_000_000,
+            "monthly_labor_cost": 1_500_000,
+            "monthly_variable_cost": 1_000_000,
+            "monthly_other_fixed_cost": 500_000,
+            "expense_timing": "early",
+            "total_loan_balance": 0,
+            "annual_interest_rate_percent": 0,
+            "remaining_term_months": 1,
+            "debt_timing": "late",
+        },
+    }
+    payload.update(updates)
+    return payload
+
+
+def test_v2_compares_only_user_confirmed_alternatives(monkeypatch) -> None:
+    monkeypatch.setattr(
+        "src.rag.hybrid_search.OpenAIEmbeddingClient.embed",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(OpenAIEmbeddingError("offline")),
+    )
+    response = client.post("/api/v1/alternatives/compare", json=v2_quick_request())
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["v2"]["enabled"] is True
+    assert [item["alternative_id"] for item in payload["intervention_results"]] == ["no_action"]
+    assert all("5%" not in item["label"] for item in payload["intervention_results"])
+    assert payload["dynamic_policy_alternative_ids"] == []
+    assert payload["v2"]["confirmed_cost_reduction"] is None
+    no_action = payload["intervention_results"][0]
+    cash_need = max(
+        0,
+        payload["safe_cash"]["suggested_amount"]
+        - no_action["metrics"]["week13_minimum_cash"],
+    )
+    assert cash_need >= 0
+
+
+def test_v2_requested_conditional_policy_graph_is_simulated_but_unranked(monkeypatch) -> None:
+    monkeypatch.setattr(
+        "src.rag.hybrid_search.OpenAIEmbeddingClient.embed",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(OpenAIEmbeddingError("offline")),
+    )
+    request = v2_quick_request(
+        selected_policy_ids=["POL_SEOUL_FUND_2026"],
+        conditional_policy_ids=["POL_SEOUL_FUND_2026"],
+        eligibility_profile={
+            "business_scale": "소상공인",
+            "fund_restricted_industry": "no",
+            "subfund_selected": "no",
+        },
+    )
+    response = client.post("/api/v1/alternatives/compare", json=request)
+    assert response.status_code == 200
+    payload = response.json()
+    fund = next(
+        item for item in payload["intervention_results"]
+        if item["alternative_id"] == "conditional_pol_seoul_fund_2026"
+    )
+    candidate = next(
+        item for item in payload["policy_discovery"]["candidates"]
+        if item["policy_id"] == "POL_SEOUL_FUND_2026"
+    )
+    assert fund["simulated"] is True
+    assert fund["ranking_eligible"] is False
+    assert fund["candidate_state"] == "확인 후 비교"
+    assert fund["metrics"]["net_new_borrowing"] > 0
+    assert fund["alternative_id"] not in payload["comparison_result"]["ordered_alternative_ids"]
+    assert candidate["eligibility_status"] == "추가 확인 필요"
+    assert candidate["application_readiness"]["status"] == "준비하면 신청 가능"
+    assert candidate["application_readiness"]["hard_failures"] == []
+
+
+def test_v2_other_fixed_cost_and_confirmed_reduction_reach_cash_engine(monkeypatch) -> None:
+    monkeypatch.setattr(
+        "src.rag.hybrid_search.OpenAIEmbeddingClient.embed",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(OpenAIEmbeddingError("offline")),
+    )
+    request = v2_quick_request(
+        cost_reduction_plan={
+            "rent": 100_000,
+            "labor": 150_000,
+            "purchase": 100_000,
+            "other_fixed": 50_000,
+        }
+    )
+    response = client.post("/api/v1/alternatives/compare", json=request)
+    assert response.status_code == 200
+    payload = response.json()
+    custom = next(
+        item for item in payload["intervention_results"]
+        if item["alternative_id"] == "cost_reduction_custom"
+    )
+    assert custom["metrics"]["support_or_cost_reduction"] == 2_400_000
+    assert payload["v2"]["confirmed_cost_reduction"]["other_fixed"] == 50_000
+    other_events = [
+        item for item in payload["baseline_input"]["events"]
+        if item["description"] == "월 기타 고정비"
+    ]
+    assert len(other_events) == 6
+    assert all(item["amount"] == 500_000 for item in other_events)
+
+
+def test_v2_action_brief_is_local_without_external_consent(monkeypatch) -> None:
+    monkeypatch.setattr(
+        "src.rag.hybrid_search.OpenAIEmbeddingClient.embed",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(OpenAIEmbeddingError("offline")),
+    )
+    request = v2_quick_request(
+        cost_reduction_plan={"rent": 100_000, "labor": 0, "purchase": 0, "other_fixed": 0}
+    )
+    response = client.post(
+        "/api/v2/ai/action-brief",
+        json={
+            "comparison": request,
+            "selected_alternative_id": "cost_reduction_custom",
+            "consent_to_external_ai": False,
+        },
+    )
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["answer_source"] == "local_deterministic"
+    assert payload["fact_lock_status"] == "not_called"
+    assert "13주 뒤 현금" in payload["action_brief"]
+
+
+def test_v2_web_preserves_mvp_assets_and_adds_policy_workbench() -> None:
+    html = client.get("/").text
+    javascript = client.get("/static/app.js").text
+    for preserved in (
+        'id="area-map"',
+        'id="presentation-presets"',
+        'id="baseline-chart"',
+        'id="comparison-chart"',
+        'id="global-loading"',
+    ):
+        assert preserved in html
+    for added in (
+        'id="monthly-other-fixed"',
+        'id="policy-question-form"',
+        'id="policy-scenario-form"',
+        'id="action-brief-content"',
+        'id="ai-brief-consent"',
+    ):
+        assert added in html
+    assert "v2_mode: true" in javascript
+    assert "cost_reduction_custom" in javascript
+    assert 'byId("diagnosis-next").addEventListener("click", () => { enableSelectedPolicyPreviews(); runComparison("decision"); })' in javascript

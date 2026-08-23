@@ -233,7 +233,9 @@ class EligibilityEngine:
             state = TriState.YES if known_code else profile.fund_restricted_industry
             return _exclude(state, "서울시 융자지원 제한업종")
         if rid == "FUND_VARIANT":
-            return _tri(profile.subfund_selected, positive_reason="하위 자금 선택 완료", negative_reason="하위 자금이 선택되지 않았습니다.")
+            if profile.subfund_selected is TriState.YES:
+                return RuleResult.PASS, "하위 자금 선택 완료"
+            return RuleResult.UNKNOWN, "세부 자금을 아직 선택하지 않았습니다. 자금 용도와 현금 부족 규모에 맞는 하위 자금 확인이 필요합니다."
 
         if rid == "CRISIS_ALL_02":
             return _tri(profile.rented_exclusive_place, positive_reason="유상 임차 고정점포", negative_reason="임차 고정점포 요건 불충족")

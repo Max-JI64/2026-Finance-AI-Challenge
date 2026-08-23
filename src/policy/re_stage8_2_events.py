@@ -34,6 +34,20 @@ class DynamicPolicyScenario(BaseModel):
         if self.policy_id == "POL_SEMAS_EMPLOYMENT_INSURANCE_2026":
             if self.employment_insurance_grade is None or self.expense_already_in_baseline is None:
                 raise ValueError("고용보험료 비교에는 가입등급과 기준현금 포함 여부가 필요합니다.")
+        elif self.policy_id == "POL_SEOUL_CRISIS_TRACK2_2026H2":
+            if (
+                self.approved_support_amount is None
+                or self.expense_amount is None
+                or self.expense_date is None
+                or self.payment_date is None
+            ):
+                raise ValueError("위기지원 비교에는 지원액·선지출액·지출일·지급예정일이 필요합니다.")
+            if self.approved_support_amount > 3_000_000:
+                raise ValueError("위기지원 공고상 최대 비교액은 300만원입니다.")
+            if self.approved_support_amount > self.expense_amount:
+                raise ValueError("지원액은 사용자가 입력한 선지출액을 넘을 수 없습니다.")
+            if self.expense_date > self.payment_date:
+                raise ValueError("선지출일은 지급예정일보다 늦을 수 없습니다.")
         elif self.policy_id == "POL_SEOUL_FAMILY_FRIENDLY_EMPLOYER_2026":
             if self.approved_support_amount is None or self.payment_date is None:
                 raise ValueError("기업지원금 비교에는 실제 신청금액과 지급예정일이 필요합니다.")
@@ -146,6 +160,50 @@ def build_dynamic_policy_plan(
             ],
             unconfirmed_conditions=["실제 보험료 납부 확인", "기준일 현재 예산 잔여"],
             summary={"support_amount": support, "new_debt_principal": 0},
+        )
+
+    if scenario.policy_id == "POL_SEOUL_CRISIS_TRACK2_2026H2":
+        assert scenario.approved_support_amount is not None
+        assert scenario.expense_amount is not None
+        assert scenario.expense_date is not None
+        assert scenario.payment_date is not None
+        events = [
+            _event(
+                policy_id=scenario.policy_id, version="2026-06-30",
+                event_id="CRISIS_TRACK2_USER_SCENARIO", sequence=1,
+                kind=EffectKind.PROJECT_EXPENSE, direction=CashDirection.OUTFLOW,
+                when=scenario.expense_date, amount=scenario.expense_amount,
+                description="사용자가 입력한 경영개선 선지출액",
+                amount_source=ValueSource.USER_INPUT,
+            ),
+            _event(
+                policy_id=scenario.policy_id, version="2026-06-30",
+                event_id="CRISIS_TRACK2_USER_SCENARIO", sequence=2,
+                kind=EffectKind.SUPPORT_CASH_INFLOW, direction=CashDirection.INFLOW,
+                when=scenario.payment_date, amount=scenario.approved_support_amount,
+                description="사용자가 입력한 조건부 지원 신청액",
+                amount_source=ValueSource.USER_INPUT,
+            ),
+        ]
+        return PolicyPlan(
+            policy_id=scenario.policy_id,
+            policy_version="2026-06-30",
+            event_id="CRISIS_TRACK2_USER_SCENARIO",
+            event_name="위기 소상공인 지원 사용자 입력 시나리오",
+            support_kind="reimbursement_grant",
+            scenario_status=ScenarioStatus.ASSUMED_APPROVED,
+            calculation_status="ready_with_user_amount_and_date",
+            deduplication_key=f"{scenario.policy_id}:CRISIS_TRACK2_USER_SCENARIO",
+            conditional_notice="사용자가 입력한 선지출·지원액·지급일의 조건부 비교이며 승인 가능성을 뜻하지 않습니다.",
+            events=events,
+            assumptions=[
+                AssumptionEntry(field="expense_amount", value=scenario.expense_amount, source=ValueSource.USER_INPUT, reason="사용자가 입력한 선지출액"),
+                AssumptionEntry(field="expense_date", value=scenario.expense_date, source=ValueSource.USER_INPUT, reason="사용자가 입력한 선지출일"),
+                AssumptionEntry(field="approved_support_amount", value=scenario.approved_support_amount, source=ValueSource.USER_INPUT, reason="사용자가 입력한 조건부 지원액"),
+                AssumptionEntry(field="payment_date", value=scenario.payment_date, source=ValueSource.USER_INPUT, reason="사용자가 입력한 지급예정일"),
+            ],
+            unconfirmed_conditions=["최종 자격", "선정 결과", "실제 인정비용", "기준일 현재 접수 가능 여부"],
+            summary={"support_amount": scenario.approved_support_amount, "cost_reduction": 0, "new_debt_principal": 0},
         )
 
     if scenario.policy_id == "POL_SEOUL_FAMILY_FRIENDLY_EMPLOYER_2026":

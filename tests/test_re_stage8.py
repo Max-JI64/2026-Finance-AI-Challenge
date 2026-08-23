@@ -7,8 +7,16 @@ from fastapi.testclient import TestClient
 
 from app.main import app
 from src.cashflow.quick_mode import QuickModeInput, build_quick_schedules
+from src.policy.eligibility import SessionEligibilityProfile
 from src.rag.local_db import DATABASE_PATH, SQLitePolicySearchIndex
-from src.integration.re_stage8 import _policy_chat_answer_with_guidance
+from src.integration.re_stage8 import (
+    SampleCompareRequest,
+    _application_readiness,
+    _load_sample,
+    _policy_chat_answer_with_guidance,
+    _v2_conditional_policy_alternatives,
+)
+from src.recommendation import MarketScenario
 from src.rag.luna_client import _plain_text_answer, explain_with_luna
 
 
@@ -25,6 +33,146 @@ def sample_request(**overrides):
     }
     payload.update(overrides)
     return payload
+
+
+def test_v2_readiness_preserves_failed_condition_answer_and_resolution() -> None:
+    readiness = _application_readiness(
+        "POL_SEOUL_CRISIS_TRACK2_2026H2",
+        {
+            "availability_status": "접수 가능 여부 확인 필요",
+            "rule_results": [
+                {
+                    "rule_id": "CRISIS_ANY_01",
+                    "condition": "매출 감소 또는 재해 피해",
+                    "result": "fail",
+                    "reason": "no",
+                }
+            ],
+        },
+        SessionEligibilityProfile(sales_decreased="no"),
+    )
+
+    assert readiness["status"] == "현재 조건으로 지원 불가"
+    assert readiness["conditional_graph_supported"] is True
+    assert readiness["blocking_details"] == [
+        {
+            "condition": "매출 감소 또는 재해 피해",
+            "current_answer": "아니오",
+            "answers": [
+                {
+                    "field": "sales_decreased",
+                    "question": "공고가 정한 비교기간에 매출이 감소했나요?",
+                    "answer": "아니오",
+                    "editable": True,
+                }
+            ],
+            "category": "증빙 준비",
+            "action": "매출 비교자료나 재해·피해 확인서가 실제로 있는지 확인하고, 있다면 해당 답변을 수정해 증빙을 준비하세요. 실제로 해당하지 않으면 이 정책은 현재 신청할 수 없습니다.",
+            "remediation_type": "remediable",
+        }
+    ]
+    assert "매출 비교자료" in readiness["next_actions"][0]
+
+
+def test_v2_structural_exclusion_preserves_exact_answer_and_blocks_graph() -> None:
+    readiness = _application_readiness(
+        "POL_SEMAS_STABILITY_VOUCHER_2026",
+        {
+            "availability_status": "기준일상 접수 가능",
+            "rule_results": [
+                {
+                    "rule_id": "VOUCH_EX_01",
+                    "condition": "소상공인 정책자금 융자제외업종",
+                    "result": "fail",
+                    "reason": "제외조건에 해당합니다: 소상공인 정책자금 융자제외업종",
+                }
+            ],
+        },
+        SessionEligibilityProfile(policy_loan_restricted_industry="yes"),
+    )
+
+    detail = readiness["blocking_details"][0]
+    assert detail["answers"] == [{
+        "field": "policy_loan_restricted_industry",
+        "question": "소상공인 정책자금 융자제외업종에 해당하나요?",
+        "answer": "예",
+        "editable": True,
+    }]
+    assert detail["remediation_type"] == "structural"
+    assert readiness["conditional_graph_supported"] is False
+    assert readiness["conditional_graph_status"] == "structural_block"
+
+
+def test_v2_rechallenge_preview_simulates_excluded_candidate_outside_rankings() -> None:
+    request = SampleCompareRequest(
+        v2_mode=True,
+        selected_policy_ids=["POL_SEMAS_RECHALLENGE_2026"],
+        conditional_policy_ids=["POL_SEMAS_RECHALLENGE_2026"],
+    )
+    discovery = {
+        "candidates": [
+            {
+                "policy_id": "POL_SEMAS_RECHALLENGE_2026",
+                "policy_version": "2026-07-29-change4",
+                "eligibility_status": "부적격",
+                "availability_status": "접수 가능 여부 확인 필요",
+                "candidate_state": "제외",
+                "official_url": "https://example.com/rechallenge",
+                "items_to_confirm": ["재창업 유형"],
+                "application_readiness": {
+                    "next_actions": ["재창업교육 수료내역 확인"],
+                    "conditional_graph_supported": True,
+                },
+            }
+        ]
+    }
+    alternatives = _v2_conditional_policy_alternatives(
+        request,
+        discovery,
+        _load_sample("declining_cash_shortage"),
+        MarketScenario(
+            direct_shock_13_week_percent=0,
+            direct_shock_6_month_percent=0,
+        ),
+    )
+
+    preview = next(item for item in alternatives if item.alternative_id == "conditional_pol_semas_rechallenge_2026")
+    assert preview.explicit_condition_assumption is True
+    assert preview.candidate_contexts[0].candidate_state.value == "확인 후 비교"
+    assert any("기준금리 3.85%" in assumption and "연 5.45%" in assumption for assumption in preview.assumptions)
+    assert preview.plans[0].summary["gross_interest_rate_percent"] == 5.45
+
+
+def test_v2_conditional_preview_rejects_structurally_blocked_candidate() -> None:
+    request = SampleCompareRequest(
+        v2_mode=True,
+        selected_policy_ids=["POL_SEMAS_RECHALLENGE_2026"],
+        conditional_policy_ids=["POL_SEMAS_RECHALLENGE_2026"],
+    )
+    discovery = {
+        "candidates": [{
+            "policy_id": "POL_SEMAS_RECHALLENGE_2026",
+            "policy_version": "2026-07-29-change4",
+            "eligibility_status": "부적격",
+            "availability_status": "접수 가능 여부 확인 필요",
+            "candidate_state": "제외",
+            "official_url": "https://example.com/rechallenge",
+            "items_to_confirm": [],
+            "application_readiness": {
+                "next_actions": ["다른 정책 비교"],
+                "conditional_graph_supported": False,
+                "conditional_graph_status": "structural_block",
+            },
+        }],
+    }
+
+    alternatives = _v2_conditional_policy_alternatives(
+        request,
+        discovery,
+        _load_sample("declining_cash_shortage"),
+        MarketScenario(direct_shock_13_week_percent=0, direct_shock_6_month_percent=0),
+    )
+    assert alternatives == []
 
 
 def test_re8_health_contract_and_catalogs() -> None:
@@ -105,6 +253,9 @@ def test_policy_candidates_depend_on_store_inputs_not_goal() -> None:
     ]
     assert left["situation_labels"] == right["situation_labels"]
     assert all("우선" not in label for label in left["situation_labels"])
+    assert all(item["match_reason"].endswith("지원 대상 확정은 아닙니다.") for item in left["candidates"])
+    assert all(item["need_group"] in item["match_reason"] for item in left["candidates"])
+    assert all(item["match_reason"] != item["matched_section"] for item in left["candidates"])
 
 
 def test_high_debt_sample_uses_official_partial_refinance_cap() -> None:
@@ -507,7 +658,8 @@ def test_web_has_four_user_steps_map_and_no_design_dash() -> None:
     assert 'id="execution-section"' not in html
     assert "데모" not in html
     assert "샘플" not in html
-    assert "—" not in html
+    assert html.count("버팀AI — 소상공인 13주 현금 생존 코파일럿") == 3
+    assert html.replace("버팀AI — 소상공인 13주 현금 생존 코파일럿", "").find("—") == -1
     assert "–" not in html
 
 
@@ -587,8 +739,8 @@ def test_diagnosis_and_decision_review_changes_are_wired() -> None:
     assert "goal: state.goal, assume_conditional: true" in javascript
     assert 'id="conditional-assumption"' not in html
     assert 'id="conditional-assumption-dialog"' not in html
-    assert '/static/styles.css?v=re8.3-010.3' in html
-    assert '/static/app.js?v=re8.3-010.3' in html
+    assert '/static/styles.css?v=v2-011' in html
+    assert '/static/app.js?v=v2-011' in html
     assert "policyCardSummaries" in javascript
     assert "item.reason_summary || item.match_explanation" not in javascript
     assert "<small>${escapeHtml(item.simulation_readiness)}</small>" not in javascript
@@ -628,7 +780,9 @@ def test_diagnosis_and_decision_review_changes_are_wired() -> None:
     assert 'id="staged-question-panel"' not in html
     assert 'id="apply-staged-answers"' not in html
     assert "renderStagedQuestions" not in javascript
-    assert "필요에 따라 확인할 금융 정책" in html
+    assert "한 번에 한 질문씩 답해 주세요" in html
+    assert "답을 고르면 바로 다음 질문으로 넘어갑니다." in html
+    assert "먼저 확인할 정책 경로 2~3개" not in html
     assert "financialPolicyNeeds" in javascript
     for group in ("현금 확보", "대출 부담 완화", "운영비 절감", "재기·전환"):
         assert group in javascript
@@ -643,7 +797,7 @@ def test_diagnosis_and_decision_review_changes_are_wired() -> None:
     assert "(max - min) * .12" in javascript
     assert "negativeGuideCount = negativeSpan >= 150 ? 2 : 1" in javascript
     assert "goal_rankings" in javascript
-    assert '정책 후보는 위 점포 조건으로 찾습니다."' in javascript
+    assert "개 후보 중 우선순위" in javascript
     assert "비교 기준을 바꿔도 목록은 그대로 유지됩니다." not in javascript
     assert "syncPolicySearchToAlternative(id)" in javascript
     assert "normalizeChatText(content)" in javascript
@@ -653,9 +807,9 @@ def test_diagnosis_and_decision_review_changes_are_wired() -> None:
     assert "updateScenarioApplicationStatus" in javascript
     assert "const selectedBeforeGoalChange = state.selectedAlternative" in javascript
     assert "selectionStillAvailable ? selectedBeforeGoalChange" in javascript
-    assert 'runComparison("decision")' not in javascript
-    assert "바로 비교 가능" in html
-    assert "자격·접수 추가 확인" in html
+    assert 'runComparison("decision")' in javascript
+    assert "선택한 정책별 신청 준비와 현금효과" in html
+    assert "막힌 공식 조건과 해결 행동" in html
     assert "alternativeReadiness" in javascript
     assert "네 가지 기준별 비교 결과" in html
     assert 'data-goal-top="최소부채"' in html

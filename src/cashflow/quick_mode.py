@@ -39,6 +39,7 @@ class QuickModeInput(BaseModel):
     monthly_rent: StrictInt = Field(ge=0)
     monthly_labor_cost: StrictInt = Field(ge=0)
     monthly_variable_cost: StrictInt = Field(ge=0)
+    monthly_other_fixed_cost: StrictInt = Field(default=0, ge=0)
     expense_timing: CashTiming
     total_loan_balance: StrictInt = Field(ge=0)
     annual_interest_rate_percent: float = Field(default=0, ge=0, le=100)
@@ -178,6 +179,7 @@ def build_quick_schedules(data: QuickModeInput) -> dict[str, DetailedCashflowInp
                 ("rent", "fixed_cost", data.monthly_rent, "rent", "월 임대료"),
                 ("labor", "fixed_cost", data.monthly_labor_cost, "labor", "월 인건비"),
                 ("variable", "variable_cost", data.monthly_variable_cost, "purchase", "월 필수매입"),
+                ("other", "fixed_cost", data.monthly_other_fixed_cost, "other", "월 기타 고정비"),
             ):
                 events.append(
                     CashEvent(

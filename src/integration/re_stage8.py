@@ -11,7 +11,7 @@ import json
 import os
 import re
 import sqlite3
-from datetime import date
+from datetime import date, timedelta
 from functools import lru_cache
 from io import StringIO
 from pathlib import Path
@@ -21,17 +21,26 @@ from uuid import uuid4
 from pydantic import BaseModel, ConfigDict, Field
 
 from scripts.build_re_stage7_examples import as_detailed, build_hero
-from src.cashflow import DetailedCashflowInput, SimpleCashflowInput
+from src.cashflow import DetailedCashflowInput, LoanInput, SimpleCashflowInput
 from src.cashflow.engine import run_detailed_cashflow, run_simple_cashflow
+from src.cashflow.loans import add_months
 from src.cashflow.quick_mode import QuickModeInput, build_quick_schedules
 from src.models.re_stage5_scenario_service import predict_market_scenarios
+from src.policy import (
+    GrantScenario,
+    LoanScenario,
+    RefinanceScenario,
+    convert_grant,
+    convert_loan,
+    convert_refinance,
+)
 from src.policy.eligibility import EligibilityEngine, SessionEligibilityProfile, TriState
-from src.policy.discovery import DiscoveryEligibilityEngine, policy_metadata, staged_questions
+from src.policy.discovery import QUESTIONS, DiscoveryEligibilityEngine, policy_metadata, staged_questions
 from src.policy.re_stage8_2_events import DynamicPolicyScenario, build_dynamic_policy_plan
 from src.rag.hybrid_search import DATABASE_PATH, HybridPolicySearchIndex
 from src.rag.openai_embeddings import DEFAULT_EMBEDDING_MODEL, load_local_openai_env
 from src.rag.policy_index import SearchResult
-from src.rag.luna_client import explain_with_luna
+from src.rag.luna_client import explain_action_brief_with_luna, explain_with_luna
 from src.recommendation import (
     AlternativeKind,
     AlternativeSpec,
@@ -39,14 +48,17 @@ from src.recommendation import (
     CandidateState,
     MarketScenario,
     UserGoal,
+    compare_alternatives,
+    suggest_safe_cash,
 )
 from src.settings import PROJECT_ROOT
 
 
-API_VERSION = "re8-api-v1.4"
+API_VERSION = "v2-api-v1.0"
 SERVICE_NAME = "정책금융 영향 시뮬레이터"
 POLICY_DATA_VERSION = "re8.2-markdown-2026-08-17"
 BASE_AS_OF = date(2026, 8, 17)
+SEMAS_REFERENCE_RATE_2026_Q3 = 3.85
 SAMPLE_DIR = PROJECT_ROOT / "data/samples/re_stage7"
 AREA_PATH = PROJECT_ROOT / "reports/stage6/area_catalog.csv"
 INDUSTRY_PATH = PROJECT_ROOT / "reports/stage6/industry_catalog.csv"
@@ -55,6 +67,59 @@ SAMPLE_NAMES = {
     "declining_low_debt": "01_declining_low_debt_detailed.json",
     "stable_high_debt": "02_stable_high_debt_detailed.json",
     "declining_cash_shortage": "03_declining_cash_shortage_detailed.json",
+}
+
+CONDITIONAL_PREVIEW_POLICY_IDS = {
+    "POL_SEOUL_FUND_2026",
+    "POL_SEOUL_CRISIS_TRACK2_2026H2",
+    "POL_SEMAS_REFINANCE_2026",
+    "POL_SEMAS_RECHALLENGE_2026",
+}
+
+RULE_ANSWER_FIELDS: dict[str, tuple[str, ...]] = {
+    "FUND_ALL_02": ("business_scale",),
+    "FUND_EX_01": ("fund_restricted_industry",),
+    "FUND_VARIANT": ("subfund_selected",),
+    "CRISIS_ALL_02": ("rented_exclusive_place",),
+    "CRISIS_ALL_03": ("opening_date",),
+    "CRISIS_ANY_01": ("sales_decreased",),
+    "CRISIS_ANY_02": ("disaster_document",),
+    "CRISIS_EX_01": ("is_operating",),
+    "CRISIS_EX_02": ("prior_crisis_support",),
+    "CLOSE_ALL_02": ("is_operating",),
+    "CLOSE_ALL_03": ("opening_date",),
+    "CLOSE_EX_01": ("self_owned_place",),
+    "CLOSE_EX_02": ("prior_closure_support",),
+    "DIGI_ALL_03": ("opening_date",),
+    "DIGI_EX_01": ("prior_digital_support",),
+    "ZERO_ALL_02": ("zero_market_operation",),
+    "ZERO_ALL_03": ("eligible_business_registration",),
+    "ZERO_EX_01": ("is_operating",),
+    "ZERO_EX_02": ("shared_office_only", "consignment_only"),
+    "ZERO_EX_03": ("duplicate_public_support",),
+    "SAFE_ALL_02": ("safety_product_business",),
+    "SAFE_ALL_03": ("tax_paid",),
+    "REFI_ALL_01": ("ncb_919_or_below",),
+    "REFI_ANY_02": ("maturity_extension_difficulty",),
+    "REFI_EX_01": ("common_loan_restriction",),
+    "RECH_EX_01": ("common_loan_restriction",),
+    "VOUCH_ALL_03": ("opening_date",),
+    "VOUCH_ALL_04": ("is_operating",),
+    "VOUCH_EX_01": ("policy_loan_restricted_industry",),
+}
+
+STRUCTURAL_ANSWER_FIELDS = {
+    "business_scale",
+    "fund_restricted_industry",
+    "policy_loan_restricted_industry",
+    "prior_crisis_support",
+    "prior_closure_support",
+    "prior_digital_support",
+    "self_owned_place",
+    "duplicate_public_support",
+    "zero_market_operation",
+    "eligible_business_registration",
+    "safety_product_business",
 }
 VERSIONS = {
     "api": API_VERSION,
@@ -94,6 +159,7 @@ FINANCIAL_POLICY_NEEDS = {
     "POL_SEMAS_REFINANCE_2026": "대출 부담 완화",
     "POL_SEMAS_RECHALLENGE_2026": "대출 부담 완화",
     "POL_SEMAS_EMPLOYMENT_INSURANCE_2026": "운영비 절감",
+    "POL_SEOUL_FAMILY_FRIENDLY_EMPLOYER_2026": "운영비 절감",
     "POL_SEOUL_DIGITAL_MIDLIFE_2026H2": "운영비 절감",
     "POL_SEOUL_ZERO_MARKET_2026_2": "운영비 절감",
     "POL_SEOUL_CLOSURE_2026": "재기·전환",
@@ -103,6 +169,18 @@ FINANCIAL_POLICY_NEEDS = {
 
 class StrictModel(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+
+class CostReductionPlan(StrictModel):
+    """Monthly reductions explicitly confirmed by the user, in won."""
+
+    rent: int = Field(default=0, ge=0, le=10_000_000_000)
+    labor: int = Field(default=0, ge=0, le=10_000_000_000)
+    purchase: int = Field(default=0, ge=0, le=10_000_000_000)
+    other_fixed: int = Field(default=0, ge=0, le=10_000_000_000)
+
+    def total(self) -> int:
+        return self.rent + self.labor + self.purchase + self.other_fixed
 
 
 class SampleCompareRequest(StrictModel):
@@ -121,6 +199,10 @@ class SampleCompareRequest(StrictModel):
     assume_conditional: bool = True
     eligibility_profile: SessionEligibilityProfile | None = None
     policy_scenarios: list[DynamicPolicyScenario] = Field(default_factory=list, max_length=6)
+    v2_mode: bool = False
+    selected_policy_ids: list[str] = Field(default_factory=list, max_length=3)
+    conditional_policy_ids: list[str] = Field(default_factory=list, max_length=3)
+    cost_reduction_plan: CostReductionPlan | None = None
 
 
 class EligibilityRequest(StrictModel):
@@ -141,6 +223,12 @@ class PolicyQuestionRequest(StrictModel):
     question: str = Field(min_length=2, max_length=500)
     history: list[PolicyChatMessage] = Field(default_factory=list, max_length=8)
     as_of: date = BASE_AS_OF
+
+
+class ActionBriefRequest(StrictModel):
+    comparison: SampleCompareRequest
+    selected_alternative_id: str = Field(min_length=1, max_length=150)
+    consent_to_external_ai: bool = False
 
 
 class CsvCashflowRequest(StrictModel):
@@ -321,6 +409,212 @@ def _situation_summary(
     return ". ".join(labels), labels
 
 
+def _policy_match_reason(need_group: str, labels: list[str]) -> str:
+    """Explain retrieval with store signals without implying eligibility."""
+
+    priorities = {
+        "현금 확보": ("13주 내 현금 부족 위험", "안전현금 부족", "최근 매출 감소", "고정비 부담 높음"),
+        "대출 부담 완화": ("고금리 기존 대출 대환 필요", "기존 대출 상환 부담", "13주 내 현금 부족 위험", "최근 매출 감소"),
+        "운영비 절감": ("고정비 부담 높음", "최근 매출 감소", "13주 내 현금 부족 위험", "안전현금 부족"),
+        "재기·전환": ("최근 매출 감소", "13주 내 현금 부족 위험", "안전현금 부족", "고정비 부담 높음"),
+    }
+    matched = [label for label in priorities.get(need_group, ()) if label in labels][:2]
+    if not matched:
+        matched = labels[:2]
+    context = "·".join(matched) if matched else "현재 점포 조건"
+    return f"{context} 상황에서 {need_group}와 관련된 정책 경로로 찾았습니다. 지원 대상 확정은 아닙니다."
+
+
+def _readiness_answer(value: Any) -> str:
+    text = str(value or "").strip()
+    return {
+        "yes": "예",
+        "no": "아니오",
+        "unknown": "모름",
+        "pass": "충족",
+        "fail": "불충족",
+    }.get(text.lower(), text or "입력 없음")
+
+
+def _profile_answer(profile: SessionEligibilityProfile | None, field: str) -> Any:
+    if profile is None or not field:
+        return None
+    if field in profile.policy_answers:
+        value = profile.policy_answers[field]
+    else:
+        value = getattr(profile, field, None)
+    if hasattr(value, "value"):
+        value = value.value
+    if isinstance(value, date):
+        return value.isoformat()
+    return value
+
+
+def _answer_label(field: str, value: Any) -> str:
+    question = QUESTIONS.get(field)
+    normalized = "unknown" if value in (None, "") else str(value)
+    if question is not None:
+        option = next((label for candidate, label in question.options if candidate == normalized), None)
+        if option:
+            return option
+    return _readiness_answer(normalized)
+
+
+def _readiness_answers(
+    item: dict[str, Any], profile: SessionEligibilityProfile | None
+) -> list[dict[str, Any]]:
+    fields = tuple(
+        field for field in (
+            item.get("field"),
+            *RULE_ANSWER_FIELDS.get(item.get("rule_id", ""), ()),
+        ) if field
+    )
+    answers = []
+    for field in dict.fromkeys(fields):
+        question = QUESTIONS.get(field)
+        if question is None:
+            continue
+        answers.append({
+            "field": field,
+            "question": question.label,
+            "answer": _answer_label(field, _profile_answer(profile, field)),
+            "editable": True,
+        })
+    return answers
+
+
+def _failure_resolution(condition: str) -> tuple[str, str]:
+    """Turn a failed official condition into a concrete, non-promissory next step."""
+
+    if any(keyword in condition for keyword in ("매출", "재해", "피해")):
+        return (
+            "증빙 준비",
+            "매출 비교자료나 재해·피해 확인서가 실제로 있는지 확인하고, 있다면 해당 답변을 수정해 증빙을 준비하세요. 실제로 해당하지 않으면 이 정책은 현재 신청할 수 없습니다.",
+        )
+    if any(keyword in condition for keyword in ("재창업", "채무조정", "교육", "수료", "업력")):
+        return (
+            "재도전 요건 확인",
+            "재창업·채무조정 유형과 교육 수료내역·기간을 공식 증빙으로 확인하세요. 아직 충족하지 않았다면 공고가 인정하는 교육이나 준비 절차부터 진행해야 합니다.",
+        )
+    if any(keyword in condition for keyword in ("제한사유", "제한 업종", "중복", "기존 지원", "과거 지원")):
+        return (
+            "제한사유 해소·예외 확인",
+            "현재 제한사유가 실제로 적용되는지 공식기관에 확인하세요. 제한이 사실이면 해소 또는 공고상 예외 인정 전에는 신청할 수 없으므로 다른 정책도 함께 비교하세요.",
+        )
+    if any(keyword in condition for keyword in ("신용", "NCB", "만기연장", "고금리")):
+        return (
+            "대출 조건 증빙",
+            "신용평점 확인서와 기존 대출내역, 만기연장 애로 증빙을 준비해 공고 기준에 해당하는지 확인하세요. 기준과 다르면 이 대환 경로는 이용할 수 없습니다.",
+        )
+    if any(keyword in condition for keyword in ("기업 규모", "소상공인", "소기업", "상시근로자")):
+        return (
+            "기업 규모 재확인",
+            "소상공인확인서와 상시근로자 수를 기준으로 기업 규모를 다시 확인하세요. 입력이 맞고 공고 기준을 벗어나면 이 정책은 신청할 수 없습니다.",
+        )
+    if any(keyword in condition for keyword in ("소재지", "사업장", "임차", "영업", "개업")):
+        return (
+            "사업장 자격 재확인",
+            "사업자등록증·임대차계약서·영업 상태로 공식 조건을 다시 확인하세요. 입력이 맞고 조건을 충족하지 않으면 이 정책 대신 가능한 다른 정책을 선택해야 합니다.",
+        )
+    return (
+        "공식 조건 재확인",
+        "공식 증빙을 기준으로 현재 답변이 맞는지 확인하세요. 입력이 잘못됐다면 답변을 수정하고, 실제로 조건을 충족하지 않으면 다른 정책을 비교하세요.",
+    )
+
+
+def _application_readiness(
+    policy_id: str,
+    decision: dict[str, Any],
+    profile: SessionEligibilityProfile | None = None,
+) -> dict[str, Any]:
+    """Separate fixed eligibility failures from preparation and official checks."""
+
+    rule_results = decision.get("rule_results", [])
+    failed = [item for item in rule_results if item.get("result") == "fail"]
+    unknown = [item for item in rule_results if item.get("result") == "unknown"]
+    blocking_details = []
+    for item in failed:
+        condition = item.get("condition", "")
+        category, action = _failure_resolution(condition)
+        answers = _readiness_answers(item, profile)
+        is_structural = any(answer["field"] in STRUCTURAL_ANSWER_FIELDS for answer in answers)
+        if not answers and "소재지" in condition:
+            is_structural = True
+        blocking_details.append({
+            "condition": condition or "공식 자격조건",
+            "current_answer": answers[0]["answer"] if len(answers) == 1 else _readiness_answer(item.get("reason")),
+            "answers": answers,
+            "category": category,
+            "action": action,
+            "remediation_type": "structural" if is_structural else "remediable",
+        })
+    confirmation_details = []
+    for item in unknown:
+        answers = _readiness_answers(item, profile)
+        if answers:
+            confirmation_details.append({
+                "condition": item.get("condition") or "공식 확인 항목",
+                "answers": answers,
+            })
+    preparation: list[str] = []
+    if policy_id == "POL_SEOUL_FUND_2026" and any(
+        item.get("rule_id") == "FUND_VARIANT" for item in unknown
+    ):
+        preparation.extend([
+            "13주 추가 필요 현금과 자금 용도에 맞는 세부 자금 선택",
+            "선택한 세부 자금의 한도·금리·추가 자격 확인",
+        ])
+    official_checks = [
+        item.get("reason") or item.get("condition", "")
+        for item in unknown
+        if not _readiness_answers(item, profile)
+    ]
+    if "확인 필요" in decision.get("availability_status", ""):
+        official_checks.append("기준일 현재 접수 가능 여부와 잔여 예산 확인")
+    official_checks = list(dict.fromkeys(item for item in official_checks if item))
+
+    if failed:
+        status = "현재 조건으로 지원 불가"
+        next_actions = [
+            *(item["action"] for item in blocking_details),
+            "해결할 수 없는 조건이면 현재 조건으로 가능한 다른 정책 후보를 비교하세요.",
+        ]
+    elif preparation:
+        status = "준비하면 신청 가능"
+        next_actions = [*preparation, *official_checks]
+    elif unknown or official_checks:
+        status = "공식 확인 필요"
+        next_actions = official_checks
+    else:
+        status = "입력 기준 지원 후보"
+        next_actions = ["공식 공고에서 현재 접수 여부와 제출서류 확인"]
+    has_structural_failure = any(
+        item["remediation_type"] == "structural" for item in blocking_details
+    )
+    base_preview_supported = policy_id in CONDITIONAL_PREVIEW_POLICY_IDS
+    if has_structural_failure:
+        graph_status = "structural_block"
+        graph_reason = "현재 답변에 업종·기업규모·소재지·중복수혜 등 구조적 제외조건이 있어 조건부 그래프에서 제외합니다."
+    elif base_preview_supported:
+        graph_status = "available"
+        graph_reason = "보완 가능한 조건 또는 공식 확인 항목을 충족하고 승인·실행된 경우를 가정해 비교합니다."
+    else:
+        graph_status = "calculation_unavailable"
+        graph_reason = "검수된 금액·지급일·상환기간 가정이 없어 임의 조건부 그래프를 만들지 않습니다."
+    return {
+        "status": status,
+        "hard_failures": [item.get("condition", "") for item in failed if item.get("condition")],
+        "blocking_details": blocking_details,
+        "confirmation_details": confirmation_details,
+        "preparation_items": preparation,
+        "official_checks": official_checks,
+        "next_actions": list(dict.fromkeys(next_actions)),
+        "conditional_graph_supported": base_preview_supported and not has_structural_failure,
+        "conditional_graph_status": graph_status,
+        "conditional_graph_reason": graph_reason,
+    }
+
+
 def _discover_policies(
     request: SampleCompareRequest,
     *,
@@ -353,21 +647,25 @@ def _discover_policies(
     candidates = []
     for item in outcome.results:
         policy = catalog[item.chunk.policy_id]
+        need_group = FINANCIAL_POLICY_NEEDS[item.chunk.policy_id]
         decision = eligibility_engine.evaluate(
             item.chunk.policy_id, profile, district=district, as_of=BASE_AS_OF
         )
         event_status = metadata[item.chunk.policy_id]["event_status"]
+        readiness = _application_readiness(item.chunk.policy_id, decision, profile)
         candidates.append(
             {
                 "policy_id": item.chunk.policy_id,
                 "policy_name": policy["policy_name"],
                 "policy_version": policy["policy_version"],
-                "need_group": FINANCIAL_POLICY_NEEDS[item.chunk.policy_id],
+                "need_group": need_group,
                 "matched_section": item.chunk.page_or_section,
                 "match_explanation": item.chunk.text[:240],
+                "match_reason": _policy_match_reason(need_group, labels),
                 "official_url": policy["official_url"],
                 **decision,
                 "eligibility_readiness": f"{decision['eligibility_status']} · {decision['availability_status']}",
+                "application_readiness": readiness,
                 "simulation_readiness": {
                     "reviewed_event": "검수 Event와 사용자 시나리오가 있으면 현금 비교 가능",
                     "reviewed_event_requires_grade": "고용보험 등급 확인 후 현금 비교 가능",
@@ -407,7 +705,10 @@ def _dynamic_policy_alternatives(
     candidates = {item["policy_id"]: item for item in discovery["candidates"]}
     catalog = {item["policy_id"]: item for item in policy_catalog()}
     alternatives: list[AlternativeSpec] = []
+    selected_policy_ids = set(request.selected_policy_ids)
     for scenario in request.policy_scenarios:
+        if request.v2_mode and scenario.policy_id not in selected_policy_ids:
+            continue
         candidate = candidates.get(scenario.policy_id)
         if candidate is None or candidate["candidate_state"] == "제외":
             continue
@@ -450,6 +751,259 @@ def _dynamic_policy_alternatives(
             )
         )
     return alternatives
+
+
+def _v2_cost_reduction_alternative(
+    request: SampleCompareRequest,
+) -> AlternativeSpec | None:
+    """Build a cost alternative only from user-confirmed category amounts."""
+
+    plan = request.cost_reduction_plan
+    if plan is None or plan.total() == 0:
+        return None
+    if request.quick_input is None:
+        raise ValueError("V2 비용 절감 비교에는 간편 재무 입력이 필요합니다.")
+    monthly_cost = (
+        request.quick_input.monthly_rent
+        + request.quick_input.monthly_labor_cost
+        + request.quick_input.monthly_variable_cost
+        + request.quick_input.monthly_other_fixed_cost
+    )
+    if monthly_cost <= 0 or plan.total() > monthly_cost:
+        raise ValueError("줄일 비용은 입력한 월 지출 합계를 넘을 수 없습니다.")
+    rate = plan.total() / monthly_cost * 100
+    details = [
+        f"임대료 {plan.rent:,}원",
+        f"인건비 {plan.labor:,}원",
+        f"필수매입비 {plan.purchase:,}원",
+        f"기타 고정비 {plan.other_fixed:,}원",
+    ]
+    return AlternativeSpec(
+        alternative_id="cost_reduction_custom",
+        label=f"확정 비용 월 {plan.total():,}원 절감",
+        kind=AlternativeKind.COST_REDUCTION,
+        cost_reduction_rate_percent=rate,
+        assumptions=[
+            "사용자가 실제로 줄일 수 있다고 확정한 월 비용만 반영",
+            ", ".join(details),
+        ],
+    )
+
+
+def _conditional_candidate_context(candidate: dict[str, Any]) -> CandidateContext:
+    return CandidateContext(
+        policy_id=candidate["policy_id"],
+        policy_version=candidate["policy_version"],
+        eligibility_status=candidate["eligibility_status"],
+        availability_status=candidate["availability_status"],
+        candidate_state=CandidateState.CONDITIONAL,
+        reason_summary="조건부 그래프이며 최종 자격·접수·승인·실행을 확정하지 않습니다.",
+        items_to_confirm=list(dict.fromkeys([
+            *candidate.get("items_to_confirm", []),
+            *candidate.get("application_readiness", {}).get("next_actions", []),
+        ])),
+        as_of=BASE_AS_OF,
+        official_notice_url=candidate["official_url"],
+        application_url=candidate["official_url"],
+    )
+
+
+def _v2_conditional_policy_alternatives(
+    request: SampleCompareRequest,
+    discovery: dict[str, Any],
+    baseline: DetailedCashflowInput,
+    market: MarketScenario,
+) -> list[AlternativeSpec]:
+    """Build explicitly requested, clearly conditional graphs outside rankings."""
+
+    requested = set(request.conditional_policy_ids)
+    selected = set(request.selected_policy_ids)
+    if not requested.issubset(selected):
+        raise ValueError("조건부 그래프는 먼저 선택한 정책에 대해서만 만들 수 있습니다.")
+    if not requested:
+        return []
+    candidates = {item["policy_id"]: item for item in discovery["candidates"]}
+    baseline_only = compare_alternatives(
+        baseline,
+        market,
+        [],
+        as_of=BASE_AS_OF,
+        safe_cash_override=request.safe_cash_override,
+    )
+    no_action = baseline_only.alternatives[0]
+    assert no_action.metrics is not None
+    safe_cash = suggest_safe_cash(baseline, user_override=request.safe_cash_override)
+    assert safe_cash.suggested_amount is not None
+    cash_need = max(0, safe_cash.suggested_amount - no_action.metrics.week13_minimum_cash)
+    alternatives: list[AlternativeSpec] = []
+
+    for policy_id in request.conditional_policy_ids:
+        candidate = candidates.get(policy_id)
+        if candidate is None:
+            continue
+        if not candidate.get("application_readiness", {}).get("conditional_graph_supported", False):
+            continue
+        context = _conditional_candidate_context(candidate)
+        if policy_id == "POL_SEOUL_FUND_2026" and cash_need > 0:
+            principal = min(cash_need, 50_000_000)
+            execution_date = baseline.reference_date + timedelta(days=28)
+            plan = convert_loan(LoanScenario(
+                policy_id=policy_id,
+                event_id="SEOUL_EMERGENCY",
+                scenario_status="assumed_approved",
+                approved_principal=principal,
+                execution_date=execution_date,
+                payment_day=5,
+                term_months=60,
+                grace_months=12,
+                repayment_method="equal_principal",
+            ))
+            alternatives.append(AlternativeSpec(
+                alternative_id="conditional_pol_seoul_fund_2026",
+                label="서울시 긴급자영업자금 · 조건부 그래프",
+                kind=AlternativeKind.POLICY_LOAN,
+                plans=[plan],
+                candidate_contexts=[context],
+                explicit_condition_assumption=True,
+                estimated_days_to_effect=28,
+                required_documents=["세부 자금 적격 확인", "자금 용도 증빙", "대출·보증 상담서류"],
+                inquiry="서울신용보증재단 1577-6119",
+                official_urls=[candidate["official_url"]],
+                assumptions=[
+                    f"13주 추가 필요 현금 기준 원금 {principal:,}원(공식 한도 5천만원 이내)",
+                    "사용자가 조건부 그래프 보기를 선택해 4주 후 실행을 가정",
+                    "60개월·12개월 거치·원금균등 조건부 비교",
+                ],
+            ))
+        elif policy_id == "POL_SEOUL_CRISIS_TRACK2_2026H2":
+            support = min(max(cash_need, 1), 3_000_000)
+            project_cost = (support * 125 + 99) // 100
+            expense_date = baseline.reference_date + timedelta(days=7)
+            payment_date = max(date(2026, 11, 30), expense_date)
+            plan = convert_grant(GrantScenario(
+                policy_id=policy_id,
+                event_id="CRISIS_SOLUTION",
+                scenario_status="assumed_approved",
+                approved_support_amount=support,
+                payment_date=payment_date,
+                total_project_cost=project_cost,
+                eligible_expense_amount=support,
+                expense_date=expense_date,
+            ))
+            alternatives.append(AlternativeSpec(
+                alternative_id="conditional_pol_seoul_crisis_track2_2026h2",
+                label="위기 소상공인 지원 · 조건부 그래프",
+                kind=AlternativeKind.NON_DEBT_SUPPORT,
+                plans=[plan],
+                candidate_contexts=[context],
+                explicit_condition_assumption=True,
+                estimated_days_to_effect=max(0, (payment_date - baseline.reference_date).days),
+                required_documents=["매출감소 또는 재해 증빙", "임대차계약서", "선지출 증빙"],
+                inquiry="서울신용보증재단 1577-6119",
+                official_urls=[candidate["official_url"]],
+                assumptions=[
+                    f"13주 추가 필요 현금과 공고상 최대 300만원 중 작은 지원액 {support:,}원",
+                    f"지원액의 125%인 선지출 {project_cost:,}원",
+                    f"선지출 {expense_date.isoformat()}·공고상 비용지원 종료시점 {payment_date.isoformat()} 지급 가정",
+                ],
+            ))
+        elif policy_id == "POL_SEMAS_RECHALLENGE_2026" and cash_need > 0:
+            principal = min(cash_need, 70_000_000)
+            execution_date = baseline.reference_date + timedelta(days=28)
+            plan = convert_loan(LoanScenario(
+                policy_id=policy_id,
+                event_id="SEMAS_RECHALLENGE_GENERAL",
+                scenario_status="assumed_approved",
+                approved_principal=principal,
+                execution_date=execution_date,
+                payment_day=5,
+                term_months=60,
+                grace_months=24,
+                repayment_method="equal_principal",
+                reference_interest_rate_percent=SEMAS_REFERENCE_RATE_2026_Q3,
+            ))
+            alternatives.append(AlternativeSpec(
+                alternative_id="conditional_pol_semas_rechallenge_2026",
+                label="소상공인 재도전특별자금 일반형 · 조건부 그래프",
+                kind=AlternativeKind.POLICY_LOAN,
+                plans=[plan],
+                candidate_contexts=[context],
+                explicit_condition_assumption=True,
+                estimated_days_to_effect=28,
+                required_documents=["재창업·채무조정 유형 증빙", "재창업교육 수료내역", "공통 대출 제한사유 확인"],
+                inquiry="소상공인통합콜센터 1533-0100 내선 1",
+                official_urls=[candidate["official_url"]],
+                assumptions=[
+                    f"13주 추가 필요 현금과 일반형 공식 한도 7천만원 중 작은 원금 {principal:,}원",
+                    "사용자가 선택한 정책의 조건을 충족하고 승인·실행된 경우를 4주 후 실행으로 가정",
+                    "2026년 3분기 정책자금 기준금리 3.85% + 일반형 가산금리 1.6%p = 연 5.45%",
+                    "60개월·24개월 거치·원금균등 조건부 비교",
+                ],
+            ))
+        elif policy_id == "POL_SEMAS_REFINANCE_2026" and baseline.loans:
+            existing = baseline.loans[0]
+            execution_date = baseline.reference_date + timedelta(days=28)
+            principal = min(existing.principal, 50_000_000)
+            refinanced_segment = existing.model_copy(update={"principal": principal})
+            maturity = add_months(execution_date, 120)
+            replacement = LoanInput(
+                loan_id="v2-conditional-refinance",
+                principal=principal,
+                annual_interest_rate_percent=4.5,
+                repayment_method="equal_principal",
+                payment_day=5,
+                maturity_date=date(maturity.year, maturity.month, 5),
+            )
+            plan = convert_refinance(RefinanceScenario(
+                policy_id=policy_id,
+                event_id="SEMAS_REFINANCE",
+                scenario_status="assumed_approved",
+                execution_date=execution_date,
+                existing_refinanced_loan=refinanced_segment,
+                replacement_loan=replacement,
+            ))
+            alternatives.append(AlternativeSpec(
+                alternative_id="conditional_pol_semas_refinance_2026",
+                label="소상공인 대환대출 · 조건부 그래프",
+                kind=AlternativeKind.REFINANCE,
+                plans=[plan],
+                candidate_contexts=[context],
+                explicit_condition_assumption=True,
+                estimated_days_to_effect=28,
+                required_documents=["기존 대출내역", "NCB 구간 확인", "만기연장 애로 증빙"],
+                inquiry="소상공인통합콜센터 1533-0100 내선 1",
+                official_urls=[candidate["official_url"]],
+                assumptions=[
+                    f"기존 대출과 공식 한도 5천만원 중 작은 대환원금 {principal:,}원",
+                    "사용자가 조건부 그래프 보기를 선택해 4주 후 실행을 가정",
+                    "연 4.5%·120개월 원금균등 조건부 비교",
+                ],
+            ))
+    return alternatives
+
+
+def _build_v2_decision(
+    request: SampleCompareRequest,
+    baseline: DetailedCashflowInput,
+    market: MarketScenario,
+    dynamic_alternatives: list[AlternativeSpec],
+    conditional_alternatives: list[AlternativeSpec],
+):
+    """Compare no-action and only explicitly confirmed V2 alternatives."""
+
+    alternatives: list[AlternativeSpec] = []
+    cost_alternative = _v2_cost_reduction_alternative(request)
+    if cost_alternative is not None:
+        alternatives.append(cost_alternative)
+    alternatives.extend(dynamic_alternatives)
+    alternatives.extend(conditional_alternatives)
+    return compare_alternatives(
+        baseline,
+        market,
+        alternatives,
+        as_of=BASE_AS_OF,
+        safe_cash_override=request.safe_cash_override,
+    )
 
 
 def _market_scenario_comparison(
@@ -598,13 +1152,26 @@ def compare_sample(request: SampleCompareRequest) -> dict[str, Any]:
     dynamic_alternatives = _dynamic_policy_alternatives(
         request, discovery, reference_date=baseline.reference_date
     )
-    result, minimum_principal = build_hero(
-        baseline,
-        market=market,
-        safe_cash_override=request.safe_cash_override,
-        assume_conditional=request.assume_conditional,
-        additional_alternatives=dynamic_alternatives,
-    )
+    conditional_alternatives = _v2_conditional_policy_alternatives(
+        request, discovery, baseline, market
+    ) if request.v2_mode else []
+    if request.v2_mode:
+        result = _build_v2_decision(
+            request,
+            baseline,
+            market,
+            dynamic_alternatives,
+            conditional_alternatives,
+        )
+        minimum_principal = 0
+    else:
+        result, minimum_principal = build_hero(
+            baseline,
+            market=market,
+            safe_cash_override=request.safe_cash_override,
+            assume_conditional=request.assume_conditional,
+            additional_alternatives=dynamic_alternatives,
+        )
     ranking = next(item for item in result.rankings if item.goal is request.goal)
     return envelope(
         sample={
@@ -676,6 +1243,20 @@ def compare_sample(request: SampleCompareRequest) -> dict[str, Any]:
         safe_cash=result.safe_cash.model_dump(mode="json"),
         policy_discovery=discovery,
         dynamic_policy_alternative_ids=[item.alternative_id for item in dynamic_alternatives],
+        conditional_policy_alternative_ids=[
+            item.alternative_id for item in conditional_alternatives
+        ],
+        v2={
+            "enabled": request.v2_mode,
+            "selected_policy_ids": request.selected_policy_ids,
+            "conditional_policy_ids": request.conditional_policy_ids,
+            "confirmed_cost_reduction": (
+                request.cost_reduction_plan.model_dump(mode="json")
+                if request.cost_reduction_plan is not None
+                else None
+            ),
+            "comparison_rule": "확정값 대안만 순위 비교하고, 사용자가 연 조건부 그래프는 점선으로 표시하되 순위에서 제외",
+        },
         minimum_policy_loan_for_sample=minimum_principal,
         assumption_ledger=[
             item
@@ -815,6 +1396,121 @@ def ask_policy(request: PolicyQuestionRequest) -> dict[str, Any]:
             "금액·전화번호·계좌·사업자번호·주민번호 패턴은 외부 전송 전에 제거",
             "OpenAI 기본 악용 모니터링 로그에는 최대 30일 포함될 수 있음",
             "공식 공고와 신청기관에서 최신 상태를 최종 확인해야 함",
+        ],
+    )
+
+
+def action_brief(request: ActionBriefRequest) -> dict[str, Any]:
+    """Recompute facts locally, then optionally ask Luna to rewrite them."""
+
+    comparison = compare_sample(request.comparison)
+    alternatives = [item for item in comparison["intervention_results"] if item.get("metrics")]
+    selected = next(
+        (
+            item
+            for item in alternatives
+            if item["alternative_id"] == request.selected_alternative_id
+        ),
+        None,
+    )
+    if selected is None:
+        raise ValueError("선택한 대안이 현재 비교 결과에 없습니다.")
+    metrics = selected["metrics"]
+    selected_ids = set(request.comparison.selected_policy_ids)
+    selected_candidates = [
+        item
+        for item in comparison["policy_discovery"]["candidates"]
+        if item["policy_id"] in selected_ids
+    ]
+    plan = next(
+        (
+            item
+            for item in comparison["execution_plan"]
+            if item["alternative_id"] == selected["alternative_id"]
+        ),
+        {},
+    )
+    checks = list(
+        dict.fromkeys(
+            [
+                *selected.get("items_to_confirm", []),
+                *plan.get("conditions_to_check_now", []),
+            ]
+        )
+    )
+    policy_status = ", ".join(
+        f"{item['policy_name']} {item['eligibility_readiness']}"
+        for item in selected_candidates
+    ) or "선택 정책 없음"
+    next_action = (
+        f"다음 행동: {checks[0]}을 공식 공고 또는 담당기관에서 확인하세요."
+        if checks
+        else "다음 행동: 입력한 절감액 또는 정책 조건을 실행 가능한지 확인하고 공식 공고를 여세요."
+    )
+    facts = [
+        f"현재 선택 대안은 {selected['label']}입니다.",
+        f"13주 뒤 현금은 {metrics['week13_ending_cash']:,}원이고 6개월 뒤 현금은 {metrics['month6_ending_cash']:,}원입니다.",
+        f"새로 생기는 빚은 {metrics['net_new_borrowing']:,}원이고 월 최대 상환액은 {metrics['maximum_monthly_debt_service']:,}원입니다.",
+        f"선택 정책 상태: {policy_status}.",
+        next_action,
+    ]
+    evidence: list[SearchResult] = []
+    retrieval_mode = "not_requested"
+    if request.consent_to_external_ai:
+        try:
+            search = HybridPolicySearchIndex(DATABASE_PATH)
+            embedding_model, requested_mode = _retrieval_runtime()
+            outcome = search.search(
+                "선택 정책 신청 조건 서류 지급 시점 확인",
+                policy_ids=selected_ids or None,
+                as_of=BASE_AS_OF,
+                top_k=4,
+                model=embedding_model,
+                mode=requested_mode,
+                max_chunks_per_policy=2,
+            )
+            retrieval_mode = outcome.retrieval_mode
+            evidence = [
+                SearchResult(chunk=item.chunk, score=max(0.0, item.combined_score))
+                for item in outcome.results
+            ]
+        except (FileNotFoundError, sqlite3.Error, ValueError):
+            retrieval_mode = "unavailable"
+    explanation = (
+        explain_action_brief_with_luna(facts, evidence)
+        if request.consent_to_external_ai
+        else type(
+            "LocalBrief",
+            (),
+            {
+                "answer": "\n".join(facts),
+                "source": "local_deterministic",
+                "model": None,
+                "fact_lock_status": "not_called",
+                "fallback_reason": "consent_not_given",
+            },
+        )()
+    )
+    return envelope(
+        action_brief=explanation.answer,
+        answer_source=explanation.source,
+        explanation_model=explanation.model,
+        fact_lock_status=explanation.fact_lock_status,
+        fallback_reason=explanation.fallback_reason,
+        deterministic_facts=facts,
+        official_evidence=[
+            {
+                "policy_id": item.chunk.policy_id,
+                "policy_version": item.chunk.policy_version,
+                "source_url": item.chunk.source_url,
+                "page_or_section": item.chunk.page_or_section,
+            }
+            for item in evidence
+        ],
+        limitations=[
+            "계산·자격·순위는 서버가 다시 계산하며 LLM이 변경하지 않음",
+            f"공식근거 검색 방식: {retrieval_mode}",
+            "외부 AI 동의가 없거나 호출이 실패하면 로컬 결정론적 브리프를 사용",
         ],
     )
 

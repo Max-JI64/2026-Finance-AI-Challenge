@@ -5,9 +5,9 @@
 
 ## Project snapshot
 
-- Last updated: 2026-08-21T11:28+09:00
-- Purpose: Build a working Seoul small-business policy-finance impact simulator whose hero compares 13-week survival and 6-month debt consequences across no action and representative interventions, using area-industry stress scenarios, schedule-based cash flow, official policy terms, and evidence-grounded AI explanations without causal-effect or personal-sales claims.
-- Important paths: `프로젝트 계획서.md` is the main MVP plan; `MVP 단계별 구현 체크리스트.md` is the execution and completion-gate document; `src/cashflow/` and `src/policy/` hold the completed RE3-RE4 engines; `config/re_stage5.yaml` and `reports/re_stage5/` hold the completed aggregate scenario model evidence; `src/policy/eligibility.py`, `src/rag/`, and `reports/re_stage6/` hold RE6; `src/recommendation/` and `reports/re_stage7/` hold the RE7 decision engine; `app/`, `src/integration/re_stage8.py`, `src/policy/discovery.py`, `src/policy/re_stage8_2_events.py`, `src/rag/hybrid_search.py`, `config/re_stage8.yaml`, and `reports/re_stage8_2/` hold the completed RE8.2 integration; `reports/re_stage9/`, `output/pdf/RE9_기능명세서.pdf`, `Dockerfile`, and `requirements-runtime.txt` hold the RE9 local submission package; `data/raw_re/향후 데이터 다운로드 가이드.md` is the acquisition guide.
+- Last updated: 2026-08-23T11:55+09:00
+- Purpose: Build a bounded-AI Seoul small-business finance copilot that separates store trends from aggregate market scenarios, presents candidate-specific reviewed policy questions one at a time before revealing policy routes, and compares no action with confirmed or explicitly conditional policy effects on deterministic 13-week and 6-month cash/debt horizons.
+- Important paths: `V2 단계별 구현 계획표.md` is the active V2 plan and preservation contract; `MVP 단계별 구현 체크리스트.md` remains the preserved MVP history. `app/static/`, `app/main.py`, and `src/integration/re_stage8.py` hold the V2 flow and APIs; `src/cashflow/quick_mode.py` includes other fixed costs; `src/policy/re_stage8_2_events.py` holds reviewed user-input policy Events; `src/rag/luna_client.py` holds the consent-gated fact-locked action brief; the prior RE3-RE8 engines and evidence remain in their existing paths. RE9 artifacts are intentionally out of current scope.
 
 ## Durable decisions
 
@@ -20,10 +20,10 @@
 
 - `decision:implementation-checklist`
   - Created: 2026-08-14T20:21+09:00
-  - Updated: 2026-08-17T14:33+09:00
+  - Updated: 2026-08-21T14:06+09:00
   - Status: active
-  - Content: The checklist records completed Stage 0-6 and RE Stage 1-8.2 with Gate evidence. RE8.3 is now the active user-directed service review and revision cycle; the existing RE9 8-persona and 20-case package is a pre-revision baseline, and external deployment is paused until the user explicitly closes RE8.3 and separately approves a free-only platform.
-  - Evidence: `MVP 단계별 구현 체크리스트.md`, `프로젝트 계획서.md`, `reports/re_stage8_3/service_review_log.md`, Gate evidence under `reports/re_stage1/` through `reports/re_stage9/`, and `config/re_stage9.yaml`.
+  - Content: The checklist records completed Stage 0-6 and RE Stage 1-8.3 with Gate evidence. RE8.3 was permanently closed on 2026-08-21 and must not be reopened; all current user-directed service revisions use the separate V2 plan and ledger. Existing RE9 artifacts remain a preserved pre-V2 baseline, and deployment remains paused pending V2 completion and separate approval.
+  - Evidence: `MVP 단계별 구현 체크리스트.md`, `프로젝트 계획서.md`, `reports/re_stage8_3/service_review_log.md`, `V2 단계별 구현 계획표.md`, and `reports/v2/service_review_log.md`.
 
 - `decision:re-stage9-local-submission-package`
   - Created: 2026-08-17T14:24+09:00
@@ -34,10 +34,17 @@
 
 - `decision:re-stage8-3-user-review-cycle`
   - Created: 2026-08-17T14:33+09:00
-  - Updated: 2026-08-17T14:33+09:00
+  - Updated: 2026-08-21T14:06+09:00
+  - Status: superseded
+  - Content: RE8.3 is complete and permanently closed by explicit user instruction. It must not be resumed; the replacement is the active V2 review cycle in `reports/v2/service_review_log.md`, beginning with the next ID `V2-006`.
+  - Evidence: `reports/re_stage8_3/service_review_log.md`, `MVP 단계별 구현 체크리스트.md`, `프로젝트 계획서.md`, and `reports/v2/service_review_log.md`.
+
+- `decision:v2-user-experience-traceability-baseline`
+  - Created: 2026-08-23T11:55+09:00
+  - Updated: 2026-08-23T11:55+09:00
   - Status: active
-  - Content: External deployment is paused while the user directly reviews the local service and identifies changes. Each request is logged with a stable ID, desired result, acceptance criteria, implementation evidence, and user recheck; Gate RE8.3 closes only after the user explicitly says revisions are complete. Screenshot and image analysis remain excluded. Any later hosting must use a sustained free tier and still requires separate platform and deployment approval.
-  - Evidence: `reports/re_stage8_3/service_review_log.md`, `MVP 단계별 구현 체크리스트.md`, `프로젝트 계획서.md`, `config/re_stage9.yaml`, and `reports/re_stage9/deployment_runbook.md`.
+  - Content: Sections 3.10-3.15 of `V2 단계별 구현 계획표.md` are the authoritative current UX and code-traceability baseline for the next competition-purpose and AI-strength comparison. They distinguish user-visible question-first flow from the server's search-first question construction, candidate-specific staged questions from answer-adaptive branching, and live LightGBM from the current BM25 and local-brief fallbacks.
+  - Evidence: `V2 단계별 구현 계획표.md`, `reports/v2/service_review_log.md` V2-012, `app/static/index.html`, `app/static/app.js`, `app/main.py`, `src/integration/re_stage8.py`, model/search/rule/cash/Event/recommendation modules, and a local comparison API probe.
 
 - `decision:conditional-policy-ui-placement`
   - Created: 2026-08-21T08:52+09:00
@@ -370,6 +377,13 @@
 
 ## Working conventions
 
+- `convention:user-owned-screen-validation`
+  - Created: 2026-08-21T14:06+09:00
+  - Updated: 2026-08-21T14:06+09:00
+  - Status: active
+  - Content: During V2 review, the user performs all screen and visual validation. Codex validates only internal data, API responses, calculations, state contracts, code consistency, syntax, and non-visual regressions; no browser, DOM, screenshot, upload, or image analysis is used unless the user explicitly changes this boundary.
+  - Evidence: User instruction on 2026-08-21 and `reports/v2/service_review_log.md`.
+
 - `convention:image-analysis-contact-sheets`
   - Created: 2026-08-21T08:13+09:00
   - Updated: 2026-08-21T08:13+09:00
@@ -492,22 +506,103 @@
 
 - `issue:re8-fixed-policy-candidate-routing`
   - Created: 2026-08-17T11:33+09:00
-  - Updated: 2026-08-17T13:16+09:00
+  - Updated: 2026-08-21T12:29+09:00
   - Status: resolved
-  - Symptom: User area, industry, revenue, cash, and debt inputs change the market scenario and cash flow, but do not dynamically discover policies across the approved portfolio; the comparison screen always builds the fixed Hero alternatives.
-  - Cause: `compare_sample` calls `build_hero` and maps only hardcoded `HERO_POLICY_BY_ALTERNATIVE` policies, while the full deterministic eligibility engine is exposed through a separate API and the UI does not collect its broader profile fields.
-  - Fix: RE8.2 now uses approved Hybrid retrieval across all 17 policies, asks only candidate-specific missing questions, applies frozen RE6 or separate reviewed overlay Rules, and feeds only verified business-cash Events with explicit user amounts and dates into the deterministic four-goal ranking. Embeddings and Luna never override eligibility or cash-flow outcomes.
-  - Evidence: `src/integration/re_stage8.py`, `src/policy/discovery.py`, `src/policy/re_stage8_2_events.py`, `src/rag/hybrid_search.py`, and `src/recommendation/engine.py`.
+  - Symptom: The current RE8.3 UI retrieves situation-based policy cards but provides no control that fills `eligibilityAnswers` or `policyScenarioValues`; therefore retrieved policies cannot be promoted to dynamic, ranking-eligible cash alternatives, and a live declining-sales example ranks only no-action and the fixed 5% cost-reduction assumption for all four goals.
+  - Cause: RE8.3 removed the staged eligibility and policy amount/date controls while retaining empty client state and a fixed six-alternative comparison; server-side dynamic routing still requires explicit policy scenarios and actionable Rule status.
+  - Fix: Implemented the approved architecture-preserving V2 flow. The UI now selects at most three retrieved policies, renders only their adaptive questions and supported amount/date inputs, and posts explicit selection state. V2 comparison removes the legacy fixed 5% and hardcoded Hero policies, creates a custom cost alternative only from category amounts, and creates policy alternatives only from complete user scenarios. A consent-gated Luna brief can rewrite recomputed locked facts, with local fallback.
+  - Evidence: `V2 단계별 구현 계획표.md`, `app/static/`, `src/integration/re_stage8.py`, `src/cashflow/quick_mode.py`, `src/policy/re_stage8_2_events.py`, `src/rag/luna_client.py`; RE9-excluded full suite 152/152 and JavaScript syntax passed on 2026-08-21.
+
+- `decision:v2-bounded-ai-copilot`
+  - Created: 2026-08-21T12:29+09:00
+  - Decision: Preserve the MVP engines, map, five presentation presets, chart interaction, loading overlay, CSV path, and accessibility contracts while making the V2 normal path diagnosis-first and policy-selective. Other fixed cost is a real cash Event. Cost reduction must be user-entered by category. Missing policy conditions remain conditional, and only complete user amount/date scenarios can enter the comparison. External LLM wording is optional and requires explicit on-screen consent.
+  - Rationale: This closes the judge-visible AI integration gap without discarding validated finance, policy, model, and interaction assets or allowing an LLM to decide eligibility, money, or ranks.
+  - Evidence: `V2 단계별 구현 계획표.md`, V2 API response key, `/api/v2/ai/action-brief`, and V2 regression tests in `tests/test_re_stage8_2.py`.
+
+- `decision:v2-question-first-wizard`
+  - Created: 2026-08-21T14:35+09:00
+  - Updated: 2026-08-21T14:35+09:00
+  - Status: active
+  - Content: V2 step 3 asks one adaptive question at a time before showing policy results. Boolean choices are ordered `아니오 → 모르겠음 → 예` and advance immediately; date and numeric questions support an explicit unknown answer, and users can go back or restart answer review. The final answer reruns the existing comparison with the collected answers and then reveals the existing policy cards, amount/date inputs, cost reduction, recalculation, and step-4 comparison without redesigning those downstream screens. Until a dedicated pre-search intake API is separately reviewed, the initial discovery response may supply the reviewed question catalog internally while policy results remain hidden.
+  - Evidence: `V2 단계별 구현 계획표.md`, `reports/v2/service_review_log.md`, `app/static/index.html`, `app/static/app.js`, `app/static/styles.css`, and focused V2 regression tests.
+
+- `experiment:v2-optional-scenario-inputs`
+  - Created: 2026-08-21T15:01+09:00
+  - Updated: 2026-08-21T15:01+09:00
+  - Status: evaluating
+  - Content: V2-008 is a user-requested trial, not a frozen decision. The core path no longer shows policy amount/date or category cost-reduction forms. It displays the existing safe-cash gap `max(0, 28-day required cash - 13-week minimum cash)`, official policy ranges, and unquantified policy actions. Existing scenario and cost inputs remain available only after the user explicitly opens optional detailed calculation. Unquantified selected policies remain visible in step 4 but are excluded from numeric ranking; when no confirmed alternative exists beyond no-action, duplicate goal rankings, graph, and detail table are hidden. The user may keep, change, or discard this experiment after direct use.
+  - Evidence: `reports/v2/service_review_log.md` V2-008, `V2 단계별 구현 계획표.md` sections 3.6.6 and V2-5, `app/static/index.html`, `app/static/app.js`, `app/static/styles.css`, and focused regressions.
+
+- `issue:v2-selected-policy-impact-and-readiness-gap`
+  - Created: 2026-08-22T23:12+09:00
+  - Updated: 2026-08-23T00:44+09:00
+  - Status: resolved
+  - Symptom: V2-008 keeps selected but unquantified or ineligible policies visible without a cash graph or an application-readiness path, so users cannot compare likely impact or learn how to progress toward an application.
+  - Cause: V2 currently couples graph visibility to confirmed amount/date Events and maps every failed hard/variant eligibility Rule to exclusion. For `POL_SEOUL_FUND_2026`, answering that no subfund has been selected fails `FUND_VARIANT`, producing `부적격 → 제외`, although selecting a subfund is a preparation step in this user journey.
+  - Fix: V2-009 first separated hard failures, preparation, and official checks. V2-010 then integrates each selected policy's failed official condition, current answer, resolution action, application preparation, and automatically calculated no-action-versus-conditional cash preview in one page-4 work unit. Disclosed conditional assumptions are available regardless of current eligibility but remain outside eligibility prediction, all goal rankings, and Pareto. Rechallenge uses the reviewed general-type assumption of 2026 Q3 base rate 3.85% plus 1.6%p, five years with two-year grace.
+  - Evidence: `reports/v2/service_review_log.md` V2-009 and V2-010, `V2 단계별 구현 계획표.md`, `src/integration/re_stage8.py`, `app/static/app.js`, `app/static/index.html`, `app/static/styles.css`, and focused regressions 38/38.
+
+- `issue:v2-stale-server-request-schema`
+  - Created: 2026-08-22T23:58+09:00
+  - Updated: 2026-08-23T00:07+09:00
+  - Status: resolved
+  - Symptom: After choosing a page-1 presentation preset, page 2 `현금 진단 보기` shows the generic server validation message `입력값을 수정해 주세요.`
+  - Cause: The current source request model accepts `conditional_policy_ids`, but the running FastAPI process was started before that model change. The live OpenAPI schema omits the field, so every current frontend comparison request receives HTTP 422 with `body.conditional_policy_ids: Extra inputs are not permitted`. The preset values themselves validate.
+  - Resolution: Restarted the local Uvicorn process from the project `.venv`; live health is HTTP 200, live OpenAPI now includes both `selected_policy_ids` and `conditional_policy_ids`, and all five presentation preset payloads pass `SampleCompareRequest` validation. No input value or validation rule changed.
+
+- `issue:v2-page4-policy-explanation-and-graph-scope`
+  - Created: 2026-08-23T00:53+09:00
+  - Updated: 2026-08-23T01:48+09:00
+  - Status: resolved
+  - Symptom: Page 4 shows a silently defaulted debt goal on unranked conditional cards, repeats evaluator prose instead of the user's exact answer, restarts all questions for one policy correction, and does not explain why only some selected policies appear in the combined graph.
+  - Cause: Client state defaults to `최소부채` and reuses the active-goal component for all alternatives; `RuleEvaluation` omits the source input field and raw answer; the review action resets the whole wizard; conditional lines exist only for four mapped reviewed Events and their cash-need or existing-loan prerequisites, independent of eligibility likelihood.
+  - Resolution: With user approval, conditional effects are now separate from recommendation goals. Readiness data preserves each original question, actual answer, and editable field; page 4 edits only the failed or unknown answer and returns to the same policy. Only remediable or official-confirmation cases with reviewed calculation assumptions can produce conditional graph alternatives. Structural exclusions explicitly suppress the graph and direct the user to other candidates, while calculation-unavailable policies explain the missing basis. A defensive server filter rejects forced structural conditional IDs.
+  - Evidence: `reports/v2/service_review_log.md` V2-011, `V2 단계별 구현 계획표.md`, `app/static/app.js`, `app/static/index.html`, `app/static/styles.css`, `src/integration/re_stage8.py`, `src/policy/discovery.py`, and focused tests; 77 regressions, JavaScript syntax, whitespace, live HTTP, and live structural/remediable API probes passed.
 
 ## Current handoff
 
 - `handoff:current`
-  - Updated: 2026-08-21T11:28+09:00
-  - Current state: The user ended this RE8.3 revision session after `RE8.3-001` through `RE8.3-010`. The latest step-2 diagnosis action shows a centered loading overlay with actual elapsed seconds while market ranges and all three comparisons run; presentation presets only fill inputs, clear stale results, and wait for the step-2 action. Static asset `re8.3-010.3`, live HTTP checks, JavaScript syntax, whitespace checks, and 46 focused tests pass.
-  - Next step: In a new session, read this memory and `reports/re_stage8_3/service_review_log.md`, start from static asset `re8.3-010.3`, and continue only the user's next review request. If visual acceptance is requested, first recheck the step-2 loading overlay and elapsed timer for both manual and preset-filled inputs.
-  - Blockers: Gate RE9 cannot resume until Gate RE8.3 closes and the user separately approves a viable sustained-free platform and external deployment. Screenshot and image analysis remain excluded; industrial-accident insurance remains outside the frozen 17-policy set.
+  - Updated: 2026-08-23T11:55+09:00
+  - Current state: V2-011 remains implemented and locally served unchanged. V2-012 expanded the active V2 plan into a current UX, file/function/API/data traceability, AI-versus-deterministic role, user-state transition, competition-comparison, and limitation baseline. The live local probe used LightGBM market scenarios while policy retrieval fell back to BM25 because OpenAI was disabled.
+  - Next step: Compare the documented V2 baseline against the contest purpose and candidate AI-strengthening options without changing service meaning until the user approves a specific direction.
+  - Blockers: None for the approved implementation. Screen validation remains user-owned; RE9, deployment, external acquisition, live OpenAI calls, screenshots, and image analysis remain out of scope.
 
 ## Session log
+
+- `session:20260822-2312`
+  - Started: 2026-08-22T23:12+09:00
+  - Last activity: 2026-08-23T11:55+09:00
+  - Focus: Implement V2-009/V2-010/V2-011, restore the local server, and establish the current V2 UX and full code/data/AI traceability baseline for contest and AI-strength comparison.
+  - Updated keys: `issue:v2-selected-policy-impact-and-readiness-gap`, `issue:v2-stale-server-request-schema`, `issue:v2-page4-policy-explanation-and-graph-scope`, `decision:v2-user-experience-traceability-baseline`, `handoff:current`
+  - Summary: V2-009 through V2-011 remain implemented and verified. V2-012 audited the active plan against current DOM, JavaScript, FastAPI, integration, model, retrieval, rule, cash, Event, recommendation, and test files, then documented the visible and internal flows, policy depth counts, state transitions, AI boundaries, contest-comparison baseline, and limitations. It corrected the stale policy-first summary and records that questions are candidate-specific but not answer-adaptive, the first two policies are auto-selected, and the current local runtime uses LightGBM plus BM25/local fallbacks. No service code, calculation, policy, model, data, screen, deployment, or image processing changed.
+
+- `session:20260821-1356`
+  - Started: 2026-08-21T13:56+09:00
+  - Last activity: 2026-08-21T15:01+09:00
+  - Focus: Permanently close stale RE8.3 records, establish the V2-only review boundary, replace the policy-first V2 flow with a connected single-question wizard, and decide how to remove pre-known intervention inputs from the core experience.
+  - Updated keys: `decision:implementation-checklist`, `decision:re-stage8-3-user-review-cycle`, `decision:v2-question-first-wizard`, `experiment:v2-optional-scenario-inputs`, `convention:user-owned-screen-validation`, `handoff:current`
+  - Summary: Closed every authoritative RE8.3 status and Gate and made the V2 ledger exclusive. V2-007 introduced the connected one-question flow. V2-008 is now an evaluation build: intervention inputs are optional, the existing safe-cash gap and official policy bounds appear by default, and unquantified policies remain actionable but outside numeric rank. Existing Event payloads remain available behind explicit detailed calculation. Focused tests 55/55, JavaScript syntax, and whitespace passed; the user owns visual and final product judgment.
+
+- `session:20260821-1346`
+  - Started: 2026-08-21T13:46+09:00
+  - Last activity: 2026-08-21T13:53+09:00
+  - Focus: Expand the V2 plan into a concrete user-service journey that another page-revision session can use directly.
+  - Updated keys: `handoff:current`
+  - Summary: Replaced the short nine-step outline with a detailed four-screen UX contract covering first-contact messaging, manual and five-preset entry, all revenue/cash/four-cost/loan inputs, loading and error behavior, store-versus-market signals, simultaneous policy discovery, selected-policy adaptive questions, confirmed scenarios, deterministic comparison, optional fact-locked LLM wording, chat boundaries, and branch-state handling. No service code, calculation, model, policy data, deployment, or RE9 artifact changed.
+
+- `session:20260821-1326`
+  - Started: 2026-08-21T13:26+09:00
+  - Last activity: 2026-08-21T13:57+09:00
+  - Focus: Re-establish the V2 user-directed local review baseline, separate V2 revisions from MVP history, and implement user annotations under the V2 ledger.
+  - Updated keys: `handoff:current`
+  - Summary: Implemented V2-001 through V2-005 and closed V2 page 1 after the user's direct confirmation. The separate V2 ledger records the completed internal-role removal, five-area presets, `버팀AI` naming, header-note removal, and full Hero name; the next review item is V2-006. No image analysis, external API call, deployment, or RE9 work occurred.
+
+- `session:20260821-1136`
+  - Started: 2026-08-21T11:36+09:00
+  - Last activity: 2026-08-21T12:29+09:00
+  - Focus: Judge RE8.3, choose refactor over restart, specify the bounded-AI user journey, and implement the approved V2 while preserving reusable MVP assets.
+  - Updated keys: `decision:v2-bounded-ai-copilot`, `issue:re8-fixed-policy-candidate-routing`, `handoff:current`
+  - Summary: Created a separate active V2 plan and implemented a trust-first landing, other fixed cost, separated store versus market signals, three-policy selection, adaptive questions, explicit cost and reviewed policy scenarios, V2-only confirmed-alternative comparison, and consent-gated fact-locked action brief. Preserved map selection, five presets, both interactive charts, loading timer, CSV, four-step shell, and legacy RE7 Hero path. RE9-excluded full tests passed 152/152, JavaScript syntax and whitespace passed, and live health reported `v2-api-v1.0`; in-app browser screenshot/mobile QA remains pending due plugin trust-path initialization failure. No external data, deployment, RE9, or live LLM call occurred.
 
 - `session:20260821-0729`
   - Started: 2026-08-21T07:29+09:00

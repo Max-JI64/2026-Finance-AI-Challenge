@@ -12,6 +12,7 @@ from src.policy.eligibility import (
     AvailabilityStatus,
     EligibilityEngine,
     EligibilityStatus,
+    RuleResult,
     SessionEligibilityProfile,
     TriState,
     profile_from_reviewed_example,
@@ -98,6 +99,26 @@ def test_closed_period_and_current_status_are_separate(engine: EligibilityEngine
         rule_ids=["FUND_ALL_01"],
     )
     assert current_unknown.availability_status is AvailabilityStatus.NEEDS_CURRENT_CHECK
+
+
+def test_unselected_seoul_fund_subproduct_is_readiness_not_ineligibility(
+    engine: EligibilityEngine,
+) -> None:
+    decision = engine.evaluate(
+        "POL_SEOUL_FUND_2026",
+        SessionEligibilityProfile(
+            region="서울특별시",
+            business_scale="소상공인",
+            fund_restricted_industry="no",
+            subfund_selected="no",
+        ),
+        as_of=date(2026, 8, 17),
+        check_availability=False,
+    )
+    variant = next(item for item in decision.rule_results if item.rule_id == "FUND_VARIANT")
+    assert decision.eligibility_status is EligibilityStatus.NEEDS_CONFIRMATION
+    assert variant.result is RuleResult.UNKNOWN
+    assert "세부 자금" in variant.reason
 
 
 def test_index_has_complete_official_metadata_and_hashes(index: PolicySearchIndex) -> None:

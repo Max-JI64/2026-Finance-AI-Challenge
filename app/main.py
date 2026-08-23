@@ -10,6 +10,7 @@ from fastapi.staticfiles import StaticFiles
 from src.cashflow import SimpleCashflowInput
 from src.integration.re_stage8 import (
     API_VERSION,
+    ActionBriefRequest,
     CsvCashflowRequest,
     EligibilityRequest,
     PolicyQuestionRequest,
@@ -17,6 +18,7 @@ from src.integration.re_stage8 import (
     VERSIONS,
     area_catalog,
     area_map_catalog,
+    action_brief,
     ask_policy,
     calculate_csv_baseline,
     calculate_simple_baseline,
@@ -103,7 +105,7 @@ def scope() -> dict[str, object]:
             "부도확률",
             "대출 승인 가능성",
         ],
-        "implementation_status": "re8_integrated_mvp",
+        "implementation_status": "v2_bounded_ai_copilot",
     }
 
 
@@ -165,3 +167,8 @@ def alternatives_compare(data: SampleCompareRequest) -> dict[str, object]:
 @app.post("/api/v1/ai/ask")
 def ai_ask(data: PolicyQuestionRequest) -> dict[str, object]:
     return ask_policy(data)
+
+
+@app.post("/api/v2/ai/action-brief")
+def ai_action_brief(data: ActionBriefRequest) -> dict[str, object]:
+    return action_brief(data)
