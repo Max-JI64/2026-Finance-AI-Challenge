@@ -5,9 +5,9 @@
 
 ## Project snapshot
 
-- Last updated: 2026-08-23T11:55+09:00
+- Last updated: 2026-08-24T15:39+09:00
 - Purpose: Build a bounded-AI Seoul small-business finance copilot that separates store trends from aggregate market scenarios, presents candidate-specific reviewed policy questions one at a time before revealing policy routes, and compares no action with confirmed or explicitly conditional policy effects on deterministic 13-week and 6-month cash/debt horizons.
-- Important paths: `V2 단계별 구현 계획표.md` is the active V2 plan and preservation contract; `MVP 단계별 구현 체크리스트.md` remains the preserved MVP history. `app/static/`, `app/main.py`, and `src/integration/re_stage8.py` hold the V2 flow and APIs; `src/cashflow/quick_mode.py` includes other fixed costs; `src/policy/re_stage8_2_events.py` holds reviewed user-input policy Events; `src/rag/luna_client.py` holds the consent-gated fact-locked action brief; the prior RE3-RE8 engines and evidence remain in their existing paths. RE9 artifacts are intentionally out of current scope.
+- Important paths: `V2 단계별 구현 계획표.md` is the preserved V2 plan and recovery contract; `V3 사용자 경험 구성안.md` describes only the implemented V3; `V4 구현 계획표.md` is the authoritative V4 product and implementation contract; `V4 사용자 경험 흐름.md` is the separate end-to-end user journey and `V4 사용자 경험 흐름.png` is its presentation infographic; `v3/` must be copied into a future `v4/` before V4-only edits.
 
 ## Durable decisions
 
@@ -361,6 +361,13 @@
   - Content: The policy-impact simulator is the approved project-plan direction. `프로젝트 계획서.md` preserves completed Stage 0-6 as archived evidence and uses RE Stage 1-9 for the service. The existing binary LightGBM and Stage 6 are removed from service inference and display and will not be retrained; RE5 LightGBM Quantile is the sole service-ML candidate, with user direct shock rates as the non-model fallback.
   - Evidence: User instruction and the rewritten `프로젝트 계획서.md`; no data, Target, model, or application implementation was executed in the rewrite turn.
 
+- `proposal:v3-bounded-agentic-orchestrator`
+  - Created: 2026-08-23T12:07+09:00
+  - Updated: 2026-08-24T14:27+09:00
+  - Status: implemented
+  - Content: The V2-copy-based V3 preserves the four-step UI and hierarchical circle map while adding confirmed situation context, no automatic policy selection, deterministic action plans, and engine-backed What-if. Policy questions remain one at a time on screen but are recalculated in at most two server batches of four then three; What-if supports revenue changes, cost reductions, market scenarios, and goals, rejects cost increases before Luna, and permits at most one clarification without accumulating replies.
+  - Evidence: `V3 사용자 경험 구성안.md` now records the complete current four-stage experience, AI/tool boundaries, file wiring, 14 regression contracts, V3 limitations, and V4 experience choices across 18 sections; implementation evidence remains `v3/V2_BASELINE_SHA256.md`, `v3/orchestrator.py`, `v3/static/`, `v3/tests/test_v3.py`, and `v3/README.md`.
+
 - `decision:stage6-service-retirement`
   - Created: 2026-08-16T20:40+09:00
   - Updated: 2026-08-16T20:40+09:00
@@ -379,10 +386,10 @@
 
 - `convention:user-owned-screen-validation`
   - Created: 2026-08-21T14:06+09:00
-  - Updated: 2026-08-21T14:06+09:00
+  - Updated: 2026-08-23T17:01+09:00
   - Status: active
-  - Content: During V2 review, the user performs all screen and visual validation. Codex validates only internal data, API responses, calculations, state contracts, code consistency, syntax, and non-visual regressions; no browser, DOM, screenshot, upload, or image analysis is used unless the user explicitly changes this boundary.
-  - Evidence: User instruction on 2026-08-21 and `reports/v2/service_review_log.md`.
+  - Content: During V3 review, the user performs final visual validation. Codex may validate HTML, CSS, JavaScript, API responses, calculations, state contracts, tests, and DOM behavior, but must not create screenshots, upload images, or analyze images unless separately needed and authorized; user comments should be handled from their text and target metadata when image analysis is unnecessary.
+  - Evidence: User instructions on 2026-08-21 and 2026-08-23; `reports/v2/service_review_log.md` and the V3 review session.
 
 - `convention:image-analysis-contact-sheets`
   - Created: 2026-08-21T08:13+09:00
@@ -559,15 +566,81 @@
   - Resolution: With user approval, conditional effects are now separate from recommendation goals. Readiness data preserves each original question, actual answer, and editable field; page 4 edits only the failed or unknown answer and returns to the same policy. Only remediable or official-confirmation cases with reviewed calculation assumptions can produce conditional graph alternatives. Structural exclusions explicitly suppress the graph and direct the user to other candidates, while calculation-unavailable policies explain the missing basis. A defensive server filter rejects forced structural conditional IDs.
   - Evidence: `reports/v2/service_review_log.md` V2-011, `V2 단계별 구현 계획표.md`, `app/static/app.js`, `app/static/index.html`, `app/static/styles.css`, `src/integration/re_stage8.py`, `src/policy/discovery.py`, and focused tests; 77 regressions, JavaScript syntax, whitespace, live HTTP, and live structural/remediable API probes passed.
 
+- `issue:v3-page4-refinance-preview-alignment`
+  - Created: 2026-08-23T16:26+09:00
+  - Updated: 2026-08-23T16:32+09:00
+  - Status: resolved
+  - Symptom: After completing page 3 and selecting three policies, `다음 행동 확인` issued three `/api/v3/orchestrate` requests that returned HTTP 400 and showed only `입력 형식과 범위를 확인해 주세요.`
+  - Cause: The selected refinance policy's reviewed conditional preview assumed execution after 28 days, while the shared cash engine intentionally permits automatic refinance before/after comparison only on the baseline reference date; this raised `REFINANCE_BASELINE_ALIGNMENT_REQUIRED`.
+  - Fix: V3 now suppresses only that incompatible conditional refinance preview, marks its card as calculation unavailable with an actionable reason, synchronizes the client conditional-ID set to the sanitized server result, and keeps the selected policy visible for official follow-up. V3 also suppresses the harmless sklearn feature-name warning on its own scenario/orchestration paths without changing predictions or V2.
+  - Evidence: `v3/orchestrator.py`, `v3/main.py`, `v3/static/app.js`, and `v3/tests/test_v3.py`; eight tests, JavaScript syntax, and whitespace passed. Live browser reuse of the exact failing page state reached page 4, retained the rechallenge conditional graph, and displayed the refinance calculation-unavailable explanation.
+
+- `proposal:v4-policy-change-action-twin`
+  - Created: 2026-08-24T14:33+09:00
+  - Updated: 2026-08-24T15:35+09:00
+  - Status: active
+  - Content: Competition-first V4 remains a policy-change-responsive action twin. The user approved page 1 as the preserved area/industry selector plus separate worry buttons, explicitly excluding natural-language entry and keeping presentation presets as independent prefilled demo data. Page 2 uses recent-sales, cash/essential-cost, and loan cards; no-loan branching, visible timing assumptions, field-level messages, a pre-diagnosis input ledger, and optional structured paste/input AI are included.
+    Suspected mistakes never block a calculable value and show only `확인 권장`; only missing/invalid values that prevent calculation block progress. The user approved the five-stage action-first experience: page 4 compares multiple policy effects in the existing graph, and page 5 turns the selected policy's conditions, data, and documents into one guided task at a time, supports source-marked extraction and drafting, and tracks readiness without predicting approval. Automatic application, fabricated data, and unreviewed external transfer remain excluded; deterministic privacy/schema/Rule/Event/cash/ranking verification stays authoritative.
+  - Evidence: `V4 구현 계획표.md` is the authoritative V4 implementation contract and `V4 사용자 경험 흐름.md` is the end-to-end journey; current `V3 사용자 경험 구성안.md` contains only implemented V3 state and limits. No V4 service code exists yet.
+
+- `decision:v4-copy-forward-implementation`
+  - Created: 2026-08-24T15:35+09:00
+  - Updated: 2026-08-24T15:35+09:00
+  - Status: active
+  - Content: V4 must not be built from an empty frontend or by editing V3 in place. At implementation start, record the current `v3/` inventory and hashes, copy the full V3 service structure into a new independent `v4/`, verify copy equality, then make V4 UI, CSS, orchestration, tests, storage keys, and runtime changes only inside `v4/`; shared-engine changes require a separate decision.
+  - Evidence: User instruction on 2026-08-24; `V4 구현 계획표.md` sections 23-25 and `V4 사용자 경험 흐름.md`.
+
 ## Current handoff
 
 - `handoff:current`
-  - Updated: 2026-08-23T11:55+09:00
-  - Current state: V2-011 remains implemented and locally served unchanged. V2-012 expanded the active V2 plan into a current UX, file/function/API/data traceability, AI-versus-deterministic role, user-state transition, competition-comparison, and limitation baseline. The live local probe used LightGBM market scenarios while policy retrieval fell back to BM25 because OpenAI was disabled.
-  - Next step: Compare the documented V2 baseline against the contest purpose and candidate AI-strengthening options without changing service meaning until the user approves a specific direction.
-  - Blockers: None for the approved implementation. Screen validation remains user-owned; RE9, deployment, external acquisition, live OpenAI calls, screenshots, and image analysis remain out of scope.
+  - Updated: 2026-08-24T15:39+09:00
+  - Current state: `V4 구현 계획표.md` contains seven P0 items, the confirmed five-stage policy-comparison-to-application-copilot experience, Stage V4-0 through V4-7, and the mandatory V3-copy contract. `V4 사용자 경험 흐름.md` describes the full journey, and `V4 사용자 경험 흐름.png` visualizes the five steps, policy graph, application readiness, and revisit loop. No `v4/` code folder has been created.
+  - Next step: Before Stage V4-0 execution, approve the remaining material items in the implementation plan, especially exact worry-button limits, document upload processing and retention, external-AI scope, persistence, agent split, What-if scope, and unchanged shared-engine contracts.
+  - Blockers: Implementation remains gated by the unresolved privacy, storage, external-AI, and shared-engine decisions; automatic submission and unreviewed external transfer remain excluded.
 
 ## Session log
+
+- `session:20260824-1433`
+  - Started: 2026-08-24T14:33+09:00
+  - Last activity: 2026-08-24T15:39+09:00
+  - Focus: Finalize the V4 roadmap, five-stage action-first application copilot, full user journey, copy-forward implementation boundary, and presentation infographic.
+  - Updated keys: `proposal:v4-policy-change-action-twin`, `decision:v4-copy-forward-implementation`, `handoff:current`
+  - Summary: Renamed the authoritative V4 source to `V4 구현 계획표.md`, confirmed five screens and the application-copilot P0, added eight implementation stages and Gates, created the full journey document, and generated `V4 사용자 경험 흐름.png` as a Korean presentation infographic. Future implementation must copy `v3/` to an independent `v4/`; no code folder, service, data, server, browser, or deployment changed.
+
+- `session:20260824-1419`
+  - Started: 2026-08-24T14:19+09:00
+  - Last activity: 2026-08-24T14:27+09:00
+  - Focus: Replace the outdated V3 proposal with a complete current-state user experience document that can serve as the V4 design baseline.
+  - Updated keys: `proposal:v3-bounded-agentic-orchestrator`, `handoff:current`
+  - Summary: Rewrote `V3 사용자 경험 구성안.md` into 18 implementation-based sections covering the full four-stage V3 flow, AI and deterministic boundaries, question batching, What-if scope and retry guard, safeguards, file routing, 14 regression contracts, current limits, V4 experience directions, screen review points, and approval decisions. Only documentation and required project records changed; no service code, browser interaction, image analysis, external call, or deployment occurred.
+
+- `session:20260824-1411`
+  - Started: 2026-08-24T14:11+09:00
+  - Last activity: 2026-08-24T14:16+09:00
+  - Focus: Finish V3 with sequential policy questions, batched recalculation, and a bounded What-if clarification flow that cannot repeat answers.
+  - Updated keys: `proposal:v3-bounded-agentic-orchestrator`, `handoff:current`
+  - Summary: Kept policy questions one at a time while limiting server recalculation to two batches, exposed supported What-if conditions and editable examples, blocked cost increases locally before Luna, and limited ambiguous input to one clarification based on the original prompt. Fourteen tests, JavaScript syntax, whitespace, and live health passed; the server runs on port 8001, and no browser manipulation or image analysis was performed.
+
+- `session:20260823-1639`
+  - Started: 2026-08-23T16:39+09:00
+  - Last activity: 2026-08-23T17:01+09:00
+  - Focus: Establish the V3 user-review boundary and turn the disconnected situation-text helper into a confirmed downstream input and orchestration path.
+  - Updated keys: `proposal:v3-bounded-agentic-orchestrator`, `convention:user-owned-screen-validation`, `handoff:current`
+  - Summary: Replaced the vague candidate button with five editable examples and a structured confirmation/apply flow. Confirmed exact area, industry, and goal fill their existing controls; concern signals reach finance guidance, adaptive question selection, action plans, and What-if recalculation without changing deterministic money, eligibility, effect, or ranking rules. Ten tests, JavaScript syntax, whitespace, V2 hashes, live API, and DOM flow passed; Luna and image analysis were not used, and the updated V3 server runs on port 8001.
+
+- `session:20260823-1626`
+  - Started: 2026-08-23T16:26+09:00
+  - Last activity: 2026-08-23T16:32+09:00
+  - Focus: Reproduce and fix the V3 page-3 to page-4 HTTP 400 failure after policy selection.
+  - Updated keys: `issue:v3-page4-refinance-preview-alignment`, `handoff:current`
+  - Summary: Reused the user's live page state to identify the selected voucher, rechallenge, and refinance policies, reproduced the exact `REFINANCE_BASELINE_ALIGNMENT_REQUIRED` exception, and fixed it inside V3 without changing the shared V2 engine. The same live state then reached page 4 with the valid rechallenge graph and a clear refinance non-calculation reason; eight tests, JavaScript syntax, and whitespace passed, and the updated server is running on port 8001.
+
+- `session:20260823-1205`
+  - Started: 2026-08-23T12:05+09:00
+  - Last activity: 2026-08-23T16:17+09:00
+  - Focus: Define, document, implement, and verify the independent V3 bounded-agent service while preserving V2.
+  - Updated keys: `proposal:v3-bounded-agentic-orchestrator`, `handoff:current`
+  - Summary: After the user rejected the visually independent first V3 shell, copied the three actual V2 static files into `v3/static` with matching hashes and rebuilt V3 only as extensions over that copy. The current build preserves the V2 four-step layout and hierarchical circle map, removes automatic first-two policy selection, adds answer-adaptive next-question orchestration, an optional bounded situation interpreter, deterministic action plan, and engine-backed What-if. Seven focused tests and JavaScript syntax passed; browser QA confirmed the V2 district-circle map and a real adaptive question transition. V2 source hashes stayed unchanged, with no deployment or external data acquisition.
 
 - `session:20260822-2312`
   - Started: 2026-08-22T23:12+09:00

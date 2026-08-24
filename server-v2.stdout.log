@@ -36,3 +36,6 @@ INFO:     127.0.0.1:56658 - "POST /api/v1/alternatives/compare HTTP/1.1" 200 OK
 INFO:     127.0.0.1:62481 - "POST /api/v1/alternatives/compare HTTP/1.1" 200 OK
 INFO:     127.0.0.1:64737 - "POST /api/v1/alternatives/compare HTTP/1.1" 200 OK
 INFO:     127.0.0.1:60602 - "POST /api/v1/alternatives/compare HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54186 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54186 - "GET /static/styles.css?v=v2-011 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49854 - "GET /static/app.js?v=v2-011 HTTP/1.1" 200 OK

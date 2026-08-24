@@ -1,0 +1,342 @@
+.v3-version-label {
+  margin-left: .35rem;
+  padding: .12rem .42rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  border-radius: 999px;
+  color: var(--accent);
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .04em;
+}
+
+.v3-assistant-panel,
+.v3-action-plan-panel,
+.v3-what-if-panel {
+  margin-top: 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.v3-assistant-panel summary {
+  cursor: pointer;
+  padding: 1rem 1.15rem;
+}
+
+.v3-assistant-panel summary span {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .35rem .75rem;
+}
+
+.v3-assistant-panel summary small {
+  color: var(--muted);
+}
+
+.v3-assistant-body,
+.v3-action-plan-panel,
+.v3-what-if-panel {
+  padding: 1.15rem;
+}
+
+.v3-assistant-body textarea,
+.v3-what-if-composer input {
+  width: 100%;
+}
+
+.v3-situation-examples {
+  margin-bottom: 1rem;
+}
+
+.v3-situation-examples > p {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .35rem .65rem;
+  margin: 0 0 .65rem;
+}
+
+.v3-situation-examples > p span {
+  color: var(--muted);
+  font-size: .85rem;
+}
+
+.v3-situation-example-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+.v3-situation-example-grid button {
+  padding: .55rem .75rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--soft);
+  color: var(--text);
+  font: inherit;
+  font-size: .85rem;
+  cursor: pointer;
+}
+
+.v3-situation-example-grid button:hover,
+.v3-situation-example-grid button.is-selected {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.v3-situation-review,
+.v3-finance-context {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: calc(var(--radius) - 4px);
+  background: var(--soft);
+}
+
+.v3-situation-review h3,
+.v3-finance-context h2 {
+  margin: 0;
+}
+
+.v3-situation-review p {
+  margin: .3rem 0 .8rem;
+  color: var(--muted);
+}
+
+.v3-situation-review-items {
+  display: grid;
+  gap: .55rem;
+  margin-bottom: .85rem;
+}
+
+.v3-situation-review-items label {
+  display: flex;
+  align-items: flex-start;
+  gap: .6rem;
+  padding: .7rem;
+  border: 1px solid var(--line);
+  border-radius: .6rem;
+  background: var(--surface);
+}
+
+.v3-situation-review-items label span {
+  display: grid;
+  gap: .15rem;
+}
+
+.v3-situation-review-items label small {
+  color: var(--muted);
+}
+
+.v3-finance-context {
+  margin: 0 0 1rem;
+}
+
+.v3-finance-context ul {
+  margin: .7rem 0 0;
+  padding-left: 1.2rem;
+}
+
+.v3-finance-context li + li {
+  margin-top: .35rem;
+}
+
+.v3-inline-actions,
+.v3-what-if-composer {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  margin-top: .8rem;
+}
+
+.v3-inline-actions .field-help {
+  margin: 0;
+}
+
+.v3-what-if-composer input {
+  flex: 1;
+}
+
+.v3-what-if-scope {
+  margin-top: .85rem;
+  padding: .9rem;
+  border: 1px solid var(--line);
+  border-radius: .7rem;
+  background: var(--soft);
+}
+
+.v3-what-if-scope p {
+  margin: .3rem 0;
+}
+
+.v3-what-if-scope small {
+  color: var(--muted);
+}
+
+.v3-what-if-example-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .45rem;
+  margin-top: .7rem;
+}
+
+.v3-what-if-example-grid button {
+  padding: .45rem .65rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: .78rem;
+  cursor: pointer;
+}
+
+.v3-what-if-example-grid button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.v3-what-if-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: .55rem;
+  margin-top: .8rem;
+  color: var(--muted);
+  font-size: .78rem;
+  line-height: 1.45;
+}
+
+.v3-what-if-consent input {
+  flex: 0 0 auto;
+  width: 17px;
+  height: 17px;
+  margin-top: .05rem;
+  accent-color: var(--accent);
+}
+
+.v3-what-if-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  margin-top: .65rem;
+}
+
+.v3-what-if-status-row .field-help {
+  margin: 0;
+}
+
+.v3-what-if-dialog {
+  width: min(760px, calc(100% - 28px));
+  overflow-y: auto;
+}
+
+.v3-what-if-source {
+  display: inline-flex;
+  margin-bottom: .45rem;
+  padding: .28rem .55rem;
+  border-radius: 999px;
+  background: var(--soft);
+  color: var(--accent);
+  font-size: .75rem;
+  font-weight: 800;
+}
+
+.v3-what-if-prompt-review {
+  margin: .55rem 0 1rem;
+  color: var(--muted);
+}
+
+.v3-what-if-change-list,
+.v3-what-if-result-grid {
+  display: grid;
+  gap: .65rem;
+  margin: .75rem 0 1.15rem;
+}
+
+.v3-what-if-change-row,
+.v3-what-if-result-row {
+  display: grid;
+  grid-template-columns: minmax(120px, .8fr) minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: .6rem;
+  padding: .75rem;
+  border: 1px solid var(--line);
+  border-radius: .65rem;
+  background: var(--soft);
+}
+
+.v3-what-if-change-row span,
+.v3-what-if-result-row span {
+  color: var(--muted);
+  font-size: .78rem;
+}
+
+.v3-what-if-change-row strong,
+.v3-what-if-result-row strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.v3-what-if-delta {
+  color: var(--accent) !important;
+  font-weight: 800;
+}
+
+.v3-what-if-clarification {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: .7rem;
+  background: var(--soft);
+}
+
+.v3-what-if-clarification label {
+  display: grid;
+  gap: .6rem;
+}
+
+.v3-what-if-clarification input {
+  width: 100%;
+}
+
+.v3-action-plan {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .8rem;
+}
+
+.v3-action-plan article {
+  padding: .9rem;
+  border: 1px solid var(--line);
+  border-radius: calc(var(--radius) - 4px);
+  background: var(--soft);
+}
+
+.v3-action-plan h3 {
+  margin: 0 0 .55rem;
+  font-size: .95rem;
+}
+
+.v3-action-plan ol {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.v3-action-plan li + li {
+  margin-top: .45rem;
+}
+
+@media (max-width: 760px) {
+  .v3-action-plan { grid-template-columns: 1fr; }
+  .v3-situation-example-grid { display: grid; grid-template-columns: 1fr; }
+  .v3-inline-actions,
+  .v3-what-if-composer { align-items: stretch; flex-direction: column; }
+  .v3-what-if-status-row { align-items: flex-start; flex-direction: column; }
+  .v3-what-if-example-grid { display: grid; grid-template-columns: 1fr 1fr; }
+  .v3-what-if-change-row,
+  .v3-what-if-result-row { grid-template-columns: 1fr; gap: .2rem; }
+  .v3-what-if-change-row > span:nth-of-type(2),
+  .v3-what-if-result-row > span:nth-of-type(2) { display: none; }
+}
