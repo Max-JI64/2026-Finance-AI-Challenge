@@ -8,6 +8,7 @@ from pydantic import BaseModel, ConfigDict
 
 from src.cashflow.engine import CashflowResult, run_detailed_cashflow
 from src.cashflow.errors import CashflowInputError
+from src.cashflow.loans import build_loan_schedule
 from src.cashflow.schemas import CashEvent, DetailedCashflowInput
 
 from .schemas import CashDirection, EffectKind, PolicyPlan
@@ -97,11 +98,30 @@ def _verify_refinance_baseline(
             for event in plan.events
             if event.effect_kind is EffectKind.EXISTING_DEBT_PAYOFF
         ]
-        if not execution_events or execution_events[0].event_date != baseline.reference_date:
+        if not execution_events or execution_events[0].event_date is None:
             raise CashflowInputError(
                 "REFINANCE_BASELINE_ALIGNMENT_REQUIRED",
                 "execution_date",
-                "자동 전후비교는 기준일에 실행되는 대환만 지원합니다. 이후 실행은 실행일 기준 대출잔액으로 새 기준선을 만드세요.",
+                "대환 실행일을 확인할 수 없습니다.",
+            )
+        execution = execution_events[0]
+        if execution.event_date < baseline.reference_date:
+            raise CashflowInputError(
+                "REFINANCE_BEFORE_REFERENCE_DATE",
+                "execution_date",
+                "대환 실행일은 현금흐름 기준일보다 빠를 수 없습니다.",
+            )
+        loan = loan_by_id[existing_id]
+        remaining = loan.principal
+        for payment in build_loan_schedule(loan, baseline.reference_date):
+            if payment.payment_date >= execution.event_date:
+                break
+            remaining = payment.closing_principal
+        if int(execution.amount or 0) > remaining:
+            raise CashflowInputError(
+                "REFINANCE_EXCEEDS_EXECUTION_BALANCE",
+                "existing_refinanced_loan.principal",
+                f"대환원금은 실행일 직전 남은 대출잔액 {remaining:,}원을 넘을 수 없습니다.",
             )
 
 

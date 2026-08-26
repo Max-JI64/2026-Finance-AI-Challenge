@@ -7,6 +7,7 @@ from fastapi.testclient import TestClient
 
 from app.main import app
 from src.cashflow.quick_mode import QuickModeInput, build_quick_schedules
+from src.policy import apply_policy_plan
 from src.policy.eligibility import SessionEligibilityProfile
 from src.rag.local_db import DATABASE_PATH, SQLitePolicySearchIndex
 from src.integration.re_stage8 import (
@@ -173,6 +174,45 @@ def test_v2_conditional_preview_rejects_structurally_blocked_candidate() -> None
         MarketScenario(direct_shock_13_week_percent=0, direct_shock_6_month_percent=0),
     )
     assert alternatives == []
+
+
+def test_v2_future_refinance_uses_execution_date_remaining_balance() -> None:
+    policy_id = "POL_SEMAS_REFINANCE_2026"
+    request = SampleCompareRequest(
+        v2_mode=True,
+        selected_policy_ids=[policy_id],
+        conditional_policy_ids=[policy_id],
+    )
+    discovery = {
+        "candidates": [{
+            "policy_id": policy_id,
+            "policy_version": "2026-07-29-change4",
+            "eligibility_status": "추가 확인 필요",
+            "availability_status": "접수 가능 여부 확인 필요",
+            "candidate_state": "확인 후 비교",
+            "official_url": "https://example.com/refinance",
+            "items_to_confirm": ["대환 가능 원금"],
+            "application_readiness": {
+                "next_actions": ["기존 대출내역 확인"],
+                "conditional_graph_supported": True,
+                "conditional_graph_status": "available",
+            },
+        }],
+    }
+    baseline = _load_sample("stable_high_debt")
+    alternatives = _v2_conditional_policy_alternatives(
+        request,
+        discovery,
+        baseline,
+        MarketScenario(direct_shock_13_week_percent=0, direct_shock_6_month_percent=0),
+    )
+
+    preview = next(item for item in alternatives if item.alternative_id == "conditional_pol_semas_refinance_2026")
+    plan = preview.plans[0]
+    assert 0 < plan.summary["refinanced_principal"] <= 50_000_000
+    assert plan.summary["refinanced_principal"] <= baseline.loans[0].principal
+    impact = apply_policy_plan(baseline, [plan])
+    assert impact.with_policy.weekly_summary.ending_cash != impact.baseline.weekly_summary.ending_cash
 
 
 def test_re8_health_contract_and_catalogs() -> None:

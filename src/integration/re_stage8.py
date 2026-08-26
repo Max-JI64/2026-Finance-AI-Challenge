@@ -23,7 +23,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from scripts.build_re_stage7_examples import as_detailed, build_hero
 from src.cashflow import DetailedCashflowInput, LoanInput, SimpleCashflowInput
 from src.cashflow.engine import run_detailed_cashflow, run_simple_cashflow
-from src.cashflow.loans import add_months
+from src.cashflow.loans import add_months, build_loan_schedule
 from src.cashflow.quick_mode import QuickModeInput, build_quick_schedules
 from src.models.re_stage5_scenario_service import predict_market_scenarios
 from src.policy import (
@@ -712,6 +712,12 @@ def _dynamic_policy_alternatives(
         candidate = candidates.get(scenario.policy_id)
         if candidate is None or candidate["candidate_state"] == "제외":
             continue
+        if (
+            request.v2_mode
+            and candidate.get("application_readiness", {}).get("conditional_graph_status")
+            == "structural_block"
+        ):
+            continue
         plan = build_dynamic_policy_plan(scenario, reference_date=reference_date)
         policy = catalog[scenario.policy_id]
         context = CandidateContext(
@@ -943,7 +949,14 @@ def _v2_conditional_policy_alternatives(
         elif policy_id == "POL_SEMAS_REFINANCE_2026" and baseline.loans:
             existing = baseline.loans[0]
             execution_date = baseline.reference_date + timedelta(days=28)
-            principal = min(existing.principal, 50_000_000)
+            remaining = existing.principal
+            for payment in build_loan_schedule(existing, baseline.reference_date):
+                if payment.payment_date >= execution_date:
+                    break
+                remaining = payment.closing_principal
+            if remaining <= 0:
+                continue
+            principal = min(remaining, 50_000_000)
             refinanced_segment = existing.model_copy(update={"principal": principal})
             maturity = add_months(execution_date, 120)
             replacement = LoanInput(

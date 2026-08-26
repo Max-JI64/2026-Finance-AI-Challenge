@@ -5,9 +5,9 @@
 
 ## Project snapshot
 
-- Last updated: 2026-08-24T15:39+09:00
+- Last updated: 2026-08-26T18:36+09:00
 - Purpose: Build a bounded-AI Seoul small-business finance copilot that separates store trends from aggregate market scenarios, presents candidate-specific reviewed policy questions one at a time before revealing policy routes, and compares no action with confirmed or explicitly conditional policy effects on deterministic 13-week and 6-month cash/debt horizons.
-- Important paths: `V2 단계별 구현 계획표.md` is the preserved V2 plan and recovery contract; `V3 사용자 경험 구성안.md` describes only the implemented V3; `V4 구현 계획표.md` is the authoritative V4 product and implementation contract; `V4 사용자 경험 흐름.md` is the separate end-to-end user journey and `V4 사용자 경험 흐름.png` is its presentation infographic; `v3/` must be copied into a future `v4/` before V4-only edits.
+- Important paths: `V2 단계별 구현 계획표.md` and `V3 사용자 경험 구성안.md` preserve earlier versions; `V4 구현 계획표.md` and `v4/` describe the implemented V4; `V5 구현 계획표.md` is the approved V5 product and implementation contract. V5 implementation has not started and the next session must begin by copying the approved V4 source and static assets into an independent `v5/` with a recorded SHA-256 baseline.
 
 ## Durable decisions
 
@@ -575,13 +575,65 @@
   - Fix: V3 now suppresses only that incompatible conditional refinance preview, marks its card as calculation unavailable with an actionable reason, synchronizes the client conditional-ID set to the sanitized server result, and keeps the selected policy visible for official follow-up. V3 also suppresses the harmless sklearn feature-name warning on its own scenario/orchestration paths without changing predictions or V2.
   - Evidence: `v3/orchestrator.py`, `v3/main.py`, `v3/static/app.js`, and `v3/tests/test_v3.py`; eight tests, JavaScript syntax, and whitespace passed. Live browser reuse of the exact failing page state reached page 4, retained the rechallenge conditional graph, and displayed the refinance calculation-unavailable explanation.
 
+- `issue:v4-conditional-policy-graph-coverage`
+  - Created: 2026-08-24T18:37+09:00
+  - Updated: 2026-08-24T19:15+09:00
+  - Status: resolved
+  - Symptom: Step 4 repeatedly graphs the rechallenge loan but not the stability voucher or refinance policy, which can make a selected but ungraphed policy look impossible or irrelevant.
+  - Cause: Conditional graph visibility is a separate calculation-coverage gate, not an eligibility verdict. The voucher is omitted from the four-policy preview allowlist despite its reviewed 250,000-won Event; V4 suppresses every refinance preview because the shared engine cannot yet align a four-week execution date with the remaining loan balance. Rechallenge additionally requires a positive safe-cash gap.
+  - Fix: V4 now injects a reviewed voucher scenario using up to 250,000 won of monthly other fixed cost, and the shared refinance application guard validates the actual loan balance immediately before a future execution date. The conditional refinance builder uses that remaining balance, while structurally blocked policies keep no curve and expose the failed condition, current answer, resolution, and editable field. Step 4 now flows from graph to policy conditions to step 5.
+  - Evidence: Live three-policy `/api/v4/orchestrate` response contains voucher, refinance, and rechallenge conditional alternatives with all three outside rankings; 93 focused regressions and JavaScript syntax pass. `v4/VERIFICATION.md` records the exact live values.
+
+- `issue:v4-policy-effect-scale-compression`
+  - Created: 2026-08-25T22:24+09:00
+  - Updated: 2026-08-25T23:01+09:00
+  - Status: resolved
+  - Symptom: When the stability voucher, refinance, and rechallenge loan share one absolute-cash chart, the first two curves appear indistinguishable from no action while the rechallenge curve dominates the scale.
+  - Cause: The three policies act through different financial mechanisms and magnitudes: the voucher offsets at most 250,000 won once, refinance adds no cash and only reduces future debt service, while rechallenge injects a new loan sized to the cash gap. The chart also visually de-emphasizes unselected curves.
+  - Fix: Kept the absolute 13-week comparison and added a separate no-action delta card for every selected policy plus focused-policy metrics for week-13 cash, net new debt, and maximum monthly repayment. The graph is limited to no action and the user's selected policy alternatives, so unselected legacy alternatives no longer add visual noise.
+  - Evidence: Live V4 API replay of the high-fixed-cost preset returned week-13 cash of -4,379,745 won for no action, -4,129,745 won for the voucher, -3,619,614 won for refinance, and 20,463,115 won for rechallenge; the new rendering is in `v4/static/app.js` and `v4/static/index.html`, with focused regressions in `v4/tests/test_v4.py`.
+
+- `issue:v4-application-task-label-and-provenance`
+  - Created: 2026-08-26T10:18+09:00
+  - Updated: 2026-08-26T16:00+09:00
+  - Status: resolved
+  - Symptom: Step 5 shows the non-actionable task `입력값이 없어 확인이 필요합니다.` across policies and labels every generated confirmation task `출처: 기존 Rule 결과`, without naming the missing condition or a concrete confirmation route.
+  - Cause: The eligibility helper returns the same generic reason for every unknown tri-state Rule; discovery exports reasons rather than condition and Rule identity, and V4 deduplicates candidate reasons with readiness actions before the application-plan API hardcodes one source label. For rechallenge, several alternative-route Rules therefore collapse into one generic card even though they do not all represent one required task.
+  - Fix: The final V4 design no longer turns Rule operands, prior answers, generic readiness strings, mutable status checks, or a placeholder final review into separate tasks. The application plan now contains only the policy-scoped `AI가 정리한 공고 핵심정보 확인`; Rule and answer meaning stays in the top condition panel.
+  - Evidence: `v4/copilot.py`, `v4/static/v4-extension.js`, `v4/tests/test_v4.py`, and `v4/VERIFICATION.md`; a live request containing noisy Rule and official-check inputs returns one task, V4 tests pass 21/21, and related shared/V4 regressions pass 76/76 under PID 26660.
+
+- `issue:v4-preparation-evidence-and-draft-gap`
+  - Created: 2026-08-26T10:42+09:00
+  - Updated: 2026-08-26T16:31+09:00
+  - Status: resolved
+  - Symptom: Completing an official-check task records only a status and no checked value, date, or evidence. The mandatory inquiry-draft task and separate draft panel do not derive a question from unresolved conditions, so their purpose is unclear.
+  - Cause: Application progress stores only policy-scoped task IDs in browser session state. The draft endpoint only wraps the user's own question in a local greeting template; stored notice retrieval and optional Luna explanation are connected solely to the separate policy chat.
+  - Fix: The separate preparation-task, progress, confirmation-form, and inquiry-draft layers were removed. Each Luna-extracted notice field now has its own browser-session confirmation toggle, while fields absent from the stored notice remain explicit direct-confirmation items. The institution-inquiry UI, local/Luna draft code, and both application-plan and draft APIs were removed rather than preserved behind unusable preconditions.
+  - Evidence: `v4/copilot.py`, `v4/main.py`, `v4/static/v4-extension.js`, `v4/static/index.html`, `v4/tests/test_v4.py`, and `v4/VERIFICATION.md`; removed APIs return 404 and related shared/V4 regressions pass 71/71.
+
+- `issue:v4-selected-policy-full-notice-extraction`
+  - Created: 2026-08-26T11:31+09:00
+  - Updated: 2026-08-26T16:31+09:00
+  - Status: resolved
+  - Symptom: Step 5 initially showed raw stored-notice excerpts or analyzed only the currently opened policy, forcing the user to interpret long notice tables and leaving the other two selected graph policies unanalyzed.
+  - Cause: The first V4 extraction path was keyed to `currentPolicy` and made one request. Strict output validation also discarded an entire policy when one field exceeded the evidence limit or normalized OCR whitespace.
+  - Fix: Entering step 5 submits every selected policy, up to three, as separate full-notice extraction requests. The source remains the existing `rag/index/policy_re8.sqlite3` `policy_chunks` table. The server validates chunk identity, quote support, and numbers internally and fails closed per field, while the user-facing cards show only extracted fields. Completed results are persisted in `v4/runtime/notice_extraction_cache.sqlite` under policy ID, version, complete-notice digest, model, and schema version, so unchanged notices do not call Luna again after a server restart. Changed notice content or explicit `공고 다시 분석` invalidates or bypasses the cache.
+  - Evidence: `v4/copilot.py`, `v4/static/v4-extension.js`, `v4/tests/test_v4.py`, and `v4/VERIFICATION.md`; persistent-cache restart and force-refresh regression passes, live cache contains one row for one policy, and related shared/V4 tests pass 71/71.
+
 - `proposal:v4-policy-change-action-twin`
   - Created: 2026-08-24T14:33+09:00
-  - Updated: 2026-08-24T15:35+09:00
+  - Updated: 2026-08-24T16:18+09:00
   - Status: active
-  - Content: Competition-first V4 remains a policy-change-responsive action twin. The user approved page 1 as the preserved area/industry selector plus separate worry buttons, explicitly excluding natural-language entry and keeping presentation presets as independent prefilled demo data. Page 2 uses recent-sales, cash/essential-cost, and loan cards; no-loan branching, visible timing assumptions, field-level messages, a pre-diagnosis input ledger, and optional structured paste/input AI are included.
+  - Content: Competition-first V4 remains a policy-change-responsive action twin. The user approved page 1 as the preserved area/industry selector plus separate worry buttons, explicitly excluding natural-language entry and keeping presentation presets as independent prefilled demo data. Page 2 uses recent-sales, cash/essential-cost, and loan cards; no-loan branching, visible timing assumptions, field-level messages, and a pre-diagnosis input ledger are included. The finance-sentence paste and structured-input feature was removed after user screen review and is not deferred automatically.
     Suspected mistakes never block a calculable value and show only `확인 권장`; only missing/invalid values that prevent calculation block progress. The user approved the five-stage action-first experience: page 4 compares multiple policy effects in the existing graph, and page 5 turns the selected policy's conditions, data, and documents into one guided task at a time, supports source-marked extraction and drafting, and tracks readiness without predicting approval. Automatic application, fabricated data, and unreviewed external transfer remain excluded; deterministic privacy/schema/Rule/Event/cash/ranking verification stays authoritative.
-  - Evidence: `V4 구현 계획표.md` is the authoritative V4 implementation contract and `V4 사용자 경험 흐름.md` is the end-to-end journey; current `V3 사용자 경험 구성안.md` contains only implemented V3 state and limits. No V4 service code exists yet.
+  - Evidence: `V4 구현 계획표.md` is the authoritative V4 implementation contract, `V4 사용자 경험 흐름.md` is the end-to-end journey, and the independent implementation is under `v4/`.
+
+- `proposal:v4-step4-policy-focus-flow`
+  - Created: 2026-08-25T22:32+09:00
+  - Updated: 2026-08-26T16:00+09:00
+  - Status: implemented
+  - Content: The user approved the judge-focused product thesis `13-week cash diagnosis -> policy effect comparison -> one application action`. Step 4 contains a collapsed optional What-if, the multi-policy graph, no-action deltas, and one selected-policy summary with three metrics, one plain status, and the step-5 action. Supported selected-policy graphs are enabled automatically; the redundant manual graph enable/remove toggle is absent. Blockers, current answers, answer editing, official preparation, and policy-scoped chat are in step 5. There is no sixth page, dense ranking layer, duplicate mini graph, policy modal, action brief, or duplicate execution plan.
+  - Evidence: `v4/static/index.html`, `v4/static/app.js`, `v4/static/v4-extension.js`, `v4/static/v4-extension.css`, `v4/tests/test_v4.py`, and `v4/VERIFICATION.md`; related shared/V4 regressions pass 76/76 and both JavaScript syntax checks pass.
 
 - `decision:v4-copy-forward-implementation`
   - Created: 2026-08-24T15:35+09:00
@@ -590,15 +642,86 @@
   - Content: V4 must not be built from an empty frontend or by editing V3 in place. At implementation start, record the current `v3/` inventory and hashes, copy the full V3 service structure into a new independent `v4/`, verify copy equality, then make V4 UI, CSS, orchestration, tests, storage keys, and runtime changes only inside `v4/`; shared-engine changes require a separate decision.
   - Evidence: User instruction on 2026-08-24; `V4 구현 계획표.md` sections 23-25 and `V4 사용자 경험 흐름.md`.
 
+- `decision:v4-competition-mvp-implementation`
+  - Created: 2026-08-24T15:48+09:00
+  - Updated: 2026-08-26T16:31+09:00
+  - Status: active
+  - Content: The user approved the V4 competition-MVP bundle, then removed finance-sentence paste/structured input and the reviewed document-sample workflow after screen review. V4 preserves the existing transaction and optional-loan CSV diagnosis, uses five concern buttons with at most two selections, bounded orchestration rather than free agent discussion, tab-scoped sessionStorage, V3-bounded What-if, in-app notices, official links, and unchanged shared Rule/Event/cash/eligibility/ranking contracts.
+    The independent five-stage `v4/` service adds the input ledger, a judge-focused step-4 comparison with one-policy focus controls and no-action deltas, then a step-5 condition-and-answer review plus field-level confirmation of Luna-structured public notice facts. For official-notice structuring, every selected policy's complete public stored-notice set, up to three policies, is read from the existing policy SQLite database and sent to Luna; no store, finance, answer, calculation, memo, or confirmation-state data is included. Six application fields are source-validated and fail closed per field. Completed public-notice extractions are the only server-persistent V4 data and are keyed by the complete-notice digest; user input and confirmation state remain browser-session-only. Step 5 has no generated task list, 1/1 progress, next-action card, or inquiry-letter feature. Presentation-only policy-change UI and duplicate action-brief/action-plan layers remain removed; reviewed sample documents, arbitrary application-document upload/OCR, user-data long-term storage, external alerts, automatic data collection, institution transfer, and automatic application remain excluded.
+  - Evidence: User approval on 2026-08-24; `v4/`, `v4/tests/test_v4.py`, `v4/VERIFICATION.md`, and `V4 구현 계획표.md` section 26.
+
+- `proposal:v5-concern-driven-review-priority`
+  - Created: 2026-08-26T15:42+09:00
+  - Updated: 2026-08-26T16:53+09:00
+  - Status: superseded by `decision:v5-copy-forward-implementation-plan`
+  - Content: Preserve V4's current concern-selection feature for now, but redesign it in V5 as one primary review lens rather than two equally weighted tags. The lens may visibly change metric emphasis, question priority, policy-card review order/default focus, explanation order, and notice-field confirmation order, but it must not alter official eligibility, policy amounts, simulated effects, or the underlying ranking score. After finance input, show an editable AI review plan that states what was detected, what will be checked first, and why. The current `policy_search_concern` signal must gain an explicit behavior or be removed, and the fixed 4+3 question batch should become one or two questions whose answers can change a route or material calculation.
+  - Evidence: User decision during V4 screen review on 2026-08-26 plus the 2026-08-26 desktop walkthrough. Selecting cash shortage and loan repayment burden changed only guidance bullets and weak question-order tie-breaking; the first question still concerned company size and Step 4 still focused the first inserted candidate rather than the refinance candidate.
+
+- `proposal:v5-bounded-ai-decision-copilot`
+  - Created: 2026-08-26T16:53+09:00
+  - Updated: 2026-08-26T16:53+09:00
+  - Status: superseded by `decision:v5-copy-forward-implementation-plan`
+  - Content: Position V5 as a bounded financial decision copilot, not a framework showcase. Keep deterministic Rule, Event, cash, eligibility, amount, effect, and ranking authority; use AI only where it reduces uncertainty through intent framing, decision-impact question planning, public-notice structuring, and fact-locked explanation. Prefer one coordinator with typed tool contracts, provenance, immutable financial outputs, fail-closed validation, retry/fallback rules, trace logs, and fixed evaluation cases. Do not make multi-agent or LangGraph a P0 requirement; introduce them only if durable asynchronous state, human approval, retries, or independently evaluated parallel roles create a measured product benefit.
+  - Evidence: Current V4 code already combines LightGBM market scenarios, bounded orchestration, deterministic financial/policy engines, and Luna full-notice extraction with chunk, quote, and number validation. The competition asks for a working AI-based financial service and an explanation of AI use and role, not a particular orchestration framework.
+
+- `decision:v5-copy-forward-implementation-plan`
+  - Created: 2026-08-26T18:36+09:00
+  - Updated: 2026-08-26T18:36+09:00
+  - Status: approved_plan
+  - Content: `V5 구현 계획표.md` is the authoritative V5 contract. V5 must start from the current approved `v4/`, copy source, static assets, templates, and tests into an independent `v5/`, record a 100% matching `v5/V4_COPY_BASELINE_SHA256.md`, exclude caches, logs, and bytecode, and modify only V5. V5 uses port 8003, `/api/v5`, `v5-api-v1.0`, `buttimaiv5:session:v1`, and a separate public-notice extraction cache. Its P0 centers one confirmed review lens, a visible AI review plan, at most two decision-impact questions, separate review and ranking order, one next notice confirmation, strict tool contracts, and fixed evaluations; multi-agent, LangGraph, OCR, external data acquisition, automatic application, and user financial-data persistence remain excluded.
+  - Evidence: User instruction on 2026-08-26 and complete `V5 구현 계획표.md`, including sections 21 through 24 for copy boundaries, file mapping, Stage V5-0 through V5-7, and evaluation Gates.
+
 ## Current handoff
 
 - `handoff:current`
-  - Updated: 2026-08-24T15:39+09:00
-  - Current state: `V4 구현 계획표.md` contains seven P0 items, the confirmed five-stage policy-comparison-to-application-copilot experience, Stage V4-0 through V4-7, and the mandatory V3-copy contract. `V4 사용자 경험 흐름.md` describes the full journey, and `V4 사용자 경험 흐름.png` visualizes the five steps, policy graph, application readiness, and revisit loop. No `v4/` code folder has been created.
-  - Next step: Before Stage V4-0 execution, approve the remaining material items in the implementation plan, especially exact worry-button limits, document upload processing and retention, external-AI scope, persistence, agent split, What-if scope, and unchanged shared-engine contracts.
-  - Blockers: Implementation remains gated by the unresolved privacy, storage, external-AI, and shared-engine decisions; automatic submission and unreviewed external transfer remain excluded.
+  - Updated: 2026-08-26T18:36+09:00
+  - Current state: `V5 구현 계획표.md` is complete with 30 sections covering the V4 copy boundary, V5 product and UX contract, deterministic financial authority, bounded AI tools, API and storage separation, CSS continuity, Stage V5-0 through V5-7, 25 review-lens and 30 question-planner Oracle cases, completion Gates, and a new-session start prompt. No `v5/` directory exists and no V4, shared-engine, server, test, external-AI, or external-data action occurred in this planning session.
+  - Next step: In a new session, read `AGENT_MEMORY.md` and `V5 구현 계획표.md`, then execute only Stage V5-0 first: verify current V4, copy the approved V4 source and static assets into `v5/`, record copy equality, separate V5 runtime values, and confirm V4 source hashes remain unchanged before Stage V5-1.
+  - Blockers: No blocker exists for the approved V5 P0 plan. Stop for user approval if implementation discovers a need to change financial calculations, Rule/Event/amount/ranking authority, shared `src/`, V4 files, public-notice fields, external data, external transmission, persistence, multi-agent, LangGraph, OCR, or automatic application. Final visual and presentation acceptance remain user-owned.
 
 ## Session log
+
+- `session:20260826-1826`
+  - Started: 2026-08-26T18:26+09:00
+  - Last activity: 2026-08-26T18:36+09:00
+  - Focus: Write the complete V5 implementation contract for a fresh-session copy-forward build that preserves V4 and CSS continuity.
+  - Updated keys: `proposal:v5-concern-driven-review-priority`, `proposal:v5-bounded-ai-decision-copilot`, `decision:v5-copy-forward-implementation-plan`, `handoff:current`
+  - Summary: Created the 1,671-line `V5 구현 계획표.md` with a V4-source copy manifest, runtime and cache separation, one-lens UX, decision-impact questioning, review-versus-ranking invariants, one-next-confirmation flow, harness contracts, Stage V5-0 through V5-7 Gates, fixed evaluation sets, and a ready-to-paste new-session prompt. Static completeness and whitespace checks passed; implementation, tests, servers, external AI, and external data were not run.
+
+- `session:20260826-1640`
+  - Started: 2026-08-26T16:40+09:00
+  - Last activity: 2026-08-26T16:53+09:00
+  - Focus: Audit V4 for a bold V5 direction that makes AI materially visible without sacrificing the financial-service user experience.
+  - Updated keys: `proposal:v5-concern-driven-review-priority`, `proposal:v5-bounded-ai-decision-copilot`, `handoff:current`
+  - Summary: Compared current code, implementation documents, competition framing, and a live desktop walkthrough. Concluded that V4 already has substantive bounded AI but lacks a visible causal chain from the first concern choice to question planning, comparison focus, and preparation. Proposed a V5 P0 centered on one primary review lens, one or two decision-impact questions, concern-aware default focus, one evidence-backed next confirmation, and measurable harness evaluations; no code or service contract changed.
+
+- `session:20260826-1002`
+  - Started: 2026-08-26T10:02+09:00
+  - Last activity: 2026-08-26T16:31+09:00
+  - Focus: Restart V4, implement selected-policy full-notice Luna extraction, then simplify and persist the step-5 notice review through user-led screen feedback.
+  - Updated keys: `issue:v4-application-task-label-and-provenance`, `issue:v4-preparation-evidence-and-draft-gap`, `issue:v4-selected-policy-full-notice-extraction`, `decision:v4-competition-mvp-implementation`, `proposal:v5-concern-driven-review-priority`, `handoff:current`
+  - Summary: Kept the existing SQLite notice source and strict server-side evidence checks, added a content-addressed persistent cache for completed Luna extraction results, and replaced the single task/progress form with independent extracted-field confirmations. Removed the inquiry-letter feature and its plan/draft APIs entirely. V4 16/16 and related shared/V4 71/71 pass; disk-cache reuse was verified after restart and PID 3880 is live, while browser and visual acceptance remain user-owned.
+
+- `session:20260825-2313`
+  - Started: 2026-08-25T23:13+09:00
+  - Last activity: 2026-08-25T23:18+09:00
+  - Focus: Re-establish the V4 screen-review handoff from current documents, code, dirty-worktree state, and live server without changing implementation.
+  - Updated keys: `handoff:current`
+  - Summary: Confirmed the step-4 comparison and step-5 preparation code paths, deterministic policy boundary, document-upload exclusion, V3 10/10 source hashes, live PID 1904 ownership of port 8002, and HTTP 200 health/root markers. No service code, calculation, API contract, V4 plan, or verification result changed; the next input is the user's screen-specific feedback.
+
+- `session:20260825-2224`
+  - Started: 2026-08-25T22:24+09:00
+  - Last activity: 2026-08-25T23:01+09:00
+  - Focus: Diagnose policy-curve scale compression, approve the judge-facing flow, and implement the simplified comparison-to-preparation experience.
+  - Updated keys: `issue:v4-policy-effect-scale-compression`, `proposal:v4-step4-policy-focus-flow`, `decision:v4-competition-mvp-implementation`, `handoff:current`
+  - Summary: Implemented the approved simplification: step 4 now shows optional What-if, selected-policy cash curves, no-action deltas, and one concise policy summary; step 5 owns blockers, editable answers, preparation, draft, and scoped chat. Removed redundant cards, tables, mini charts, modal, action layers, stacked launcher, and presentation-only change sample. Focused tests passed 67/67, live HTTP is healthy, and PID 1904 serves the updated V4.
+
+- `session:20260824-1542`
+  - Started: 2026-08-24T15:42+09:00
+  - Last activity: 2026-08-24T19:15+09:00
+  - Focus: Implement and screen-review the independent five-stage V4 MVP, then fix selected-policy graph coverage and the step-4 to step-5 application route.
+  - Updated keys: `decision:v4-competition-mvp-implementation`, `issue:v4-conditional-policy-graph-coverage`, `handoff:current`
+  - Summary: After diagnosing the five-preset graph gap, implemented the user-approved correction: stability voucher uses a reviewed eligible-cost offset, refinance uses its four-week execution-date remaining balance, and structural ineligibility stays ungraphed with exact reasons and editable answers. Reordered step 4 from graph to conditions to step 5, added direct preparation actions, passed 93 regressions and JavaScript syntax, and verified all three conditional policies together on the refreshed live server.
 
 - `session:20260824-1433`
   - Started: 2026-08-24T14:33+09:00

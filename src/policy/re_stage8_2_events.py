@@ -7,6 +7,7 @@ from datetime import date
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from src.cashflow.loans import add_months
+from src.policy.converters import convert_voucher
 from src.policy.schemas import (
     AssumptionEntry,
     CashDirection,
@@ -15,6 +16,8 @@ from src.policy.schemas import (
     PolicyPlan,
     ScenarioStatus,
     ValueSource,
+    VoucherExpense,
+    VoucherScenario,
 )
 
 
@@ -34,6 +37,18 @@ class DynamicPolicyScenario(BaseModel):
         if self.policy_id == "POL_SEMAS_EMPLOYMENT_INSURANCE_2026":
             if self.employment_insurance_grade is None or self.expense_already_in_baseline is None:
                 raise ValueError("고용보험료 비교에는 가입등급과 기준현금 포함 여부가 필요합니다.")
+        elif self.policy_id == "POL_SEMAS_STABILITY_VOUCHER_2026":
+            if (
+                self.approved_support_amount is None
+                or self.expense_amount is None
+                or self.expense_date is None
+                or self.expense_already_in_baseline is not True
+            ):
+                raise ValueError("안정 바우처 비교에는 지원액·적격비용·결제일과 기준현금 포함 확인이 필요합니다.")
+            if self.approved_support_amount > 250_000:
+                raise ValueError("안정 바우처 공고상 최대 비교액은 25만원입니다.")
+            if self.approved_support_amount > self.expense_amount:
+                raise ValueError("바우처 지원액은 입력한 적격비용을 넘을 수 없습니다.")
         elif self.policy_id == "POL_SEOUL_CRISIS_TRACK2_2026H2":
             if (
                 self.approved_support_amount is None
@@ -112,6 +127,26 @@ def _event(
 def build_dynamic_policy_plan(
     scenario: DynamicPolicyScenario, *, reference_date: date
 ) -> PolicyPlan:
+    if scenario.policy_id == "POL_SEMAS_STABILITY_VOUCHER_2026":
+        assert scenario.approved_support_amount is not None
+        assert scenario.expense_amount is not None
+        assert scenario.expense_date is not None
+        return convert_voucher(VoucherScenario(
+            policy_id=scenario.policy_id,
+            event_id="STABILITY_VOUCHER",
+            scenario_status="assumed_approved",
+            awarded_amount=scenario.approved_support_amount,
+            activation_date=scenario.expense_date,
+            expiry_date=date(2026, 12, 31),
+            expenses=[VoucherExpense(
+                expense_id="V4_FIXED_COST",
+                expense_date=scenario.expense_date,
+                expense_type="utility",
+                amount=scenario.expense_amount,
+                description="사용자가 입력한 월 기타 고정비 중 적격 비용 가정",
+            )],
+        ))
+
     if scenario.policy_id == "POL_SEMAS_EMPLOYMENT_INSURANCE_2026":
         assert scenario.employment_insurance_grade is not None
         assert scenario.expense_already_in_baseline is not None

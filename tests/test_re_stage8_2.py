@@ -274,6 +274,23 @@ def test_track2_dynamic_event_requires_user_amounts_and_dates() -> None:
     assert plan.calculation_status == "ready_with_user_amount_and_date"
 
 
+def test_dynamic_stability_voucher_uses_confirmed_baseline_expense() -> None:
+    plan = build_dynamic_policy_plan(
+        DynamicPolicyScenario(
+            policy_id="POL_SEMAS_STABILITY_VOUCHER_2026",
+            approved_support_amount=250_000,
+            expense_amount=800_000,
+            expense_date=date(2026, 9, 29),
+            expense_already_in_baseline=True,
+        ),
+        reference_date=date(2026, 9, 1),
+    )
+
+    assert plan.summary["cost_reduction"] == 250_000
+    assert plan.summary["cash_inflow"] == 0
+    assert all(event.effect_kind.value != "new_debt_principal" for event in plan.events)
+
+
 def test_reviewed_dynamic_event_reaches_re7_alternative_comparison() -> None:
     scenario = DynamicPolicyScenario(
         policy_id="POL_SEOUL_FAMILY_FRIENDLY_EMPLOYER_2026",
