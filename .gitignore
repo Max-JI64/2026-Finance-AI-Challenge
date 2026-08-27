@@ -40,3 +40,4 @@ v5/runtime/*.log
 !data/processed_re/policy/re_stage8_2/*.csv
 *.sqlite
 *.parquet
+!data/processed_re/re_stage8/market_features_2025q4.parquet
