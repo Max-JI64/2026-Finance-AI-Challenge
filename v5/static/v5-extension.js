@@ -31,6 +31,8 @@ const v4FinanceFields = [
   "revenue-timing", "expense-timing", "debt-timing",
 ];
 
+const v5RepresentativeDemoState = { loading: false, loaded: false };
+
 function syncV5ReviewLensContext() {
   const signalByLens = { cash_runway: "cash_concern", debt_relief: "debt_concern", fixed_cost: "fixed_cost_concern" };
   const signal = signalByLens[state.reviewLens];
@@ -48,9 +50,11 @@ function syncV5ReviewLensContext() {
     button.setAttribute("aria-checked", String(active));
     button.tabIndex = active || !state.reviewLens ? 0 : -1;
   });
-  byId("v5-lens-status").textContent = state.reviewLens
-    ? `${v5ReviewLensLabels[state.reviewLens]} 선택 · 자격, 금액, 효과와 기존 순위는 바뀌지 않습니다.`
-    : "목적 한 개를 선택해야 다음 단계로 진행할 수 있습니다.";
+  byId("v5-lens-status").textContent = state.reviewLens === "unsure" && state.reviewLensSource === "suggested"
+    ? "무엇부터 확인할지 모르겠음을 기본값으로 적용했습니다. 결과를 본 뒤 검토 기준을 제안합니다."
+    : state.reviewLens
+      ? `${v5ReviewLensLabels[state.reviewLens]} 선택 · 자격, 금액, 효과와 기존 순위는 바뀌지 않습니다.`
+      : "목적 한 개를 선택해 주세요.";
   const guidance = {
     cash_runway: "현재 현금과 앞으로 28일 필수지출을 먼저 확인합니다.",
     debt_relief: "대출 잔액·금리·남은 기간을 먼저 확인합니다.",
@@ -144,7 +148,7 @@ window.openV4InputLedger = function openV4InputLedger() {
   const rows = [
     ["사업장", `${state.selectedArea.district} ${state.selectedArea.name}`, "사용자 선택", "확인됨"],
     ["업종", state.industries.find((item) => item.code === byId("industry-select").value)?.name || "", "사용자 선택", "확인됨"],
-    ["주된 해결 목적", v5ReviewLensLabels[state.reviewLens] || "선택 없음", "사용자 선택", "확인됨"],
+    ["주된 해결 목적", v5ReviewLensLabels[state.reviewLens] || "선택 없음", state.reviewLensSource === "suggested" ? "기본값" : "사용자 선택", "확인됨"],
     ["최근 월매출", monthlyRevenueRows, "사용자 입력", "확인됨"],
     ["현재 보유 현금", `${byId("opening-cash").value}만원`, "사용자 입력", v4MoneyWarning("opening-cash", Number(byId("opening-cash").value), averageRevenue)],
     ["월 필수지출", `${["monthly-rent", "monthly-labor", "monthly-purchase", "monthly-other-fixed"].reduce((sum, id) => sum + Number(byId(id).value || 0), 0).toLocaleString("ko-KR")}만원`, "사용자 입력", "확인됨"],
@@ -170,7 +174,197 @@ function toggleNoLoan() {
     byId("loan-term").value = 36;
   }
   updateSummary();
+  updateV5RequiredProgress();
+  updateV5TimingSummary();
   saveV4Session();
+}
+
+function toggleV5ZeroShortcut(checkboxId, inputId) {
+  const checkbox = byId(checkboxId);
+  const input = byId(inputId);
+  input.disabled = checkbox.checked;
+  if (checkbox.checked) {
+    input.value = 0;
+    input.setAttribute("aria-invalid", "false");
+    input.closest("label")?.querySelector(".v4-field-message")?.remove();
+  }
+}
+
+function toggleV5ZeroShortcuts() {
+  toggleV5ZeroShortcut("v5-no-rent", "monthly-rent");
+  toggleV5ZeroShortcut("v5-no-employees", "monthly-labor");
+  updateSummary();
+  updateV5RequiredProgress();
+  saveV4Session();
+}
+
+function v5RequiredEntries() {
+  const entries = [...document.querySelectorAll(".revenue-input")].map((input, index) => ({
+    input,
+    label: `${index + 1}번째 월매출`,
+    valid: input.value !== "" && Number(input.value) >= 0,
+  }));
+  const labels = {
+    "opening-cash": "현재 보유 현금",
+    "monthly-rent": "월 임대료",
+    "monthly-labor": "월 인건비",
+    "monthly-purchase": "월 필수 매입비",
+    "monthly-other-fixed": "월 기타 고정비",
+    "loan-balance": "남은 대출 잔액",
+  };
+  Object.entries(labels).forEach(([id, label]) => {
+    const input = byId(id);
+    entries.push({ input, label, valid: input.disabled || (input.value !== "" && Number(input.value) >= 0) });
+  });
+  if (!byId("v4-no-loan").checked && Number(byId("loan-balance").value || 0) > 0) {
+    entries.push({ input: byId("loan-rate"), label: "대출 이자율", valid: byId("loan-rate").value !== "" && Number(byId("loan-rate").value) >= 0 });
+    entries.push({ input: byId("loan-term"), label: "남은 상환 기간", valid: byId("loan-term").value !== "" && Number(byId("loan-term").value) >= 1 });
+  }
+  return entries;
+}
+
+function updateV5RequiredProgress() {
+  const entries = v5RequiredEntries();
+  const remaining = entries.filter((entry) => !entry.valid);
+  const complete = entries.length - remaining.length;
+  const panel = byId("v5-required-progress");
+  panel.dataset.complete = String(remaining.length === 0);
+  byId("v5-required-progress-text").textContent = `재무 필수 입력 ${complete}/${entries.length} 완료`;
+  byId("v5-required-progress-detail").textContent = remaining.length
+    ? `${remaining.length}개 남음 · 다음 항목: ${remaining[0].label}`
+    : "필수 입력을 모두 채웠습니다. 진단 전 입력 원장에서 한 번 더 확인합니다.";
+}
+
+function updateV5TimingSummary() {
+  const revenue = byId("revenue-timing").selectedOptions[0]?.text || "선택 전";
+  const expense = byId("expense-timing").selectedOptions[0]?.text || "선택 전";
+  const debt = byId("v4-no-loan").checked ? "대출 없음" : byId("debt-timing").selectedOptions[0]?.text || "선택 전";
+  byId("v5-timing-summary").textContent = `현재 계산 시기 가정: 매출 ${revenue}, 비용 ${expense}, 상환 ${debt}. 매일과 매주는 월 금액을 해당 횟수로 나누고, 월 구간은 하방·기준·회복 범위에 따라 구간 안 날짜를 다르게 잡습니다.`;
+}
+
+function parseV5RevenuePaste(value) {
+  return value.trim().split(/[\s;]+/).filter(Boolean).map((token) => Number(token.replaceAll(",", "")));
+}
+
+function applyV5RevenuePaste() {
+  const values = parseV5RevenuePaste(byId("v5-revenue-paste").value);
+  const status = byId("v5-revenue-tools-status");
+  if (values.length < 3 || values.length > 12 || values.some((value) => !Number.isFinite(value) || value < 0)) {
+    status.textContent = "0 이상인 월매출을 최근 달부터 3개 이상 12개 이하로 입력해 주세요.";
+    return;
+  }
+  state.revenueMonths = values.length;
+  renderRevenueMonths(values);
+  updateSummary();
+  updateV5RequiredProgress();
+  status.textContent = `${values.length}개월 매출을 최근 달부터 적용했습니다.`;
+  saveV4Session();
+}
+
+function copyV5RecentRevenueToThreeMonths() {
+  const inputs = [...document.querySelectorAll(".revenue-input")];
+  const value = inputs[0]?.value;
+  const status = byId("v5-revenue-tools-status");
+  if (value === "" || Number(value) < 0) {
+    status.textContent = "가장 최근 달 매출을 먼저 입력해 주세요.";
+    inputs[0]?.focus();
+    return;
+  }
+  inputs.slice(0, 3).forEach((input) => { input.value = value; input.dispatchEvent(new Event("input", { bubbles: true })); });
+  status.textContent = "가장 최근 달 금액을 최근 3개월에 복사했습니다.";
+}
+
+function scrollToV5OwnDiagnosis() {
+  const target = byId("area-search");
+  target.scrollIntoView({ behavior: "smooth", block: "center" });
+  window.setTimeout(() => target.focus({ preventScroll: true }), 350);
+}
+
+function v5RepresentativeValueTone(metric, scenario, baseline) {
+  const value = scenario?.[metric];
+  if (metric === "first_cash_shortage_week") {
+    return value == null
+      ? { tone: "positive", label: "13주 안 현금 부족 없음" }
+      : { tone: "danger", label: "13주 안 현금 부족" };
+  }
+  if (metric === "week13_ending_cash") {
+    return Number(value) >= 0
+      ? { tone: "positive", label: "13주 뒤 현금 확보" }
+      : { tone: "danger", label: "13주 뒤 현금 부족" };
+  }
+  if (["month6_remaining_principal", "maximum_monthly_debt_service", "total_interest_through_maturity"].includes(metric)) {
+    const baselineValue = Number(baseline?.[metric]);
+    const numericValue = Number(value);
+    if (Number.isFinite(numericValue) && Number.isFinite(baselineValue) && numericValue > baselineValue) {
+      return { tone: "warning", label: "무대응보다 부담 증가" };
+    }
+  }
+  return { tone: "neutral", label: "" };
+}
+
+function renderV5RepresentativeDemo(payload) {
+  const scenarios = Object.fromEntries(payload.scenarios.map((item) => [item.alternative_id, item]));
+  const order = ["no_action", "track2_reimbursement", "emergency_loan"];
+  const valueRows = [
+    ["첫 현금 부족", "first_cash_shortage_week", (value) => value == null ? "13주 안에 없음" : `${value}주차`],
+    ["13주차 현금", "week13_ending_cash", compactMoney],
+    ["6개월 뒤 남은 부채", "month6_remaining_principal", compactMoney],
+    ["월 최대 상환액", "maximum_monthly_debt_service", compactMoney],
+    ["만기까지 총이자", "total_interest_through_maturity", compactMoney],
+  ];
+  byId("v5-representative-demo-title").textContent = payload.title;
+  const input = payload.input_summary;
+  byId("v5-demo-inputs").innerHTML = [
+    ["기준일", input.reference_date.replaceAll("-", ".")],
+    ["현재 현금", compactMoney(input.opening_cash)],
+    ["월매출", compactMoney(input.monthly_revenue)],
+    ["월 필수비용", compactMoney(input.monthly_fixed_and_variable_cost)],
+    ["기존 대출", compactMoney(input.existing_loan_balance)],
+  ].map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`).join("");
+  byId("v5-demo-table-body").innerHTML = valueRows.map(([label, key, formatter]) => {
+    const cells = order.map((id) => {
+      const emphasis = v5RepresentativeValueTone(key, scenarios[id], scenarios.no_action);
+      const accessibleLabel = emphasis.label ? `<span class="sr-only">${escapeHtml(emphasis.label)}: </span>` : "";
+      return `<td><strong class="v5-demo-value v5-demo-value--${emphasis.tone}">${accessibleLabel}${escapeHtml(formatter(scenarios[id]?.[key]))}</strong></td>`;
+    }).join("");
+    return `<tr data-demo-metric="${escapeHtml(key)}"><th scope="row">${escapeHtml(label)}</th>${cells}</tr>`;
+  }).join("");
+  byId("v5-demo-summary").textContent = payload.summary;
+  byId("v5-demo-limitations").innerHTML = payload.limitations.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
+  byId("v5-demo-loading").hidden = true;
+  byId("v5-demo-error").hidden = true;
+  byId("v5-demo-content").hidden = false;
+}
+
+async function loadV5RepresentativeDemo(force = false) {
+  if (v5RepresentativeDemoState.loading || (v5RepresentativeDemoState.loaded && !force)) return;
+  v5RepresentativeDemoState.loading = true;
+  byId("v5-demo-loading").hidden = false;
+  byId("v5-demo-error").hidden = true;
+  byId("v5-demo-content").hidden = true;
+  try {
+    renderV5RepresentativeDemo(await api("/api/v5/representative-demo"));
+    v5RepresentativeDemoState.loaded = true;
+  } catch (error) {
+    console.error(error);
+    byId("v5-demo-loading").hidden = true;
+    byId("v5-demo-error").hidden = false;
+  } finally {
+    v5RepresentativeDemoState.loading = false;
+  }
+}
+
+function toggleV5RepresentativeDemo() {
+  const section = byId("v5-representative-demo");
+  const willOpen = section.hidden;
+  section.hidden = !willOpen;
+  byId("v5-open-representative-demo").setAttribute("aria-expanded", String(willOpen));
+  byId("v5-open-representative-demo").textContent = willOpen ? "대표 사례 닫기" : "대표 사례 30초 보기";
+  if (willOpen) {
+    loadV5RepresentativeDemo();
+    section.focus({ preventScroll: true });
+    section.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 }
 
 async function loadV4ApplicationPlan(policyId = v4State.currentPolicy?.policy_id) {
@@ -422,6 +616,8 @@ function saveV4Session() {
       whatIf: { pending: state.pendingWhatIf, undo: state.whatIfUndo },
       finance,
       noLoan: byId("v4-no-loan")?.checked || false,
+      noRent: byId("v5-no-rent")?.checked || false,
+      noEmployees: byId("v5-no-employees")?.checked || false,
       areaCode: state.selectedArea?.code || null,
       industryCode: byId("industry-select")?.value || null,
       eligibilityAnswers: state.eligibilityAnswers,
@@ -433,11 +629,17 @@ function saveV4Session() {
 
 function restoreV4Session() {
   let snapshot;
-  try { snapshot = JSON.parse(sessionStorage.getItem(V5_SESSION_KEY) || "null"); } catch { return; }
-  if (!snapshot) return;
-  state.reviewLens = Object.hasOwn(v5ReviewLensLabels, snapshot.reviewLens) ? snapshot.reviewLens : "";
+  try { snapshot = JSON.parse(sessionStorage.getItem(V5_SESSION_KEY) || "null"); } catch { snapshot = null; }
+  if (!snapshot) {
+    toggleV5ZeroShortcuts();
+    syncV5ReviewLensContext();
+    updateV5RequiredProgress();
+    updateV5TimingSummary();
+    return;
+  }
+  state.reviewLens = Object.hasOwn(v5ReviewLensLabels, snapshot.reviewLens) ? snapshot.reviewLens : "unsure";
   state.confirmedReviewLens = snapshot.confirmedReviewLens || null;
-  state.reviewLensSource = snapshot.reviewLensSource || "user";
+  state.reviewLensSource = snapshot.reviewLensSource || (state.reviewLens === "unsure" ? "suggested" : "user");
   state.questionTraces = snapshot.questionTraces || [];
   state.v3AskedFields = snapshot.askedFields || [];
   state.questionBatchRound = Math.min(2, Number(snapshot.questionRound || 0));
@@ -451,6 +653,8 @@ function restoreV4Session() {
     renderRevenueMonths(snapshot.finance.revenues);
   }
   byId("v4-no-loan").checked = Boolean(snapshot.noLoan);
+  byId("v5-no-rent").checked = Boolean(snapshot.noRent);
+  byId("v5-no-employees").checked = Boolean(snapshot.noEmployees);
   state.eligibilityAnswers = snapshot.eligibilityAnswers || {};
   state.selectedPolicyIds = new Set(snapshot.selectedPolicyIds || []);
   if (snapshot.application) {
@@ -463,7 +667,7 @@ function restoreV4Session() {
       } catch { /* Restoring an old tab must not block the rest of the page. */ }
     }, 0);
   }
-  toggleNoLoan(); syncV5ReviewLensContext(); updateSummary();
+  toggleNoLoan(); toggleV5ZeroShortcuts(); syncV5ReviewLensContext(); updateSummary(); updateV5TimingSummary();
   let attempts = 0;
   const restoreCatalogSelection = window.setInterval(() => {
     attempts += 1;
@@ -558,8 +762,15 @@ document.addEventListener("click", async (event) => {
   if (returnComparison) showStep("decision");
 });
 
-document.addEventListener("change", () => window.queueMicrotask(saveV4Session));
-document.addEventListener("input", () => window.queueMicrotask(saveV4Session));
+document.addEventListener("change", (event) => {
+  if (event.target.matches("#revenue-timing, #expense-timing, #debt-timing")) updateV5TimingSummary();
+  if (event.target.matches(".revenue-input, #opening-cash, #monthly-rent, #monthly-labor, #monthly-purchase, #monthly-other-fixed, #loan-balance, #loan-rate, #loan-term")) updateV5RequiredProgress();
+  window.queueMicrotask(saveV4Session);
+});
+document.addEventListener("input", (event) => {
+  if (event.target.matches(".revenue-input, #opening-cash, #monthly-rent, #monthly-labor, #monthly-purchase, #monthly-other-fixed, #loan-balance, #loan-rate, #loan-term")) updateV5RequiredProgress();
+  window.queueMicrotask(saveV4Session);
+});
 document.addEventListener("focusout", (event) => {
   if (event.target.matches(".revenue-input, #opening-cash, #monthly-rent, #monthly-labor, #monthly-purchase, #monthly-other-fixed, #loan-balance, #loan-rate, #loan-term")) renderV4FieldMessages();
 });
@@ -574,6 +785,14 @@ document.addEventListener("keydown", (event) => {
   next.focus();
 });
 byId("v4-no-loan").addEventListener("change", toggleNoLoan);
+byId("v5-no-rent").addEventListener("change", toggleV5ZeroShortcuts);
+byId("v5-no-employees").addEventListener("change", toggleV5ZeroShortcuts);
+byId("v5-apply-revenue-paste").addEventListener("click", applyV5RevenuePaste);
+byId("v5-copy-revenue-three").addEventListener("click", copyV5RecentRevenueToThreeMonths);
+byId("v5-open-representative-demo").addEventListener("click", toggleV5RepresentativeDemo);
+byId("v5-demo-retry").addEventListener("click", () => loadV5RepresentativeDemo(true));
+byId("v5-start-own-diagnosis").addEventListener("click", scrollToV5OwnDiagnosis);
+byId("v5-demo-start-own").addEventListener("click", scrollToV5OwnDiagnosis);
 byId("v4-ledger-close").addEventListener("click", () => byId("v4-input-ledger").close());
 byId("v4-ledger-edit").addEventListener("click", () => byId("v4-input-ledger").close());
 byId("v4-ledger-confirm").addEventListener("click", () => { byId("v4-input-ledger").close(); saveV4Session(); runComparison("diagnosis"); });

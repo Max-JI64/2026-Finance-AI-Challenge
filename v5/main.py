@@ -35,6 +35,7 @@ from v5.orchestrator import (
     apply_what_if,
     interpret_situation,
     orchestrate_state,
+    representative_demo,
 )
 
 
@@ -129,6 +130,11 @@ def get_industries() -> dict[str, object]:
 @app.get("/api/v5/catalog/policies")
 def get_policies() -> dict[str, object]:
     return envelope(items=policy_catalog())
+
+
+@app.get("/api/v5/representative-demo")
+def get_representative_demo() -> dict[str, object]:
+    return representative_demo()
 
 
 @app.get("/api/v5/market-scenarios/{area_code}/{industry_code}")

@@ -9,7 +9,7 @@ const state = {
   policyScenarioEditorPolicyId: "", costReductionEditorOpen: false,
   situationInterpretation: null, situationContext: null,
   pendingWhatIf: null, whatIfUndo: null, whatIfOriginalPrompt: "", whatIfClarificationAttempts: 0,
-  reviewLens: "", confirmedReviewLens: null, reviewLensSource: "user",
+  reviewLens: "unsure", confirmedReviewLens: null, reviewLensSource: "suggested",
   reviewPlan: null, reviewOrder: [], metricOrder: [], noticeFieldPriority: [], questionTraces: [],
 };
 
@@ -442,25 +442,40 @@ function renderRevenueMonths(values = null) {
   byId("add-revenue-month").disabled = state.revenueMonths >= 12;
   document.querySelectorAll(".revenue-input").forEach((node) => node.addEventListener("input", updateSummary));
   document.querySelector(".remove-month")?.addEventListener("click", () => { state.revenueMonths -= 1; renderRevenueMonths(); updateSummary(); });
+  if (typeof updateV5RequiredProgress === "function") updateV5RequiredProgress();
 }
 
 function numericValue(id, fallback = 0) { const raw = byId(id).value; return raw === "" ? fallback : Number(raw); }
 function moneyInputValue(id, fallback = 0) { const raw = byId(id).value; return raw === "" ? fallback : Math.round(Number(raw) * 10000); }
+function failValidation(message, target) {
+  if (target) {
+    target.setAttribute("aria-invalid", "true");
+    target.focus({ preventScroll: true });
+    target.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+  throw new Error(message);
+}
 function revenueValues(strict = true) {
-  const raw = [...document.querySelectorAll(".revenue-input")].map((node) => node.value);
-  if (strict && raw.some((value) => value === "")) throw new Error("최근 월매출을 모두 입력해 주세요.");
-  return raw.filter((value) => value !== "").map((value) => Math.round(Number(value) * 10000));
+  const inputs = [...document.querySelectorAll(".revenue-input")];
+  const invalid = inputs.find((node) => node.value === "" || Number(node.value) < 0);
+  if (strict && invalid) failValidation("최근 월매출을 모두 0원 이상으로 입력해 주세요.", invalid);
+  return inputs.map((node) => node.value).filter((value) => value !== "").map((value) => Math.round(Number(value) * 10000));
 }
 function validateBusiness() {
-  if (!state.selectedArea) throw new Error("상권을 선택해 주세요.");
-  if (!byId("industry-major-select").value) throw new Error("업종 대분류를 선택해 주세요.");
-  if (!byId("industry-select").value) throw new Error("세부 업종을 선택해 주세요.");
-  if (!state.reviewLens) throw new Error("오늘 가장 먼저 해결하고 싶은 목적을 선택해 주세요.");
+  if (!state.selectedArea) failValidation("상권을 선택해 주세요.", byId("area-select"));
+  if (!byId("industry-major-select").value) failValidation("업종 대분류를 선택해 주세요.", byId("industry-major-select"));
+  if (!byId("industry-select").value) failValidation("세부 업종을 선택해 주세요.", byId("industry-select"));
+  if (!state.reviewLens) failValidation("오늘 가장 먼저 해결하고 싶은 목적을 선택해 주세요.", byId("v5-lens-title"));
 }
 function validateFinance() {
   revenueValues(true);
-  ["opening-cash", "monthly-rent", "monthly-labor", "monthly-purchase", "monthly-other-fixed", "loan-balance"].forEach((id) => { if (byId(id).value === "" || Number(byId(id).value) < 0) throw new Error("현재 현금과 월 지출을 빠짐없이 입력해 주세요."); });
-  if (moneyInputValue("loan-balance") > 0 && numericValue("loan-rate", null) == null) throw new Error("대출 이자율을 입력해 주세요.");
+  const labels = { "opening-cash": "현재 보유 현금", "monthly-rent": "월 임대료", "monthly-labor": "월 인건비", "monthly-purchase": "월 필수 매입비", "monthly-other-fixed": "월 기타 고정비", "loan-balance": "남은 대출 잔액" };
+  for (const [id, label] of Object.entries(labels)) {
+    const input = byId(id);
+    if (input.value === "" || Number(input.value) < 0) failValidation(`${label}을 0원 이상으로 입력해 주세요.`, input);
+  }
+  if (moneyInputValue("loan-balance") > 0 && numericValue("loan-rate", null) == null) failValidation("대출 이자율을 입력해 주세요.", byId("loan-rate"));
+  if (moneyInputValue("loan-balance") > 0 && (numericValue("loan-term", null) == null || numericValue("loan-term") < 1)) failValidation("남은 상환 기간을 1개월 이상으로 입력해 주세요.", byId("loan-term"));
 }
 function referenceDate() {
   const date = new Date(); date.setDate(1); date.setMonth(date.getMonth() + 1);
@@ -639,7 +654,7 @@ async function applyPreset(id) {
   const area = state.areaPoints.find((item) => item.code === preset?.areaCode);
   const industry = state.industries.find((item) => item.code === "CS100001") || state.industries[0];
   if (!preset || !area || !industry) return toast("준비된 가게 상황을 불러오지 못했습니다.");
-  state.data = null; state.marketScenarios = null; state.scenarioResults = {}; state.scenarioCacheKey = ""; state.selectedAlternative = null; state.focusedPolicyId = ""; state.selectedPolicyIds = new Set(); state.conditionalPolicyIds = new Set(); state.policySelectionInitialized = false; state.questionCatalog = {}; state.eligibilityAnswers = {}; state.policyScenarioValues = {}; state.actionBrief = null; state.questionWizardOrder = []; state.questionWizardAllOrder = []; state.questionWizardIndex = 0; state.questionWizardKey = ""; state.questionWizardComplete = false; state.questionWizardResultsVisible = false; state.questionWizardMode = "full"; state.questionWizardReturnPolicyId = ""; state.questionBatchRound = 0; state.v3AskedFields = []; state.policyScenarioEditorPolicyId = ""; state.costReductionEditorOpen = false; state.situationInterpretation = null; state.situationContext = null; state.pendingWhatIf = null; state.whatIfUndo = null; state.whatIfOriginalPrompt = ""; state.whatIfClarificationAttempts = 0; state.reviewLens = ""; state.confirmedReviewLens = null; state.reviewLensSource = "user"; state.reviewPlan = null; state.reviewOrder = []; state.metricOrder = []; state.noticeFieldPriority = []; state.questionTraces = [];
+  state.data = null; state.marketScenarios = null; state.scenarioResults = {}; state.scenarioCacheKey = ""; state.selectedAlternative = null; state.focusedPolicyId = ""; state.selectedPolicyIds = new Set(); state.conditionalPolicyIds = new Set(); state.policySelectionInitialized = false; state.questionCatalog = {}; state.eligibilityAnswers = {}; state.policyScenarioValues = {}; state.actionBrief = null; state.questionWizardOrder = []; state.questionWizardAllOrder = []; state.questionWizardIndex = 0; state.questionWizardKey = ""; state.questionWizardComplete = false; state.questionWizardResultsVisible = false; state.questionWizardMode = "full"; state.questionWizardReturnPolicyId = ""; state.questionBatchRound = 0; state.v3AskedFields = []; state.policyScenarioEditorPolicyId = ""; state.costReductionEditorOpen = false; state.situationInterpretation = null; state.situationContext = null; state.pendingWhatIf = null; state.whatIfUndo = null; state.whatIfOriginalPrompt = ""; state.whatIfClarificationAttempts = 0; state.reviewLens = "unsure"; state.confirmedReviewLens = null; state.reviewLensSource = "suggested"; state.reviewPlan = null; state.reviewOrder = []; state.metricOrder = []; state.noticeFieldPriority = []; state.questionTraces = [];
   byId("v3-undo-what-if").hidden = true;
   byId("diagnosis-empty").hidden = false; byId("diagnosis-result").hidden = true; byId("decision-empty").hidden = false; byId("decision-result").hidden = true; byId("diagnosis-next").disabled = true;
   document.querySelectorAll("[data-goal-top]").forEach((node) => { node.textContent = "계산 전"; });
@@ -649,6 +664,8 @@ async function applyPreset(id) {
   const major = industryMajor(industry.code); byId("industry-major-select").value = major; populateIndustries(major, industry.code);
   state.revenueMonths = preset.revenues.length; renderRevenueMonths(preset.revenues);
   [["opening-cash", preset.cash], ["monthly-rent", preset.rent], ["monthly-labor", preset.labor], ["monthly-purchase", preset.purchase], ["monthly-other-fixed", preset.other], ["loan-balance", preset.loan], ["loan-rate", preset.rate], ["loan-term", preset.term], ["reduce-rent", 0], ["reduce-labor", 0], ["reduce-purchase", 0], ["reduce-other", 0]].forEach(([field, value]) => { byId(field).value = value; });
+  byId("v5-no-rent").checked = false; byId("v5-no-employees").checked = false;
+  if (typeof toggleV5ZeroShortcuts === "function") toggleV5ZeroShortcuts();
   byId("revenue-timing").value = "daily"; byId("expense-timing").value = "early"; byId("debt-timing").value = "late";
   state.scenario = "central"; document.querySelector('input[name="market-scenario"][value="central"]').checked = true;
   document.querySelectorAll("[data-preset]").forEach((node) => node.classList.toggle("is-selected", node.dataset.preset === id));
@@ -1056,9 +1073,9 @@ function invalidateSituationDependentResults() {
   state.whatIfUndo = null;
   state.whatIfOriginalPrompt = "";
   state.whatIfClarificationAttempts = 0;
-  state.reviewLens = "";
+  state.reviewLens = "unsure";
   state.confirmedReviewLens = null;
-  state.reviewLensSource = "user";
+  state.reviewLensSource = "suggested";
   state.reviewPlan = null;
   state.reviewOrder = [];
   state.metricOrder = [];

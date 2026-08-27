@@ -19,7 +19,7 @@ from v5.copilot import (
     _validated_notice_fields,
 )
 from v5.main import app as v5_app
-from v5.orchestrator import METRIC_ORDER, order_policy_reviews
+from v5.orchestrator import METRIC_ORDER, order_policy_reviews, representative_demo
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -122,6 +122,50 @@ def test_root_exposes_three_user_stages_and_preserves_core_inputs() -> None:
     assert "정책마다 필요한 답변은 준비 화면에서 바로 선택합니다" in html
     assert "v5-extension.js" in html and "v4-extension.js" not in html
     assert re.search(r'<details[^>]*class="presentation-presets"[^>]*id="presentation-presets"[^>]*hidden', html)
+    assert "추가 대출이 위기를 해결하는지, 부채만 늘리는지 계산합니다." in html
+    assert "대표 사례 30초 보기" in html and "내 사업장으로 계산하기" in html
+    assert all(item in html for item in ("v5-no-rent", "v5-no-employees", "v4-no-loan", "v5-revenue-paste", "v5-required-progress"))
+    app_script = (ROOT / "v5/static/app.js").read_text(encoding="utf-8")
+    extension_script = (ROOT / "v5/static/v5-extension.js").read_text(encoding="utf-8")
+    extension_css = (ROOT / "v5/static/v5-extension.css").read_text(encoding="utf-8")
+    assert 'reviewLens: "unsure", confirmedReviewLens: null, reviewLensSource: "suggested"' in app_script
+    assert 'api("/api/v5/representative-demo")' in extension_script
+    assert "v5RepresentativeValueTone" in extension_script
+    assert all(
+        marker in extension_script
+        for marker in ("13주 안 현금 부족", "13주 뒤 현금 확보", "무대응보다 부담 증가")
+    )
+    assert all(
+        selector in extension_css
+        for selector in (".v5-demo-value--danger", ".v5-demo-value--positive", ".v5-demo-value--warning")
+    )
+
+
+def test_representative_demo_uses_the_deterministic_engine_and_fixed_synthetic_case() -> None:
+    calculated = representative_demo()
+    first = V5.get("/api/v5/representative-demo")
+    second = V5.get("/api/v5/representative-demo")
+    assert first.status_code == second.status_code == 200, first.text
+    assert first.json() == second.json()
+    body = first.json()
+    assert body == calculated
+    assert body["schema_version"] == "v5-representative-demo-v1.0"
+    assert body["sample_id"] == "declining_cash_shortage"
+    assert body["is_synthetic"] is True
+    assert body["calculation_authority"] == "deterministic_rule_event_cashflow_ranking_only"
+    assert [item["alternative_id"] for item in body["scenarios"]] == [
+        "no_action",
+        "track2_reimbursement",
+        "emergency_loan",
+    ]
+    no_action, non_debt, policy_loan = body["scenarios"]
+    assert no_action["week13_cash_change_vs_no_action"] == 0
+    assert non_debt["net_new_borrowing"] == 0
+    assert policy_loan["net_new_borrowing"] > 0
+    assert policy_loan["month6_debt_change_vs_no_action"] > 0
+    assert policy_loan["week13_ending_cash"] - no_action["week13_ending_cash"] == policy_loan["week13_cash_change_vs_no_action"]
+    assert all(item["first_cash_shortage_week"] is None or item["first_cash_shortage_week"] >= 1 for item in body["scenarios"])
+    assert len(body["limitations"]) == 3
 
 
 def test_compatibility_routes_templates_and_removed_routes() -> None:

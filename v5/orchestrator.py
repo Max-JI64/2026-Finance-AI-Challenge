@@ -8,6 +8,7 @@ import re
 import warnings
 from collections import Counter
 from datetime import date, datetime, timedelta, timezone
+from functools import lru_cache
 from typing import Any, Literal
 from uuid import uuid4
 from unittest.mock import patch
@@ -144,6 +145,129 @@ class WhatIfIntent(StrictModel):
     summary: str = Field(default="", max_length=300)
     clarification_question: str | None = Field(default=None, max_length=300)
     operations: list[WhatIfOperation] = Field(default_factory=list, max_length=4)
+
+
+REPRESENTATIVE_DEMO_ALTERNATIVES = (
+    ("no_action", "무대응"),
+    ("track2_reimbursement", "비차입 지원"),
+    ("emergency_loan", "신규 정책자금"),
+)
+
+
+def _first_cash_shortage_week(alternative: dict[str, Any]) -> int | None:
+    for row in alternative.get("weekly_13", []):
+        if int(row.get("minimum_cash", 0)) < 0:
+            return int(row["period"])
+    return None
+
+
+def _demo_metric(alternative: dict[str, Any], key: str) -> int:
+    metrics = alternative.get("metrics") or {}
+    value = metrics.get(key)
+    if value is None:
+        raise ValueError(f"대표 사례 계산 결과에 {key} 지표가 없습니다.")
+    return int(value)
+
+
+def _change_sentence(subject: str, amount: int) -> str:
+    if amount > 0:
+        return f"{subject} 무대응보다 {amount:,}원 늘어납니다"
+    if amount < 0:
+        return f"{subject} 무대응보다 {abs(amount):,}원 줄어듭니다"
+    return f"{subject} 무대응과 같습니다"
+
+
+@lru_cache(maxsize=1)
+def representative_demo() -> dict[str, Any]:
+    """Return one fixed fictional case calculated by the existing finance engine."""
+
+    calculated = compare_sample(SampleCompareRequest(
+        sample_id="declining_cash_shortage",
+        direct_shock_13_week_percent=-12,
+        direct_shock_6_month_percent=-18,
+        goal="최소부채",
+        assume_conditional=True,
+        v2_mode=False,
+    ))
+    alternatives = {
+        str(item.get("alternative_id")): item
+        for item in calculated.get("intervention_results", [])
+    }
+    missing = [alternative_id for alternative_id, _ in REPRESENTATIVE_DEMO_ALTERNATIVES if alternative_id not in alternatives]
+    if missing:
+        raise ValueError(f"대표 사례 대안이 누락되었습니다: {', '.join(missing)}")
+
+    baseline = alternatives["no_action"]
+    scenarios: list[dict[str, Any]] = []
+    for alternative_id, display_label in REPRESENTATIVE_DEMO_ALTERNATIVES:
+        alternative = alternatives[alternative_id]
+        metrics = alternative.get("metrics") or {}
+        scenarios.append({
+            "alternative_id": alternative_id,
+            "label": display_label,
+            "policy_label": alternative.get("label"),
+            "first_cash_shortage_week": _first_cash_shortage_week(alternative),
+            "week13_ending_cash": _demo_metric(alternative, "week13_ending_cash"),
+            "month6_remaining_principal": _demo_metric(alternative, "month6_remaining_principal"),
+            "maximum_monthly_debt_service": _demo_metric(alternative, "maximum_monthly_debt_service"),
+            "total_interest_through_maturity": _demo_metric(alternative, "total_interest_through_maturity"),
+            "net_new_borrowing": _demo_metric(alternative, "net_new_borrowing"),
+            "support_or_cost_reduction": int(metrics.get("support_or_cost_reduction") or 0),
+            "week13_cash_change_vs_no_action": (
+                _demo_metric(alternative, "week13_ending_cash")
+                - _demo_metric(baseline, "week13_ending_cash")
+            ),
+            "month6_debt_change_vs_no_action": (
+                _demo_metric(alternative, "month6_remaining_principal")
+                - _demo_metric(baseline, "month6_remaining_principal")
+            ),
+            "is_conditional": alternative_id != "no_action",
+        })
+
+    non_debt = scenarios[1]
+    policy_loan = scenarios[2]
+    summary = (
+        "비차입 지원의 신규 부채는 0원입니다. "
+        f"{_change_sentence('13주 현금은', non_debt['week13_cash_change_vs_no_action'])}. "
+        f"신규 정책자금을 적용하면 {_change_sentence('13주 현금은', policy_loan['week13_cash_change_vs_no_action'])}. "
+        f"{_change_sentence('6개월 뒤 남은 부채는', policy_loan['month6_debt_change_vs_no_action'])}."
+    )
+    baseline_input = calculated["baseline_input"]
+    reference_month = str(baseline_input["reference_date"])[:7]
+    first_month_events = [
+        item
+        for item in baseline_input["events"]
+        if str(item["event_date"]).startswith(reference_month)
+    ]
+    return {
+        "schema_version": "v5-representative-demo-v1.0",
+        "sample_id": "declining_cash_shortage",
+        "title": "현금 부족과 기존 부채가 함께 있는 가상 음식점",
+        "is_synthetic": True,
+        "calculation_authority": "deterministic_rule_event_cashflow_ranking_only",
+        "input_summary": {
+            "reference_date": baseline_input["reference_date"],
+            "opening_cash": int(baseline_input["opening_cash"]),
+            "monthly_revenue": sum(
+                int(item["amount"])
+                for item in first_month_events
+                if item["event_type"] == "operating_inflow"
+            ),
+            "monthly_fixed_and_variable_cost": sum(
+                int(item["amount"])
+                for item in first_month_events
+                if item["event_type"] in {"fixed_cost", "variable_cost"}
+            ),
+            "existing_loan_balance": sum(int(item["principal"]) for item in baseline_input["loans"]),
+        },
+        "scenarios": scenarios,
+        "summary": summary,
+        "limitations": [
+            "실제 사업장이 아닌 고정 가상 사례입니다.",
+            "정책 지원과 대출은 승인되고 표시된 시점에 실행된 경우를 가정한 계산입니다.",
+            "현재 접수 여부, 실제 승인과 최종 조건은 공식기관에서 확인해야 합니다.",
+        ],
+    }
 
 
 INDUSTRY_ALIASES = {

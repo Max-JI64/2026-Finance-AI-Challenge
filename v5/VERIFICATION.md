@@ -1,25 +1,26 @@
 # V5 검증 기록
 
-검증 시각: 2026-08-26 22:54 KST
+검증 시각: 2026-08-27 11:00 KST
 
 ## 결과 요약
 
-V5-0부터 V5-7까지 코드와 비시각 Gate를 통과했다. V5는 V4에서 독립 복사됐고, V4와 공용 `src/`는 수정하지 않았다. 최종 화면의 시각적 완성도, 모바일 체감, 발표 3분 리허설은 사용자 승인 범위로 남아 있다.
+V5-0부터 V5-7과 V5 Final 코드·비시각 Gate를 통과했다. V5는 V4에서 독립 복사됐고 V4 실행 소스는 그대로다. V5 Final은 공용 추천 응답에 현금흐름 엔진이 이미 계산하던 `6개월 뒤 남은 원금` 필드만 노출했다. 계산식, 자격, 금액, 효과와 순위 로직은 바꾸지 않았다. 최종 화면의 시각적 완성도, 모바일 체감, 발표 3분 리허설은 사용자 승인 범위로 남아 있다.
 
 | 검증 | 결과 |
 | --- | --- |
 | V4 구현 전 기준선 | `v4/tests/test_v4.py` 16/16 통과 |
 | V4 복사 직후 일치 | 16/16 파일 SHA-256 일치 |
-| V5 전용 회귀 | 17/17 통과 |
+| V5 전용 회귀 | 18/18 통과 |
 | V4와 관련 공용 정책 회귀 | 83/83 통과 |
 | 사용자 피드백 후 V3·V4 집중 회귀 | 30/30 통과 |
 | 검토 렌즈 Oracle | 25/25 일치 |
 | 정책별 준비 조건 계약 | 후보별 전체 필드 일치 |
 | 고정 사용자 흐름 계약 | 8/8 일치 |
 | JavaScript 문법 | `app.js`, `v5-extension.js` 2/2 통과 |
-| Python 문법 | `main.py`, `orchestrator.py`, `copilot.py`, `test_v5.py` 통과 |
+| Python 문법 | `main.py`, `orchestrator.py`, 공용 추천 Schema·엔진, `test_v5.py` 통과 |
+| 정적 자산 링크 | 7/7 대상 존재 |
 | V4 원본 불변 | 복사 기준 16/16 SHA-256 유지 |
-| V5 라이브 상태 | PID 24416, `127.0.0.1:8003`, `/health` HTTP 200 |
+| V5 라이브 상태 | PID 21076, `127.0.0.1:8003`, `/health`와 대표 사례 API HTTP 200 |
 
 ## Stage Gate
 
@@ -37,6 +38,17 @@ V5-0부터 V5-7까지 코드와 비시각 Gate를 통과했다. V5는 V4에서 �
 - 정상 경로의 발표 프리셋은 숨기고 `?demo=1`에서만 표시한다.
 - 프리셋은 입력만 채우며 목적 선택이나 계산을 자동 실행하지 않는다.
 - 계산에 연결되지 않던 운영 기간 입력을 제거했다.
+
+### V5 Final. 종료 수정
+
+- 첫 화면의 핵심 문구를 `추가 대출이 위기를 해결하는지, 부채만 늘리는지 계산합니다.`로 고정했다.
+- 사용자가 선택할 때만 여는 `대표 사례 30초 보기`를 추가했다. 고정 가상 입력만 코드에 두고 무대응, 비차입 지원, 신규 정책자금의 결과 숫자는 기존 결정론 엔진에서 계산한다.
+- 대표 사례는 첫 현금 부족 주차, 13주 현금, 6개월 뒤 남은 부채, 월 최대 상환액과 만기까지 총이자를 비교한다.
+- `가상 사례`, `내 사업장 결과가 아닙니다`, 조건부 계산 한계와 개인 진단 이동을 함께 표시한다.
+- `무엇부터 확인할지 모르겠음`을 기본값으로 적용하되 진단 뒤 제안 기준은 사용자가 확인하기 전 확정하지 않는다.
+- 최근 월매출 붙여넣기, 최근 달 금액의 3개월 복사, `임대료 없음`, `직원 없음`, `대출 없음`, 남은 필수 입력 수, 첫 오류 항목 이동과 시기 가정 안내를 추가했다.
+- 거래내역·대출 CSV는 기본 경로를 막지 않는 선택형 정밀 입력으로 유지했다.
+- 첫 화면에서 저장 공고 기준일, 현재 접수와 최종 자격의 공식기관 확인, 승인·실행을 가정한 조건부 효과를 고지한다.
 
 ### V5-2. 검토 렌즈와 계획
 
@@ -87,7 +99,7 @@ V5-0부터 V5-7까지 코드와 비시각 Gate를 통과했다. V5는 V4에서 �
 node --check v5/static/app.js
 node --check v5/static/v5-extension.js
 
-$p = Start-Process -FilePath 'C:\Program Files\Python313\python.exe' -ArgumentList @('-m','py_compile','v5\main.py','v5\orchestrator.py','v5\copilot.py','v5\tests\test_v5.py') -WorkingDirectory 'D:\대회\2026 금융 AI Challenge' -Wait -PassThru -NoNewWindow
+$p = Start-Process -FilePath 'C:\Program Files\Python313\python.exe' -ArgumentList @('-m','py_compile','v5\main.py','v5\orchestrator.py','src\recommendation\schemas.py','src\recommendation\engine.py','v5\tests\test_v5.py') -WorkingDirectory 'D:\대회\2026 금융 AI Challenge' -Wait -PassThru -NoNewWindow
 
 $p = Start-Process -FilePath 'C:\Program Files\Python313\python.exe' -ArgumentList @('-m','pytest','v5\tests\test_v5.py','-q') -WorkingDirectory 'D:\대회\2026 금융 AI Challenge' -Wait -PassThru -NoNewWindow
 
@@ -100,13 +112,24 @@ $p = Start-Process -FilePath 'C:\Program Files\Python313\python.exe' -ArgumentLi
 
 인앱 브라우저의 실제 흐름에서도 앞단 질문 영역 0개, 정책 카드 3개 즉시 표시, 선택 정책의 준비 조건 카드 4개, 직접 선택 버튼 11개, 이전 `답변 수정` 버튼 0개를 확인했다. 조건 하나를 선택한 뒤 준비 화면을 유지하면서 선택 상태가 반영되는 것도 확인했다.
 
+2026-08-27 V5 Final 반영 뒤 V5 전용 18/18과 V4·관련 공용 정책 회귀 83/83을 통과했다. JavaScript 2개와 Python 5개 문법, HTML 정적 자산 링크 7개를 확인했다. 라이브 루트에서 최종 핵심 문구와 `v5-final-002` 자산을 확인했고 대표 사례 API는 엔진 권한 식별자와 세 대안을 반환했다. 대표 사례 표는 현금 부족을 위험색, 현금 확보를 성공색, 무대응보다 증가한 부채·상환 부담을 주의색으로 표시하며 스크린리더용 의미 문구를 함께 제공한다. 화면 캡처 기반 사용자 시각 승인, 모바일 실제 기기 체감과 발표 리허설은 수행하지 않았다.
+
 ## 라이브 확인
 
 - 실행: `v5.main:app`
 - 주소: `http://127.0.0.1:8003/`
-- 프로세스: PID 24416
+- 프로세스: PID 21076
 - `/health`: HTTP 200, `v5-api-v1.0`
-- `/`: HTTP 200, V5 JavaScript 자산 확인
+- `/`: HTTP 200, V5 Final 핵심 문구와 `v5-final-002` 자산 확인
+- `/api/v5/representative-demo`: HTTP 200, 세 대안과 결정론 엔진 권한 확인
+- `/?demo=1`: HTTP 200, 같은 V5 서버에서 발표용 예시 5개 노출 확인
+
+### 대표 사례 표 강조 후속 검증
+
+- 현금 부족 주차와 음수 13주 현금은 `danger`, 13주 내 부족 없음과 양수 13주 현금은 `positive`로 분류된다.
+- 신규 정책자금의 6개월 부채, 월 최대 상환액, 총이자가 무대응보다 크면 `warning`으로 분류된다.
+- 일반 경로에서는 발표용 예시 5개가 숨겨지고 `/?demo=1`에서 같은 서버·같은 V5 코드로 표시된다.
+- V5 전용 회귀 18/18, JavaScript 문법과 변경 파일 공백 검사를 다시 통과했다.
 
 ## 수행하지 않은 항목
 

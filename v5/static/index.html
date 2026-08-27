@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="버팀AI V5는 해결 목적에 맞춰 정책과 재무 지표의 검토 순서를 정하고 13주 현금과 6개월 부채 변화를 비교합니다.">
-  <title>버팀AI V5 - 목적 연결형 정책금융 코파일럿</title>
+  <meta name="description" content="버팀AI V5는 추가 대출이 현금 위기를 해결하는지, 부채만 늘리는지 13주 현금과 6개월 부채로 비교합니다.">
+  <title>버팀AI V5 - 현금 위기와 부채 비교</title>
   <link rel="preconnect" href="https://unpkg.com">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="stylesheet" href="/static/styles.css?v=v5-copy-001">
   <link rel="stylesheet" href="/static/v3-extension.css?v=v5-copy-001">
-  <link rel="stylesheet" href="/static/v5-extension.css?v=v5-001">
+  <link rel="stylesheet" href="/static/v5-extension.css?v=v5-final-002">
 </head>
 <body>
   <header class="site-header">
@@ -36,9 +36,41 @@
     <div class="screen-shell">
       <section class="screen is-active" id="business" aria-labelledby="business-title">
         <section class="v5-intro" aria-labelledby="v5-intro-title">
-          <p class="eyebrow">버팀AI V5</p>
-          <h1 id="v5-intro-title">13주 현금과 6개월 부채를 비교해 지금 먼저 볼 정책을 찾습니다.</h1>
-          <p>해결 목적은 정책과 재무 숫자를 보여주는 순서만 정합니다. 자격, 금액, 효과와 기존 순위는 결정론 엔진이 계산합니다.</p>
+          <p class="eyebrow">소상공인을 위한 정책금융 실행 판단</p>
+          <h1 id="v5-intro-title">추가 대출이 위기를 해결하는지, 부채만 늘리는지 계산합니다.</h1>
+          <p>현금 부족과 기존 대출을 함께 놓고 무대응, 비차입 지원, 신규 정책자금의 13주 현금과 6개월 부채를 비교합니다.</p>
+          <div class="v5-intro-actions">
+            <button type="button" class="secondary" id="v5-open-representative-demo" aria-expanded="false" aria-controls="v5-representative-demo">대표 사례 30초 보기</button>
+            <button type="button" class="primary" id="v5-start-own-diagnosis">내 사업장으로 계산하기</button>
+          </div>
+          <aside class="v5-boundary-note" aria-label="계산 범위와 확인이 필요한 사항">
+            <strong>계산 결과를 이렇게 사용하세요</strong>
+            <ul>
+              <li>정책 자격, 금액, 효과와 순위는 저장 공고와 결정론 엔진으로만 계산합니다.</li>
+              <li>공고 저장 기준일은 정책 카드에 표시하며 현재 접수 여부와 최종 자격은 공식기관에서 확인해야 합니다.</li>
+              <li>정책 효과는 승인되고 표시된 시점에 실행된 경우를 가정한 조건부 결과입니다.</li>
+            </ul>
+          </aside>
+        </section>
+        <section class="v5-representative-demo" id="v5-representative-demo" aria-labelledby="v5-representative-demo-title" hidden tabindex="-1">
+          <div class="v5-demo-heading">
+            <div><p class="eyebrow">가상 사례</p><h2 id="v5-representative-demo-title">대표 사례를 계산하고 있습니다</h2></div>
+            <span>내 사업장 결과가 아닙니다</span>
+          </div>
+          <p id="v5-demo-loading" role="status" aria-live="polite">기존 현금흐름 엔진으로 세 가지 대응을 계산하고 있습니다.</p>
+          <div class="v5-demo-error" id="v5-demo-error" hidden><p>대표 사례를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.</p><button type="button" class="secondary" id="v5-demo-retry">다시 불러오기</button></div>
+          <div id="v5-demo-content" hidden>
+            <dl class="v5-demo-inputs" id="v5-demo-inputs" aria-label="가상 사례 입력값"></dl>
+            <div class="v5-demo-table-wrap" tabindex="0" aria-label="가상 사례 대응별 계산 결과 표">
+              <table class="v5-demo-table">
+                <thead><tr><th scope="col">비교 지표</th><th scope="col">무대응</th><th scope="col">비차입 지원</th><th scope="col">신규 정책자금</th></tr></thead>
+                <tbody id="v5-demo-table-body"></tbody>
+              </table>
+            </div>
+            <p class="v5-demo-summary" id="v5-demo-summary"></p>
+            <ul class="v5-demo-limitations" id="v5-demo-limitations"></ul>
+            <button type="button" class="primary" id="v5-demo-start-own">내 사업장으로 계산하기</button>
+          </div>
         </section>
         <header class="section-heading"><p class="eyebrow">진단 · 사업장</p><h1 id="business-title">어느 상권에서 운영하시나요?</h1><p>서울 전체에서 자치구, 행정동, 개별 상권 순서로 범위를 좁히거나 목록에서 바로 찾을 수 있습니다.</p></header>
         <details class="presentation-presets" id="presentation-presets" hidden><summary><span><strong>발표용 예시 불러오기</strong><small>준비된 가게 상황 5개 보기</small></span></summary><div class="preset-content"><p id="preset-title">예시는 입력값만 채웁니다. 해결 목적 선택, 계산과 정책 선택은 직접 진행합니다.</p><div class="preset-grid"><button type="button" data-preset="cash-rich"><span>1</span><strong>현금 여유가 큰 가게</strong><small>매출과 보유 현금이 안정적</small></button><button type="button" data-preset="stable"><span>2</span><strong>안정적으로 운영 중</strong><small>6개월 매출이 비슷한 수준</small></button><button type="button" data-preset="sales-down"><span>3</span><strong>매출이 줄고 있는 가게</strong><small>최근 2개 분기 동안 매출 하락</small></button><button type="button" data-preset="high-fixed"><span>4</span><strong>고정비가 큰 가게</strong><small>임대료와 인건비 부담이 큼</small></button><button type="button" data-preset="debt-heavy"><span>5</span><strong>대출 상환이 부담인 가게</strong><small>잔액과 이자 부담이 큼</small></button></div><p class="preset-status" id="preset-status" aria-live="polite"></p></div></details>
@@ -89,29 +121,41 @@
             <button type="button" role="radio" aria-checked="false" data-v5-review-lens="policy_choice">지원금과 융자 중 무엇을 볼지 비교</button>
             <button type="button" role="radio" aria-checked="false" data-v5-review-lens="unsure">무엇부터 확인할지 모르겠음</button>
           </div>
-          <p class="field-help" id="v5-lens-status">목적 한 개를 선택해야 다음 단계로 진행할 수 있습니다.</p>
+          <p class="field-help" id="v5-lens-status">무엇부터 확인할지 모르겠음을 기본값으로 적용했습니다. 결과를 본 뒤 검토 기준을 제안합니다.</p>
         </section>
         <div class="screen-actions"><span></span><button class="primary" id="business-next">재무 입력하기</button></div>
       </section>
       <section class="screen" id="finance" aria-labelledby="finance-title">
         <header class="section-heading"><p class="eyebrow">진단 · 재무 입력</p><h1 id="finance-title">최근 현금 흐름을 알려주세요</h1><p>최근 2개 분기, 6개월 매출을 기본으로 입력합니다. 계절 변동이 크면 최대 12개월까지 추가할 수 있습니다.</p></header>
+        <section class="v5-required-progress" id="v5-required-progress" aria-live="polite">
+          <strong id="v5-required-progress-text">필수 입력을 확인하고 있습니다</strong>
+          <span id="v5-required-progress-detail">비어 있는 첫 항목부터 안내합니다.</span>
+        </section>
         <section class="v3-finance-context" id="v3-finance-context" aria-labelledby="v3-finance-context-title" hidden><div><p class="eyebrow">선택한 해결 목적</p><h2 id="v3-finance-context-title">이 항목들을 먼저 확인해 주세요</h2></div><ul id="v3-finance-context-items"></ul></section>
         <section class="input-section" aria-labelledby="revenue-title">
           <div class="input-section-heading"><div><h2 id="revenue-title">최근 월매출</h2><p>부가세 포함 여부를 매월 같은 기준으로 입력해 주세요.</p></div><button class="text-button" id="add-revenue-month">한 달 추가</button></div>
           <div id="revenue-months" class="revenue-months"></div>
           <p class="field-help">기본 6개월, 최소 3개월, 최대 12개월입니다. 현금흐름은 6개월 평균을 사용하고 최근과 과거의 차이는 정책 후보를 찾는 매출 흐름으로 반영합니다.</p>
+          <details class="v5-revenue-tools">
+            <summary>여러 달 매출을 한 번에 입력</summary>
+            <p>가장 최근 달부터 만원 단위 금액을 줄바꿈 또는 공백으로 구분해 붙여 넣으세요. 금액 안의 천 단위 쉼표는 그대로 사용할 수 있습니다.</p>
+            <label for="v5-revenue-paste">월매출 목록<textarea id="v5-revenue-paste" rows="3" inputmode="numeric" placeholder="예: 1,200&#10;1,150&#10;1,080"></textarea></label>
+            <div class="v5-revenue-tool-actions"><button type="button" class="secondary" id="v5-apply-revenue-paste">목록 적용</button><button type="button" class="secondary" id="v5-copy-revenue-three">최근 달 금액을 3개월에 복사</button></div>
+            <p class="field-help" id="v5-revenue-tools-status" aria-live="polite"></p>
+          </details>
           <label class="wide-label">매출이 주로 들어오는 시기<select id="revenue-timing"><option value="daily">매일</option><option value="weekly">매주</option><option value="month_start">매월 1일부터 10일</option><option value="month_middle">매월 11일부터 20일</option><option value="month_end">매월 21일부터 월말</option></select></label>
         </section>
         <section class="input-section" aria-labelledby="cash-title">
           <div class="input-section-heading"><div><h2 id="cash-title">현재 보유 현금과 월 지출</h2><p>통장과 보유 현금을 합친 금액, 그리고 매달 반드시 나가는 비용을 적어 주세요.</p></div></div>
           <div class="form-grid money-grid">
             <label>현재 보유 현금<span class="money-input"><input id="opening-cash" type="number" min="0" step="1" inputmode="numeric" placeholder="예: 500" required><b>만원</b></span></label>
-            <label>월 임대료<span class="money-input"><input id="monthly-rent" type="number" min="0" step="1" inputmode="numeric" placeholder="예: 150" required><b>만원</b></span></label>
-            <label>월 인건비<span class="money-input"><input id="monthly-labor" type="number" min="0" step="1" inputmode="numeric" placeholder="예: 300" required><b>만원</b></span></label>
+            <div class="v5-money-field"><label for="monthly-rent">월 임대료<span class="money-input"><input id="monthly-rent" type="number" min="0" step="1" inputmode="numeric" placeholder="예: 150" required><b>만원</b></span></label><label class="v5-zero-shortcut"><input type="checkbox" id="v5-no-rent"><span>임대료 없음</span></label></div>
+            <div class="v5-money-field"><label for="monthly-labor">월 인건비<span class="money-input"><input id="monthly-labor" type="number" min="0" step="1" inputmode="numeric" placeholder="예: 300" required><b>만원</b></span></label><label class="v5-zero-shortcut"><input type="checkbox" id="v5-no-employees"><span>직원 없음</span></label></div>
             <label>월 필수 매입비<span class="money-input"><input id="monthly-purchase" type="number" min="0" step="1" inputmode="numeric" placeholder="예: 250" required><b>만원</b></span></label>
             <label>월 기타 고정비<span class="money-input"><input id="monthly-other-fixed" type="number" min="0" step="1" inputmode="numeric" placeholder="예: 80" value="0" required><b>만원</b></span><small>공과금·보험료·구독료 등</small></label>
             <label>비용이 주로 나가는 시기<select id="expense-timing"><option value="early">1일부터 10일</option><option value="middle">11일부터 20일</option><option value="late">21일부터 월말</option></select></label>
           </div>
+          <p class="v5-timing-summary" id="v5-timing-summary">입금일과 지출일 가정을 확인하고 있습니다.</p>
         </section>
         <section class="input-section" aria-labelledby="loan-title">
           <div class="input-section-heading v4-loan-heading"><div><h2 id="loan-title">현재 대출</h2><p>대출이 없으면 오른쪽의 `대출 없음`을 선택하세요.</p></div><label class="v4-no-loan"><input type="checkbox" id="v4-no-loan"><span>대출 없음</span></label></div>
@@ -124,7 +168,7 @@
           <p class="field-help">기본 가정: 입력한 잔액·금리·남은 기간의 원리금 균등상환이며, 상환 시기는 선택한 월 구간으로 계산합니다.</p>
         </section>
         <details class="file-input-panel">
-          <summary>거래내역 파일로 더 정확하게 입력</summary>
+          <summary>선택형 정밀 입력: 거래내역·대출 CSV</summary>
           <p>여러 달 또는 여러 분기의 실제 입출금 날짜를 그대로 넣을 수 있습니다. 금액은 만원 단위이며, 한글이 깨지지 않도록 UTF-8-SIG 양식으로 제공합니다.</p>
           <div class="template-links"><a class="secondary" href="/static/templates/거래내역_입력양식.csv" download>거래내역 양식 받기</a><a class="secondary" href="/static/templates/대출_입력양식.csv" download>대출 양식 받기</a></div>
           <div class="form-grid file-grid">
@@ -228,7 +272,7 @@
   <div class="loading-overlay" id="global-loading" role="status" aria-live="assertive" aria-busy="true" hidden><div class="loading-card"><span class="loading-spinner" aria-hidden="true"></span><strong id="global-loading-title">현금흐름을 계산하고 있습니다</strong><p id="global-loading-message">잠시만 기다려 주세요.</p><time id="global-loading-elapsed" role="timer" aria-live="off">경과 시간 0초</time></div></div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script src="/static/app.js?v=v5-001" defer></script>
-  <script src="/static/v5-extension.js?v=v5-001" defer></script>
+  <script src="/static/app.js?v=v5-final-002" defer></script>
+  <script src="/static/v5-extension.js?v=v5-final-002" defer></script>
 </body>
 </html>

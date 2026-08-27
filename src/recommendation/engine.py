@@ -253,6 +253,11 @@ def _metrics(
         survives_6_months=month_result.monthly_summary.first_cash_depletion_date is None,
         net_new_borrowing=amounts["new_debt"] - amounts["payoff"],
         refinanced_principal=amounts["refinanced"],
+        month6_remaining_principal=(
+            int(debt["remaining_principal_at_6_months"])
+            if debt.get("remaining_principal_at_6_months") is not None
+            else None
+        ),
         maximum_monthly_debt_service=max(monthly_services, default=0),
         first_policy_monthly_payment=amounts["first_payment"],
         total_interest_through_maturity=(int(interest) if interest is not None else None),

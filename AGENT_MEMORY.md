@@ -5,7 +5,7 @@
 
 ## Project snapshot
 
-- Last updated: 2026-08-27T09:33+09:00
+- Last updated: 2026-08-27T11:29+09:00
 - Purpose: Build a bounded-AI Seoul small-business finance copilot that separates store trends from aggregate market scenarios, shows policy candidates without an upfront question gate, lets users choose each selected policy's reviewed conditions in its preparation screen, and compares no action with confirmed or explicitly conditional policy effects on deterministic 13-week and 6-month cash/debt horizons.
 - Important paths: `V2 단계별 구현 계획표.md` and `V3 사용자 경험 구성안.md` preserve earlier versions; `V4 구현 계획표.md` and `v4/` preserve the implemented V4; `V5 구현 계획표.md`, `V5 사용자 경험 흐름.md`, `v5/`, `v5/VERIFICATION.md`, and `reports/v5/evaluation/` describe the implemented V5, its V6 comparison baseline, verification evidence, and fixed evaluation Oracles.
 
@@ -673,10 +673,10 @@
 
 - `baseline:v5-user-experience-flow`
   - Created: 2026-08-26T23:26+09:00
-  - Updated: 2026-08-26T23:26+09:00
+  - Updated: 2026-08-27T11:00+09:00
   - Status: active
-  - Content: `V5 사용자 경험 흐름.md` is the implemented V5 UX baseline for future V6 comparison. It records three visible stages, five single-choice review lenses, zero upfront policy questions, three initially visible policy cards, a maximum of three selected policies, variable policy-specific preparation conditions, six notice fields for one policy, one-next-field emphasis, page-local five-turn policy chat, sessionStorage-only user state, deterministic financial authority, all main branches and failures, V5 friction points, and a fill-in V6 comparison table with task-time, action-count, comprehension, choice-quality, and perceived-effort measures. It explicitly separates current implementation from unmeasured visual or usability approval.
-  - Evidence: `V5 사용자 경험 흐름.md` cross-checked against `v5/static/index.html`, `v5/static/app.js`, `v5/static/v5-extension.js`, `v5/orchestrator.py`, `v5/copilot.py`, `v5/README.md`, and `v5/VERIFICATION.md`; code-derived count checks confirmed 3 stage buttons, 5 lens controls, top-3 candidate rendering, maximum-3 selection, zero upfront questionnaire markup, 6 notice keys, and a 5-turn chat limit.
+  - Content: `V5 사용자 경험 흐름.md` is the implemented V5 Final UX baseline. It records the optional fictional three-scenario demo, final target copy and limits, three visible stages, suggested `unsure` lens default across five choices, current-contract input conveniences, zero upfront policy questions, three initially visible policy cards, a maximum of three selected policies, variable policy-specific preparation conditions, six notice fields for one policy, page-local five-turn policy chat, sessionStorage-only user state, deterministic financial authority, all main branches and failures, and the separation between code verification and user-owned visual approval. The five presentation input presets are preserved on the same V5 port and shown only with `/?demo=1`; they are not a separate server.
+  - Evidence: `V5 사용자 경험 흐름.md` cross-checked against `v5/static/index.html`, `v5/static/app.js`, `v5/static/v5-extension.js`, `v5/orchestrator.py`, `v5/copilot.py`, `v5/README.md`, and `v5/VERIFICATION.md`; V5 18/18 and related shared regressions 83/83 pass, including static contracts for final copy, controls, the deterministic representative-demo endpoint, and the query-gated five presentation presets.
 
 - `proposal:v6-crisis-golden-time-navigator`
   - Created: 2026-08-26T23:47+09:00
@@ -694,10 +694,10 @@
 
 - `decision:v5-finalization-and-project-close`
   - Created: 2026-08-27T08:44+09:00
-  - Updated: 2026-08-27T08:56+09:00
+  - Updated: 2026-08-27T11:29+09:00
   - Status: active
-  - Content: The user approved ending the current university AI service project with `V5 Final` instead of building V6 or switching topics. The bounded closeout includes target and core-claim copy, one representative no-action versus non-debt versus policy-loan demo, visible freshness and conditional-result limits, user-owned desktop/mobile and presentation review, final regression/link checks, and wording alignment across the README, specification, presentation, and portfolio. New models, data, V6 features, account/POS/application automation, and long-term accounts or alerts are excluded.
-  - Evidence: User approval on 2026-08-27; `프로젝트 계획서.md` Parts 11-12, `V5 구현 계획표.md` section 31, `V5 사용자 경험 흐름.md` section 19, and `V6 실제 수요 검증 보고서.md` sections 1 and 8. This approval sets the finishing scope but does not claim real-user demand or completed visual review.
+  - Content: The user approved ending the current university AI service project with `V5 Final` instead of building V6 or switching topics. The application-readiness summary proposal is withdrawn and no new feature is added. V5 intentionally ends after cash/debt comparison, condition and notice review, and official-application handoff because current reception and remaining budget require official recheck, final eligibility and approval belong to the institution, automated application would expand financial/document collection and external transmission, and AI does not decide or execute applications. Deployment is deferred by the user and is not an active task.
+  - Evidence: `프로젝트 계획서.md` section 38.1, `V5 사용자 경험 흐름.md` section 18.1, and `V6 실제 수요 검증 보고서.md` section 12 now record the same application-handoff boundary; V5 tests pass 18/18 and both JavaScript entry files pass syntax checks. No service code, model, data, deployment, automatic application, or V6 work changed.
 
 - `baseline:v5-final-unexplored-angle-recheck`
   - Created: 2026-08-27T09:15+09:00
@@ -708,27 +708,34 @@
 
 - `proposal:v5-input-burden-mitigation`
   - Created: 2026-08-27T09:33+09:00
-  - Updated: 2026-08-27T09:33+09:00
-  - Status: proposed
-  - Content: Keep V5's deterministic finance inputs and reduce friction without inventing values: show one representative case before personal entry, default or skip the nonfinancial review-lens choice, offer user-confirmed zero shortcuts, support pasted or repeated revenue values, show required-field progress and focused errors, expose timing assumptions, and keep CSV as optional precision input. Never silently substitute zero, industry averages, or AI guesses. A future ultra-light check using only aggregate essential spending is distinct from the already approved monthly-value-and-timing `간편 추정` contract and requires a separate output/error contract and user approval.
-  - Evidence: Current `v5/static/index.html` and `v5/static/app.js` input and validation paths; `V6 실제 수요 검증 보고서.md` sections 10-11; `V5 사용자 경험 흐름.md` section 20; `프로젝트 계획서.md` section 40. This is documented guidance only, not an implemented V5 change.
+  - Updated: 2026-08-27T10:41+09:00
+  - Status: implemented
+  - Content: V5 Final implements the optional 30-second fictional demo, the suggested `unsure` review-lens default, user-confirmed no-rent/no-employees/no-loan zero shortcuts, pasted 3-12-month revenue values, recent-value copy to three months, required-field progress, first-invalid-field focus, visible timing assumptions, and optional precision CSV. It never silently substitutes zero, industry averages, or AI guesses. An ultra-light aggregate-expense check, automatic finance-data import, or counselor product remains separate follow-up scope.
+  - Evidence: `v5/static/index.html`, `v5/static/app.js`, `v5/static/v5-extension.js`, `v5/static/v5-extension.css`, `v5/orchestrator.py`, and `v5/tests/test_v5.py`; V5 18/18, related shared regressions 83/83, static links 7/7, syntax checks, and live representative-demo response pass.
 
 ## Current handoff
 
 - `handoff:current`
-  - Updated: 2026-08-27T09:33+09:00
-  - Current state: V5 Stage V5-0 through V5-7 code and nonvisual Gates remain implemented and unchanged. The final external recheck and its limitations are now in the authoritative demand report and summarized in the plan. The UX and plan also distinguish safe V5 input-friction reductions from a future ultra-light check that would change the calculation and output contract. The approved `V5 Final` endpoint remains unchanged.
-  - Next step: If requested, choose which documented low-risk input-friction changes belong in the bounded closeout, then implement and verify only those alongside the already approved target copy, representative demo, visible limitations, final regression/link checks, and user-owned visual/mobile/presentation review. Freeze V5 after those checks and close the project.
-  - Blockers: The new input-friction ideas are documented but not implemented. An ultra-light aggregate-expense check, automatic finance-data import, counselor-channel product, future V6, or broader scope requires a separate project decision. External notices or datasets remain user-acquired.
+  - Updated: 2026-08-27T11:29+09:00
+  - Current state: The user reported completing the service review and retained the existing V5 Final feature boundary. The reason for stopping before automatic application is now recorded consistently in the project plan, UX baseline, and demand-validation report. The current V5 suite and JavaScript syntax checks pass, and no service code changed in this documentation update.
+  - Next step: Freeze V5 functionality and reuse the documented application-handoff rationale in the eventual proposal, function specification, and presentation. Deployment is explicitly deferred and should not be raised or started until the user resumes it.
+  - Blockers: No current code or documentation blocker remains. Real-user demand and final-prize likelihood remain unproven, but they do not require another V5 feature in the approved closeout scope.
 
 ## Session log
 
+- `session:20260827-0948`
+  - Started: 2026-08-27T09:48+09:00
+  - Last activity: 2026-08-27T11:29+09:00
+  - Focus: Complete and verify the V5 Final closeout, assess its competition narrative, and document why the service intentionally hands off to official application instead of adding automatic submission.
+  - Updated keys: `decision:v5-finalization-and-project-close`, `proposal:v5-input-burden-mitigation`, `baseline:v5-user-experience-flow`, `handoff:current`
+  - Summary: Implemented the final positioning, deterministic fictional demo, input conveniences, limits, and semantic number emphasis; confirmed the five presentation presets remain at `/?demo=1`; and reran V5 and JavaScript checks successfully. After the user review, withdrew the optional summary-artifact suggestion and documented the approved official-application handoff rationale in three current project reports. Deployment is deferred by the user, and no V6, external data, model, service feature, automatic application, or institutional transmission was added.
+
 - `session:20260827-0926`
   - Started: 2026-08-27T09:26+09:00
-  - Last activity: 2026-08-27T09:33+09:00
-  - Focus: Record the final external recheck in project documents and develop a safe response to V5's user input burden.
-  - Updated keys: `baseline:v5-final-unexplored-angle-recheck`, `proposal:v5-input-burden-mitigation`, `handoff:current`
-  - Summary: Added the new research axes, sources, limitations, and V5 Final conclusion to `V6 실제 수요 검증 보고서.md`, with concise synchronized sections in `프로젝트 계획서.md` and `V5 사용자 경험 흐름.md`. Audited the actual V5 input and validation flow, then separated nonsemantic friction reductions from a future ultra-light check that would require a new calculation and uncertainty contract. Preserved the previously approved monthly-value-and-timing simple-estimation contract and documented that no service code, tests, server, financial authority, dataset, or closeout scope changed.
+  - Last activity: 2026-08-27T09:44+09:00
+  - Focus: Record the final external recheck, define the optional representative demo, and classify input-friction edits between V5 Final and future-version scope.
+  - Updated keys: `decision:v5-finalization-and-project-close`, `baseline:v5-final-unexplored-angle-recheck`, `proposal:v5-input-burden-mitigation`, `handoff:current`
+  - Summary: Added the new research axes, sources, and limits to the authoritative report and synchronized the plan and UX documents. Defined the representative demo as an optional 30-second fictional case whose no-action, non-debt, and policy-loan results come from the V5 engine rather than hardcoded or personal estimates. Classified all current-contract-preserving input-friction edits as V5 Final, listed their actual implementation state, and kept ultra-light aggregate-input diagnosis, automatic imports, counselor products, and V6 outside the closeout. No service code, tests, server, finance authority, dataset, or visual acceptance changed.
 
 - `session:20260827-0911`
   - Started: 2026-08-27T09:11+09:00

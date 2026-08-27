@@ -175,6 +175,7 @@ class AlternativeMetrics(StrictModel):
     survives_6_months: StrictBool
     net_new_borrowing: StrictInt
     refinanced_principal: StrictInt = Field(ge=0)
+    month6_remaining_principal: StrictInt | None = Field(default=None, ge=0)
     maximum_monthly_debt_service: StrictInt = Field(ge=0)
     first_policy_monthly_payment: StrictInt = Field(ge=0)
     total_interest_through_maturity: StrictInt | None
