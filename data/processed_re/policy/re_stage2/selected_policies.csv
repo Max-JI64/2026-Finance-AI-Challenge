@@ -1,0 +1,11 @@
+﻿policy_id,group_id,portfolio,display_order,policy_name,role,cashflow_potential,seoul_focus,source_codes,selection_status,official_validation_status
+POL_SEOUL_FUND_2026,GRP_986459037b76bc05,A+C,1,2026년도 서울특별시 중소기업육성자금 융자지원 변경계획,서울 금융·이차보전·융자,high,yes,P04_SEOUL_FUND,최종선정_사용자승인,공식원문검증완료_RE2
+POL_SEOUL_CRISIS_TRACK2_2026H2,GRP_059661575f800512,A+C,2,[서울] 2026년 하반기 위기 소상공인 조기발굴 및 선제지원(Track2) 사업 모집 공고,서울 위기 선제지원,medium,yes,P01_BIZINFO;P05_SME24,최종선정_사용자승인,공식원문검증완료_RE2
+POL_SEOUL_CLOSURE_2026,GRP_8addc5b8a4605054,A+C,3,[서울] 2026년 새 길 여는 폐업지원 사업 모집 공고,서울 폐업지원,medium,yes,P01_BIZINFO;P05_SME24,최종선정_사용자승인,공식원문검증완료_RE2
+POL_SEOUL_DIGITAL_MIDLIFE_2026H2,GRP_3e9edccb0ee86990,A+C,4,[서울] 2026년 하반기 중장년 소상공인 디지털 전환지원 사업 모집 공고,서울 디지털 전환,medium,yes,P01_BIZINFO;P05_SME24,최종선정_사용자승인,공식원문검증완료_RE2
+POL_SEOUL_ZERO_MARKET_2026_2,GRP_9952c69b120ce343,A+C,5,[서울] 2026년 2차 서울제로마켓 활성화 사업 참여자 모집 공고,서울 친환경 판로,medium,yes,P01_BIZINFO;P05_SME24,최종선정_사용자승인,공식원문검증완료_RE2
+POL_SEOUL_SAFETY_TEST_2026H2,GRP_0437d4b877340e15,A+C,6,[서울] 2026년 하반기 소상공인 안전검사 지원사업 공고(생활용품 및 어린이제품),서울 검사비 지원,high,yes,P01_BIZINFO;P05_SME24,최종선정_사용자승인,공식원문검증완료_RE2
+POL_SEOUL_RESTART_2026,GRP_eebf82e34fa3bb67,A+C,7,다시서기 프로젝트,서울 재기 복합지원,high,yes,P04_SEOUL_SUPPORT,최종선정_사용자승인,공식원문검증완료_RE2
+POL_SEMAS_REFINANCE_2026,GRP_b2fae65b4e109c08,A+C,8,대환대출,대환·채무완화,high,no,P03_SEMAS_OVERVIEW,최종선정_사용자승인,공식원문검증완료_RE2
+POL_SEMAS_RECHALLENGE_2026,GRP_8a8a930f24156e8c,A+C,9,재도전특별자금,재기 금융,high,no,P03_SEMAS_OVERVIEW,최종선정_사용자승인,공식원문검증완료_RE2
+POL_SEMAS_STABILITY_VOUCHER_2026,GRP_5c8130070c7bb48f,A+C,10,소상공인 경영안정 바우처 지원사업 시행 공고,비차입 비용지원,high,no,P01_BIZINFO;P05_SME24,최종선정_사용자승인,공식원문검증완료_RE2
