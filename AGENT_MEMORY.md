@@ -5,9 +5,9 @@
 
 ## Project snapshot
 
-- Last updated: 2026-08-26T18:36+09:00
-- Purpose: Build a bounded-AI Seoul small-business finance copilot that separates store trends from aggregate market scenarios, presents candidate-specific reviewed policy questions one at a time before revealing policy routes, and compares no action with confirmed or explicitly conditional policy effects on deterministic 13-week and 6-month cash/debt horizons.
-- Important paths: `V2 단계별 구현 계획표.md` and `V3 사용자 경험 구성안.md` preserve earlier versions; `V4 구현 계획표.md` and `v4/` describe the implemented V4; `V5 구현 계획표.md` is the approved V5 product and implementation contract. V5 implementation has not started and the next session must begin by copying the approved V4 source and static assets into an independent `v5/` with a recorded SHA-256 baseline.
+- Last updated: 2026-08-27T09:33+09:00
+- Purpose: Build a bounded-AI Seoul small-business finance copilot that separates store trends from aggregate market scenarios, shows policy candidates without an upfront question gate, lets users choose each selected policy's reviewed conditions in its preparation screen, and compares no action with confirmed or explicitly conditional policy effects on deterministic 13-week and 6-month cash/debt horizons.
+- Important paths: `V2 단계별 구현 계획표.md` and `V3 사용자 경험 구성안.md` preserve earlier versions; `V4 구현 계획표.md` and `v4/` preserve the implemented V4; `V5 구현 계획표.md`, `V5 사용자 경험 흐름.md`, `v5/`, `v5/VERIFICATION.md`, and `reports/v5/evaluation/` describe the implemented V5, its V6 comparison baseline, verification evidence, and fixed evaluation Oracles.
 
 ## Durable decisions
 
@@ -666,20 +666,90 @@
 
 - `decision:v5-copy-forward-implementation-plan`
   - Created: 2026-08-26T18:36+09:00
-  - Updated: 2026-08-26T18:36+09:00
-  - Status: approved_plan
-  - Content: `V5 구현 계획표.md` is the authoritative V5 contract. V5 must start from the current approved `v4/`, copy source, static assets, templates, and tests into an independent `v5/`, record a 100% matching `v5/V4_COPY_BASELINE_SHA256.md`, exclude caches, logs, and bytecode, and modify only V5. V5 uses port 8003, `/api/v5`, `v5-api-v1.0`, `buttimaiv5:session:v1`, and a separate public-notice extraction cache. Its P0 centers one confirmed review lens, a visible AI review plan, at most two decision-impact questions, separate review and ranking order, one next notice confirmation, strict tool contracts, and fixed evaluations; multi-agent, LangGraph, OCR, external data acquisition, automatic application, and user financial-data persistence remain excluded.
-  - Evidence: User instruction on 2026-08-26 and complete `V5 구현 계획표.md`, including sections 21 through 24 for copy boundaries, file mapping, Stage V5-0 through V5-7, and evaluation Gates.
+  - Updated: 2026-08-26T23:26+09:00
+  - Status: implemented
+  - Content: `V5 구현 계획표.md` remains the authoritative V5 contract and is implemented in the independent `v5/` service. V5 records 16/16 V4 copy hashes, uses port 8003, `/api/v5`, `v5-api-v1.0`, `buttimaiv5:session:v1`, and its own public-notice extraction cache. Its visible P0 connects one confirmed review lens to a short local review plan, shows policy candidates immediately without an upfront question gate, keeps separate review and ranking positions, and uses lens-specific selected-policy review and metric order. The current notice-field order is fixed across lenses as application period, financing terms, application path, required documents, contact, and publication date. After comparison, the selected policy's preparation screen shows every reviewed condition linked by the shared `POLICY_FIELDS` contract as direct choices and recalculates eligibility and supported conditional effects in place; reception status, remaining budget, and other user-unanswerable checks stay in a separate institution-check section. Internal design explanation cards, signal or mechanism keys, public-notice chunk counts, and notice digests are not user-facing. Six notice confirmations mean six extracted fields for one selected policy, not six policies. Completion ends only the on-screen review and routes the user to current official reception checks or back to comparison. Policy selection remains capped at three from V2 through V5, and the amount graph contains no action plus only supported selected-policy alternatives. Deterministic Rule, Event, cash, eligibility, amount, effect, and ranking authority remain unchanged; multi-agent, LangGraph, OCR, external data acquisition, automatic application, and user financial-data persistence remain excluded.
+  - Evidence: `V5 구현 계획표.md`, `v5/V4_COPY_BASELINE_SHA256.md`, `v5/`, `v5/VERIFICATION.md`, and `reports/v5/evaluation/`; V5 tests pass 17/17, post-feedback V3/V4 tests pass 30/30, the review-lens Oracle passes 25/25, fixed personas pass 8/8, every candidate's preparation conditions match the shared policy contract, the in-app browser verified the direct preparation-choice flow, and V4 source hashes remain 16/16 unchanged.
+
+- `baseline:v5-user-experience-flow`
+  - Created: 2026-08-26T23:26+09:00
+  - Updated: 2026-08-26T23:26+09:00
+  - Status: active
+  - Content: `V5 사용자 경험 흐름.md` is the implemented V5 UX baseline for future V6 comparison. It records three visible stages, five single-choice review lenses, zero upfront policy questions, three initially visible policy cards, a maximum of three selected policies, variable policy-specific preparation conditions, six notice fields for one policy, one-next-field emphasis, page-local five-turn policy chat, sessionStorage-only user state, deterministic financial authority, all main branches and failures, V5 friction points, and a fill-in V6 comparison table with task-time, action-count, comprehension, choice-quality, and perceived-effort measures. It explicitly separates current implementation from unmeasured visual or usability approval.
+  - Evidence: `V5 사용자 경험 흐름.md` cross-checked against `v5/static/index.html`, `v5/static/app.js`, `v5/static/v5-extension.js`, `v5/orchestrator.py`, `v5/copilot.py`, `v5/README.md`, and `v5/VERIFICATION.md`; code-derived count checks confirmed 3 stage buttons, 5 lens controls, top-3 candidate rendering, maximum-3 selection, zero upfront questionnaire markup, 6 notice keys, and a 5-turn chat limit.
+
+- `proposal:v6-crisis-golden-time-navigator`
+  - Created: 2026-08-26T23:47+09:00
+  - Updated: 2026-08-27T08:56+09:00
+  - Status: superseded
+  - Content: The desk-research V6 candidate would have preserved the deterministic policy Event and 13-week/6-month engine while narrowing the target to pre-delinquency businesses with existing debt and roughly 4-12 weeks of cash runway. The user chose not to implement this candidate in the current project; `decision:v5-finalization-and-project-close` replaces it.
+  - Evidence: `V6 실제 수요 검증 보고서.md` preserves the candidate as future research, while the 2026-08-27 user decision and updated V5/project documents set V5 Final as the current project endpoint.
+
+- `baseline:v6-need-validation-research`
+  - Created: 2026-08-27T08:35+09:00
+  - Updated: 2026-08-27T08:35+09:00
+  - Status: active
+  - Content: Desk research is complete for the problem, incumbent public descriptions, adjacent pivot candidates, and keep/pivot criteria. It confirms material cash/debt distress, delayed crisis decisions, fragmented application behavior, and the risk that new lending only postpones failure. Public descriptions of Small Business 365, Seoul's commercial-district service, and Cashnote cover diagnosis, policy discovery, alerts, cash records, or loan comparison, but did not establish the same individual no-action versus policy cash/debt simulation. This absence is not proof that no hidden or counselor-only equivalent exists. Actual need remains unvalidated until target users or experienced counselors demonstrate changed borrowing amount, policy choice, timing, or referral path.
+  - Evidence: `V6 실제 수요 검증 보고서.md`; `V5 사용자 경험 흐름.md` lines 478-554; `프로젝트 계획서.md` lines 2413-2425; official sources linked in the report. No external file was downloaded and no service code, financial contract, server, dataset, or deployment changed.
+
+- `decision:v5-finalization-and-project-close`
+  - Created: 2026-08-27T08:44+09:00
+  - Updated: 2026-08-27T08:56+09:00
+  - Status: active
+  - Content: The user approved ending the current university AI service project with `V5 Final` instead of building V6 or switching topics. The bounded closeout includes target and core-claim copy, one representative no-action versus non-debt versus policy-loan demo, visible freshness and conditional-result limits, user-owned desktop/mobile and presentation review, final regression/link checks, and wording alignment across the README, specification, presentation, and portfolio. New models, data, V6 features, account/POS/application automation, and long-term accounts or alerts are excluded.
+  - Evidence: User approval on 2026-08-27; `프로젝트 계획서.md` Parts 11-12, `V5 구현 계획표.md` section 31, `V5 사용자 경험 흐름.md` section 19, and `V6 실제 수요 검증 보고서.md` sections 1 and 8. This approval sets the finishing scope but does not claim real-user demand or completed visual review.
+
+- `baseline:v5-final-unexplored-angle-recheck`
+  - Created: 2026-08-27T09:15+09:00
+  - Updated: 2026-08-27T09:33+09:00
+  - Status: active
+  - Content: A final external recheck from previously unused angles supports the 13-week no-action versus intervention calculation as a credible distress decision aid, but weakens the case for V5 as a self-serve consumer product because financial stress, multi-step policy applications, and follow-up burdens can prevent information from becoming action. Future real-service potential is stronger as a repeated counselor/accountant/support-institution tool than as a broader V6 feature expansion; this is a research-grounded hypothesis, not Korean user or partner validation.
+  - Evidence: UK Pensions Regulator rolling 13-week distress guidance; FCA Occasional Paper 61 robo-advice RCT; AEJ Economic Policy 2026 application-assistance RCT; 2026 Spanish minimum-income take-up RCT; KOSME six-step application flow; IFAC/World Bank SME advisory guidance; current Financial Consumer Protection Act registration boundary. The sourced interpretation and limits are now recorded in `V6 실제 수요 검증 보고서.md` section 9 and summarized in `프로젝트 계획서.md` section 39. No external file was downloaded and no code, financial contract, dataset, server, project scope, or closeout decision changed.
+
+- `proposal:v5-input-burden-mitigation`
+  - Created: 2026-08-27T09:33+09:00
+  - Updated: 2026-08-27T09:33+09:00
+  - Status: proposed
+  - Content: Keep V5's deterministic finance inputs and reduce friction without inventing values: show one representative case before personal entry, default or skip the nonfinancial review-lens choice, offer user-confirmed zero shortcuts, support pasted or repeated revenue values, show required-field progress and focused errors, expose timing assumptions, and keep CSV as optional precision input. Never silently substitute zero, industry averages, or AI guesses. A future ultra-light check using only aggregate essential spending is distinct from the already approved monthly-value-and-timing `간편 추정` contract and requires a separate output/error contract and user approval.
+  - Evidence: Current `v5/static/index.html` and `v5/static/app.js` input and validation paths; `V6 실제 수요 검증 보고서.md` sections 10-11; `V5 사용자 경험 흐름.md` section 20; `프로젝트 계획서.md` section 40. This is documented guidance only, not an implemented V5 change.
 
 ## Current handoff
 
 - `handoff:current`
-  - Updated: 2026-08-26T18:36+09:00
-  - Current state: `V5 구현 계획표.md` is complete with 30 sections covering the V4 copy boundary, V5 product and UX contract, deterministic financial authority, bounded AI tools, API and storage separation, CSS continuity, Stage V5-0 through V5-7, 25 review-lens and 30 question-planner Oracle cases, completion Gates, and a new-session start prompt. No `v5/` directory exists and no V4, shared-engine, server, test, external-AI, or external-data action occurred in this planning session.
-  - Next step: In a new session, read `AGENT_MEMORY.md` and `V5 구현 계획표.md`, then execute only Stage V5-0 first: verify current V4, copy the approved V4 source and static assets into `v5/`, record copy equality, separate V5 runtime values, and confirm V4 source hashes remain unchanged before Stage V5-1.
-  - Blockers: No blocker exists for the approved V5 P0 plan. Stop for user approval if implementation discovers a need to change financial calculations, Rule/Event/amount/ranking authority, shared `src/`, V4 files, public-notice fields, external data, external transmission, persistence, multi-agent, LangGraph, OCR, or automatic application. Final visual and presentation acceptance remain user-owned.
+  - Updated: 2026-08-27T09:33+09:00
+  - Current state: V5 Stage V5-0 through V5-7 code and nonvisual Gates remain implemented and unchanged. The final external recheck and its limitations are now in the authoritative demand report and summarized in the plan. The UX and plan also distinguish safe V5 input-friction reductions from a future ultra-light check that would change the calculation and output contract. The approved `V5 Final` endpoint remains unchanged.
+  - Next step: If requested, choose which documented low-risk input-friction changes belong in the bounded closeout, then implement and verify only those alongside the already approved target copy, representative demo, visible limitations, final regression/link checks, and user-owned visual/mobile/presentation review. Freeze V5 after those checks and close the project.
+  - Blockers: The new input-friction ideas are documented but not implemented. An ultra-light aggregate-expense check, automatic finance-data import, counselor-channel product, future V6, or broader scope requires a separate project decision. External notices or datasets remain user-acquired.
 
 ## Session log
+
+- `session:20260827-0926`
+  - Started: 2026-08-27T09:26+09:00
+  - Last activity: 2026-08-27T09:33+09:00
+  - Focus: Record the final external recheck in project documents and develop a safe response to V5's user input burden.
+  - Updated keys: `baseline:v5-final-unexplored-angle-recheck`, `proposal:v5-input-burden-mitigation`, `handoff:current`
+  - Summary: Added the new research axes, sources, limitations, and V5 Final conclusion to `V6 실제 수요 검증 보고서.md`, with concise synchronized sections in `프로젝트 계획서.md` and `V5 사용자 경험 흐름.md`. Audited the actual V5 input and validation flow, then separated nonsemantic friction reductions from a future ultra-light check that would require a new calculation and uncertainty contract. Preserved the previously approved monthly-value-and-timing simple-estimation contract and documented that no service code, tests, server, financial authority, dataset, or closeout scope changed.
+
+- `session:20260827-0911`
+  - Started: 2026-08-27T09:11+09:00
+  - Last activity: 2026-08-27T09:15+09:00
+  - Focus: Recheck the V5 Final decision through external research angles not used in the earlier demand and competitor review.
+  - Updated keys: `baseline:v5-final-unexplored-angle-recheck`, `handoff:current`
+  - Summary: Reviewed behavioral decision evidence, administrative take-up experiments, 13-week distress cash-flow practice, SME adviser channels, the current Korean policy-fund application flow, and financial-product intermediation boundaries. The evidence supports V5's deterministic no-action comparison but not its direct-to-consumer demand or policy-success claims, so the approved V5 Final closeout remains correct and any future growth should first test a counselor-embedded decision aid rather than add V6 features. No code, tests, external acquisition, deployment, financial contract, server, dataset, or closeout scope changed.
+
+- `session:20260826-2342`
+  - Started: 2026-08-26T23:42+09:00
+  - Last activity: 2026-08-27T08:56+09:00
+  - Focus: Reassess whether V5 solves a real user need, compare current public services and financial distress evidence, then convert the result into an honest student-project finalization decision without changing implementation.
+  - Updated keys: `proposal:v6-crisis-golden-time-navigator`, `baseline:v6-need-validation-research`, `decision:v5-finalization-and-project-close`, `handoff:current`
+  - Summary: Completed the desk research, integrated its evidence and limits, and received user approval to finish the current project as `V5 Final` instead of implementing V6 or switching topics. Updated `프로젝트 계획서.md`, `V5 구현 계획표.md`, `V5 사용자 경험 흐름.md`, and `V6 실제 수요 검증 보고서.md` so they consistently define the bounded closeout and preserve the absence of real-user demand evidence. The former V6 candidate is now a superseded future-research option. No code, tests, external file acquisition, deployment, financial contract, server, or dataset changed.
+
+- `session:20260826-1902`
+  - Started: 2026-08-26T19:02+09:00
+  - Last activity: 2026-08-26T23:26+09:00
+  - Focus: Implement and refine the approved V5 copy-forward contract, then document the actual V5 user journey as the baseline for V6 comparison while preserving V4 and deterministic financial authority.
+  - Updated keys: `decision:v5-copy-forward-implementation-plan`, `baseline:v5-user-experience-flow`, `handoff:current`
+  - Summary: Copied and hashed the 16 approved V4 files into independent V5, implemented the three-stage user shell, single review lens, local review plan, review-versus-ranking separation, metric prioritization, one-next-confirmation UI, strict traces and authority hashes, and fixed review/persona evaluations. User screen feedback replaced internal identifiers with Korean meaning, added notice loading feedback, hid chunk/digest metadata, distinguished six notice fields from selected policies, and added post-confirmation official-check and comparison-return actions. The follow-up removed the internal order/criteria cards and the at-most-two upfront question gate, then moved all selected-policy conditions into direct preparation-screen choices with in-place recalculation and separate institution checks. `V5 사용자 경험 흐름.md` now documents the actual entry, diagnosis, comparison, preparation, loading, failure, persistence, and completion paths; V4 carryovers and V5 changes; current UX burdens; representative comparison scenarios; and a fill-in V6 measurement table. The code check also corrected an earlier assumption: notice-field order is currently fixed across lenses. V5 17/17 and V3/V4 30/30 tests remain the latest code results; this documentation-only update did not rerun tests or change service code. External AI, external data, deployment, final visual acceptance, mobile acceptance, and presentation rehearsal were not performed.
 
 - `session:20260826-1826`
   - Started: 2026-08-26T18:26+09:00

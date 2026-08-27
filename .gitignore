@@ -32,8 +32,10 @@ rag/index/*
 !rag/index/.gitkeep
 !rag/index/policy_re8.sqlite3
 tmp/*.log
+v5/runtime/*.log
 
 *.csv
 !reports/**/*.csv
+!v5/static/templates/*.csv
 *.sqlite
 *.parquet

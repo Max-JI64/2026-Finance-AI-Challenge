@@ -1,0 +1,80 @@
+{
+  "version": "v5-question-planner-oracle-v1",
+  "purpose": "검수 질문만 사용해 영향도 2 이상을 안정 정렬하고 최대 두 개로 제한하는지 고정 검증한다.",
+  "candidate_profiles": {
+    "all": [
+      {"policy_id":"POL_SEOUL_FUND_2026","candidate_state":"확인 후 비교","eligibility_status":"확인 필요"},
+      {"policy_id":"POL_SEMAS_REFINANCE_2026","candidate_state":"확인 후 비교","eligibility_status":"확인 필요"},
+      {"policy_id":"POL_SEMAS_STABILITY_VOUCHER_2026","candidate_state":"확인 후 비교","eligibility_status":"확인 필요"}
+    ],
+    "refinance_voucher": [
+      {"policy_id":"POL_SEMAS_REFINANCE_2026","candidate_state":"확인 후 비교","eligibility_status":"확인 필요"},
+      {"policy_id":"POL_SEMAS_STABILITY_VOUCHER_2026","candidate_state":"확인 후 비교","eligibility_status":"확인 필요"}
+    ],
+    "refinance": [
+      {"policy_id":"POL_SEMAS_REFINANCE_2026","candidate_state":"확인 후 비교","eligibility_status":"확인 필요"}
+    ],
+    "voucher": [
+      {"policy_id":"POL_SEMAS_STABILITY_VOUCHER_2026","candidate_state":"확인 후 비교","eligibility_status":"확인 필요"}
+    ],
+    "seoul_fund": [
+      {"policy_id":"POL_SEOUL_FUND_2026","candidate_state":"확인 후 비교","eligibility_status":"확인 필요"}
+    ],
+    "none": [],
+    "excluded": [
+      {"policy_id":"POL_SEOUL_FUND_2026","candidate_state":"제외","eligibility_status":"부적격"},
+      {"policy_id":"POL_SEMAS_REFINANCE_2026","candidate_state":"제외","eligibility_status":"부적격"},
+      {"policy_id":"POL_SEMAS_STABILITY_VOUCHER_2026","candidate_state":"제외","eligibility_status":"부적격"}
+    ]
+  },
+  "question_catalogs": {
+    "full": [
+      {"field":"subfund_selected","label":"세부 자금 유형","input_type":"select","reason":"계산할 세부 자금 유형이 필요합니다.","impact":"금액과 일정 경로가 달라집니다.","options":[{"value":"general","label":"일반자금"}],"policy_ids":["POL_SEOUL_FUND_2026"]},
+      {"field":"shared_eligibility","label":"공통 확인 조건","input_type":"tri_state","reason":"두 정책의 공식 조건입니다.","impact":"자격 경로가 달라집니다.","options":[{"value":"yes","label":"예"},{"value":"no","label":"아니오"}],"policy_ids":["POL_SEMAS_REFINANCE_2026","POL_SEMAS_STABILITY_VOUCHER_2026"]},
+      {"field":"refinance_started_at","label":"기존 대출 실행일","input_type":"date","reason":"대환 계산 가능성을 확인합니다.","impact":"대환 계산 경로가 달라집니다.","options":[],"policy_ids":["POL_SEMAS_REFINANCE_2026"]},
+      {"field":"voucher_utility_contract","label":"적격 공과금 계약","input_type":"tri_state","reason":"바우처 공식 조건입니다.","impact":"자격 경로가 달라집니다.","options":[{"value":"yes","label":"예"},{"value":"no","label":"아니오"}],"policy_ids":["POL_SEMAS_STABILITY_VOUCHER_2026"]},
+      {"field":"detail_only","label":"설명 상세 선택","input_type":"select","reason":"설명을 더 자세히 보여줍니다.","impact":"계산과 경로는 유지됩니다.","options":[],"policy_ids":["POL_UNKNOWN"]}
+    ],
+    "low_only": [
+      {"field":"detail_only","label":"설명 상세 선택","input_type":"select","reason":"설명을 더 자세히 보여줍니다.","impact":"계산과 경로는 유지됩니다.","options":[],"policy_ids":["POL_UNKNOWN"]}
+    ]
+  },
+  "cases": [
+    {"id":"question-01","review_lens":"cash_runway","candidate_profile":"all","question_catalog":"full","expected_question_ids":["subfund_selected","shared_eligibility"]},
+    {"id":"question-02","review_lens":"debt_relief","candidate_profile":"all","question_catalog":"full","expected_question_ids":["subfund_selected","shared_eligibility"]},
+    {"id":"question-03","review_lens":"fixed_cost","candidate_profile":"all","question_catalog":"full","expected_question_ids":["subfund_selected","shared_eligibility"]},
+    {"id":"question-04","review_lens":"policy_choice","candidate_profile":"all","question_catalog":"full","expected_question_ids":["subfund_selected","shared_eligibility"]},
+
+    {"id":"question-05","review_lens":"cash_runway","candidate_profile":"all","question_catalog":"full","answered_fields":["subfund_selected"],"expected_question_ids":["shared_eligibility","voucher_utility_contract"]},
+    {"id":"question-06","review_lens":"debt_relief","candidate_profile":"all","question_catalog":"full","answered_fields":["subfund_selected"],"expected_question_ids":["shared_eligibility","refinance_started_at"]},
+    {"id":"question-07","review_lens":"fixed_cost","candidate_profile":"all","question_catalog":"full","answered_fields":["subfund_selected"],"expected_question_ids":["shared_eligibility","voucher_utility_contract"]},
+    {"id":"question-08","review_lens":"policy_choice","candidate_profile":"all","question_catalog":"full","answered_fields":["subfund_selected"],"expected_question_ids":["shared_eligibility","voucher_utility_contract"]},
+
+    {"id":"question-09","review_lens":"cash_runway","candidate_profile":"all","question_catalog":"full","asked_fields":["shared_eligibility"],"expected_question_ids":["subfund_selected","voucher_utility_contract"]},
+    {"id":"question-10","review_lens":"debt_relief","candidate_profile":"all","question_catalog":"full","asked_fields":["shared_eligibility"],"expected_question_ids":["subfund_selected","refinance_started_at"]},
+    {"id":"question-11","review_lens":"fixed_cost","candidate_profile":"all","question_catalog":"full","asked_fields":["shared_eligibility"],"expected_question_ids":["subfund_selected","voucher_utility_contract"]},
+    {"id":"question-12","review_lens":"policy_choice","candidate_profile":"all","question_catalog":"full","asked_fields":["shared_eligibility"],"expected_question_ids":["subfund_selected","voucher_utility_contract"]},
+
+    {"id":"question-13","review_lens":"cash_runway","candidate_profile":"refinance_voucher","question_catalog":"full","expected_question_ids":["shared_eligibility","voucher_utility_contract"]},
+    {"id":"question-14","review_lens":"debt_relief","candidate_profile":"refinance_voucher","question_catalog":"full","expected_question_ids":["shared_eligibility","refinance_started_at"]},
+    {"id":"question-15","review_lens":"fixed_cost","candidate_profile":"refinance_voucher","question_catalog":"full","expected_question_ids":["shared_eligibility","voucher_utility_contract"]},
+    {"id":"question-16","review_lens":"policy_choice","candidate_profile":"refinance_voucher","question_catalog":"full","expected_question_ids":["shared_eligibility","voucher_utility_contract"]},
+
+    {"id":"question-17","review_lens":"cash_runway","candidate_profile":"refinance","question_catalog":"full","expected_question_ids":["shared_eligibility","refinance_started_at"]},
+    {"id":"question-18","review_lens":"debt_relief","candidate_profile":"refinance","question_catalog":"full","expected_question_ids":["shared_eligibility","refinance_started_at"]},
+    {"id":"question-19","review_lens":"fixed_cost","candidate_profile":"refinance","question_catalog":"full","expected_question_ids":["shared_eligibility","refinance_started_at"]},
+    {"id":"question-20","review_lens":"policy_choice","candidate_profile":"refinance","question_catalog":"full","expected_question_ids":["shared_eligibility","refinance_started_at"]},
+
+    {"id":"question-21","review_lens":"cash_runway","candidate_profile":"voucher","question_catalog":"full","expected_question_ids":["shared_eligibility","voucher_utility_contract"]},
+    {"id":"question-22","review_lens":"debt_relief","candidate_profile":"voucher","question_catalog":"full","expected_question_ids":["shared_eligibility","voucher_utility_contract"]},
+    {"id":"question-23","review_lens":"fixed_cost","candidate_profile":"voucher","question_catalog":"full","expected_question_ids":["shared_eligibility","voucher_utility_contract"]},
+    {"id":"question-24","review_lens":"policy_choice","candidate_profile":"voucher","question_catalog":"full","expected_question_ids":["shared_eligibility","voucher_utility_contract"]},
+
+    {"id":"question-25","review_lens":"cash_runway","candidate_profile":"seoul_fund","question_catalog":"full","expected_question_ids":["subfund_selected"]},
+    {"id":"question-26","review_lens":"debt_relief","candidate_profile":"none","question_catalog":"full","expected_question_ids":[]},
+    {"id":"question-27","review_lens":"fixed_cost","candidate_profile":"excluded","question_catalog":"full","expected_question_ids":[]},
+    {"id":"question-28","review_lens":"policy_choice","candidate_profile":"all","question_catalog":"full","asked_count":1,"expected_question_ids":["subfund_selected"]},
+    {"id":"question-29","review_lens":"cash_runway","candidate_profile":"all","question_catalog":"full","asked_count":2,"expected_question_ids":[]},
+    {"id":"question-30","review_lens":"debt_relief","candidate_profile":"all","question_catalog":"low_only","expected_question_ids":[]}
+  ]
+}

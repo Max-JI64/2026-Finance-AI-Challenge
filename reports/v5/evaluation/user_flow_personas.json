@@ -1,0 +1,14 @@
+{
+  "version": "v5-user-flow-oracle-v1",
+  "scope": "기능 일관성 평가이며 실제 사용자 만족도, 정책 승인 또는 실제 정책 효과를 뜻하지 않는다.",
+  "personas": [
+    {"id":"persona-01","name":"현금 부족 카페","review_lens":"cash_runway","signal_profile":["cash_gap_28d","sales_direction"],"expected_question_count":1,"comparison_reachable":true,"expected_focus_mechanism":"grant_or_cost_reduction","expected_next_notice_field":"application_period","forbidden_financial_claim_expected":false},
+    {"id":"persona-02","name":"고금리 대출 음식점","review_lens":"debt_relief","signal_profile":["high_interest_debt_present","negative_cash_within_13w"],"expected_question_count":2,"comparison_reachable":true,"expected_focus_mechanism":"refinance","expected_next_notice_field":"application_period","forbidden_financial_claim_expected":false},
+    {"id":"persona-03","name":"임대료 부담 미용업","review_lens":"fixed_cost","signal_profile":["fixed_cost_pressure"],"expected_question_count":1,"comparison_reachable":true,"expected_focus_mechanism":"cost_reduction","expected_next_notice_field":"application_period","forbidden_financial_claim_expected":false},
+    {"id":"persona-04","name":"지원 방식 비교 소매업","review_lens":"policy_choice","signal_profile":["policy_route_uncertainty"],"expected_question_count":2,"comparison_reachable":true,"expected_focus_mechanism":"grant","expected_next_notice_field":"application_period","forbidden_financial_claim_expected":false},
+    {"id":"persona-05","name":"목적 미정 현금 부족 점포","review_lens":"unsure","confirmed_review_lens":"cash_runway","signal_profile":["cash_gap_28d"],"expected_question_count":1,"comparison_reachable":true,"expected_focus_mechanism":"grant_or_cost_reduction","expected_next_notice_field":"application_period","forbidden_financial_claim_expected":false},
+    {"id":"persona-06","name":"대출 없는 서비스업","review_lens":"debt_relief","signal_profile":["new_debt_sensitivity"],"expected_question_count":1,"comparison_reachable":true,"expected_focus_mechanism":"cost_reduction","expected_next_notice_field":"application_period","forbidden_financial_claim_expected":false},
+    {"id":"persona-07","name":"조건 확인을 건너뛴 점포","review_lens":"policy_choice","signal_profile":["policy_route_uncertainty"],"skip_questions":true,"expected_question_count":0,"comparison_reachable":true,"expected_focus_mechanism":"grant","expected_next_notice_field":"application_period","forbidden_financial_claim_expected":false},
+    {"id":"persona-08","name":"뚜렷한 위험 신호가 없는 점포","review_lens":"unsure","confirmed_review_lens":"policy_choice","signal_profile":[],"expected_question_count":0,"comparison_reachable":true,"expected_focus_mechanism":"mechanism_mix","expected_next_notice_field":"application_period","forbidden_financial_claim_expected":false}
+  ]
+}
