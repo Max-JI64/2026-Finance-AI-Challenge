@@ -5,7 +5,7 @@
 
 ## Project snapshot
 
-- Last updated: 2026-08-27T11:29+09:00
+- Last updated: 2026-08-27T13:30+09:00
 - Purpose: Build a bounded-AI Seoul small-business finance copilot that separates store trends from aggregate market scenarios, shows policy candidates without an upfront question gate, lets users choose each selected policy's reviewed conditions in its preparation screen, and compares no action with confirmed or explicitly conditional policy effects on deterministic 13-week and 6-month cash/debt horizons.
 - Important paths: `V2 단계별 구현 계획표.md` and `V3 사용자 경험 구성안.md` preserve earlier versions; `V4 구현 계획표.md` and `v4/` preserve the implemented V4; `V5 구현 계획표.md`, `V5 사용자 경험 흐름.md`, `v5/`, `v5/VERIFICATION.md`, and `reports/v5/evaluation/` describe the implemented V5, its V6 comparison baseline, verification evidence, and fixed evaluation Oracles.
 
@@ -694,10 +694,10 @@
 
 - `decision:v5-finalization-and-project-close`
   - Created: 2026-08-27T08:44+09:00
-  - Updated: 2026-08-27T11:29+09:00
+  - Updated: 2026-08-27T11:39+09:00
   - Status: active
-  - Content: The user approved ending the current university AI service project with `V5 Final` instead of building V6 or switching topics. The application-readiness summary proposal is withdrawn and no new feature is added. V5 intentionally ends after cash/debt comparison, condition and notice review, and official-application handoff because current reception and remaining budget require official recheck, final eligibility and approval belong to the institution, automated application would expand financial/document collection and external transmission, and AI does not decide or execute applications. Deployment is deferred by the user and is not an active task.
-  - Evidence: `프로젝트 계획서.md` section 38.1, `V5 사용자 경험 흐름.md` section 18.1, and `V6 실제 수요 검증 보고서.md` section 12 now record the same application-handoff boundary; V5 tests pass 18/18 and both JavaScript entry files pass syntax checks. No service code, model, data, deployment, automatic application, or V6 work changed.
+  - Content: The user approved ending feature development with `V5 Final` instead of building V6 or switching topics. The application-readiness summary proposal remains withdrawn and no new feature is added. V5 intentionally ends at official-application handoff for the recorded policy, privacy, and authority reasons. On 2026-08-27 the user resumed submission and deployment preparation, but no hosting provider or external deployment has yet been approved or executed.
+  - Evidence: `프로젝트 계획서.md` section 38.1, `V5 사용자 경험 흐름.md` section 18.1, `V6 실제 수요 검증 보고서.md` section 12, the current user request, and the official DAKER submission page checked on 2026-08-27. V5 tests pass 18/18 and both JavaScript entry files pass syntax checks; no service code, model, data, automatic application, or V6 work changed in this check.
 
 - `baseline:v5-final-unexplored-angle-recheck`
   - Created: 2026-08-27T09:15+09:00
@@ -713,15 +713,29 @@
   - Content: V5 Final implements the optional 30-second fictional demo, the suggested `unsure` review-lens default, user-confirmed no-rent/no-employees/no-loan zero shortcuts, pasted 3-12-month revenue values, recent-value copy to three months, required-field progress, first-invalid-field focus, visible timing assumptions, and optional precision CSV. It never silently substitutes zero, industry averages, or AI guesses. An ultra-light aggregate-expense check, automatic finance-data import, or counselor product remains separate follow-up scope.
   - Evidence: `v5/static/index.html`, `v5/static/app.js`, `v5/static/v5-extension.js`, `v5/static/v5-extension.css`, `v5/orchestrator.py`, and `v5/tests/test_v5.py`; V5 18/18, related shared regressions 83/83, static links 7/7, syntax checks, and live representative-demo response pass.
 
+- `baseline:competition-submission-and-hosting-readiness`
+  - Created: 2026-08-27T11:39+09:00
+  - Updated: 2026-08-27T13:30+09:00
+  - Status: active
+  - Content: The 2026-09-07 10:00 first submission requires a proposal PDF, function-specification PDF, and executable web-service URL; the URL must remain accessible from 2026-09-07 11:00 through 2026-09-11 23:59. A presentation PDF and source ZIP are required only after selection for the presentation round, by 2026-10-08 23:59. Cloud Run with 1 GiB and scale-to-zero is the preferred submission host if the user can attach a billing account; Render free is simpler but its 512 MB/0.1 CPU instance, 15-minute sleep, roughly one-minute wake, and ephemeral storage create more judging risk.
+  - Evidence: Official DAKER, Render, Hugging Face, and Cloud Run documentation checked 2026-08-27; `대회개요.md` lines 77-156; the local V5 server used 293.8 MiB working set after a successful 0.71-second market-scenario request. Current `Dockerfile` runs `app.main:app` and does not copy or launch `v5/`, whose final entry point is `v5.main:app`.
+
 ## Current handoff
 
 - `handoff:current`
-  - Updated: 2026-08-27T11:29+09:00
-  - Current state: The user reported completing the service review and retained the existing V5 Final feature boundary. The reason for stopping before automatic application is now recorded consistently in the project plan, UX baseline, and demand-validation report. The current V5 suite and JavaScript syntax checks pass, and no service code changed in this documentation update.
-  - Next step: Freeze V5 functionality and reuse the documented application-handoff rationale in the eventual proposal, function specification, and presentation. Deployment is explicitly deferred and should not be raised or started until the user resumes it.
-  - Blockers: No current code or documentation blocker remains. Real-user demand and final-prize likelihood remain unproven, but they do not require another V5 feature in the approved closeout scope.
+  - Updated: 2026-08-27T13:30+09:00
+  - Current state: V5 functionality remains frozen, and submission preparation is active. Official requirements confirm that the first deadline needs two PDFs and a live URL, not a presentation. The repository is clean and matches `origin/main`; the current Dockerfile still launches pre-V5 `app.main:app`. A local deployment probe passed health, representative demo, and market-scenario requests, measured 293.8 MiB working set after model use, and was stopped after measurement.
+  - Next step: Obtain the user's Cloud Run versus Render choice, then create a V5-specific deployment path, deploy it, and verify the public root, health endpoint, representative demo, main user flow, cold start, and required availability window before drafting the proposal and function specification from the official templates.
+  - Blockers: Cloud Run is recommended but requires the user's Google Cloud billing-account and project authorization even when usage is intended to stay within the free tier. Render avoids that setup but has tighter 512 MB/0.1 CPU resources and a longer free-tier wake delay. No external service has been created.
 
 ## Session log
+
+- `session:20260827-1136`
+  - Started: 2026-08-27T11:36+09:00
+  - Last activity: 2026-08-27T13:30+09:00
+  - Focus: Confirm the competition submission package and assess a free deployment route for V5 Final.
+  - Updated keys: `decision:v5-finalization-and-project-close`, `baseline:competition-submission-and-hosting-readiness`, `handoff:current`
+  - Summary: Verified from the official DAKER page that the first deadline requires a proposal PDF, function-specification PDF, and executable URL, while the presentation PDF and source ZIP apply only after presentation-round selection. Compared current free-hosting conditions, measured the local V5 server at 293.8 MiB working set after a successful model request, and changed the recommendation to Cloud Run 1 GiB scale-to-zero when billing setup is acceptable; Render free remains the simpler but riskier fallback. Confirmed the repository is clean and up to date and that its Dockerfile launches `app.main:app` rather than `v5.main:app`; no external deployment or service-code change was made.
 
 - `session:20260827-0948`
   - Started: 2026-08-27T09:48+09:00
