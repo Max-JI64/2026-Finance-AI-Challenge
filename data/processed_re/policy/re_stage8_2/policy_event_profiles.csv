@@ -1,0 +1,8 @@
+policy_id,event_id,event_name,event_kind,calculation_status,maximum_amount,amount_rule,timing_rule,business_cash_effect,source_locator
+POL_SEMAS_EMPLOYMENT_INSURANCE_2026,EMPLOYMENT_INSURANCE_REFUND,자영업자 고용보험료 환급,reimbursement_recurring,ready_with_user_grade,38025,등급별 월 31590~38025원 또는 32760·37440원,보험료 납부 약 2개월 후 환급,사용자가 보험료의 기준현금 포함 여부를 확인한 경우만 계산,지원내용·가입등급별 표·지원절차
+POL_SEOUL_FAMILY_FRIENDLY_EMPLOYER_2026,FAMILY_LEAVE_EMPLOYER_REFUND,육아휴직·출산휴가 기업지원금,reimbursement_grant,ready_with_user_amount_and_date,4500000,근로자 1인당 월 최대 30만원·3개월·기업당 5인,접수 차수별 공고 지급일,실제 사업주 부담액과 지급일을 사용자가 입력한 경우만 계산,지원내용·지원절차
+POL_SEOUL_IEUM_SAVINGS_2026,GENERATION_EMPLOYMENT_REFUND,세대이음 고용지원금,delayed_reimbursement,outside_six_month_horizon,8640000,청년·중장년 1쌍 기업부담금 연 288만원 최대 3년,매칭 후 1년 단위 근속 확인 뒤 환급,기본 6개월 현금축에는 반영하지 않음,사업개요 ③
+POL_SEOUL_YELLOW_UMBRELLA_2026,YELLOW_UMBRELLA_SAVINGS,희망장려금 추가 적립,restricted_savings_credit,not_business_cash,240000,월 2만원 최대 12회 공제계정 적립,공제부금 납입 확인 후 적립,사업체 가용현금으로 계산하지 않음,지원내용·지원절차
+POL_SEOUL_HOSPITAL_LIVING_EXPENSE_2026,HOSPITAL_LIVING_SUPPORT,서울형 입원 생활비,personal_living_grant,not_business_cash,1357440,2026년 1일 96960원 연 최대 14일,퇴원·검진일 후 180일 이내 신청,개인 생활비이므로 사업체 현금흐름과 합산하지 않음,지원일수·지원금액
+POL_SEOUL_PRIVATE_CHILDCARE_2026,PRIVATE_CHILDCARE_SUBSIDY,민간 아이돌봄 이용료 지원,service_subsidy,not_business_cash,5400000,이용료 2/3·1자녀 360만원·2자녀 540만원,선정 후 2026-12-31까지 기관 정산,개인 돌봄 서비스이며 사업체 현금으로 계산하지 않음,지원내용·지원한도
+POL_JUNGGU_CUSTOM_SUPPORT_2026,JUNGGU_IMPROVEMENT_REFUND,시설개선·온라인전환 비용 지원,reimbursement_grant,closed_as_of_date,1000000,VAT 제외 적격 구입액의 90% 최대 100만원,완료 후 3개월 이내 지급,접수 종료로 신규 실행 가능 대안에서 제외,지원금액·지원절차·신청기간

@@ -37,5 +37,6 @@ v5/runtime/*.log
 *.csv
 !reports/**/*.csv
 !v5/static/templates/*.csv
+!data/processed_re/policy/re_stage8_2/*.csv
 *.sqlite
 *.parquet
