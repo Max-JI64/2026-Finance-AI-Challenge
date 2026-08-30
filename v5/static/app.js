@@ -107,12 +107,37 @@ const mapPalette = {
   selected: { stroke: "#102a56", fill: "#2563eb" },
 };
 const presentationPresets = {
-  "cash-rich": { areaCode: "3001496", revenues: [1800, 1780, 1760, 1740, 1710, 1680], cash: 3000, rent: 200, labor: 450, purchase: 400, other: 90, loan: 1000, rate: 4, term: 48 },
-  stable: { areaCode: "3120012", revenues: [1200, 1190, 1210, 1180, 1200, 1190], cash: 1200, rent: 180, labor: 350, purchase: 300, other: 70, loan: 1500, rate: 5, term: 36 },
-  "sales-down": { areaCode: "3001491", revenues: [700, 760, 820, 880, 940, 1000], cash: 500, rent: 180, labor: 350, purchase: 280, other: 80, loan: 2000, rate: 6.5, term: 36 },
-  "high-fixed": { areaCode: "3110131", revenues: [1000, 1020, 1040, 1060, 1080, 1100], cash: 400, rent: 300, labor: 500, purchase: 250, other: 180, loan: 1500, rate: 6, term: 30 },
-  "debt-heavy": { areaCode: "3120153", revenues: [1100, 1120, 1140, 1160, 1180, 1200], cash: 300, rent: 180, labor: 300, purchase: 250, other: 100, loan: 5000, rate: 9, term: 24 },
+  "cash-rich": { areaCode: "3001496", reviewLens: "policy_choice", revenues: [1800, 1780, 1760, 1740, 1710, 1680], cash: 3000, rent: 200, labor: 450, purchase: 400, other: 90, loan: 1000, rate: 4, term: 48 },
+  stable: { areaCode: "3120012", reviewLens: "policy_choice", revenues: [1200, 1190, 1210, 1180, 1200, 1190], cash: 1200, rent: 180, labor: 350, purchase: 300, other: 70, loan: 1500, rate: 5, term: 36 },
+  "sales-down": { areaCode: "3001491", reviewLens: "cash_runway", revenues: [700, 760, 820, 880, 940, 1000], cash: 500, rent: 180, labor: 350, purchase: 280, other: 80, loan: 2000, rate: 6.5, term: 36 },
+  "high-fixed": { areaCode: "3110131", reviewLens: "fixed_cost", revenues: [1000, 1020, 1040, 1060, 1080, 1100], cash: 400, rent: 300, labor: 500, purchase: 250, other: 180, loan: 1500, rate: 6, term: 30 },
+  "debt-heavy": { areaCode: "3120153", reviewLens: "debt_relief", revenues: [1100, 1120, 1140, 1160, 1180, 1200], cash: 300, rent: 180, labor: 300, purchase: 250, other: 100, loan: 5000, rate: 9, term: 24 },
 };
+const isPresentationDemo = new URLSearchParams(window.location.search).get("demo") === "1";
+
+function setPresentationPresetReady(ready) {
+  const panel = byId("presentation-presets");
+  const readiness = byId("preset-readiness");
+  if (!panel || !readiness) return;
+  panel.dataset.ready = String(ready);
+  panel.setAttribute("aria-busy", String(!ready));
+  document.querySelectorAll("[data-preset]").forEach((button) => { button.disabled = !ready; });
+  readiness.classList.toggle("is-ready", ready);
+  readiness.innerHTML = ready
+    ? '<span class="preset-ready-mark" aria-hidden="true">✓</span><span>준비가 끝났습니다. 시연할 가게를 선택하세요.</span>'
+    : '<span class="preset-readiness-spinner" aria-hidden="true"></span><span>예시 데이터를 준비하고 있습니다.</span>';
+}
+
+function initPresentationDemoMode() {
+  if (!isPresentationDemo) return;
+  const panel = byId("presentation-presets");
+  panel.hidden = false;
+  panel.open = true;
+  document.body.classList.add("is-presentation-demo");
+  byId("demo-mode-indicator").hidden = false;
+  byId("business").prepend(panel);
+  setPresentationPresetReady(false);
+}
 const situationSignalGuidance = {
   sales_decline: "최근 6개월 월매출을 실제 금액으로 확인합니다.",
   debt_concern: "대출 잔액·금리·남은 상환기간을 먼저 확인합니다.",
@@ -557,10 +582,14 @@ async function loadMarketScenarios() {
 }
 function formatPercent(value) { return `${Number(value) > 0 ? "+" : ""}${Number(value).toLocaleString("ko-KR", { maximumFractionDigits: 1 })}%`; }
 
-function selectedScenarioSummary() {
+function selectedScenarioPercent() {
   const modelScenario = state.marketScenarios?.scenarios?.[state.scenario];
   const comparedScenario = scenarioComparison().find((item) => item.scenario === state.scenario);
-  const percent = modelScenario?.thirteen_week_percent ?? comparedScenario?.thirteen_week_percent;
+  return modelScenario?.thirteen_week_percent ?? comparedScenario?.thirteen_week_percent;
+}
+
+function selectedScenarioSummary() {
+  const percent = selectedScenarioPercent();
   return `${scenarioLabels[state.scenario]}${percent == null ? "" : ` · 13주 ${formatPercent(percent)}`}`;
 }
 
@@ -650,11 +679,13 @@ async function runComparison(next = "diagnosis", navigate = true, manageLoading 
 }
 
 async function applyPreset(id) {
+  const panel = byId("presentation-presets");
+  if (panel?.dataset.ready !== "true") return toast("예시 데이터를 준비하고 있습니다. 잠시 후 다시 선택해 주세요.");
   const preset = presentationPresets[id];
   const area = state.areaPoints.find((item) => item.code === preset?.areaCode);
   const industry = state.industries.find((item) => item.code === "CS100001") || state.industries[0];
   if (!preset || !area || !industry) return toast("준비된 가게 상황을 불러오지 못했습니다.");
-  state.data = null; state.marketScenarios = null; state.scenarioResults = {}; state.scenarioCacheKey = ""; state.selectedAlternative = null; state.focusedPolicyId = ""; state.selectedPolicyIds = new Set(); state.conditionalPolicyIds = new Set(); state.policySelectionInitialized = false; state.questionCatalog = {}; state.eligibilityAnswers = {}; state.policyScenarioValues = {}; state.actionBrief = null; state.questionWizardOrder = []; state.questionWizardAllOrder = []; state.questionWizardIndex = 0; state.questionWizardKey = ""; state.questionWizardComplete = false; state.questionWizardResultsVisible = false; state.questionWizardMode = "full"; state.questionWizardReturnPolicyId = ""; state.questionBatchRound = 0; state.v3AskedFields = []; state.policyScenarioEditorPolicyId = ""; state.costReductionEditorOpen = false; state.situationInterpretation = null; state.situationContext = null; state.pendingWhatIf = null; state.whatIfUndo = null; state.whatIfOriginalPrompt = ""; state.whatIfClarificationAttempts = 0; state.reviewLens = "unsure"; state.confirmedReviewLens = null; state.reviewLensSource = "suggested"; state.reviewPlan = null; state.reviewOrder = []; state.metricOrder = []; state.noticeFieldPriority = []; state.questionTraces = [];
+  state.data = null; state.marketScenarios = null; state.scenarioResults = {}; state.scenarioCacheKey = ""; state.selectedAlternative = null; state.focusedPolicyId = ""; state.selectedPolicyIds = new Set(); state.conditionalPolicyIds = new Set(); state.policySelectionInitialized = false; state.questionCatalog = {}; state.eligibilityAnswers = {}; state.policyScenarioValues = {}; state.actionBrief = null; state.questionWizardOrder = []; state.questionWizardAllOrder = []; state.questionWizardIndex = 0; state.questionWizardKey = ""; state.questionWizardComplete = false; state.questionWizardResultsVisible = false; state.questionWizardMode = "full"; state.questionWizardReturnPolicyId = ""; state.questionBatchRound = 0; state.v3AskedFields = []; state.policyScenarioEditorPolicyId = ""; state.costReductionEditorOpen = false; state.situationInterpretation = null; state.situationContext = null; state.pendingWhatIf = null; state.whatIfUndo = null; state.whatIfOriginalPrompt = ""; state.whatIfClarificationAttempts = 0; state.reviewLens = preset.reviewLens; state.confirmedReviewLens = null; state.reviewLensSource = "user"; state.reviewPlan = null; state.reviewOrder = []; state.metricOrder = []; state.noticeFieldPriority = []; state.questionTraces = [];
   byId("v3-undo-what-if").hidden = true;
   byId("diagnosis-empty").hidden = false; byId("diagnosis-result").hidden = true; byId("decision-empty").hidden = false; byId("decision-result").hidden = true; byId("diagnosis-next").disabled = true;
   document.querySelectorAll("[data-goal-top]").forEach((node) => { node.textContent = "계산 전"; });
@@ -668,14 +699,22 @@ async function applyPreset(id) {
   if (typeof toggleV5ZeroShortcuts === "function") toggleV5ZeroShortcuts();
   byId("revenue-timing").value = "daily"; byId("expense-timing").value = "early"; byId("debt-timing").value = "late";
   state.scenario = "central"; document.querySelector('input[name="market-scenario"][value="central"]').checked = true;
-  document.querySelectorAll("[data-preset]").forEach((node) => node.classList.toggle("is-selected", node.dataset.preset === id));
+  document.querySelectorAll("[data-preset]").forEach((node) => {
+    const selected = node.dataset.preset === id;
+    node.classList.toggle("is-selected", selected);
+    node.setAttribute("aria-pressed", String(selected));
+  });
   document.querySelectorAll("[data-situation-example]").forEach((node) => node.classList.remove("is-selected"));
   byId("v3-situation-text").value = "";
   byId("v3-situation-review").hidden = true;
   byId("v3-finance-context").hidden = true;
   if (typeof syncV5ReviewLensContext === "function") syncV5ReviewLensContext();
   byId("v3-situation-status").textContent = "발표용 빠른 시연은 준비된 숫자 입력을 사용합니다.";
-  byId("preset-status").textContent = `${area.name} 상권과 6개월 재무정보를 채웠습니다. 2단계에서 현금 진단 보기를 누르면 계산을 시작합니다.`;
+  const selectedLabel = document.querySelector(`[data-preset="${CSS.escape(id)}"] strong`)?.textContent || "선택한 가게";
+  panel.classList.add("has-selection");
+  panel.dataset.selectedPreset = id;
+  byId("preset-status").innerHTML = `<strong>${escapeHtml(selectedLabel)} 예시를 불러왔습니다.</strong><span>사업장·업종·6개월 재무정보와 주된 해결 목적이 채워졌으며 계산은 아직 시작하지 않았습니다.</span>`;
+  byId("preset-continue").hidden = false;
   updateConfirmedReduction(); updateScenarioApplicationStatus(); updateSummary();
   toast("6개월 입력을 채웠습니다. 재무 입력에서 현금 진단을 시작하세요.");
 }
@@ -717,14 +756,27 @@ function renderResults() {
 
 function renderStoreSignals() {
   const revenues = revenueValues(false);
-  let storeText = "추세 확인 필요";
+  let storeText = "비교할 매출 입력이 필요합니다";
   if (revenues.length >= 2 && revenues[revenues.length - 1] > 0) {
     const change = (revenues[0] - revenues[revenues.length - 1]) / revenues[revenues.length - 1] * 100;
-    const direction = change <= -10 ? "감소 흐름" : change >= 10 ? "증가 흐름" : "대체로 보합";
-    storeText = `${direction} · ${formatPercent(change)}`;
+    const magnitude = Math.abs(change).toLocaleString("ko-KR", { maximumFractionDigits: 1 });
+    storeText = change < 0
+      ? `최근 달 매출 ${magnitude}% 감소`
+      : change > 0
+        ? `최근 달 매출 ${magnitude}% 증가`
+        : "최근 달 매출 변동 없음";
   }
+  const marketPercent = selectedScenarioPercent();
+  const marketMagnitude = marketPercent == null ? null : Math.abs(Number(marketPercent)).toLocaleString("ko-KR", { maximumFractionDigits: 1 });
+  const marketChange = marketPercent == null
+    ? "전망 확인 중"
+    : Number(marketPercent) < 0
+      ? `상권·업종 매출 전년 동기 대비 ${marketMagnitude}% 감소`
+      : Number(marketPercent) > 0
+        ? `상권·업종 매출 전년 동기 대비 ${marketMagnitude}% 증가`
+        : "상권·업종 매출 전년 동기와 동일";
   byId("store-trend-value").textContent = storeText;
-  byId("market-outlook-value").textContent = selectedScenarioSummary();
+  byId("market-outlook-value").textContent = `${scenarioLabels[state.scenario]}: ${marketChange}`;
 }
 
 function scenarioField(policyId, field, label, type = "text", suffix = "") {
@@ -746,14 +798,6 @@ function baselineCashNeed() {
   const baseline = state.data?.intervention_results?.find((item) => item.alternative_id === "no_action" && item.metrics);
   const safeCash = Number(state.data?.safe_cash?.suggested_amount || 0);
   return Math.max(0, safeCash - Number(baseline?.metrics?.week13_minimum_cash || 0));
-}
-
-function renderPolicyCashNeed() {
-  const amount = baselineCashNeed();
-  byId("policy-cash-need-value").textContent = compactMoney(amount);
-  byId("policy-cash-need-explanation").textContent = amount > 0
-    ? "현금이 가장 낮은 주에도 앞으로 28일 필요현금을 유지하기 위한 차액입니다. 대출 권장액이나 승인금액이 아닙니다."
-    : "현재 선택한 상권 범위에서는 13주 동안 앞으로 28일 필요현금 기준을 유지합니다.";
 }
 
 function policyFundingText(policyId) {
@@ -793,8 +837,6 @@ function renderPolicyDiscovery() {
   if (!discovery) return;
   if (state.reviewPlan?.requires_confirmation) {
     byId("policy-results").hidden = true;
-    byId("policy-cash-need").hidden = true;
-    byId("optional-comparison-tools").hidden = true;
     byId("policy-scenario-inputs").hidden = true;
     byId("cost-reduction-panel").hidden = true;
     byId("policy-refresh-actions").hidden = true;
@@ -808,13 +850,9 @@ function renderPolicyDiscovery() {
 
 function renderPolicyResults(discovery) {
   byId("policy-results").hidden = false;
-  byId("policy-cash-need").hidden = false;
-  byId("optional-comparison-tools").hidden = false;
   byId("policy-scenario-inputs").hidden = !state.policyScenarioEditorPolicyId;
   byId("cost-reduction-panel").hidden = !state.costReductionEditorOpen;
   byId("policy-refresh-actions").hidden = !state.policyScenarioEditorPolicyId && !state.costReductionEditorOpen;
-  byId("open-cost-reduction").setAttribute("aria-expanded", String(state.costReductionEditorOpen));
-  renderPolicyCashNeed();
   byId("situation-labels").innerHTML = (discovery.situation_labels || []).map((label) => `<span>${escapeHtml(humanizeText(label))}</span>`).join("");
   (discovery.candidates || []).flatMap((item) => item.preparation_questions || []).forEach((item) => { state.questionCatalog[item.field] = item; });
   const allCandidates = (discovery.candidates || []).filter((item) => Object.hasOwn(financialPolicyNeeds, item.policy_id));
@@ -823,7 +861,11 @@ function renderPolicyResults(discovery) {
   }
   const selectedCandidates = allCandidates.filter((item) => state.selectedPolicyIds.has(item.policy_id));
   const candidates = [...allCandidates.slice(0, 3), ...selectedCandidates].filter((item, index, items) => items.findIndex((other) => other.policy_id === item.policy_id) === index).slice(0, 3);
-  byId("policy-discovery-status").textContent = `${allCandidates.length}개 후보 중 우선순위 ${candidates.length}개를 보여줍니다. 현재 ${state.selectedPolicyIds.size}개 선택.`;
+  const allVisiblePoliciesSelected = candidates.length > 0 && candidates.every((item) => state.selectedPolicyIds.has(item.policy_id));
+  byId("policy-discovery-status").textContent = `현재 입력에 맞는 정책 ${candidates.length}개를 보여줍니다. 현재 ${state.selectedPolicyIds.size}개 선택.`;
+  byId("select-all-policies").hidden = candidates.length === 0;
+  byId("select-all-policies").disabled = allVisiblePoliciesSelected;
+  byId("select-all-policies").textContent = allVisiblePoliciesSelected ? "모두 선택됨" : "정책 모두 선택";
   const card = (item) => {
     const readiness = item.application_readiness || {};
     const readinessItems = readiness.next_actions || [];
@@ -1552,6 +1594,15 @@ document.addEventListener("click", async (event) => {
   }
   const focusedPolicy = event.target.closest("[data-focus-policy]");
   if (focusedPolicy) { focusPolicy(focusedPolicy.dataset.focusPolicy); return; }
+  const selectAllPolicies = event.target.closest("#select-all-policies");
+  if (selectAllPolicies) {
+    document.querySelectorAll("#policy-discovery-cards [data-policy-select]").forEach((input) => {
+      if (state.selectedPolicyIds.size < 3) state.selectedPolicyIds.add(input.dataset.policySelect);
+    });
+    state.scenarioCacheKey = ""; state.actionBrief = null;
+    renderPolicyDiscovery();
+    return;
+  }
   const alternative = event.target.closest("[data-select-alternative]"); if (alternative) selectAlternative(alternative.dataset.selectAlternative);
   const policyScenario = event.target.closest("[data-open-policy-scenario]");
   if (policyScenario) { openPolicyScenarioEditor(policyScenario.dataset.openPolicyScenario); return; }
@@ -1599,13 +1650,13 @@ byId("area-select").addEventListener("change", (event) => selectArea(event.targe
 byId("industry-major-select").addEventListener("change", (event) => { populateIndustries(event.target.value); updateSummary(); });
 byId("industry-select").addEventListener("change", () => { updateSummary(); refreshComparisonForMarketChange(); });
 byId("business-next").addEventListener("click", () => { try { validateBusiness(); showStep("finance"); } catch (error) { toast(error.message); } });
+byId("preset-continue").addEventListener("click", () => { try { validateBusiness(); showStep("finance"); byId("finance-title").focus({ preventScroll: true }); } catch (error) { toast(error.message); } });
 byId("add-revenue-month").addEventListener("click", () => { if (state.revenueMonths < 12) { state.revenueMonths += 1; renderRevenueMonths(); } });
 ["opening-cash", "monthly-rent", "monthly-labor", "monthly-purchase", "monthly-other-fixed", "loan-balance"].forEach((id) => byId(id).addEventListener("input", updateSummary));
 ["reduce-rent", "reduce-labor", "reduce-purchase", "reduce-other"].forEach((id) => byId(id).addEventListener("input", () => { updateConfirmedReduction(); state.scenarioCacheKey = ""; state.actionBrief = null; }));
 byId("run-diagnosis").addEventListener("click", () => openV4InputLedger());
 byId("diagnosis-next").addEventListener("click", () => { enableSelectedPolicyPreviews(); runComparison("decision"); });
 byId("refresh-policy-comparison").addEventListener("click", async () => { if (await runComparison("diagnosis", false)) toast("선택한 정책 조건과 금액을 다시 계산했습니다."); });
-byId("open-cost-reduction").addEventListener("click", () => setCostReductionEditor(true));
 byId("close-cost-reduction").addEventListener("click", () => setCostReductionEditor(false));
 byId("close-policy-scenario").addEventListener("click", closePolicyScenarioEditor);
 byId("v3-interpret-situation").addEventListener("click", interpretV3Situation);
@@ -1671,12 +1722,27 @@ byId("v4-policy-next").addEventListener("click", () => {
   const index = Math.max(0, candidates.findIndex((item) => item.policy_id === state.focusedPolicyId));
   focusPolicy(candidates[(index + 1) % candidates.length].policy_id);
 });
+let safeCashScrollPosition = null;
+function keepSafeCashScrollPosition() {
+  if (!safeCashScrollPosition) return;
+  window.scrollTo({ left: safeCashScrollPosition.x, top: safeCashScrollPosition.y, behavior: "auto" });
+}
 byId("safe-cash-help").addEventListener("click", () => {
   const dialog = byId("safe-cash-dialog");
-  if (typeof dialog.showModal === "function") dialog.showModal();
+  safeCashScrollPosition = { x: window.scrollX, y: window.scrollY };
+  if (typeof dialog.showModal === "function") {
+    dialog.showModal();
+    requestAnimationFrame(keepSafeCashScrollPosition);
+  }
 });
 byId("safe-cash-close").addEventListener("click", () => byId("safe-cash-dialog").close());
 byId("safe-cash-confirm").addEventListener("click", () => byId("safe-cash-dialog").close());
+byId("safe-cash-dialog").addEventListener("close", () => {
+  requestAnimationFrame(() => {
+    keepSafeCashScrollPosition();
+    safeCashScrollPosition = null;
+  });
+});
 byId("safe-cash-dialog").addEventListener("click", (event) => {
   const dialog = event.currentTarget;
   const rect = dialog.getBoundingClientRect();
@@ -1691,4 +1757,10 @@ renderRevenueMonths();
 updateConfirmedReduction();
 updateChatLimit();
 updateScenarioApplicationStatus();
-loadCatalogs().catch(() => toast("상권과 업종 목록을 불러오지 못했습니다."));
+initPresentationDemoMode();
+loadCatalogs().then(() => setPresentationPresetReady(true)).catch(() => {
+  setPresentationPresetReady(false);
+  const readiness = byId("preset-readiness");
+  if (readiness) readiness.innerHTML = '<span class="preset-error-mark" aria-hidden="true">!</span><span>예시 데이터를 불러오지 못했습니다. 화면을 새로고침해 주세요.</span>';
+  toast("상권과 업종 목록을 불러오지 못했습니다.");
+});

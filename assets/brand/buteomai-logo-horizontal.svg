@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="160" viewBox="0 0 600 160" role="img" aria-labelledby="title desc">
+  <title id="title">버팀AI 가로형 로고</title>
+  <desc id="desc">버팀AI 심벌과 한글 영문 조합 글자</desc>
+  <g transform="translate(20 20) scale(1.875)">
+    <rect width="64" height="64" rx="14" fill="#176b4d"/>
+    <path d="M13 32 C22 32 28 30 35 27 C42 24 47 19 52 14" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+    <path d="M20 49 H30 M25 49 V32 M36 49 H46 M41 49 V24" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="166" y="105" fill="#17211d" font-family="Pretendard, 'Noto Sans KR', 'Malgun Gothic', system-ui, sans-serif" font-size="78" font-weight="850" letter-spacing="-3">버팀AI</text>
+</svg>

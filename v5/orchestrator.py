@@ -169,12 +169,20 @@ def _demo_metric(alternative: dict[str, Any], key: str) -> int:
     return int(value)
 
 
-def _change_sentence(subject: str, amount: int) -> str:
+def _change_sentence(subject: str, amount: int, baseline: str = "무대응") -> str:
     if amount > 0:
-        return f"{subject} 무대응보다 {amount:,}원 늘어납니다"
+        return f"{subject} {baseline}보다 {amount:,}원 늘어납니다"
     if amount < 0:
-        return f"{subject} 무대응보다 {abs(amount):,}원 줄어듭니다"
-    return f"{subject} 무대응과 같습니다"
+        return f"{subject} {baseline}보다 {abs(amount):,}원 줄어듭니다"
+    return f"{subject} {baseline}과 같습니다"
+
+
+def _change_amount(amount: int) -> str:
+    if amount > 0:
+        return f"{amount:,}원 늘어납니다"
+    if amount < 0:
+        return f"{abs(amount):,}원 줄어듭니다"
+    return "같습니다"
 
 
 @lru_cache(maxsize=1)
@@ -227,10 +235,11 @@ def representative_demo() -> dict[str, Any]:
     non_debt = scenarios[1]
     policy_loan = scenarios[2]
     summary = (
-        "비차입 지원의 신규 부채는 0원입니다. "
+        "비차입 지원은 신규 부채가 0원이며, "
         f"{_change_sentence('13주 현금은', non_debt['week13_cash_change_vs_no_action'])}. "
-        f"신규 정책자금을 적용하면 {_change_sentence('13주 현금은', policy_loan['week13_cash_change_vs_no_action'])}. "
-        f"{_change_sentence('6개월 뒤 남은 부채는', policy_loan['month6_debt_change_vs_no_action'])}."
+        "신규 정책자금은 같은 기준에서 "
+        f"13주 현금이 {_change_amount(policy_loan['week13_cash_change_vs_no_action'])}. "
+        f"6개월 뒤 남은 부채도 {_change_amount(policy_loan['month6_debt_change_vs_no_action'])}."
     )
     baseline_input = calculated["baseline_input"]
     reference_month = str(baseline_input["reference_date"])[:7]

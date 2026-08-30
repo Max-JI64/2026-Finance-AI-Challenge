@@ -15,14 +15,11 @@ const v5ReviewLensLabels = {
   unsure: "무엇부터 확인할지 모르겠음",
 };
 
-const v5SignalLabels = {
-  cash_gap_28d: "28일 필요현금 부족",
-  negative_cash_within_13w: "13주 안의 현금 부족",
-  sales_direction: "최근 매출 방향",
-  high_interest_debt_present: "대환 검토가 필요한 금리",
-  fixed_cost_pressure: "고정비 부담",
-  new_debt_sensitivity: "새로 생기는 부채",
-  policy_route_uncertainty: "답변이 필요한 정책 조건",
+const v5ReviewLensComparisonLabels = {
+  cash_runway: "28일 필요현금과 13주 현금",
+  debt_relief: "월 상환액, 6개월 뒤 남은 부채, 신규 부채",
+  fixed_cost: "비용 절감액과 13주 현금",
+  policy_choice: "지원 방식별 현금과 신규 부채",
 };
 
 const v4FinanceFields = [
@@ -50,11 +47,16 @@ function syncV5ReviewLensContext() {
     button.setAttribute("aria-checked", String(active));
     button.tabIndex = active || !state.reviewLens ? 0 : -1;
   });
-  byId("v5-lens-status").textContent = state.reviewLens === "unsure" && state.reviewLensSource === "suggested"
-    ? "무엇부터 확인할지 모르겠음을 기본값으로 적용했습니다. 결과를 본 뒤 검토 기준을 제안합니다."
-    : state.reviewLens
-      ? `${v5ReviewLensLabels[state.reviewLens]} 선택 · 자격, 금액, 효과와 기존 순위는 바뀌지 않습니다.`
-      : "목적 한 개를 선택해 주세요.";
+  const lensStatus = byId("v5-lens-status");
+  const hideLensStatus = state.reviewLens === "unsure" && state.reviewLensSource === "suggested";
+  lensStatus.hidden = hideLensStatus;
+  lensStatus.textContent = hideLensStatus
+    ? ""
+    : state.reviewLens === "unsure"
+      ? "계산 결과를 바탕으로 먼저 확인할 항목을 제안합니다."
+      : state.reviewLens
+        ? `${v5ReviewLensLabels[state.reviewLens]}을 중심으로 결과를 보여드립니다.`
+        : "목적 한 개를 선택해 주세요.";
   const guidance = {
     cash_runway: "현재 현금과 앞으로 28일 필수지출을 먼저 확인합니다.",
     debt_relief: "대출 잔액·금리·남은 기간을 먼저 확인합니다.",
@@ -84,17 +86,23 @@ window.renderV5ReviewPlan = function renderV5ReviewPlan() {
   const plan = state.reviewPlan;
   if (!section || !plan) return;
   section.hidden = false;
-  const detected = (state.data?.detected_signals || []).filter((item) => item.status === "present");
-  const detectedText = detected.length
-    ? detected.map((item) => escapeHtml(item.display_text || v5SignalLabels[item.key] || "추가 재무 신호")).join(" · ")
-    : "뚜렷한 우선 신호 없음";
-  byId("v5-review-plan-content").innerHTML = `<p class="v5-review-plan-summary">${escapeHtml(plan.summary)}</p><dl><div><dt>검토 기준</dt><dd>${escapeHtml(plan.goal_label)}</dd></div><div><dt>확인한 재무 상태</dt><dd>${detectedText}</dd></div><div><dt>먼저 볼 효과</dt><dd>${escapeHtml(plan.first_effect)}</dd></div></dl>`;
+  const title = byId("v5-review-plan-title");
+  const content = byId("v5-review-plan-content");
   const actions = byId("v5-review-plan-actions");
   if (plan.requires_confirmation) {
     const suggestion = plan.suggested_review_lens;
+    title.textContent = "먼저 확인할 기준을 제안합니다";
+    content.innerHTML = `<div class="v5-review-plan-grid"><article class="v5-review-plan-card is-primary"><span>제안 기준</span><strong>${escapeHtml(v5ReviewLensLabels[suggestion])}</strong><p>재무 상태를 바탕으로 제안했습니다. 아직 선택하지 않았습니다.</p></article><article class="v5-review-plan-card"><span>이 기준을 선택하면 먼저 확인</span><strong>${escapeHtml(v5ReviewLensComparisonLabels[suggestion])}</strong><p>선택한 기준에 따라 정책 카드와 결과의 표시 순서가 바뀝니다.</p></article></div>`;
     actions.hidden = false;
-    actions.innerHTML = `<p><strong>${escapeHtml(v5ReviewLensLabels[suggestion])}</strong> 기준을 제안합니다. 자동으로 확정하지 않습니다.</p><button type="button" class="primary" data-v5-confirm-lens="${escapeHtml(suggestion)}" data-v5-confirm-suggestion="true">이 기준으로 검토</button><button type="button" class="secondary" data-v5-show-lens-options>다른 기준 선택</button>`;
+    actions.innerHTML = `<p>제안을 선택하거나 다른 기준을 고르세요.</p><button type="button" class="primary" data-v5-confirm-lens="${escapeHtml(suggestion)}" data-v5-confirm-suggestion="true">이 기준 선택</button><button type="button" class="secondary" data-v5-show-lens-options>다른 기준 선택</button>`;
   } else {
+    const sourceText = plan.review_lens_source === "confirmed_suggestion"
+      ? "진단 화면에서 제안을 선택했습니다."
+      : plan.review_lens_source === "changed"
+        ? "진단 화면에서 기준을 변경했습니다."
+        : "사업장 입력에서 직접 선택했습니다.";
+    title.textContent = `${plan.goal_label} 기준으로 비교합니다`;
+    content.innerHTML = `<div class="v5-review-plan-grid"><article class="v5-review-plan-card is-primary"><span>선택한 기준</span><strong>${escapeHtml(v5ReviewLensLabels[plan.review_lens])}</strong><p>${sourceText}</p></article><article class="v5-review-plan-card"><span>정책 비교에서 먼저 확인</span><strong>${escapeHtml(v5ReviewLensComparisonLabels[plan.review_lens])}</strong><p>선택한 기준에 따라 정책 카드와 결과의 표시 순서가 바뀝니다.</p></article></div>`;
     actions.hidden = true;
     actions.innerHTML = "";
   }
@@ -139,27 +147,25 @@ window.openV4InputLedger = function openV4InputLedger() {
   try { validateBusiness(); validateFinance(); } catch (error) { toast(error.message); return; }
   syncV5ReviewLensContext();
   const revenueInputs = [...document.querySelectorAll(".revenue-input")];
-  const revenueValuesInTenThousandWon = revenueInputs.map((input) => Number(input.value));
-  const averageRevenue = revenueValuesInTenThousandWon.reduce((sum, value) => sum + value, 0) / revenueValuesInTenThousandWon.length;
   const monthlyRevenueRows = revenueInputs.map((input) => ({
     month: input.closest("label")?.childNodes[0]?.textContent.trim() || "월매출",
     amount: `${Number(input.value).toLocaleString("ko-KR")}만원`,
   }));
   const rows = [
-    ["사업장", `${state.selectedArea.district} ${state.selectedArea.name}`, "사용자 선택", "확인됨"],
-    ["업종", state.industries.find((item) => item.code === byId("industry-select").value)?.name || "", "사용자 선택", "확인됨"],
-    ["주된 해결 목적", v5ReviewLensLabels[state.reviewLens] || "선택 없음", state.reviewLensSource === "suggested" ? "기본값" : "사용자 선택", "확인됨"],
-    ["최근 월매출", monthlyRevenueRows, "사용자 입력", "확인됨"],
-    ["현재 보유 현금", `${byId("opening-cash").value}만원`, "사용자 입력", v4MoneyWarning("opening-cash", Number(byId("opening-cash").value), averageRevenue)],
-    ["월 필수지출", `${["monthly-rent", "monthly-labor", "monthly-purchase", "monthly-other-fixed"].reduce((sum, id) => sum + Number(byId(id).value || 0), 0).toLocaleString("ko-KR")}만원`, "사용자 입력", "확인됨"],
-    ["대출", byId("v4-no-loan").checked ? "없음" : `잔액 ${byId("loan-balance").value}만원 · 연 ${byId("loan-rate").value}% · ${byId("loan-term").value}개월`, "사용자 입력", v4MoneyWarning("loan-rate", Number(byId("loan-rate").value), averageRevenue)],
-    ["시기 가정", `매출 ${byId("revenue-timing").selectedOptions[0].text} · 비용 ${byId("expense-timing").selectedOptions[0].text} · 상환 ${byId("debt-timing").selectedOptions[0].text}`, "계산 가정", "확인됨"],
+    ["사업장", `${state.selectedArea.district} ${state.selectedArea.name}`],
+    ["업종", state.industries.find((item) => item.code === byId("industry-select").value)?.name || ""],
+    ["주된 해결 목적", v5ReviewLensLabels[state.reviewLens] || "선택 없음"],
+    ["최근 월매출", monthlyRevenueRows],
+    ["현재 보유 현금", `${byId("opening-cash").value}만원`],
+    ["월 필수지출", `${["monthly-rent", "monthly-labor", "monthly-purchase", "monthly-other-fixed"].reduce((sum, id) => sum + Number(byId(id).value || 0), 0).toLocaleString("ko-KR")}만원`],
+    ["대출", byId("v4-no-loan").checked ? "없음" : `잔액 ${byId("loan-balance").value}만원 · 연 ${byId("loan-rate").value}% · ${byId("loan-term").value}개월`],
+    ["시기 가정", `매출 ${byId("revenue-timing").selectedOptions[0].text} · 비용 ${byId("expense-timing").selectedOptions[0].text} · 상환 ${byId("debt-timing").selectedOptions[0].text}`],
   ];
-  byId("v4-ledger-content").innerHTML = `<div class="v4-ledger-table">${rows.map(([label, value, source, status]) => {
+  byId("v4-ledger-content").innerHTML = `<div class="v4-ledger-table">${rows.map(([label, value]) => {
     const valueHtml = Array.isArray(value)
       ? `<dl class="v4-monthly-ledger">${value.map((item) => `<div><dt>${escapeHtml(item.month)}</dt><dd>${escapeHtml(item.amount)}</dd></div>`).join("")}</dl>`
       : `<span>${escapeHtml(value)}</span>`;
-    return `<div class="${status === "확인 권장" ? "needs-review" : ""}"><strong>${escapeHtml(label)}</strong>${valueHtml}<small>${escapeHtml(source)} · ${escapeHtml(status)}</small></div>`;
+    return `<div><strong>${escapeHtml(label)}</strong>${valueHtml}</div>`;
   }).join("")}</div>`;
   const dialog = byId("v4-input-ledger");
   if (typeof dialog.showModal === "function") dialog.showModal();
@@ -334,21 +340,28 @@ function renderV5RepresentativeDemo(payload) {
   byId("v5-demo-loading").hidden = true;
   byId("v5-demo-error").hidden = true;
   byId("v5-demo-content").hidden = false;
+  byId("v5-representative-demo").setAttribute("aria-busy", "false");
 }
 
 async function loadV5RepresentativeDemo(force = false) {
   if (v5RepresentativeDemoState.loading || (v5RepresentativeDemoState.loaded && !force)) return;
   v5RepresentativeDemoState.loading = true;
+  byId("v5-representative-demo").setAttribute("aria-busy", "true");
   byId("v5-demo-loading").hidden = false;
   byId("v5-demo-error").hidden = true;
   byId("v5-demo-content").hidden = true;
   try {
-    renderV5RepresentativeDemo(await api("/api/v5/representative-demo"));
+    const minimumFeedback = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ? Promise.resolve()
+      : new Promise((resolve) => window.setTimeout(resolve, 450));
+    const [payload] = await Promise.all([api("/api/v5/representative-demo"), minimumFeedback]);
+    renderV5RepresentativeDemo(payload);
     v5RepresentativeDemoState.loaded = true;
   } catch (error) {
     console.error(error);
     byId("v5-demo-loading").hidden = true;
     byId("v5-demo-error").hidden = false;
+    byId("v5-representative-demo").setAttribute("aria-busy", "false");
   } finally {
     v5RepresentativeDemoState.loading = false;
   }
@@ -450,12 +463,11 @@ function renderV4NoticeExtraction(plan) {
     return `<section class="v4-notice-ai is-loading" aria-live="polite" aria-busy="true"><div class="v5-notice-loading"><span class="v5-inline-spinner" aria-hidden="true"></span><div><span>AI가 공고를 확인하는 중</span><h3>신청에 필요한 내용을 정리하고 있습니다</h3><p>저장된 공고에서 신청 기간, 지원 조건과 필요 서류를 찾고 있습니다.</p></div></div></section>`;
   }
   if (extraction.analysis_status !== "completed") {
-    return `<section class="v4-notice-ai is-unavailable"><span>AI 분석 불가</span><h3>공고 핵심정보를 자동으로 정리하지 못했습니다</h3><p>${escapeHtml(extraction.notice || "공식 공고에서 필요한 값을 직접 확인해 주세요.")}</p><a href="${safeUrl(plan.policy.official_url)}" target="_blank" rel="noreferrer">공식 공고에서 직접 확인</a></section>`;
+    return `<section class="v4-notice-ai is-unavailable"><span>공식 공고 확인</span><h3>공식 공고에서 직접 확인해 주세요</h3><p>최신 내용과 신청 가능 여부는 공식 공고에서 확인할 수 있습니다.</p><a href="${safeUrl(plan.policy.official_url)}" target="_blank" rel="noreferrer">공식 공고 열기</a></section>`;
   }
   const fields = (extraction.fields || []).map((field) => {
     if (field.status !== "found") {
-      const failedValidation = field.validation_status === "evidence_validation_failed";
-      return `<article class="v4-notice-field is-missing"><span>${escapeHtml(field.label)}</span><strong>${failedValidation ? "AI 추출값 확인 필요" : "공고에서 확인되지 않음"}</strong><p>${failedValidation ? "저장 공고 내용과 일치 여부를 자동 확인하지 못했습니다." : "AI가 저장 공고에서 이 값을 찾지 못했습니다."}</p><a href="${safeUrl(plan.policy.official_url)}" target="_blank" rel="noreferrer">공식 공고에서 직접 확인</a></article>`;
+      return `<article class="v4-notice-field is-missing"><span>${escapeHtml(field.label)}</span><strong>공식 공고에서 직접 확인해 주세요</strong><p>최신 내용과 신청 가능 여부는 공식 공고에서 확인할 수 있습니다.</p><a href="${safeUrl(plan.policy.official_url)}" target="_blank" rel="noreferrer">공식 공고 열기</a></article>`;
     }
     const value = field.value ? `<strong>${escapeHtml(field.value)}</strong>` : "";
     const items = field.items?.length ? `<ul>${field.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>` : "";
@@ -466,20 +478,19 @@ function renderV4NoticeExtraction(plan) {
   const foundFields = (extraction.fields || []).filter((field) => field.status === "found");
   const confirmedCount = foundFields.filter((field) => v4State.noticeFieldConfirmations.has(v4NoticeFieldConfirmationKey(plan.policy, extraction, field.key))).length;
   const cacheLabel = extraction.cache_status === "fresh" ? "방금 다시 정리함" : "저장된 분석 결과 사용";
-  return `<section class="v4-notice-ai"><div class="v4-notice-ai-heading"><div><span>AI 공고 분석</span><h3>저장 공고에서 정리한 신청 핵심정보</h3></div><div class="v4-notice-ai-meta"><small>공고 저장 기준일 ${escapeHtml(extraction.retrieved_at || "미확인")} · ${cacheLabel}</small><button type="button" class="secondary" data-v4-refresh-notice="${escapeHtml(plan.policy.policy_id)}">공고 다시 분석</button></div></div><p class="v4-notice-ai-guide">저장된 공고에서 찾은 핵심정보입니다. 공고에서 확인되지 않은 값은 채우지 않았습니다.</p><p class="v4-notice-confirm-summary"><strong>이 정책의 공고 항목 ${confirmedCount} / ${foundFields.length}개 확인</strong><span>정책 개수가 아니라, 선택한 정책 한 건에서 확인할 신청정보 개수입니다.</span></p><div class="v4-notice-field-grid">${fields}</div><p class="v4-evidence-warning">AI 추출값은 신청 편의를 위한 초안입니다. 현재 접수 여부·잔여 예산·최종 자격은 공식 공고와 신청기관에서 확인해야 합니다.</p></section>`;
+  return `<section class="v4-notice-ai"><div class="v4-notice-ai-heading"><div><span>AI 공고 분석</span><h3>저장 공고에서 정리한 신청 핵심정보</h3></div><div class="v4-notice-ai-meta"><small>공고 저장 기준일 ${escapeHtml(extraction.retrieved_at || "미확인")} · ${cacheLabel}</small><button type="button" class="secondary" data-v4-refresh-notice="${escapeHtml(plan.policy.policy_id)}">공고 다시 분석</button></div></div><p class="v4-notice-ai-guide">항목별 내용을 살펴보고, 필요한 정보는 공식 공고에서 직접 확인해 주세요.</p><p class="v4-notice-confirm-summary"><strong>이 정책의 공고 항목 ${confirmedCount} / ${foundFields.length}개 확인</strong><span>정책 개수가 아니라, 선택한 정책 한 건에서 확인할 신청정보 개수입니다.</span></p><div class="v4-notice-field-grid">${fields}</div><p class="v4-evidence-warning">AI가 정리한 내용은 신청 준비를 위한 참고 정보입니다. 현재 접수 여부·잔여 예산·최종 자격은 공식 공고와 신청기관에서 확인해야 합니다.</p></section>`;
 }
 
 function v5NoticeFieldCard(plan, extraction, field, isNext = false) {
   const confirmationKey = v4NoticeFieldConfirmationKey(plan.policy, extraction, field.key);
   const confirmed = v4State.noticeFieldConfirmations.has(confirmationKey);
-  const failedValidation = field.validation_status === "evidence_validation_failed";
   const statusText = field.status === "found"
     ? "저장 공고에서 찾음"
-    : failedValidation ? "원문 근거 검증 실패" : "공고에서 확인되지 않음";
+    : "공식 공고에서 직접 확인해 주세요";
   const value = field.value ? `<strong>${escapeHtml(field.value)}</strong>` : "";
   const items = field.items?.length ? `<ul>${field.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>` : "";
   const missing = field.status !== "found"
-    ? `<p>${failedValidation ? "추출값을 자동 확정하지 않았습니다." : "찾지 못한 값을 채우지 않았습니다."}</p><a href="${safeUrl(plan.policy.official_url)}" target="_blank" rel="noreferrer">공식 공고에서 직접 확인</a>`
+    ? `<a href="${safeUrl(plan.policy.official_url)}" target="_blank" rel="noreferrer">공식 공고 열기</a>`
     : "";
   return `<article class="v5-notice-field${isNext ? " is-next" : ""}${confirmed ? " is-confirmed" : ""}"><span>${escapeHtml(field.label)}</span><small>${escapeHtml(statusText)}</small>${value}${items}${missing}<button type="button" class="secondary v4-field-confirm${confirmed ? " is-confirmed" : ""}" data-v4-confirm-notice-field="${escapeHtml(field.key)}">${confirmed ? "확인 완료" : field.status === "found" ? "이 내용 확인" : "공식 공고에서 확인함"}</button></article>`;
 }
@@ -578,6 +589,9 @@ function renderV4PolicyConditions(candidate) {
 }
 
 async function applyV5PreparationAnswer(policyId, field, value) {
+  const preparationWasActive = byId("preparation")?.classList.contains("is-active");
+  const scrollPosition = { x: window.scrollX, y: window.scrollY };
+  const conditionPanelTop = byId("v4-policy-condition-list")?.getBoundingClientRect().top ?? null;
   const previous = state.eligibilityAnswers[field];
   state.eligibilityAnswers[field] = value || "unknown";
   state.scenarioCacheKey = "";
@@ -592,11 +606,18 @@ async function applyV5PreparationAnswer(policyId, field, value) {
       return;
     }
     await loadV4ApplicationPlan(policyId);
-    showStep("preparation");
+    if (!preparationWasActive) showStep("preparation");
     saveV4Session();
-    window.setTimeout(() => document.querySelector(`[data-v5-policy-answer="${CSS.escape(field)}"][aria-pressed="true"], [data-v5-policy-answer-entry="${CSS.escape(field)}"]`)?.focus({ preventScroll: true }), 0);
   } finally {
     hideLoading();
+    window.requestAnimationFrame(() => {
+      if (preparationWasActive) {
+        const updatedPanelTop = byId("v4-policy-condition-list")?.getBoundingClientRect().top ?? conditionPanelTop;
+        const layoutShift = conditionPanelTop == null || updatedPanelTop == null ? 0 : updatedPanelTop - conditionPanelTop;
+        window.scrollTo({ left: scrollPosition.x, top: scrollPosition.y + layoutShift, behavior: "auto" });
+      }
+      document.querySelector(`[data-v5-policy-answer="${CSS.escape(field)}"][aria-pressed="true"], [data-v5-policy-answer-entry="${CSS.escape(field)}"]`)?.focus({ preventScroll: true });
+    });
   }
 }
 

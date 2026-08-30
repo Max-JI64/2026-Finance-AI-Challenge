@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="420" viewBox="0 0 900 420" role="img" aria-labelledby="title desc">
+  <title id="title">버팀AI 로고 시안 01</title>
+  <desc id="desc">두 개의 버팀목이 완만하게 상승하는 현금흐름선을 받치는 심벌과 버팀AI 글자 조합</desc>
+  <rect width="900" height="420" rx="28" fill="#f5f7f5"/>
+
+  <g transform="translate(72 70)">
+    <rect width="176" height="176" rx="42" fill="#176b4d"/>
+    <path d="M35 89 C60 89 76 84 96 76 C116 68 130 56 143 41" fill="none" stroke="#ffffff" stroke-width="10" stroke-linecap="round"/>
+    <path d="M57 135 H83 M70 135 V88 M105 135 H131 M118 135 V67" fill="none" stroke="#ffffff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <g transform="translate(290 92)">
+    <text x="0" y="74" fill="#17211d" font-family="Pretendard, 'Noto Sans KR', system-ui, sans-serif" font-size="72" font-weight="850" letter-spacing="-3">버팀AI</text>
+    <text x="2" y="120" fill="#63706a" font-family="Pretendard, 'Noto Sans KR', system-ui, sans-serif" font-size="22" font-weight="650">현금흐름을 받치고, 정책 선택의 영향을 비교합니다</text>
+  </g>
+
+  <g transform="translate(48 302)">
+    <rect width="804" height="82" rx="18" fill="#101512"/>
+    <g transform="translate(26 20) scale(.65625)">
+      <rect width="64" height="64" rx="14" fill="#68bd94"/>
+      <path d="M13 32 C22 32 28 30 35 27 C42 24 47 19 52 14" fill="none" stroke="#101512" stroke-width="4" stroke-linecap="round"/>
+      <path d="M20 49 H30 M25 49 V32 M36 49 H46 M41 49 V24" fill="none" stroke="#101512" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <text x="82" y="52" fill="#eef4f0" font-family="Pretendard, 'Noto Sans KR', system-ui, sans-serif" font-size="25" font-weight="850" letter-spacing="-1">버팀AI</text>
+    <text x="680" y="50" fill="#aab8b0" font-family="Pretendard, 'Noto Sans KR', system-ui, sans-serif" font-size="15" font-weight="650">헤더 적용 크기</text>
+  </g>
+</svg>

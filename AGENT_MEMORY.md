@@ -5,11 +5,92 @@
 
 ## Project snapshot
 
-- Last updated: 2026-08-27T13:30+09:00
+- Last updated: 2026-08-30T18:26+09:00
 - Purpose: Build a bounded-AI Seoul small-business finance copilot that separates store trends from aggregate market scenarios, shows policy candidates without an upfront question gate, lets users choose each selected policy's reviewed conditions in its preparation screen, and compares no action with confirmed or explicitly conditional policy effects on deterministic 13-week and 6-month cash/debt horizons.
 - Important paths: `V2 단계별 구현 계획표.md` and `V3 사용자 경험 구성안.md` preserve earlier versions; `V4 구현 계획표.md` and `v4/` preserve the implemented V4; `V5 구현 계획표.md`, `V5 사용자 경험 흐름.md`, `v5/`, `v5/VERIFICATION.md`, and `reports/v5/evaluation/` describe the implemented V5, its V6 comparison baseline, verification evidence, and fixed evaluation Oracles.
 
 ## Durable decisions
+
+- `decision:v5-market-scenario-copy`
+  - Created: 2026-08-30T16:21+09:00
+  - Updated: 2026-08-30T16:52+09:00
+  - Status: active
+  - Content: V5의 하방·기준·회복 범위는 선택한 상권·업종 전체 매출이 앞으로 13주와 6개월 동안 각 경로로 움직인다고 가정해 현금흐름에 적용하는 시나리오다. 내 점포 매출 예측으로 표현하지 않으며, 카드의 수치는 전년 같은 기간 대비 상권·업종 전체 매출 변화율이다. 데스크톱에서는 설명 한 줄과 개인 점포 예측이 아니라는 주의문 한 줄의 정확한 2줄 구조로 표시한다.
+  - Evidence: `v5/static/index.html`, `v5/static/v5-extension.css`, `v5/tests/test_v5.py`; `git diff --check`, V5 테스트 18/18, 로컬 브라우저에서 두 문장 각각 한 줄 렌더링 확인.
+
+- `decision:v5-diagnosis-information-clarity`
+  - Created: 2026-08-30T16:52+09:00
+  - Updated: 2026-08-30T17:37+09:00
+  - Status: active
+  - Content: 진단 결과는 `내 가게·입력한 매출`의 과거 변화와 `상권·업종·앞으로 13주`의 미래 가정을 다른 정보로 명시한다. 상권 전망 값은 `상권·업종 매출 전년 동기 대비`를 붙여 변화 대상과 비교 기준을 함께 표시한다. 검토 기준은 중복 신호를 나열하지 않으며 28일 필요현금 팝업은 현재 스크롤 위치 위에 고정한다.
+  - Evidence: `v5/static/index.html`, `v5/static/app.js`, `v5/static/styles.css`, `v5/static/v5-extension.js`, `v5/static/v5-extension.css`, `v5/tests/test_v5.py`; JavaScript 구문 검사, `git diff --check`, V5 테스트 18/18, 로컬 브라우저 문구와 팝업 열기 전후 배경 위치 확인.
+
+- `decision:v5-official-notice-positive-handoff-copy`
+  - Created: 2026-08-30T17:50+09:00
+  - Updated: 2026-08-30T17:50+09:00
+  - Status: active
+  - Content: 준비 화면에서 공고 항목을 자동 확인할 수 없는 경우 `실패`, `검증 실패`, `자동 확정하지 않음`, `찾지 못함` 같은 부정적 상태 문구를 노출하지 않고 `공식 공고에서 직접 확인해 주세요`와 공식 공고 링크로 안내한다. 정책 상담 진입 제목은 `AI와 채팅으로 이 정책 더 물어보기`로 AI 채팅 기능을 명시한다.
+  - Evidence: `v5/static/index.html`, `v5/static/v5-extension.js`, `v5/tests/test_v5.py`; JavaScript 구문 및 관련 V5 테스트 1건 통과.
+
+- `issue:v5-preparation-answer-scroll-jump`
+  - Created: 2026-08-30T17:54+09:00
+  - Updated: 2026-08-30T17:54+09:00
+  - Status: resolved
+  - Symptom: 준비 화면의 정책 조건을 선택할 때마다 재계산 후 화면이 맨 위로 이동했다.
+  - Cause: 조건 재계산 뒤 이미 활성화된 준비 화면에 `showStep("preparation")`을 다시 호출하면서 공통 단계 전환의 상단 스크롤이 실행됐다.
+  - Fix: 준비 화면이 이미 활성화된 경우 단계 전환을 생략하고, 선택 전 스크롤 위치와 조건 패널의 화면상 위치를 저장해 재렌더링 높이 변화까지 보정한 뒤 복원한다.
+  - Evidence: `v5/static/v5-extension.js`, `v5/static/index.html`, `v5/tests/test_v5.py`; JavaScript 구문 및 관련 V5 테스트 1건 통과.
+
+- `issue:v5-input-ledger-scroll-jump`
+  - Created: 2026-08-30T17:56+09:00
+  - Updated: 2026-08-30T17:59+09:00
+  - Status: superseded
+  - Symptom: 재무 입력 하단에서 `현금 진단 보기`로 입력 원장을 열 때 현재 스크롤 위치가 바뀌었다.
+  - Cause: 입력 원장 모달을 열고 닫는 과정에서 배경 문서의 위치를 별도로 보존하지 않았다.
+  - Fix: 2026-08-30T17:59+09:00 사용자 요청으로 입력 원장 전용 스크롤 저장·복원 변경을 전부 롤백했다. 입력 원장은 변경 전 동작을 사용하며, 준비 화면의 정책 조건 선택 스크롤 유지 수정은 별도로 유지한다.
+  - Evidence: `v5/static/v5-extension.js`, `v5/static/index.html`, `v5/tests/test_v5.py`; 전용 식별자 부재와 JavaScript 구문 확인.
+
+- `decision:v5-finance-form-clarity`
+  - Created: 2026-08-30T16:05+09:00
+  - Updated: 2026-08-30T16:11+09:00
+  - Status: active
+  - Content: V5의 최근 월매출, 현재 현금·월 지출, 현재 대출 입력은 다크·화이트 모드별로 섹션 면과 구분되는 공통 입력 배경·테두리·단위 위계를 사용한다. 현금·지출과 대출은 데스크톱 2열의 동일 높이 행이며 `임대료 없음`과 `직원 없음`은 전체 폭 선택 컨트롤이다. 진단 전 입력 원장은 최대 1040px의 항목명+값 2열만 표시하고, 최근 월매출은 3열과 줄바꿈 없는 `YYYY년 M월`을 사용한다. 출처·입력 방식·확인 상태 메타정보와 하단 `확인 권장` 안내는 표시하지 않는다.
+  - Evidence: `v5/static/index.html`, `v5/static/v5-extension.css`, `v5/static/v5-extension.js`, `v5/tests/test_v5.py`; JavaScript 구문 검사, `git diff --check`, V5 테스트 18/18, 로컬 HTML/CSS/JS HTTP 200 및 입력 토큰·2열 렌더링·메타정보 제거 확인.
+
+- `decision:v5-demo-mode-launcher`
+  - Created: 2026-08-30T14:35+09:00
+  - Updated: 2026-08-30T17:05+09:00
+  - Status: active
+  - Content: `?demo=1`에서만 발표용 예시 선택판을 사업장 입력 화면 맨 위로 옮겨 자동으로 열고, 헤더에 `발표 모드` 배지를 표시한다. 카탈로그 로딩이 끝나기 전에는 5개 예시 선택을 잠그며, 선택 후에도 자동 계산하지 않고 `입력값 확인하기`로 재무 입력 단계에 이동한다. 예시 선택 시 현금 여유·안정 운영은 정책 유형 비교, 매출 감소는 현금 생존, 고정비 부담은 고정비 절감, 대출 부담은 상환 부담 완화를 주된 해결 목적으로 자동 선택한다. 발표 조작부는 기본 초록과 분리된 다크/화이트 대응 앰버·골드 토큰을 쓰며 일반 URL에서는 계속 숨긴다.
+  - Evidence: `v5/static/index.html`, `v5/static/app.js`, `v5/static/styles.css`, `v5/static/v5-extension.css`, `v5/tests/test_v5.py`; JavaScript 구문 검사, `git diff --check`, V5 테스트 18/18. 이번 자동 선택 변경은 사용자 소유 시각 확인을 존중해 브라우저·이미지 검사를 수행하지 않았다.
+
+- `decision:v5-user-selectable-theme`
+  - Created: 2026-08-30T12:17+09:00
+  - Updated: 2026-08-30T12:17+09:00
+  - Status: active
+  - Content: V5 provides a top-right light/dark theme toggle. The explicit choice persists only as the non-sensitive `buteomai:theme` localStorage key; without a saved choice the system color preference is followed. Both themes use centralized semantic CSS tokens, theme-specific logo/favicon assets, and chart redraw after a theme change.
+  - Evidence: `v5/static/index.html`, `v5/static/styles.css`, `v5/static/v5-extension.css`, `v5/static/theme.js`, and `v5/tests/test_v5.py`; JavaScript checks, V5 18/18 tests, and local root/health/theme/CSS HTTP 200.
+
+- `decision:v5-dark-surface-contrast`
+  - Created: 2026-08-30T18:06+09:00
+  - Updated: 2026-08-30T18:06+09:00
+  - Status: active
+  - Content: V5 다크모드의 페이지 배경, 공통 박스 표면, 중첩 보조면, 공통 테두리 사이의 밝기 차이를 확대한다. 개별 비교 박스에만 예외 스타일을 붙이지 않고 의미 기반 `--bg`, `--surface`, `--soft`, `--line` 토큰을 조정해 진단·정책 비교·준비 화면의 같은 계층 박스에 일관되게 적용하며 라이트모드는 유지한다.
+  - Evidence: `v5/static/styles.css`, `v5/static/theme.js`, `v5/static/index.html`, `v5/tests/test_v5.py`; `git diff --check`, JavaScript 구문 검사, 관련 V5 테스트 1건, 실행 중 서버의 갱신 CSS·테마 스크립트 확인.
+
+- `decision:v5-policy-bulk-selection`
+  - Created: 2026-08-30T18:16+09:00
+  - Updated: 2026-08-30T18:16+09:00
+  - Status: active
+  - Content: 진단 화면의 정책 후보는 사용자에게 실제로 노출하는 최대 3개만 기준으로 안내한다. `정책 모두 선택`은 현재 보이는 정책을 최대 선택 한도 3개까지 한 번에 선택하고, 전부 선택되면 `모두 선택됨`으로 비활성화한다. 내부 검색 후보 전체 개수는 선택 안내에 노출하지 않는다.
+  - Evidence: `v5/static/index.html`, `v5/static/app.js`, `v5/static/styles.css`, `v5/tests/test_v5.py`; JavaScript 구문 검사, `git diff --check`, 관련 V5 테스트 2건, 실행 중 서버의 갱신 HTML·CSS·JavaScript 확인.
+
+- `decision:v5-submission-doc-ui-sync`
+  - Created: 2026-08-30T17:27+09:00
+  - Updated: 2026-08-30T18:26+09:00
+  - Status: active
+  - Content: 최신 V5 UI 변경은 제출용 Markdown에 화면 테마 전환, 발표 예시별 해결 목적 자동 선택, 간소화된 입력 원장, 현재 위치의 28일 필요현금 팝업, `가상 예시`, 정책 후보 일괄 선택, 준비 조건 선택 시 화면 위치 유지와 AI 채팅 명칭을 동기화한다. 핵심 계산·정책·AI What-if 설명은 그대로 유지하고 HWPX·PDF와 공개 배포는 사용자의 별도 작업 전까지 수정하지 않는다.
+  - Evidence: `제출/08_공모전_기획서_원고_및_시각자료_2차수정본.md`, `제출/09_기능명세서_원고_및_시각자료_2차수정본.md`; 2026-08-30 문구 대조.
 
 - `decision:mvp-scope`
   - Created: 2026-08-14T19:55+09:00
@@ -17,6 +98,13 @@
   - Status: active
   - Content: The MVP is named `서울 소상공인 정책금융 영향 시뮬레이터` and compares no action, grants, cost reduction, refinancing, policy loans, and mixed interventions through 13-week cash survival plus 6-month debt effects. Aggregate ML outputs are labeled area-environment stress scenarios; personal sales/closure, credit or approval probability, account/POS integration, causal policy impact, and claims of AI optimal recommendation are excluded.
   - Evidence: User-approved updates to `프로젝트 계획서.md`, `프로젝트 차별화 구상.md`, and `MVP 단계별 구현 체크리스트.md`; the completed RE1 contract/config retain the historical former name and are migrated only in current RE8 API/UI work.
+
+- `decision:submission-differentiation-frontload`
+  - Created: 2026-08-30T10:40+09:00
+  - Updated: 2026-08-30T10:40+09:00
+  - Status: active
+  - Content: The current proposal and function-specification Markdown drafts lead with the service's primary differentiation: using the current financial state as one baseline to compare no policy with non-debt support or up to three policy alternatives, each applied separately, across 13-week cash flow and six-month debt and repayment burden. The proposal's differentiation section also contrasts this decision question with the discovery and diagnosis questions answered by other service types.
+  - Evidence: User approval on 2026-08-30; `제출/08_공모전_기획서_원고_및_시각자료_2차수정본.md` sections 1 and 4; `제출/09_기능명세서_원고_및_시각자료_2차수정본.md` section 1.
 
 - `decision:implementation-checklist`
   - Created: 2026-08-14T20:21+09:00
@@ -391,6 +479,19 @@
   - Content: During V3 review, the user performs final visual validation. Codex may validate HTML, CSS, JavaScript, API responses, calculations, state contracts, tests, and DOM behavior, but must not create screenshots, upload images, or analyze images unless separately needed and authorized; user comments should be handled from their text and target metadata when image analysis is unnecessary.
   - Evidence: User instructions on 2026-08-21 and 2026-08-23; `reports/v2/service_review_log.md` and the V3 review session.
 
+- `convention:user-owned-submission-document-editing`
+  - Created: 2026-08-27T15:12+09:00
+  - Updated: 2026-08-28T11:11+09:00
+  - Status: active
+  - Content: Preserve the official HWPX templates unchanged. Submission copy must omit version labels, development stages and internal work history, and contain only judge-facing problem, service, AI, data, expected-effect, safety and verification content. Each official document's next draft must contain its own screenshot placement, state, crop, caption and filename guidance rather than use a separate photo-guide document. Pipeline assets are content wireframes only: Codex defines the required inputs, processing, output, storage, transmission and authority boundaries, while the user may redesign their visual styling and retains HWPX/PDF layout and final visual approval.
+  - Evidence: User instructions on 2026-08-27 and 2026-08-28; official templates; `제출/06_공모전_기획서_원고_및_시각자료_통합초안.md`; `제출/07_기능명세서_원고_및_시각자료_통합초안.md`; and their pipeline wireframes under `제출/assets/`.
+
+- `convention:judge-readable-submission-prose`
+  - Created: 2026-08-28T14:20+09:00
+  - Updated: 2026-08-28T19:41+09:00
+  - Status: active
+  - Content: Revise proposal and function-specification copy from the judge's perspective. Every passage must be understandable on first reading and contain only the facts needed to explain the user task, inputs, processing, outputs, evidence, limits and responsibility boundary; remove development history, internal terminology, repetition and explanatory asides that do not help the judge evaluate the service. Prefer user-facing names, explicit source/input/use relationships and plain Korean, while keeping detailed operational information only where the official document requires it.
+
 - `convention:image-analysis-contact-sheets`
   - Created: 2026-08-21T08:13+09:00
   - Updated: 2026-08-21T08:13+09:00
@@ -694,10 +795,10 @@
 
 - `decision:v5-finalization-and-project-close`
   - Created: 2026-08-27T08:44+09:00
-  - Updated: 2026-08-27T11:39+09:00
+  - Updated: 2026-08-27T14:23+09:00
   - Status: active
-  - Content: The user approved ending feature development with `V5 Final` instead of building V6 or switching topics. The application-readiness summary proposal remains withdrawn and no new feature is added. V5 intentionally ends at official-application handoff for the recorded policy, privacy, and authority reasons. On 2026-08-27 the user resumed submission and deployment preparation, but no hosting provider or external deployment has yet been approved or executed.
-  - Evidence: `프로젝트 계획서.md` section 38.1, `V5 사용자 경험 흐름.md` section 18.1, `V6 실제 수요 검증 보고서.md` section 12, the current user request, and the official DAKER submission page checked on 2026-08-27. V5 tests pass 18/18 and both JavaScript entry files pass syntax checks; no service code, model, data, automatic application, or V6 work changed in this check.
+  - Content: The user approved ending feature development with `V5 Final` instead of building V6 or switching topics. V5 intentionally ends at official-application handoff for the recorded policy, privacy, and authority reasons. Submission preparation is active, and V5 is now deployed publicly on Cloud Run without adding a new service feature, model, automatic application, or V6 scope.
+  - Evidence: `프로젝트 계획서.md` section 38.1, `V5 사용자 경험 흐름.md` section 18.1, `V6 실제 수요 검증 보고서.md` section 12, commits `78c3e61` through `cb4bc35`, and live Cloud Run checks on 2026-08-27. V5 tests pass 18/18 and the deployed root, health, catalogs, market scenario, and representative demo return HTTP 200.
 
 - `baseline:v5-final-unexplored-angle-recheck`
   - Created: 2026-08-27T09:15+09:00
@@ -715,27 +816,113 @@
 
 - `baseline:competition-submission-and-hosting-readiness`
   - Created: 2026-08-27T11:39+09:00
-  - Updated: 2026-08-27T13:30+09:00
+  - Updated: 2026-08-27T14:23+09:00
   - Status: active
-  - Content: The 2026-09-07 10:00 first submission requires a proposal PDF, function-specification PDF, and executable web-service URL; the URL must remain accessible from 2026-09-07 11:00 through 2026-09-11 23:59. A presentation PDF and source ZIP are required only after selection for the presentation round, by 2026-10-08 23:59. Cloud Run with 1 GiB and scale-to-zero is the preferred submission host if the user can attach a billing account; Render free is simpler but its 512 MB/0.1 CPU instance, 15-minute sleep, roughly one-minute wake, and ephemeral storage create more judging risk.
-  - Evidence: Official DAKER, Render, Hugging Face, and Cloud Run documentation checked 2026-08-27; `대회개요.md` lines 77-156; the local V5 server used 293.8 MiB working set after a successful 0.71-second market-scenario request. Current `Dockerfile` runs `app.main:app` and does not copy or launch `v5/`, whose final entry point is `v5.main:app`.
+  - Content: The 2026-09-07 10:00 first submission requires a proposal PDF, function-specification PDF, and executable web-service URL; the URL must remain accessible from 2026-09-07 11:00 through 2026-09-11 23:59. A presentation PDF and source ZIP are required only after selection for the presentation round, by 2026-10-08 23:59. Cloud Run service `finance-ai-challenge` is deployed in `asia-northeast3` with 1 GiB, one CPU, minimum zero and maximum one instance, and the public URL is `https://finance-ai-challenge-232883421735.asia-northeast3.run.app`.
+  - Evidence: Official DAKER and Cloud Run requirements checked 2026-08-27; project `max-finance-ai-challenge`; final deployment commit `cb4bc35`; Cloud Build `04206ce6-ff67-48ba-b018-91a6ad96f2c8`; revision `finance-ai-challenge-00006-9rl`; live HTTP 200 checks for root, health `v5-api-v1.0`, three catalogs, market scenario, representative demo, and `/?demo=1`.
+
+- `issue:cloud-run-v5-runtime-packaging`
+  - Created: 2026-08-27T14:23+09:00
+  - Updated: 2026-08-27T14:23+09:00
+  - Status: resolved
+  - Symptom: Initial Cloud Run revisions could not read the OpenAI secret, later Docker builds missed ignored policy data, and deployed model or demo endpoints returned HTTP 500.
+  - Cause: The revision service account lacked secret accessor permission; required CSV and Parquet runtime assets were excluded by global Git ignore rules; the slim Linux image lacked LightGBM's `libgomp.so.1` dependency.
+  - Fix: Grant `roles/secretmanager.secretAccessor` on `openai-api-key`, track only the required runtime CSV and Parquet files through explicit `.gitignore` exceptions, and install Debian `libgomp1` in `Dockerfile`; no secret value was committed or logged.
+  - Evidence: Cloud Run and Cloud Build logs; commits `6ad1ffb`, `24f5365`, `bc99ae5`, and `cb4bc35`; final live endpoint checks all returned HTTP 200.
 
 ## Current handoff
 
 - `handoff:current`
-  - Updated: 2026-08-27T13:30+09:00
-  - Current state: V5 functionality remains frozen, and submission preparation is active. Official requirements confirm that the first deadline needs two PDFs and a live URL, not a presentation. The repository is clean and matches `origin/main`; the current Dockerfile still launches pre-V5 `app.main:app`. A local deployment probe passed health, representative demo, and market-scenario requests, measured 293.8 MiB working set after model use, and was stopped after measurement.
-  - Next step: Obtain the user's Cloud Run versus Render choice, then create a V5-specific deployment path, deploy it, and verify the public root, health endpoint, representative demo, main user flow, cold start, and required availability window before drafting the proposal and function specification from the official templates.
-  - Blockers: Cloud Run is recommended but requires the user's Google Cloud billing-account and project authorization even when usage is intended to stay within the free tier. Render avoids that setup but has tighter 512 MB/0.1 CPU resources and a longer free-tier wake delay. No external service has been created.
+  - Updated: 2026-08-30T18:26+09:00
+  - Current state: 로컬 V5 서버가 PID 23052로 실행 중이다. 정책 후보 영역에 현재 보이는 최대 3개 정책을 한 번에 선택하는 버튼을 추가했고 상태 문구는 노출 정책 3개 기준으로 단순화했다. 다크모드 공통 박스 대비 수정도 유지하며 계산 값과 공개 배포는 바꾸지 않았다.
+  - Next step: 사용자가 정책 3개 일괄 선택과 다크모드 박스 대비를 직접 확인하고, 갱신된 기능명세서 문구와 그림 3(b) 캡처 조건을 확인한다.
+  - Blockers: 없음. HWPX·PDF·서비스·계산·공개 배포는 이번 문서 편집에서 변경하지 않았고 최종 시각 승인은 사용자 소유다.
 
 ## Session log
 
+- `session:20260830-1114`
+  - Started: 2026-08-30T11:14+09:00
+  - Last activity: 2026-08-30T18:26+09:00
+  - Focus: Revise the local V5 service and synchronize only the resulting submission-document wording while preserving rollback and user-owned visual boundaries.
+  - Updated keys: `decision:v5-user-selectable-theme`, `decision:v5-dark-surface-contrast`, `decision:v5-policy-bulk-selection`, `decision:v5-demo-mode-launcher`, `decision:v5-finance-form-clarity`, `decision:v5-market-scenario-copy`, `decision:v5-diagnosis-information-clarity`, `decision:v5-submission-doc-ui-sync`, `decision:v5-official-notice-positive-handoff-copy`, `issue:v5-preparation-answer-scroll-jump`, `issue:v5-input-ledger-scroll-jump`, `handoff:current`
+  - Summary: Revised the V5 brand, theme, presentation presets, finance form, ledger, scenario explanation, diagnosis and preparation copy, then synchronized the current Markdown drafts. Preparation extraction gaps hand off directly to official notices, AI chat is explicit, preparation-condition recalculation preserves scroll, dark-mode semantic surfaces are clearer, and the three visible policy candidates can now be selected together without exposing the larger internal candidate count. The function specification now reflects bulk policy selection, scroll-preserving preparation answers, AI chat naming and the updated figure 3(b) capture; the proposal needed no change. The later pre-diagnosis ledger scroll-preservation experiment was rolled back by user request. Calculations, APIs, HWPX, PDF and public deployment remain unchanged.
+
+- `session:20260830-0031`
+  - Started: 2026-08-30T00:31+09:00
+  - Last activity: 2026-08-30T10:40+09:00
+  - Focus: Judge- and AI-screening review of whether the two current Markdown submission drafts make the service differentiation immediately visible.
+  - Updated keys: `decision:submission-differentiation-frontload`, `handoff:current`
+  - Summary: Reviewed only the two current Markdown drafts and the named competitors' current official public descriptions, then front-loaded the approved no-policy-versus-policy financial-outcome definition in both drafts and added a compact three-row comparison table to proposal section 4. Humanizer and whitespace checks passed; no HWPX, PDF, service or calculation file changed.
+
+- `session:20260829-1744`
+  - Started: 2026-08-29T17:44+09:00
+  - Last activity: 2026-08-29T21:53+09:00
+  - Focus: Clarify the proposal's policy-fund wording, prepare Figure 2, align the document structure, and review the user's first proposal PDF.
+  - Updated keys: `handoff:current`
+  - Summary: Clarified and revised policy-fund wording and created a pixel-preserving Figure 2 composite with labeled panels and preserved sources. Four tables were temporarily converted to prose for one HWP layout, then restored verbatim when the user changed templates. The proposal role table was retained while its redundant Figure 3 pipeline-like diagram block was removed in favor of the completed function-specification pipeline; source assets remain preserved. Proposal section 7 was retitled around MVP scope and future enhancement without changing its evidence boundary. Corrected the initial false screenshot critique after code review. The subsequent six-page PDF review confirmed all seven sections and 12 embedded links, but found a `거치기간` wording regression, one missing no-invention sentence, reduced dataset-link traceability, unresolved Figure 2 cross-policy continuity, and several mandatory page-break/orphan fixes. No HWP or PDF was modified.
+
+- `session:20260829-1120`
+  - Started: 2026-08-29T11:20+09:00
+  - Last activity: 2026-08-29T17:11+09:00
+  - Focus: Finalize the second-pass submission copy, establish Figure 6 boundaries, produce reference-only ImageGen drafts, prepare Canva-ready pipeline icons, and review the user's completed Figure 6 replacement.
+  - Updated keys: `handoff:current`
+  - Summary: Finalized the approved 08 and 09 copy, replaced Figure 6 edit instructions with final boundary prose, generated a concise icon-led pipeline and reusable icon assets, reviewed the user's completed Canva reconstruction, and updated the Figure 6 target, caption and two adjacent AI-boundary paragraphs after approval. The processing table, service, calculation, HWPX and PDF remain unchanged.
+
+- `session:20260828-1731`
+  - Started: 2026-08-28T17:31+09:00
+  - Last activity: 2026-08-28T22:09+09:00
+  - Focus: Complete the proposal first-pass revision and begin the function-specification first-pass revision under a consistent judge-readability standard.
+  - Updated keys: `convention:judge-readable-submission-prose`, `handoff:current`
+  - Summary: Completed the proposal first-pass revision and function-specification sections 1 through 5. Section 5 was reduced to the official judge-facing URL reproduction needs while preserving the representative inputs and exact expected results; its full-flow check was reduced from seven steps to four and its limitations from eleven items to six. Figure 6 remains deferred to tomorrow, and no service, calculation, official HWPX or PDF change was made.
+
+- `session:20260828-1126`
+  - Started: 2026-08-28T11:26+09:00
+  - Last activity: 2026-08-28T16:36+09:00
+  - Focus: Simplify proposal language, separate problem background from service differentiation, and refresh competitor evidence from official public sources.
+  - Updated keys: `convention:judge-readable-submission-prose`, `handoff:current`
+  - Summary: User-approved edits clarified and template-aligned the proposal and function specification. Proposal section 5 now explains its three data classes, collection methods, all nine Seoul sources, notice-to-schedule conversion, LightGBM training unit and two sales-change dependent variables. It also makes explicit that the three outputs are numeric rates used as inputs to cash-flow calculations, while the deterministic financial engine—not the model—calculates weekly balances. The model/AI role table, privacy boundary and Figure 3 were simplified and synchronized, and the revised figure PNG was rendered and visually checked. No service, calculation or official HWPX change was made.
+
+- `session:20260828-1032`
+  - Started: 2026-08-28T10:32+09:00
+  - Last activity: 2026-08-28T11:11+09:00
+  - Focus: Merge proposal, function-specification and screenshot-placement drafts into the next document versions and define the pipeline content without treating its visual design as final.
+  - Updated keys: `convention:user-owned-submission-document-editing`, `handoff:current`
+  - Summary: Created `제출/06_공모전_기획서_원고_및_시각자료_통합초안.md` and `제출/07_기능명세서_원고_및_시각자료_통합초안.md`, embedding all planned screenshot directions in their owning official document. Added high-level and detailed SVG/PNG pipeline wireframes plus explicit must-keep content for inputs, local processing, optional external AI, verification, outputs, storage, transmission and deterministic financial authority. Rechecked the public root, health and representative demo on 2026-08-28, validated SVG XML and PNG rendering, and preserved both official HWPX files; automated regression suites were not rerun and pipeline aesthetics remain user-owned.
+
+- `session:20260828-0948`
+  - Started: 2026-08-28T09:48+09:00
+  - Last activity: 2026-08-28T10:06+09:00
+  - Focus: Draft all five official function-specification fields as judge-facing submission copy without internal version or development-history language.
+  - Updated keys: `handoff:current`
+  - Summary: Created `제출/04_기능명세서_항목별_원고_초안.md` and `제출/05_기능명세서_사진_삽입_가이드.md`. The official copy covers five required fields and ten functions, while the guide specifies six exact visuals with insertion points, capture states, crops, captions, filenames, a pipeline layout and PDF checks. Rechecked the public root, health and representative demo on 2026-08-28; static checks found no prohibited version, internal endpoint, local-address or development-history wording in the official copy. No service, deployment, official HWPX or PDF changed.
+
+- `session:20260827-2353`
+  - Started: 2026-08-27T23:50+09:00
+  - Last activity: 2026-08-27T23:53+09:00
+  - Focus: Explain the proposal's numeric source markers and restore the planned screenshot, placement and caption handoff.
+  - Updated keys: `convention:user-owned-submission-document-editing`, `handoff:current`
+  - Summary: Replaced all `[1]` through `[5]` body markers with named inline official links and created `제출/04_공모전_기획서_사진_삽입_가이드.md`. The guide covers the representative comparison, three-panel diagnosis-to-preparation flow and AI-versus-deterministic authority diagram using only synthetic inputs. Static checks found no unexplained numeric markers or internal version and development language in the official copy; no screenshot, HWPX or PDF was produced.
+
+- `session:20260827-2347`
+  - Started: 2026-08-27T23:47+09:00
+  - Last activity: 2026-08-27T23:47+09:00
+  - Focus: Draft all seven official proposal fields as judge-facing submission copy while removing version labels and internal work history.
+  - Updated keys: `convention:user-owned-submission-document-editing`, `handoff:current`
+  - Summary: Created `제출/03_공모전_기획서_항목별_원고_초안.md` with the service name, summary, problem, differentiation, data and AI roles, expected effects, safety and verification limits, plus five public sources. Rechecked the 2026 MSS survey scope and statistics on the official page. The draft contains no version, Stage, Gate, copy-forward or development-history language; no service, deployment, HWPX or PDF changed.
+
+- `session:20260827-1458`
+  - Started: 2026-08-27T14:58+09:00
+  - Last activity: 2026-08-27T15:52+09:00
+  - Focus: Confirm the first-round document requirements and prepare separate execution plans for drafting the official proposal and function-specification templates in later sessions.
+  - Updated keys: `convention:user-owned-submission-document-editing`, `handoff:current`
+  - Summary: Read both HWPX templates without modifying them, mapped all 7 proposal and 5 function-specification fields to V5 sources, and created two standalone plans under `제출/`. Later clarified both plans with the screenshot ownership split: Codex supplies shot lists, states, crops and captions; the user captures synthetic deployed screens, inserts them into HWPX, adjusts layout, converts to PDF, and owns final visual approval. No service, deployment, HWPX, or PDF was changed.
+
 - `session:20260827-1136`
   - Started: 2026-08-27T11:36+09:00
-  - Last activity: 2026-08-27T13:30+09:00
-  - Focus: Confirm the competition submission package and assess a free deployment route for V5 Final.
-  - Updated keys: `decision:v5-finalization-and-project-close`, `baseline:competition-submission-and-hosting-readiness`, `handoff:current`
-  - Summary: Verified from the official DAKER page that the first deadline requires a proposal PDF, function-specification PDF, and executable URL, while the presentation PDF and source ZIP apply only after presentation-round selection. Compared current free-hosting conditions, measured the local V5 server at 293.8 MiB working set after a successful model request, and changed the recommendation to Cloud Run 1 GiB scale-to-zero when billing setup is acceptable; Render free remains the simpler but riskier fallback. Confirmed the repository is clean and up to date and that its Dockerfile launches `app.main:app` rather than `v5.main:app`; no external deployment or service-code change was made.
+  - Last activity: 2026-08-27T14:23+09:00
+  - Focus: Confirm the competition submission package, prepare V5 for Cloud Run, deploy it, and verify the public service.
+  - Updated keys: `decision:v5-finalization-and-project-close`, `baseline:competition-submission-and-hosting-readiness`, `issue:cloud-run-v5-runtime-packaging`, `handoff:current`
+  - Summary: Verified that the first deadline requires two PDFs and a live URL, then deployed V5 to Cloud Run in project `max-finance-ai-challenge`. Corrected the V5 entry point and container path, secret-access permission, ignored runtime CSV and Parquet assets, and missing LightGBM `libgomp1`; final commit `cb4bc35` and revision `finance-ai-challenge-00006-9rl` serve 100 percent of traffic. The public root, health, catalogs, market scenario, representative demo, and demo route all return HTTP 200; no report or presentation artifact was drafted.
 
 - `session:20260827-0948`
   - Started: 2026-08-27T09:48+09:00

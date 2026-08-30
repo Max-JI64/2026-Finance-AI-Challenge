@@ -12,7 +12,8 @@
 .v5-demo-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
 .v5-demo-heading h2{margin:0;font-size:1.25rem}
 .v5-demo-heading>span{flex:0 0 auto;padding:6px 10px;border-radius:999px;background:var(--soft);color:var(--muted);font-size:.72rem;font-weight:800}
-#v5-demo-loading{margin:18px 0 0;color:var(--muted)}
+.v5-demo-loading{display:flex;align-items:center;gap:12px;margin:18px 0 0;padding:14px 16px;border:1px solid color-mix(in srgb,var(--accent) 22%,var(--line));border-radius:var(--radius-sm);background:var(--soft);color:var(--muted);font-weight:700}
+.v5-demo-loading .v5-inline-spinner{width:24px;height:24px}
 .v5-demo-error{margin-top:18px;padding:14px;border-left:4px solid var(--danger);background:var(--soft)}
 .v5-demo-error p{margin:0 0 10px}
 .v5-demo-inputs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;margin:18px 0;overflow:hidden;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--line)}
@@ -47,20 +48,29 @@
 .v5-zero-shortcut input{appearance:auto;width:17px!important;height:17px!important;min-height:17px;margin:0;padding:0;accent-color:var(--accent)}
 .v5-zero-shortcut:has(input:checked){color:var(--accent-strong)}
 .v5-timing-summary{margin:16px 0 0;padding:12px 14px;border-radius:var(--radius-sm);background:var(--soft);color:var(--muted);font-size:.76rem;line-height:1.55}
+.scenario-description{display:grid;width:100%;max-width:none;gap:3px;line-height:1.55}
+.scenario-description span{display:block}
 .v5-lens-panel,.v5-review-plan{margin-top:20px;padding:22px;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);color:var(--text)}
 .v5-lens-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:18px 0 10px}
 .v5-lens-grid button{min-height:62px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--soft);color:var(--text);font-weight:800;line-height:1.4;cursor:pointer}
 .v5-lens-grid button[aria-checked="true"]{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 16%,var(--surface));color:var(--accent-strong);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 18%,transparent)}
 .v5-review-plan-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
-.v5-review-plan-summary{margin:16px 0;padding:14px;border-radius:12px;background:var(--soft);font-weight:800;line-height:1.55}
+.v5-review-plan-summary{max-width:70ch;margin:16px 0 0;padding:14px;border-radius:12px;background:var(--soft);font-weight:500;line-height:1.65}
 .v5-review-plan dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0}
 .v5-review-plan dl>div{padding:13px;border:1px solid var(--line);border-radius:12px}
 .v5-review-plan dt{color:var(--muted);font-size:.78rem;font-weight:800}
 .v5-review-plan dd{margin:6px 0 0;font-weight:800;line-height:1.5}
+.v5-review-plan-grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:12px;margin-top:16px}
+.v5-review-plan-card{display:grid;align-content:start;gap:5px;padding:16px;border:1px solid var(--line);border-radius:12px;background:var(--soft)}
+.v5-review-plan-card.is-primary{border-left:4px solid var(--accent)}
+.v5-review-plan-card span{color:var(--muted);font-size:.75rem;font-weight:700}
+.v5-review-plan-card strong{font-size:1rem;line-height:1.45}
+.v5-review-plan-card p{margin:0;color:var(--muted);font-size:.82rem;line-height:1.55}
 .v5-review-plan-actions{margin-top:14px;padding:14px;border:1px solid color-mix(in srgb,var(--warning) 50%,var(--line));border-radius:12px;background:color-mix(in srgb,var(--warning) 10%,var(--surface))}
 .v5-review-plan-actions p{margin:0 0 10px}
 .v5-plan-lens-options{display:flex;flex-wrap:wrap;gap:8px}
 .v5-review-order-reason{color:var(--accent-strong)!important;font-weight:800}
+@media(max-width:760px){.v5-review-plan-grid{grid-template-columns:1fr}}
 
 .v5-next-notice{margin-top:14px;padding:16px;border:1px solid color-mix(in srgb,var(--accent) 55%,var(--line));border-radius:14px;background:var(--surface)}
 .v5-next-notice h3{margin:4px 0 12px}
@@ -234,3 +244,51 @@ input[aria-invalid="true"]{border-color:var(--danger);background:color-mix(in sr
   .v5-demo-inputs{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(prefers-reduced-motion:reduce){.v5-inline-spinner{animation-duration:1.8s}}
+
+/* Explicit light/dark theme control. All financial and policy states retain their semantic color. */
+.brand-mark{position:relative}.brand-mark-dark{display:none!important}:root[data-theme="dark"] .brand-mark-light{display:none!important}:root[data-theme="dark"] .brand-mark-dark{display:block!important}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-width:124px;min-height:40px;padding:7px 11px;border:1px solid var(--line);border-radius:999px;background:var(--soft);color:var(--text);font-size:.78rem;font-weight:800;white-space:nowrap;cursor:pointer;transition:border-color .16s ease,background-color .16s ease,color .16s ease,transform .12s ease}.theme-toggle:hover{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-strong)}.theme-toggle:active{transform:translateY(1px)}.theme-toggle-track{position:relative;width:34px;height:18px;border:1px solid var(--line);border-radius:999px;background:var(--surface)}.theme-toggle-thumb{position:absolute;top:3px;left:3px;width:10px;height:10px;border-radius:50%;background:var(--accent-strong);transition:transform .18s ease,background-color .18s ease}:root[data-theme="dark"] .theme-toggle-thumb{transform:translateX(16px)}
+.primary,.step-button.is-active span,.alternative-card.is-top:before,.preset-grid span,.chat-message--user .chat-avatar,.chat-message--user .chat-bubble{color:var(--on-accent)}
+.v4-field-confirm.is-confirmed{color:var(--on-accent)}
+.ranking-notice{background:var(--warning-soft);color:var(--warning-text)}.ranking-notice.is-danger{border-left-color:var(--danger);background:var(--danger-soft);color:var(--danger-text)}
+body,.site-header,.step-nav,.theme-toggle,.theme-toggle-track{transition-property:background-color,border-color,color;transition-duration:.18s;transition-timing-function:ease}
+@media(prefers-reduced-motion:reduce){body,.site-header,.step-nav,.theme-toggle,.theme-toggle-track,.theme-toggle-thumb{transition:none}}
+@media(max-width:420px){.theme-toggle{min-width:auto}.theme-toggle-label{font-size:.72rem}}
+
+.site-header-actions{display:flex;align-items:center;gap:9px}
+:root{--demo-accent:#a94f00;--demo-accent-strong:#6c3300;--demo-accent-soft:#fff1dc;--demo-on-accent:#fff;--demo-surface:#fffaf2}
+:root[data-theme="dark"]{--demo-accent:#f2b84b;--demo-accent-strong:#ffd787;--demo-accent-soft:#3a2a14;--demo-on-accent:#251300;--demo-surface:#1f1b14}
+@media(prefers-color-scheme:dark){:root:not([data-theme]){--demo-accent:#f2b84b;--demo-accent-strong:#ffd787;--demo-accent-soft:#3a2a14;--demo-on-accent:#251300;--demo-surface:#1f1b14}}
+.demo-mode-indicator{padding:7px 10px;border:1px solid var(--demo-accent);border-radius:999px;background:var(--demo-accent-soft);color:var(--demo-accent-strong);font-size:.72rem;font-weight:900;letter-spacing:.04em}
+.is-presentation-demo .presentation-presets{margin:0 0 30px;border:2px solid var(--demo-accent);background:linear-gradient(135deg,color-mix(in srgb,var(--demo-accent-soft) 72%,var(--demo-surface)),var(--surface) 70%);box-shadow:0 16px 40px color-mix(in srgb,var(--demo-accent) 18%,transparent)}.is-presentation-demo .presentation-presets>summary{padding:22px 24px}.is-presentation-demo .preset-mode-label{display:block;color:var(--demo-accent-strong)}.is-presentation-demo .presentation-presets>summary::after{background:var(--demo-accent-soft);color:var(--demo-accent-strong)}.is-presentation-demo .presentation-presets>summary strong{font-size:clamp(1.25rem,2.5vw,1.65rem);letter-spacing:-.035em}.is-presentation-demo .presentation-presets>summary small{font-size:.86rem}.is-presentation-demo .preset-content{padding:4px 24px 24px;border-top-color:color-mix(in srgb,var(--demo-accent) 45%,var(--line))}.is-presentation-demo .preset-readiness-spinner{border-top-color:var(--demo-accent)}.is-presentation-demo .preset-readiness.is-ready{color:var(--demo-accent-strong);background:var(--demo-accent-soft)}.is-presentation-demo .preset-ready-mark{background:var(--demo-accent);color:var(--demo-on-accent)}.is-presentation-demo .preset-grid{gap:11px}.is-presentation-demo .preset-grid button{min-height:132px;padding:15px;transition:transform .14s ease,border-color .14s ease,background-color .14s ease,box-shadow .14s ease}.is-presentation-demo .preset-grid button:not(:disabled):hover,.is-presentation-demo .preset-grid button.is-selected{border-color:var(--demo-accent);background:var(--demo-accent-soft)}.is-presentation-demo .preset-grid button:not(:disabled):hover{transform:translateY(-2px)}.is-presentation-demo .preset-grid button.is-selected{transform:translateY(-2px);box-shadow:inset 0 0 0 2px var(--demo-accent),0 8px 20px color-mix(in srgb,var(--demo-accent) 18%,transparent)}.is-presentation-demo .preset-grid button>span{background:var(--demo-accent);color:var(--demo-on-accent)}.is-presentation-demo .preset-grid strong{font-size:.9rem}.is-presentation-demo .preset-grid small{font-size:.74rem}.is-presentation-demo .preset-status strong{color:var(--demo-accent-strong)}.is-presentation-demo .preset-completion .primary{border-color:var(--demo-accent);background:var(--demo-accent);color:var(--demo-on-accent)}.is-presentation-demo .preset-completion .primary:hover{border-color:var(--demo-accent-strong);background:var(--demo-accent-strong);color:var(--demo-on-accent)}.is-presentation-demo .presentation-presets.has-selection{border-color:var(--demo-accent-strong)}.is-presentation-demo .presentation-presets summary:focus-visible,.is-presentation-demo .presentation-presets button:focus-visible{outline-color:color-mix(in srgb,var(--demo-accent) 62%,transparent)}
+@media(max-width:760px){.site-header-actions{gap:6px}.demo-mode-indicator{padding:6px 8px;font-size:.65rem}.is-presentation-demo .presentation-presets>summary{padding:18px}.is-presentation-demo .preset-content{padding:2px 18px 18px}.preset-completion{align-items:stretch;flex-direction:column}.preset-completion .primary{width:100%}}
+@media(prefers-reduced-motion:reduce){.preset-readiness-spinner{animation-duration:1.8s}.is-presentation-demo .preset-grid button{transition:none}}
+
+/* Finance entry hierarchy: aligned rows, visible entry surfaces, and clear zero-value shortcuts. */
+:root{--finance-input-bg:#f8fbf9;--finance-input-border:#91a49a;--finance-input-shadow:inset 0 1px 0 rgba(255,255,255,.9)}
+:root[data-theme="dark"]{--finance-input-bg:#27312c;--finance-input-border:#5f7067;--finance-input-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+@media(prefers-color-scheme:dark){:root:not([data-theme]){--finance-input-bg:#27312c;--finance-input-border:#5f7067;--finance-input-shadow:inset 0 1px 0 rgba(255,255,255,.04)}}
+.v5-cash-grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:minmax(142px,auto);column-gap:20px;row-gap:0;align-items:stretch}
+.v5-cash-grid>label,.v5-cash-grid>.v5-money-field{min-width:0;min-height:142px;padding:14px 0 18px;border-bottom:1px solid var(--line);align-content:start}
+.v5-cash-grid>.v5-money-field{display:grid;grid-template-rows:auto 1fr;gap:10px}
+.v5-cash-grid .money-input input,.v5-cash-grid select,.revenue-months .money-input input,#revenue-timing,.v5-loan-grid .money-input input,.v5-loan-grid select{min-height:56px;border-color:var(--finance-input-border);background:var(--finance-input-bg);box-shadow:var(--finance-input-shadow);font-size:1.02rem;font-weight:800}
+.v5-cash-grid .money-input b,.revenue-months .money-input b,.v5-loan-grid .money-input b{top:16px;padding-left:10px;border-left:1px solid color-mix(in srgb,var(--finance-input-border) 70%,transparent);color:var(--text);font-size:.8rem}
+.v5-cash-grid .money-input input:disabled,.v5-loan-grid .money-input input:disabled,.v5-loan-grid select:disabled{border-color:var(--line);background:var(--soft);box-shadow:none;color:var(--muted);opacity:.72}
+.revenue-months{align-items:stretch}.revenue-months .month-entry{align-content:start}.revenue-months .money-input{margin-top:2px}
+.v5-loan-grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:minmax(110px,auto);column-gap:20px;row-gap:0;align-items:stretch}
+.v5-loan-grid>label{min-width:0;min-height:110px;padding:14px 0 18px;border-bottom:1px solid var(--line);align-content:start}
+.v5-cash-grid .v5-zero-shortcut{display:flex;align-items:center;justify-self:stretch;gap:9px;min-height:40px;padding:8px 11px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--finance-input-bg);color:var(--text);font-size:.8rem;font-weight:800;transition:border-color .14s ease,background-color .14s ease,color .14s ease}
+.v5-cash-grid .v5-zero-shortcut:hover{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-strong)}
+.v5-cash-grid .v5-zero-shortcut:has(input:checked){border-color:var(--accent);background:var(--accent-soft);color:var(--accent-strong);box-shadow:inset 0 0 0 1px var(--accent)}
+.v5-cash-grid .v5-zero-shortcut input{flex:0 0 auto;width:19px!important;height:19px!important;min-height:19px}
+
+/* The final input ledger needs enough desktop width to keep year-month labels intact. */
+.v4-input-ledger{width:min(1040px,calc(100vw - 48px));max-height:90dvh;padding:clamp(26px,3vw,36px);scrollbar-gutter:stable}
+.v4-input-ledger #v4-input-ledger-title{padding-right:44px}
+.v4-input-ledger .v4-ledger-table>div{grid-template-columns:150px minmax(0,1fr);gap:16px 20px;padding:14px 16px;align-items:start}
+.v4-input-ledger .v4-monthly-ledger{grid-template-columns:repeat(3,minmax(170px,1fr));gap:8px 16px}
+.v4-input-ledger .v4-monthly-ledger>div{min-width:0}
+.v4-input-ledger .v4-monthly-ledger dt{white-space:nowrap;word-break:keep-all}
+@media(max-width:900px){.v4-input-ledger{width:calc(100vw - 28px);padding:24px}.v4-input-ledger .v4-ledger-table>div{grid-template-columns:1fr}.v4-input-ledger .v4-monthly-ledger{grid-template-columns:repeat(2,minmax(150px,1fr))}}
+@media(max-width:760px){.v5-cash-grid,.v5-loan-grid{grid-template-columns:1fr;grid-auto-rows:auto;row-gap:0}.v5-cash-grid>label,.v5-cash-grid>.v5-money-field,.v5-loan-grid>label{min-height:0}.v4-input-ledger{padding:22px 18px}.v4-input-ledger .v4-monthly-ledger{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.v5-cash-grid .v5-zero-shortcut{transition:none}}

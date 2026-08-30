@@ -124,12 +124,42 @@ def test_root_exposes_three_user_stages_and_preserves_core_inputs() -> None:
     assert re.search(r'<details[^>]*class="presentation-presets"[^>]*id="presentation-presets"[^>]*hidden', html)
     assert "추가 대출이 위기를 해결하는지, 부채만 늘리는지 계산합니다." in html
     assert "대표 사례 30초 보기" in html and "내 사업장으로 계산하기" in html
+    assert "서울 소상공인 정책금융 영향 시뮬레이터" in html
+    assert 'class="v3-version-label">V5' not in html and ">₩<" not in html
+    assert "buteomai-mark.svg" in html and "buteomai-mark-dark.svg" in html and ">ㅂ<" not in html
+    assert 'id="theme-toggle"' in html and 'id="theme-toggle-label"' in html
+    assert 'id="demo-mode-indicator"' in html and 'id="preset-continue"' in html
+    assert "발표할 가게를 선택하세요" in html and "입력값 확인하기" in html
+    assert "구체적인 계획이 있을 때만 추가 계산" not in html
+    assert 'id="optional-comparison-tools"' not in html and 'id="open-cost-reduction"' not in html
+    assert "13주 추가 필요 현금" not in html and 'id="policy-cash-need"' not in html
+    assert 'document.documentElement.dataset.theme' in html and "theme.js" in html
+    assert "가상 예시" in html and "v5-inline-spinner" in html and 'aria-busy="false"' in html
+    assert "AI와 채팅으로 이 정책 더 물어보기" in html
+    assert "무엇부터 확인할지 모르겠음을 기본값으로 적용했습니다" not in html
+    assert "선택한 고민에 맞춰 먼저 볼 정책과 핵심 재무 숫자를 정리합니다." in html
+    assert 'id="select-all-policies"' in html and "정책 모두 선택" in html
+    assert "선택한 상권·업종 전체의 매출이 앞으로 13주와 6개월 동안" in html
+    assert "내 점포의 매출을 예측하는 값은 아닙니다." in html
+    assert "한 범위를 선택하면 진단과 정책 비교에 같은 조건이 적용됩니다." not in html
+    assert 'class="scenario-description"' in html
+    assert "내 가게의 지난 매출과 상권의 앞으로 매출을 따로 봅니다" in html
+    assert "내 가게 · 입력한 매출" in html and "상권·업종 · 앞으로 13주" in html
+    assert "내 점포 최근 흐름과 상권 전망은 다른 정보입니다" not in html
     assert all(item in html for item in ("v5-no-rent", "v5-no-employees", "v4-no-loan", "v5-revenue-paste", "v5-required-progress"))
     app_script = (ROOT / "v5/static/app.js").read_text(encoding="utf-8")
     extension_script = (ROOT / "v5/static/v5-extension.js").read_text(encoding="utf-8")
     extension_css = (ROOT / "v5/static/v5-extension.css").read_text(encoding="utf-8")
     assert 'reviewLens: "unsure", confirmedReviewLens: null, reviewLensSource: "suggested"' in app_script
+    assert "상권·업종 매출 전년 동기 대비" in app_script
+    assert "전년 같은 기간보다" not in app_script
+    assert '`${scenarioLabels[state.scenario]}: ${marketChange}`' in app_script
     assert 'api("/api/v5/representative-demo")' in extension_script
+    assert "공식 공고에서 직접 확인해 주세요" in extension_script
+    assert all(text not in extension_script for text in ("원문 근거 검증 실패", "추출값을 자동 확정하지 않았습니다.", "공고에서 확인되지 않음", "찾지 못한 값을 채우지 않았습니다.", "AI 분석 불가", "자동으로 정리하지 못했습니다"))
+    assert 'const preparationWasActive = byId("preparation")?.classList.contains("is-active")' in extension_script
+    assert 'window.scrollTo({ left: scrollPosition.x, top: scrollPosition.y + layoutShift, behavior: "auto" })' in extension_script
+    assert 'setAttribute("aria-busy", "true")' in extension_script
     assert "v5RepresentativeValueTone" in extension_script
     assert all(
         marker in extension_script
@@ -139,6 +169,60 @@ def test_root_exposes_three_user_stages_and_preserves_core_inputs() -> None:
         selector in extension_css
         for selector in (".v5-demo-value--danger", ".v5-demo-value--positive", ".v5-demo-value--warning")
     )
+    theme_script = (ROOT / "v5/static/theme.js").read_text(encoding="utf-8")
+    base_css = (ROOT / "v5/static/styles.css").read_text(encoding="utf-8")
+    assert 'const STORAGE_KEY = "buteomai:theme"' in theme_script
+    assert 'root.dataset.theme === "dark" ? "light" : "dark"' in theme_script
+    assert 'aria-pressed' in theme_script and "renderCharts" in theme_script
+    assert ':root[data-theme="dark"]' in base_css
+    assert all(token in base_css for token in ("--bg:#0d130f", "--surface:#18221d", "--soft:#222e27", "--line:#4b5a52"))
+    assert 'isDark ? "#0d130f" : "#f3f7f4"' in theme_script
+    assert ".assumption-dialog{position:fixed" in base_css
+    assert all(token in base_css for token in ("--bg:", "--surface:", "--text:", "--muted:", "--line:", "--on-accent:"))
+    assert 'const isPresentationDemo = new URLSearchParams(window.location.search).get("demo") === "1"' in app_script
+    assert "initPresentationDemoMode" in app_script and "setPresentationPresetReady" in app_script
+    assert 'byId("business").prepend(panel)' in app_script
+    assert 'showStep("finance")' in app_script
+    expected_preset_lenses = {
+        '"cash-rich"': "policy_choice",
+        "stable": "policy_choice",
+        '"sales-down"': "cash_runway",
+        '"high-fixed"': "fixed_cost",
+        '"debt-heavy"': "debt_relief",
+    }
+    for preset_id, review_lens in expected_preset_lenses.items():
+        assert re.search(
+            rf'{re.escape(preset_id)}:\s*\{{[^}}]*reviewLens:\s*"{review_lens}"',
+            app_script,
+        )
+    assert 'state.reviewLens = preset.reviewLens' in app_script
+    assert 'state.reviewLensSource = "user"' in app_script
+    assert "6개월 재무정보와 주된 해결 목적이 채워졌으며" in app_script
+    assert 'byId("optional-comparison-tools")' not in app_script
+    assert 'byId("open-cost-reduction")' not in app_script
+    assert 'byId("policy-cash-need")' not in app_script
+    assert "function baselineCashNeed()" in app_script and "function renderPolicyCashNeed()" not in app_script
+    assert ".is-presentation-demo .presentation-presets" in extension_css
+    assert all(token in extension_css for token in ("--demo-accent:", "--demo-accent-soft:", "--demo-on-accent:"))
+    assert 'var(--demo-accent)' in extension_css and 'var(--demo-accent-soft)' in extension_css
+    assert 'class="form-grid money-grid v5-cash-grid"' in html
+    assert 'class="form-grid money-grid v5-loan-grid"' in html
+    assert all(selector in extension_css for selector in (".v5-cash-grid", ".v5-cash-grid .v5-zero-shortcut", ".v4-input-ledger .v4-monthly-ledger"))
+    assert all(selector in extension_css for selector in (".revenue-months .money-input input", "#revenue-timing", ".v5-loan-grid .money-input input"))
+    assert "--finance-input-bg:" in extension_css and "width:min(1040px,calc(100vw - 48px))" in extension_css
+    assert "`확인 권장` 항목은 계산 가능하므로" not in html
+    assert 'rows.map(([label, value])' in extension_script
+    assert "사용자 선택 · 확인됨" not in extension_script and "사용자 입력 · 확인됨" not in extension_script
+    assert "대체로 보합" not in app_script and "최근 달 매출" in app_script
+    assert "safeCashScrollPosition" in app_script and "keepSafeCashScrollPosition" in app_script
+    assert "현재 입력에 맞는 정책 ${candidates.length}개를 보여줍니다" in app_script
+    assert "개 후보 중 우선순위" not in app_script
+    assert 'event.target.closest("#select-all-policies")' in app_script
+    assert 'document.querySelectorAll("#policy-discovery-cards [data-policy-select]")' in app_script
+    assert ".policy-selection-toolbar" in base_css
+    assert "먼저 볼 효과" not in extension_script and "확인한 재무 상태" not in extension_script
+    assert "아직 선택하지 않았습니다" in extension_script and "v5-review-plan-grid" in extension_script
+    assert "정책 비교에서 먼저 확인" in extension_script and "사업장 입력에서 직접 선택했습니다" in extension_script
 
 
 def test_representative_demo_uses_the_deterministic_engine_and_fixed_synthetic_case() -> None:
@@ -164,6 +248,7 @@ def test_representative_demo_uses_the_deterministic_engine_and_fixed_synthetic_c
     assert policy_loan["net_new_borrowing"] > 0
     assert policy_loan["month6_debt_change_vs_no_action"] > 0
     assert policy_loan["week13_ending_cash"] - no_action["week13_ending_cash"] == policy_loan["week13_cash_change_vs_no_action"]
+    assert body["summary"].count("무대응") == 1
     assert all(item["first_cash_shortage_week"] is None or item["first_cash_shortage_week"] >= 1 for item in body["scenarios"])
     assert len(body["limitations"]) == 3
 

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">버팀AI 어두운 배경용 심벌</title>
+  <desc id="desc">두 개의 버팀목이 상승하는 현금흐름선을 받치는 심벌</desc>
+  <rect width="64" height="64" rx="14" fill="#68bd94"/>
+  <path d="M13 32 C22 32 28 30 35 27 C42 24 47 19 52 14" fill="none" stroke="#101512" stroke-width="4" stroke-linecap="round"/>
+  <path d="M20 49 H30 M25 49 V32 M36 49 H46 M41 49 V24" fill="none" stroke="#101512" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
