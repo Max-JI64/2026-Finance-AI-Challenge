@@ -5,7 +5,7 @@
 
 ## Project snapshot
 
-- Last updated: 2026-08-30T18:26+09:00
+- Last updated: 2026-08-30T21:57+09:00
 - Purpose: Build a bounded-AI Seoul small-business finance copilot that separates store trends from aggregate market scenarios, shows policy candidates without an upfront question gate, lets users choose each selected policy's reviewed conditions in its preparation screen, and compares no action with confirmed or explicitly conditional policy effects on deterministic 13-week and 6-month cash/debt horizons.
 - Important paths: `V2 단계별 구현 계획표.md` and `V3 사용자 경험 구성안.md` preserve earlier versions; `V4 구현 계획표.md` and `v4/` preserve the implemented V4; `V5 구현 계획표.md`, `V5 사용자 경험 흐름.md`, `v5/`, `v5/VERIFICATION.md`, and `reports/v5/evaluation/` describe the implemented V5, its V6 comparison baseline, verification evidence, and fixed evaluation Oracles.
 
@@ -87,9 +87,9 @@
 
 - `decision:v5-submission-doc-ui-sync`
   - Created: 2026-08-30T17:27+09:00
-  - Updated: 2026-08-30T18:26+09:00
+  - Updated: 2026-08-30T21:04+09:00
   - Status: active
-  - Content: 최신 V5 UI 변경은 제출용 Markdown에 화면 테마 전환, 발표 예시별 해결 목적 자동 선택, 간소화된 입력 원장, 현재 위치의 28일 필요현금 팝업, `가상 예시`, 정책 후보 일괄 선택, 준비 조건 선택 시 화면 위치 유지와 AI 채팅 명칭을 동기화한다. 핵심 계산·정책·AI What-if 설명은 그대로 유지하고 HWPX·PDF와 공개 배포는 사용자의 별도 작업 전까지 수정하지 않는다.
+  - Content: 최신 V5 UI 변경은 제출용 Markdown에 화면 테마 전환, 발표 예시별 해결 목적 자동 선택, 간소화된 입력 원장, 현재 위치의 28일 필요현금 팝업, `가상 예시`, 정책 후보 일괄 선택, 준비 조건 선택 시 화면 위치 유지와 AI 채팅 명칭을 동기화한다. 일반 이용 흐름은 일반 URL 기준으로 두고, 심사위원 확인 절에는 `/?demo=1` 전체 주소와 가상 입력 선택 화면 캡처 지침을 둔다. 그림 1은 MVP 첫 문단과 서비스 구성 문단 사이에서 대표 사례의 비교 내용을 본문으로 설명하고 캡션은 `그림 1. 대표 사례 30초 보기`로 짧게 쓴다. What-if는 핵심 설명과 이용 흐름에서 제외하고 `가정 변경 비교`라는 이름으로 기능 목록, AI 처리와 개인정보 절에만 실제 역할과 외부 전송 한계를 남기며, 중복된 일반 `선택형 기능` 설명 문단은 두지 않는다. 상권환경 모델 절은 P10·P50·P90의 의미, 4개 expanding-window Fold, 직전 1분기 제외, 후보 비교, 2025Q2 내부 시간 Holdout과 새 미래기간 독립검증 미완료를 설명한다. 활용 데이터 절은 서울시 상권분석서비스 9개 공개자료의 개별 공식 링크와 2021Q1~2025Q4 사용기간을 밝힌다. HWPX·PDF와 공개 배포는 사용자의 별도 작업 전까지 수정하지 않는다.
   - Evidence: `제출/08_공모전_기획서_원고_및_시각자료_2차수정본.md`, `제출/09_기능명세서_원고_및_시각자료_2차수정본.md`; 2026-08-30 문구 대조.
 
 - `decision:mvp-scope`
@@ -833,19 +833,26 @@
 ## Current handoff
 
 - `handoff:current`
-  - Updated: 2026-08-30T18:26+09:00
-  - Current state: 로컬 V5 서버가 PID 23052로 실행 중이다. 정책 후보 영역에 현재 보이는 최대 3개 정책을 한 번에 선택하는 버튼을 추가했고 상태 문구는 노출 정책 3개 기준으로 단순화했다. 다크모드 공통 박스 대비 수정도 유지하며 계산 값과 공개 배포는 바꾸지 않았다.
-  - Next step: 사용자가 정책 3개 일괄 선택과 다크모드 박스 대비를 직접 확인하고, 갱신된 기능명세서 문구와 그림 3(b) 캡처 조건을 확인한다.
-  - Blockers: 없음. HWPX·PDF·서비스·계산·공개 배포는 이번 문서 편집에서 변경하지 않았고 최종 시각 승인은 사용자 소유다.
+  - Updated: 2026-08-30T21:04+09:00
+  - Current state: 기능명세서의 상권환경 모델 절에 Quantile의 P10·P50·P90 의미, 2024Q1~Q4의 4개 expanding-window Fold, 각 검증 직전 1분기 제외, 후보 비교, 2025Q2 내부 시간 Holdout과 새 미래기간 독립검증 미완료를 반영했다. 활용 데이터 절에는 서울시 상권분석서비스 공개자료 9종의 개별 공식 링크와 2021Q1~2025Q4 사용기간을 추가했다.
+  - Next step: 사용자가 Markdown 문구를 확정하면 해당 내용을 공식 HWPX에 옮기고 PDF 배치를 최종 확인한다.
+  - Blockers: 없음. 모델·서비스·계산·HWPX·PDF·공개 배포는 이번 문서 편집에서 변경하지 않았고 최종 시각 승인은 사용자 소유다.
 
 ## Session log
 
+- `session:20260830-2157`
+  - Started: 2026-08-30T21:57+09:00
+  - Last activity: 2026-08-30T21:57+09:00
+  - Focus: Explain how to keep the deployed Cloud Run service at one warm 1-vCPU instance without changing external deployment settings.
+  - Updated keys: none
+  - Summary: Confirmed the recorded deployment baseline of 1 vCPU, 1 GiB, minimum zero and maximum one; recommended service-level minimum one with request-based billing for cold-start reduction, and distinguished it from instance-based billing required for CPU execution outside requests. No Cloud Run setting, code, data, or document was changed.
+
 - `session:20260830-1114`
   - Started: 2026-08-30T11:14+09:00
-  - Last activity: 2026-08-30T18:26+09:00
+  - Last activity: 2026-08-30T21:04+09:00
   - Focus: Revise the local V5 service and synchronize only the resulting submission-document wording while preserving rollback and user-owned visual boundaries.
   - Updated keys: `decision:v5-user-selectable-theme`, `decision:v5-dark-surface-contrast`, `decision:v5-policy-bulk-selection`, `decision:v5-demo-mode-launcher`, `decision:v5-finance-form-clarity`, `decision:v5-market-scenario-copy`, `decision:v5-diagnosis-information-clarity`, `decision:v5-submission-doc-ui-sync`, `decision:v5-official-notice-positive-handoff-copy`, `issue:v5-preparation-answer-scroll-jump`, `issue:v5-input-ledger-scroll-jump`, `handoff:current`
-  - Summary: Revised the V5 brand, theme, presentation presets, finance form, ledger, scenario explanation, diagnosis and preparation copy, then synchronized the current Markdown drafts. Preparation extraction gaps hand off directly to official notices, AI chat is explicit, preparation-condition recalculation preserves scroll, dark-mode semantic surfaces are clearer, and the three visible policy candidates can now be selected together without exposing the larger internal candidate count. The function specification now reflects bulk policy selection, scroll-preserving preparation answers, AI chat naming and the updated figure 3(b) capture; the proposal needed no change. The later pre-diagnosis ledger scroll-preservation experiment was rolled back by user request. Calculations, APIs, HWPX, PDF and public deployment remain unchanged.
+  - Summary: Revised the V5 brand, theme, presentation presets, finance form, ledger, scenario explanation, diagnosis and preparation copy, then synchronized the current Markdown drafts. Preparation extraction gaps hand off directly to official notices, AI chat is explicit, preparation-condition recalculation preserves scroll, dark-mode semantic surfaces are clearer, and the three visible policy candidates can now be selected together without exposing the larger internal candidate count. The function specification reflects bulk selection, scroll-preserving answers, AI chat naming and updated capture guidance. It keeps the normal URL in the general user flow while adding the full `/?demo=1` URL and synthetic-input verification. Figure 1 now has a concise representative-case explanation and caption. What-if was de-emphasized and the generic selection paragraph removed. The pipeline block was judged sufficient, but its image label still needs term alignment. The model section now defines P10/P50/P90 and discloses four chronological expanding-window Folds, one-quarter exclusion, model comparison, the fixed 2025Q2 internal time Holdout and lack of a later independent future-period audit. The data section links the nine official Seoul datasets and states the 2021Q1~2025Q4 period. The proposal needed no change. Calculations, APIs, HWPX, PDF and public deployment remain unchanged.
 
 - `session:20260830-0031`
   - Started: 2026-08-30T00:31+09:00
