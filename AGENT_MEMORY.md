@@ -5,7 +5,7 @@
 
 ## Project snapshot
 
-- Last updated: 2026-08-30T21:57+09:00
+- Last updated: 2026-08-30T22:06+09:00
 - Purpose: Build a bounded-AI Seoul small-business finance copilot that separates store trends from aggregate market scenarios, shows policy candidates without an upfront question gate, lets users choose each selected policy's reviewed conditions in its preparation screen, and compares no action with confirmed or explicitly conditional policy effects on deterministic 13-week and 6-month cash/debt horizons.
 - Important paths: `V2 단계별 구현 계획표.md` and `V3 사용자 경험 구성안.md` preserve earlier versions; `V4 구현 계획표.md` and `v4/` preserve the implemented V4; `V5 구현 계획표.md`, `V5 사용자 경험 흐름.md`, `v5/`, `v5/VERIFICATION.md`, and `reports/v5/evaluation/` describe the implemented V5, its V6 comparison baseline, verification evidence, and fixed evaluation Oracles.
 
@@ -66,10 +66,10 @@
 
 - `decision:v5-user-selectable-theme`
   - Created: 2026-08-30T12:17+09:00
-  - Updated: 2026-08-30T12:17+09:00
+  - Updated: 2026-08-30T22:06+09:00
   - Status: active
-  - Content: V5 provides a top-right light/dark theme toggle. The explicit choice persists only as the non-sensitive `buteomai:theme` localStorage key; without a saved choice the system color preference is followed. Both themes use centralized semantic CSS tokens, theme-specific logo/favicon assets, and chart redraw after a theme change.
-  - Evidence: `v5/static/index.html`, `v5/static/styles.css`, `v5/static/v5-extension.css`, `v5/static/theme.js`, and `v5/tests/test_v5.py`; JavaScript checks, V5 18/18 tests, and local root/health/theme/CSS HTTP 200.
+  - Content: V5 provides a top-right light/dark theme toggle. The explicit choice persists only as the non-sensitive `buteomai:theme` localStorage key; without a saved choice the site starts in dark mode regardless of the browser or operating-system color preference. Both themes use centralized semantic CSS tokens, theme-specific logo/favicon assets, and chart redraw after a theme change.
+  - Evidence: `v5/static/index.html`, `v5/static/styles.css`, `v5/static/v5-extension.css`, `v5/static/theme.js`, and `v5/tests/test_v5.py`; JavaScript syntax check, `git diff --check`, and V5 tests 18/18.
 
 - `decision:v5-dark-surface-contrast`
   - Created: 2026-08-30T18:06+09:00
@@ -833,12 +833,19 @@
 ## Current handoff
 
 - `handoff:current`
-  - Updated: 2026-08-30T21:04+09:00
-  - Current state: 기능명세서의 상권환경 모델 절에 Quantile의 P10·P50·P90 의미, 2024Q1~Q4의 4개 expanding-window Fold, 각 검증 직전 1분기 제외, 후보 비교, 2025Q2 내부 시간 Holdout과 새 미래기간 독립검증 미완료를 반영했다. 활용 데이터 절에는 서울시 상권분석서비스 공개자료 9종의 개별 공식 링크와 2021Q1~2025Q4 사용기간을 추가했다.
-  - Next step: 사용자가 Markdown 문구를 확정하면 해당 내용을 공식 HWPX에 옮기고 PDF 배치를 최종 확인한다.
-  - Blockers: 없음. 모델·서비스·계산·HWPX·PDF·공개 배포는 이번 문서 편집에서 변경하지 않았고 최종 시각 승인은 사용자 소유다.
+  - Updated: 2026-08-30T22:06+09:00
+  - Current state: V5는 저장된 테마 선택이 없는 첫 방문에서 브라우저·운영체제 설정과 무관하게 다크모드로 시작한다. 사용자가 토글로 화이트모드를 선택하면 기존처럼 `buteomai:theme`에 저장해 다음 방문에도 유지한다.
+  - Next step: 필요하면 현재 변경을 공개 Cloud Run 서비스에 별도 배포한 뒤 실제 첫 방문과 저장된 화이트모드 재방문을 확인한다.
+  - Blockers: 로컬 코드와 V5 테스트는 완료됐지만 공개 배포와 실제 브라우저 시각 승인은 이번 작업 범위에서 수행하지 않았다.
 
 ## Session log
+
+- `session:20260830-2204`
+  - Started: 2026-08-30T22:04+09:00
+  - Last activity: 2026-08-30T22:06+09:00
+  - Focus: Make dark mode the V5 first-visit default while preserving explicit user theme choices.
+  - Updated keys: `decision:v5-user-selectable-theme`, `handoff:current`
+  - Summary: Replaced the system-color default with a synchronous dark default, removed automatic reactions to system-theme changes, aligned the initial browser theme color, bumped the theme-script cache key, and added regression assertions. JavaScript syntax, `git diff --check`, and all 18 V5 tests passed; public deployment and browser visual approval remain unchanged.
 
 - `session:20260830-2157`
   - Started: 2026-08-30T21:57+09:00

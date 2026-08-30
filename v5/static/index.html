@@ -4,14 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="버팀AI는 추가 대출이 현금 위기를 해결하는지, 부채만 늘리는지 13주 현금과 6개월 부채로 비교합니다.">
-  <meta name="theme-color" content="#f3f7f4">
+  <meta name="theme-color" content="#0d130f">
   <title>버팀AI | 서울 소상공인 정책금융 영향 시뮬레이터</title>
   <script>
     (() => {
       let savedTheme = null;
       try { savedTheme = window.localStorage.getItem("buteomai:theme"); } catch { /* Storage can be unavailable in private contexts. */ }
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-      document.documentElement.dataset.theme = savedTheme === "light" || savedTheme === "dark" ? savedTheme : systemTheme;
+      document.documentElement.dataset.theme = savedTheme === "light" || savedTheme === "dark" ? savedTheme : "dark";
     })();
   </script>
   <link id="theme-favicon" rel="icon" type="image/svg+xml" href="/static/brand/buteomai-mark.svg?v=brand-001">
@@ -281,7 +280,7 @@
   <div class="loading-overlay" id="global-loading" role="status" aria-live="assertive" aria-busy="true" hidden><div class="loading-card"><span class="loading-spinner" aria-hidden="true"></span><strong id="global-loading-title">현금흐름을 계산하고 있습니다</strong><p id="global-loading-message">잠시만 기다려 주세요.</p><time id="global-loading-elapsed" role="timer" aria-live="off">경과 시간 0초</time></div></div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script src="/static/theme.js?v=v5-theme-002" defer></script>
+  <script src="/static/theme.js?v=v5-theme-003" defer></script>
   <script src="/static/app.js?v=v5-final-009" defer></script>
   <script src="/static/v5-extension.js?v=v5-final-008" defer></script>
 </body>

@@ -134,6 +134,8 @@ def test_root_exposes_three_user_stages_and_preserves_core_inputs() -> None:
     assert 'id="optional-comparison-tools"' not in html and 'id="open-cost-reduction"' not in html
     assert "13주 추가 필요 현금" not in html and 'id="policy-cash-need"' not in html
     assert 'document.documentElement.dataset.theme' in html and "theme.js" in html
+    assert '? savedTheme : "dark"' in html
+    assert '<meta name="theme-color" content="#0d130f">' in html
     assert "가상 예시" in html and "v5-inline-spinner" in html and 'aria-busy="false"' in html
     assert "AI와 채팅으로 이 정책 더 물어보기" in html
     assert "무엇부터 확인할지 모르겠음을 기본값으로 적용했습니다" not in html
@@ -173,6 +175,7 @@ def test_root_exposes_three_user_stages_and_preserves_core_inputs() -> None:
     base_css = (ROOT / "v5/static/styles.css").read_text(encoding="utf-8")
     assert 'const STORAGE_KEY = "buteomai:theme"' in theme_script
     assert 'root.dataset.theme === "dark" ? "light" : "dark"' in theme_script
+    assert "prefers-color-scheme" not in theme_script
     assert 'aria-pressed' in theme_script and "renderCharts" in theme_script
     assert ':root[data-theme="dark"]' in base_css
     assert all(token in base_css for token in ("--bg:#0d130f", "--surface:#18221d", "--soft:#222e27", "--line:#4b5a52"))

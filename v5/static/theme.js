@@ -7,17 +7,6 @@
   const label = document.getElementById("theme-toggle-label");
   const favicon = document.getElementById("theme-favicon");
   const themeColor = document.querySelector('meta[name="theme-color"]');
-  const systemPreference = window.matchMedia("(prefers-color-scheme: dark)");
-
-  function savedTheme() {
-    try {
-      const value = window.localStorage.getItem(STORAGE_KEY);
-      return value === "light" || value === "dark" ? value : null;
-    } catch {
-      return null;
-    }
-  }
-
   function storeTheme(theme) {
     try { window.localStorage.setItem(STORAGE_KEY, theme); } catch { /* Theme persistence is best-effort. */ }
   }
@@ -49,7 +38,4 @@
 
   applyTheme(root.dataset.theme === "dark" ? "dark" : "light");
   toggle?.addEventListener("click", () => applyTheme(root.dataset.theme === "dark" ? "light" : "dark", true));
-  systemPreference.addEventListener?.("change", (event) => {
-    if (!savedTheme()) applyTheme(event.matches ? "dark" : "light");
-  });
 })();
