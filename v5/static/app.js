@@ -135,6 +135,7 @@ function initPresentationDemoMode() {
   panel.open = true;
   document.body.classList.add("is-presentation-demo");
   byId("demo-mode-indicator").hidden = false;
+  if (window.demoFallback.testMode()) byId("demo-mode-indicator").textContent = `발표 모드 · 자동 복구 테스트 ${window.demoFallback.testMode()}`;
   byId("business").prepend(panel);
   setPresentationPresetReady(false);
 }
@@ -655,20 +656,45 @@ async function runComparison(next = "diagnosis", navigate = true, manageLoading 
   const original = button.textContent; button.disabled = true; button.textContent = "3개 범위 계산 중";
   if (manageLoading) showLoading("세 가지 매출 변화 범위의 현금흐름을 계산하고 있습니다.");
   try {
-    await loadMarketScenarios();
+    if (!window.demoFallback.testMode()) await loadMarketScenarios();
     if (state.scenarioCacheKey !== cacheKey || !state.scenarioResults[state.scenario]) {
-      const entries = await Promise.all(Object.keys(scenarioLabels).map(async (scenario) => [
-        scenario,
-        await api("/api/v5/orchestrate", { method: "POST", body: JSON.stringify({ comparison: { ...body, market_scenario: scenario }, answered_fields: Object.keys(state.eligibilityAnswers), asked_fields: state.v3AskedFields, situation_context: situationContextPayload(), question_round: state.questionBatchRound, review_lens: state.reviewLens, review_lens_source: state.reviewLensSource, confirmed_review_lens: state.confirmedReviewLens }) }),
-      ]));
-      state.scenarioResults = Object.fromEntries(entries.map(([scenario, result]) => [scenario, applyGoalRanking(result)]));
-      if (entries.some(([, result]) => result.conditional_policy_fallbacks?.length)) {
-        state.scenarioCacheKey = "";
-        return await window.openDemoFallback();
+      try {
+        if (window.demoFallback.testMode()) throw new Error("Injected comparison failure: fallback=" + window.demoFallback.testMode());
+        const entries = await Promise.all(Object.keys(scenarioLabels).map(async (scenario) => [
+          scenario,
+          await api("/api/v5/orchestrate", { method: "POST", body: JSON.stringify({ comparison: { ...body, market_scenario: scenario }, answered_fields: Object.keys(state.eligibilityAnswers), asked_fields: state.v3AskedFields, situation_context: situationContextPayload(), question_round: state.questionBatchRound, review_lens: state.reviewLens, review_lens_source: state.reviewLensSource, confirmed_review_lens: state.confirmedReviewLens }) }),
+        ]));
+        if (entries.some(([, result]) => !result?.baseline_cashflow?.debt_summary ||
+          !Number.isFinite(result?.safe_cash?.suggested_amount) || !result?.comparison_result ||
+          !result?.intervention_results?.some(item => item.alternative_id === "no_action" && item.metrics) ||
+          !result?.market_scenario_comparison?.length ||
+          result.market_scenario_comparison.some(item => item.weekly_13?.length !== 13 || item.weekly_13.some(week => !Number.isFinite(week.closing_cash))) ||
+          result.intervention_results.some(item => item.metrics && (item.weekly_13?.length !== 13 || item.weekly_13.some(week => !Number.isFinite(week.closing_cash)))))) {
+          throw new Error("Incomplete comparison graph data");
+        }
+        state.scenarioResults = Object.fromEntries(entries.map(([scenario, result]) => [scenario, applyGoalRanking(result)]));
+        if (entries.some(([, result]) => result.conditional_policy_fallbacks?.length)) {
+          throw new Error("Conditional policy calculation unavailable");
+        }
+      } catch (error) {
+        console.warn("Comparison recovered with sample data", error);
+        state.scenarioResults = await window.demoFallback.load();
       }
       state.scenarioCacheKey = cacheKey;
     }
     state.data = applyGoalRanking(state.scenarioResults[state.scenario]);
+    if (state.data.fallback) {
+      state.marketScenarios = null;
+      const candidates = state.data.policy_discovery.candidates;
+      if (!state.selectedPolicyIds.size || !candidates.some(item => state.selectedPolicyIds.has(item.policy_id))) {
+        state.selectedPolicyIds = new Set(candidates.map(item => item.policy_id));
+      }
+      for (const result of Object.values(state.scenarioResults)) {
+        result.policy_discovery.candidates.forEach(candidate => {
+          candidate.official_url = state.policies.find(item => item.policy_id === candidate.policy_id)?.official_url || "";
+        });
+      }
+    }
     state.reviewPlan = state.data.review_plan || null;
     state.reviewOrder = state.data.review_order || [];
     state.metricOrder = state.data.metric_order || [];
@@ -683,9 +709,10 @@ async function runComparison(next = "diagnosis", navigate = true, manageLoading 
     syncPolicySearchToAlternative(state.selectedAlternative);
     renderResults(); updateSummary(); if (navigate) showStep(next); return true;
   } catch (error) {
-    console.error("Comparison recovery", error);
+    console.error("Comparison rendering failed", error);
     state.scenarioCacheKey = "";
-    return await window.openDemoFallback();
+    toast("화면을 표시하지 못했습니다. 새로고침 후 다시 시도해 주세요.");
+    return false;
   }
   finally { if (manageLoading) hideLoading(); button.disabled = false; button.textContent = original; }
 }
@@ -745,6 +772,13 @@ async function runCsvBaseline() {
 function scenarioComparison() { return state.data?.market_scenario_comparison || []; }
 function scenarioValuesDiffer(selector) { const values = scenarioComparison().map(selector); return new Set(values.map((value) => String(value))).size > 1; }
 function renderResults() {
+  const sample = state.data.fallback;
+  document.querySelectorAll("[data-fallback-notice]").forEach(node => {
+    node.hidden = !sample;
+    node.textContent = sample ? `계산 오류로 ${sample.level}차 자동 복구를 적용했습니다. 아래 그래프·금액은 가상 시연 사례이며 입력한 사업장의 예측이나 정책 승인 결과가 아닙니다.` : "";
+  });
+  if (byId("v5-review-plan")) byId("v5-review-plan").hidden = !!sample;
+  if (sample) document.querySelectorAll("#scenario-options label b").forEach(node => { node.textContent = "가상 예시"; });
   byId("diagnosis-empty").hidden = true; byId("diagnosis-result").hidden = false; byId("decision-empty").hidden = true; byId("decision-result").hidden = false; byId("diagnosis-next").disabled = false;
   const inputBaseline = state.data.baseline_cashflow;
   const baselineAlternative = state.data.intervention_results.find((item) => item.alternative_id === "no_action" && item.metrics);
@@ -789,6 +823,7 @@ function renderStoreSignals() {
         : "상권·업종 매출 전년 동기와 동일";
   byId("store-trend-value").textContent = storeText;
   byId("market-outlook-value").textContent = `${scenarioLabels[state.scenario]}: ${marketChange}`;
+  if (state.data?.fallback) byId("market-outlook-value").textContent = `${scenarioLabels[state.scenario]} · 가상 예시 매출 경로 (실제 상권 전망 아님)`;
 }
 
 function scenarioField(policyId, field, label, type = "text", suffix = "") {
@@ -874,7 +909,7 @@ function renderPolicyResults(discovery) {
   const selectedCandidates = allCandidates.filter((item) => state.selectedPolicyIds.has(item.policy_id));
   const candidates = [...allCandidates.slice(0, 3), ...selectedCandidates].filter((item, index, items) => items.findIndex((other) => other.policy_id === item.policy_id) === index).slice(0, 3);
   const allVisiblePoliciesSelected = candidates.length > 0 && candidates.every((item) => state.selectedPolicyIds.has(item.policy_id));
-  byId("policy-discovery-status").textContent = `현재 입력에 맞는 정책 ${candidates.length}개를 보여줍니다. 현재 ${state.selectedPolicyIds.size}개 선택.`;
+  byId("policy-discovery-status").textContent = `${state.data.fallback ? "가상 시연용" : "현재 입력에 맞는"} 정책 ${candidates.length}개를 보여줍니다. 현재 ${state.selectedPolicyIds.size}개 선택.`;
   byId("select-all-policies").hidden = candidates.length === 0;
   byId("select-all-policies").disabled = allVisiblePoliciesSelected;
   byId("select-all-policies").textContent = allVisiblePoliciesSelected ? "모두 선택됨" : "정책 모두 선택";
@@ -986,8 +1021,8 @@ function renderPolicyFocus() {
   const metrics = (state.metricOrder?.length ? state.metricOrder : ["week13_ending_cash", "net_new_borrowing", "maximum_monthly_debt_service"]).map((key) => ({ key, label: v5MetricLabels[key] || key, value: v5MetricDelta(key, alternative, baseline) }));
   const structural = readiness.conditional_graph_status === "structural_block";
   const calculationUnavailable = readiness.conditional_graph_status === "calculation_unavailable" || !alternative;
-  const status = structural ? "현재 입력 기준 지원 어려움" : calculationUnavailable ? "효과 계산 조건 확인 필요" : "조건부 효과 비교 가능";
-  const explanation = structural
+  const status = state.data.fallback ? "가상 예시 효과 비교" : structural ? "현재 입력 기준 지원 어려움" : calculationUnavailable ? "효과 계산 조건 확인 필요" : "조건부 효과 비교 가능";
+  const explanation = state.data.fallback ? "자동 복구용 가상 사례입니다. 입력한 사업장의 실제 효과나 지원 가능성을 뜻하지 않습니다." : structural
     ? readiness.conditional_graph_reason || "앞에서 입력한 조건에 지원 제외 사유가 있습니다. 잘못 입력했다면 5단계에서 답변을 수정할 수 있습니다."
     : calculationUnavailable
     ? readiness.conditional_graph_reason || "공식 금액이나 현재 재무조건이 부족해 임의의 효과를 만들지 않았습니다. 신청 가능 여부와는 별개입니다."

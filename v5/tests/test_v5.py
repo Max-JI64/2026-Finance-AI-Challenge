@@ -219,7 +219,10 @@ def test_root_exposes_three_user_stages_and_preserves_core_inputs() -> None:
     assert "사용자 선택 · 확인됨" not in extension_script and "사용자 입력 · 확인됨" not in extension_script
     assert "대체로 보합" not in app_script and "최근 달 매출" in app_script
     assert "safeCashScrollPosition" in app_script and "keepSafeCashScrollPosition" in app_script
-    assert "현재 입력에 맞는 정책 ${candidates.length}개를 보여줍니다" in app_script
+    assert 'state.data.fallback ? "가상 시연용" : "현재 입력에 맞는"' in app_script
+    assert 'data-fallback-notice' in html
+    assert 'window.demoFallback.testMode()' in app_script
+    assert 'window.openDemoFallback' not in app_script
     assert "개 후보 중 우선순위" not in app_script
     assert 'event.target.closest("#select-all-policies")' in app_script
     assert 'document.querySelectorAll("#policy-discovery-cards [data-policy-select]")' in app_script

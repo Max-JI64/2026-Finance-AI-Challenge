@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="ko">
 <head>
-  <script src="/static/demo-fallback.js?v=v5-fallback-002"></script>
   <meta charset="utf-8">
+  <script src="/static/demo-fallback.js?v=v5-fallback-003"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="버팀AI는 추가 대출이 현금 위기를 해결하는지, 부채만 늘리는지 13주 현금과 6개월 부채로 비교합니다.">
   <meta name="theme-color" content="#0d130f">
@@ -206,6 +206,7 @@
         </section>
         <div id="diagnosis-empty" class="empty-state"><h2>재무 입력을 완료해 주세요</h2><p>현금 진단을 계산하면 이곳에 결과가 표시됩니다.</p><button class="primary" data-step="finance">재무 입력으로 이동</button></div>
         <div id="diagnosis-result" hidden tabindex="-1">
+          <p class="field-help" data-fallback-notice role="status" hidden></p>
           <div class="metric-strip diagnosis-metrics" id="diagnosis-metrics"></div>
           <section class="signal-separation" aria-labelledby="signal-separation-title"><div><p class="eyebrow">과거 매출과 미래 가정</p><h2 id="signal-separation-title">내 가게의 지난 매출과 상권의 앞으로 매출을 따로 봅니다</h2></div><div class="signal-grid"><article><span>내 가게 · 입력한 매출</span><strong id="store-trend-value">계산 전</strong><p id="store-trend-note">입력한 기간의 가장 오래된 달과 최근 달을 비교한 값입니다.</p></article><article><span>상권·업종 · 앞으로 13주</span><strong id="market-outlook-value">계산 전</strong><p>선택한 범위에서 상권·업종 전체 매출이 어떻게 변할지 가정한 값입니다.</p></article></div></section>
           <section class="chart-panel"><div class="chart-heading"><div><h2>세 가지 상권 범위의 13주 현금 비교</h2><p>노란색은 필요현금 미달 구간이고, 0원 아래는 현금 적자 구간입니다.</p></div><div class="chart-legend scenario-chart-legend" id="scenario-chart-legend"></div></div><button type="button" class="safe-cash-guide" id="safe-cash-help" aria-haspopup="dialog" aria-controls="safe-cash-dialog"><strong>앞으로 28일 필요현금</strong><span>앞으로 28일의 필수 비용과 대출 상환금</span><em>자세히</em></button><canvas id="baseline-chart" width="1100" height="520" aria-label="세 가지 상권 범위의 13주 예상 현금 잔액 비교 그래프. 노란색은 필요현금 미달 구간이고 0원 아래는 현금 적자 구간입니다."></canvas></section>
@@ -235,6 +236,7 @@
         <button type="button" class="active-scenario-link" id="active-scenario-link"><span>적용 중</span><strong id="decision-scenario-status">기준 범위</strong><small id="decision-scenario-help">선택한 범위가 진단과 정책 비교에 적용됩니다.</small><em>범위 변경</em></button>
         <div id="decision-empty" class="empty-state"><h2>먼저 현금 진단이 필요합니다</h2><button class="primary" data-step="finance">재무 입력으로 이동</button></div>
         <div id="decision-result" hidden>
+          <p class="field-help" data-fallback-notice role="status" hidden></p>
           <details class="v3-what-if-panel v4-what-if-panel">
             <summary><span>선택 기능</span><strong>AI What-if로 조건을 바꿔 보기</strong><small>현재 입력은 유지한 채 매출이나 비용 조건만 임시 계산합니다.</small></summary>
             <div class="v4-what-if-body">
@@ -282,7 +284,7 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="/static/theme.js?v=v5-theme-003" defer></script>
-  <script src="/static/app.js?v=v5-final-009" defer></script>
+  <script src="/static/app.js?v=v5-final-010" defer></script>
   <script src="/static/v5-extension.js?v=v5-final-008" defer></script>
 </body>
 </html>
