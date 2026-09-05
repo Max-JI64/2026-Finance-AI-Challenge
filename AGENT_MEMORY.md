@@ -5,11 +5,25 @@
 
 ## Project snapshot
 
-- Last updated: 2026-08-30T22:06+09:00
+- Last updated: 2026-09-05T13:04+09:00
 - Purpose: Build a bounded-AI Seoul small-business finance copilot that separates store trends from aggregate market scenarios, shows policy candidates without an upfront question gate, lets users choose each selected policy's reviewed conditions in its preparation screen, and compares no action with confirmed or explicitly conditional policy effects on deterministic 13-week and 6-month cash/debt horizons.
-- Important paths: `V2 단계별 구현 계획표.md` and `V3 사용자 경험 구성안.md` preserve earlier versions; `V4 구현 계획표.md` and `v4/` preserve the implemented V4; `V5 구현 계획표.md`, `V5 사용자 경험 흐름.md`, `v5/`, `v5/VERIFICATION.md`, and `reports/v5/evaluation/` describe the implemented V5, its V6 comparison baseline, verification evidence, and fixed evaluation Oracles.
+- Important paths: `V2 단계별 구현 계획표.md` and `V3 사용자 경험 구성안.md` preserve earlier versions; `V4 구현 계획표.md` and `v4/` preserve the implemented V4; `V5 구현 계획표.md`, `V5 사용자 경험 흐름.md`, `v5/`, `v5/VERIFICATION.md`, and `reports/v5/evaluation/` describe the implemented V5, its V6 comparison baseline, verification evidence, and fixed evaluation Oracles. `포트폴리오/2026 금융 AI Challenge - 버팀AI/` contains the final-service portfolio case study, two detail pages, eight HWPX-embedded images converted to PNG, and exact copies of the final proposal and function-specification PDFs. `데모 사이트/index.html` is the self-contained offline portfolio demo derived from the current V5 UI.
 
 ## Durable decisions
+
+- `decision:offline-portfolio-demo`
+  - Created: 2026-08-31T17:12+09:00
+  - Updated: 2026-08-31T18:04+09:00
+  - Status: active
+  - Content: GitHub 블로그용 공개 데모는 현재 `v5/static/` 화면을 복사한 독립 파생본 `데모 사이트/index.html` 한 파일로 유지한다. 원본 V5는 변경하지 않는다. 데모는 2026-08-31에 계산해 저장한 이태원 관광특구 한식음식점의 고정 가상 사례, 하방·기준·회복 세 범위와 정책 3개만 보여주며 입력과 정책 선택은 고정한다. 런타임 LightGBM, 서버·API 호출, 외부 AI, 공고 자동 분석, 외부 링크·자원과 데이터 전송은 사용하지 않고 CSP `connect-src 'none'`으로 연결도 차단한다. 저장 수치는 개인 점포 예측이나 현재 공고 상태가 아니며 최종 시각 확인은 사용자 소유다.
+  - Evidence: `데모 사이트/index.html`; 인라인 JavaScript 4개 구문 검사, 인라인 스타일 3개와 고정 사례·정책 3개·시나리오 3개 계약 검사, 외부 자원·URL·통신 API·런타임 모델명·API 키 패턴 부재 확인. 앱 내 브라우저의 `file://` 접근은 보안 정책으로 차단되어 실제 브라우저 시각 검사는 수행하지 않았다.
+
+- `decision:portfolio-final-service-case-study`
+  - Created: 2026-08-31T14:12+09:00
+  - Updated: 2026-08-31T14:12+09:00
+  - Status: active
+  - Content: 버팀AI 포트폴리오는 개발 버전·단계 이력, 로컬 주소와 테스트 건수를 노출하지 않고 최종 공개 서비스만 설명한다. 메인 사례 페이지는 문제 정의, 진단-비교-준비 흐름, 무대응 대비 13주 현금과 6개월 부채·상환 비교, 데이터·AI 역할 분리, 개인정보와 한계를 다룬다. 별도 세부 페이지는 금융 계산과 AI·데이터 안전장치를 설명한다. 화면 자료는 폐기된 별도 이미지가 아니라 사용자가 최종 `기획서.hwpx`와 `기능명세서.hwpx`에 삽입한 원본만 사용한다.
+  - Evidence: `포트폴리오/2026 금융 AI Challenge - 버팀AI/`; 최종 HWPX `BinData` 원본 확인, 이미지 8개 PNG 로드, Markdown 상대 링크 16개, 대표 사례 수치 대조, PDF 7쪽·12쪽과 원본 SHA-256 일치, 공개 URL 현재 화면과 금융보안원·DAKER·중소벤처기업부·서울 열린데이터광장 공식 페이지 확인.
 
 - `decision:v5-market-scenario-copy`
   - Created: 2026-08-30T16:21+09:00
@@ -795,10 +809,10 @@
 
 - `decision:v5-finalization-and-project-close`
   - Created: 2026-08-27T08:44+09:00
-  - Updated: 2026-08-27T14:23+09:00
+  - Updated: 2026-08-31T20:46+09:00
   - Status: active
-  - Content: The user approved ending feature development with `V5 Final` instead of building V6 or switching topics. V5 intentionally ends at official-application handoff for the recorded policy, privacy, and authority reasons. Submission preparation is active, and V5 is now deployed publicly on Cloud Run without adding a new service feature, model, automatic application, or V6 scope.
-  - Evidence: `프로젝트 계획서.md` section 38.1, `V5 사용자 경험 흐름.md` section 18.1, `V6 실제 수요 검증 보고서.md` section 12, commits `78c3e61` through `cb4bc35`, and live Cloud Run checks on 2026-08-27. V5 tests pass 18/18 and the deployed root, health, catalogs, market scenario, and representative demo return HTTP 200.
+  - Content: The user closed the project after completing the proposal, function specification, final-service portfolio package, offline demo and Cloud billing safeguards. The existing all-service KRW 10,000 alerts-only budget is retained and the separate Cloud Run Spend Cap setup is user-confirmed complete. No implementation, document, deployment, review, portfolio or cost-control task is active; keep the project completed until the user makes a separate new work request. V5 remains the final implemented scope, ending at official-application handoff without V6, automatic application or a new service contract.
+  - Evidence: User closeout and Cloud budget completion confirmations on 2026-08-31; `프로젝트 계획서.md` section 38.1; `V5 사용자 경험 흐름.md` section 18.1; current submission artifacts under `제출/`; final portfolio package under `포트폴리오/2026 금융 AI Challenge - 버팀AI/`; offline demo `데모 사이트/index.html`; public root and `/health` returned HTTP 200 with `v5-api-v1.0` at 2026-08-31T20:46+09:00. Billing-console configuration itself was not independently read by Codex.
 
 - `baseline:v5-final-unexplored-angle-recheck`
   - Created: 2026-08-27T09:15+09:00
@@ -830,15 +844,77 @@
   - Fix: Grant `roles/secretmanager.secretAccessor` on `openai-api-key`, track only the required runtime CSV and Parquet files through explicit `.gitignore` exceptions, and install Debian `libgomp1` in `Dockerfile`; no secret value was committed or logged.
   - Evidence: Cloud Run and Cloud Build logs; commits `6ad1ffb`, `24f5365`, `bc99ae5`, and `cb4bc35`; final live endpoint checks all returned HTTP 200.
 
+- `issue:v5-comparison-policy-fallback`
+  - Created: 2026-09-04T17:52+09:00
+  - Updated: 2026-09-04T17:52+09:00
+  - Status: resolved
+  - Symptom: 2026-10-01 기준 재무 입력에서 대환 계약이 `(119, 0, equal_principal)`로 계산돼 공식 120개월 옵션 검증에 실패하고 비교 화면으로 넘어가지 못했다.
+  - Cause: 비선택 매출 범위의 무대응 경로만 필요했지만 고정 만기일 `2036-08-05`를 쓰는 전체 Hero 정책 대안까지 만들었고, 개별 조건부 정책 오류가 전체 응답을 중단했다.
+  - Fix: 비선택 범위는 무대응만 계산하고, V5 대환 만기는 첫 납부일부터 정확히 120회가 되도록 만들었다. 정책별 `CashflowInputError`는 해당 정책만 제외하고 무대응과 나머지 정책으로 계속 진행하며 fallback 상태를 응답에 남긴다.
+  - Evidence: `src/integration/re_stage8.py`, `v5/orchestrator.py`, `v5/tests/test_v5.py`, `tests/test_re_stage8.py`; 현재 시연 기준일·강제 오류·120회 계약 회귀 3/3 및 관련 전체 54/54 테스트 통과, `git diff --check` 통과. 공개 배포와 브라우저 시각 검사는 수행하지 않았다.
+
 ## Current handoff
 
+- First-chart recovery extension (2026-09-05): 2차 저장 사례와 3차 내장 사례 모두 하방·기준·회복 3선 그래프 및 무대응·정책 4선 그래프를 제공한다. 상단 범위 선택은 하단 정책 현금선과 13주 현금 수치를 함께 변경한다. 가상 시연 경로이며 개인화 예측이 아니다. Node 복구·전환 검사 통과, 배포와 시각 승인은 미수행.
+
+- Recovery extension (2026-09-05T13:04+09:00): 사용자 요청으로 정책 제외 이후 저장 예시 JSON을 사용하는 2차 fallback과 네트워크·파일 장애 시 브라우저 내장 예시를 사용하는 3차 fallback을 추가했다. 전체 비교를 독립 가상 시연 화면으로 전환하며 무대응·비차입 지원·대환·신규 융자 4개 현금 선과 금액 표, 정책 탭, 입력 복귀 버튼을 제공한다. 원래 선택 정책에 대한 개인화 결과로 표시하지 않는다. API에는 20초 제한, 예시 요청에는 3초 제한을 두었고 정상 JSON·offline·손상·timeout Node 검증이 통과했다. 공개 배포와 실제 브라우저 시각 검사는 미수행이다.
+
 - `handoff:current`
-  - Updated: 2026-08-30T22:06+09:00
-  - Current state: V5는 저장된 테마 선택이 없는 첫 방문에서 브라우저·운영체제 설정과 무관하게 다크모드로 시작한다. 사용자가 토글로 화이트모드를 선택하면 기존처럼 `buteomai:theme`에 저장해 다음 방문에도 유지한다.
-  - Next step: 필요하면 현재 변경을 공개 Cloud Run 서비스에 별도 배포한 뒤 실제 첫 방문과 저장된 화이트모드 재방문을 확인한다.
-  - Blockers: 로컬 코드와 V5 테스트는 완료됐지만 공개 배포와 실제 브라우저 시각 승인은 이번 작업 범위에서 수행하지 않았다.
+  - Updated: 2026-09-04T17:52+09:00
+  - Current state: V5의 2026-10-01 대환 119개월 오류를 수정했고, 개별 조건부 정책 계산 실패 시 해당 정책만 제외한 채 무대응 기준선과 나머지 정책으로 비교 화면에 진입하는 규칙기반 fallback을 구현했다. 관련 전체 54개 테스트가 통과했다.
+  - Next step: 사용자가 공개 반영을 명시적으로 승인하면 현재 변경을 Cloud Run에 배포하고 실제 1→2페이지 흐름을 확인한다.
+  - Blockers: 로컬 코드는 완료됐지만 공개 Cloud Run에는 아직 배포하지 않았고 현재 로컬 V5 서버도 실행 중이지 않다.
 
 ## Session log
+
+- `session:20260904-1742`
+  - Started: 2026-09-04T17:42+09:00
+  - Last activity: 2026-09-04T17:52+09:00
+  - Focus: Diagnose the V5 finance-input transition failure and make the MVP comparison screen reachable through a bounded deterministic fallback.
+  - Updated keys: `issue:v5-comparison-policy-fallback`, `handoff:current`
+  - Summary: Reproduced the 2026-10-01 `(119, 0, equal_principal)` failure, limited non-selected market ranges to no-action calculation, made V5 refinance exactly 120 payments, and isolated policy-specific cash-flow errors so the baseline and remaining policies still return HTTP 200. Three targeted and 54 related tests passed; no deployment or visual approval was performed.
+
+- `session:20260831-2149`
+  - Started: 2026-08-31T21:49+09:00
+  - Last activity: 2026-08-31T23:18+09:00
+  - Focus: Check whether the 17-day solo-development challenge story already exists and separate documented facts from personal answers only the user can provide.
+  - Updated keys: `handoff:current`
+  - Summary: Drafted challenge and weakness-mitigation answers, then completed seven persuasion-and-communication answers. The latest copy attributes judge-facing order, virtual-case design, and first drafts to AI, while preserving the user's problem recognition, revision instructions, final wording, HWPX entry, screenshot placement, PDF conversion, and final visual review.
+
+- `session:20260831-2019`
+  - Started: 2026-08-31T20:19+09:00
+  - Last activity: 2026-08-31T20:46+09:00
+  - Focus: Determine whether the deployed Cloud Run service can automatically stop near a monthly KRW 10,000 charge threshold.
+  - Updated keys: `decision:v5-finalization-and-project-close`, `handoff:current`
+  - Summary: Reconfirmed the deployment baseline and current official Google Cloud rules, then the user retained the existing all-service KRW 10,000 alert budget and confirmed completion of the separate Cloud Run Spend Cap. Final read-only checks returned HTTP 200 for the public root and `/health`, with `v5-api-v1.0`. Closed the entire project again with no active or pending work; no code, service, data or submission artifact changed.
+
+- `session:20260831-1712`
+  - Started: 2026-08-31T17:12+09:00
+  - Last activity: 2026-08-31T18:04+09:00
+  - Focus: Create a self-contained GitHub-blog demo by copying the current V5 UI and replacing model, server, API, external-AI, and external-resource dependencies with one fixed offline snapshot.
+  - Updated keys: `decision:offline-portfolio-demo`, `handoff:current`
+  - Summary: Preserved `v5/`, created only `데모 사이트/index.html`, embedded the copied V5 UI, CSS, brand SVGs, three policy records, and precomputed downside/central/recovery results for one synthetic case. Removed runtime communication and external resources, disabled mutable assumptions, enforced CSP network blocking, and passed JavaScript, snapshot-contract, and self-contained-resource checks; browser visual approval remains user-owned because local `file://` navigation was blocked by the app browser policy.
+
+- `session:20260831-1746`
+  - Started: 2026-08-31T17:46+09:00
+  - Last activity: 2026-08-31T20:20+09:00
+  - Focus: Reconstruct major 버팀AI pivots, failures, scope cuts, Quantile time-series design, and policy-retrieval model evaluation from project records.
+  - Updated keys: none; read-only retrospective
+  - Summary: Verified the main product and implementation pivots plus the finance-engine record: no silent core amortization error was found; the largest incident was future-date refinance balance alignment that first failed closed and was later extended with execution-date remaining-principal calculation, targeted regression, 93 integrated tests, and live API checks. Also separated a V4 preset won-versus-ten-thousand-won input-conversion bug from core engine math. For generative AI, found no recorded live incident where Luna invented official terms, changed eligibility or ranking, altered finance results, or blocked the whole service. The authority split was preventive before live LLM use: deterministic Rule/Event/cash/ranking facts were locked, unsupported claims and numbers were rejected, and failures fell back locally. A synthetic notice test deliberately added unsupported contact number `1357` and correctly failed that field closed; simulated embedding outages returned BM25 results, while the recorded live Luna query passed Fact-lock. The largest concrete 17-day scope cut was the full AI application copilot: document sample/extraction/comparison, progress tasks, and inquiry-draft layers were partly built, then removed when they proved presentation-like, evidence-poor, and dependent on unapproved sensitive-document/OCR/storage/institution-transfer contracts. The finished core retained deterministic 13-week/6-month policy-effect comparison, condition review, and field-level evidence-validated public-notice extraction, ending at the official application route rather than automatic submission. The model retrospective confirmed the binary persistent-decline model could rank risk but not provide cash-flow shock magnitude, so RE5 compared six Quantile families over three continuous YoY targets and four purged expanding-window folds. XGBoost had 0.17-0.51% lower MAE, but LightGBM had lower Interval Score on all targets and about 8.4x lower fit time; its later internal Holdout was artifact-clean but undercovered at 69.39-71.03%, so it remained an aggregate scenario generator with explicit limits. The retrieval retrospective confirmed 40 cases means 32 search plus 8 safety, and hybrid-large was selected for perfect Recall@5 and Hit@5 despite hybrid-small's higher MRR; BM25 fallback and a five-second, two-attempt maximum were part of the selection. No product, calculation, deployment, or submission artifact changed.
+
+- `session:20260831-1346`
+  - Started: 2026-08-31T13:46+09:00
+  - Last activity: 2026-08-31T16:32+09:00
+  - Focus: Build the final-service portfolio package and close the project until a separate future work request.
+  - Updated keys: `decision:portfolio-final-service-case-study`, `decision:v5-finalization-and-project-close`, `handoff:current`
+  - Summary: Created and verified the external-reader portfolio package using eight images embedded in the final HWPX documents and exact copies of both final PDFs. After delivery, the user explicitly marked the project complete; no work remains active and it will resume only on a separate new request.
+
+- `session:20260831-0942`
+  - Started: 2026-08-31T09:42+09:00
+  - Last activity: 2026-08-31T09:43+09:00
+  - Focus: Record the user's final project closeout and explicit restart conditions.
+  - Updated keys: `decision:v5-finalization-and-project-close`, `handoff:current`
+  - Summary: Marked the project complete after the user confirmed that the proposal and function specification are finished. No code or submission artifact changed; future work resumes only for requested site revisions or advancement to the final round.
 
 - `session:20260830-2204`
   - Started: 2026-08-30T22:04+09:00

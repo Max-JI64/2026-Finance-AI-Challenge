@@ -902,6 +902,12 @@ def orchestrate_state(request: OrchestrateRequest) -> dict[str, Any]:
     groups = _candidate_groups(candidates)
     status_counts = Counter(str(item.get("candidate_state", "확인 필요")) for item in candidates)
     selected_policy_ids = [item.policy_id for item in review_order]
+    conditional_policy_fallbacks = result.get("conditional_policy_fallbacks", [])
+    suppressed_conditional_policy_ids = [
+        str(item.get("policy_id"))
+        for item in conditional_policy_fallbacks
+        if item.get("policy_id")
+    ]
     authority_invariants = _authority_invariants(request, result)
     tool_traces = [
         _tool_trace("finance_diagnosis", selected_policy_ids, "기존 13주·6개월 계산을 그대로 사용했습니다."),
@@ -913,7 +919,16 @@ def orchestrate_state(request: OrchestrateRequest) -> dict[str, Any]:
             status="success" if review_lens is not None else "fallback",
         ),
         _tool_trace("policy_discovery", selected_policy_ids, "기존 로컬 정책 검색과 공식 Rule 결과를 사용했습니다."),
-        _tool_trace("policy_simulator", selected_policy_ids, "기존 Event와 현금흐름 대안을 변경하지 않았습니다."),
+        _tool_trace(
+            "policy_simulator",
+            selected_policy_ids,
+            (
+                "일부 정책 계산 오류는 해당 정책만 제외하고 무대응 기준선과 나머지 정책으로 비교했습니다."
+                if suppressed_conditional_policy_ids
+                else "기존 Event와 현금흐름 대안을 변경하지 않았습니다."
+            ),
+            status="fallback" if suppressed_conditional_policy_ids else "success",
+        ),
     ]
     result["v3"] = {
         "version": "v5-api-v1.0",
@@ -934,7 +949,7 @@ def orchestrate_state(request: OrchestrateRequest) -> dict[str, Any]:
         "status_counts": dict(status_counts),
         "recommended_review_policy_ids": selected_policy_ids or [item.get("policy_id") for item in candidates[:3]],
         "automatic_policy_selection": False,
-        "suppressed_conditional_policy_ids": [],
+        "suppressed_conditional_policy_ids": suppressed_conditional_policy_ids,
         "external_ai_used": False,
         "policy_retrieval": "local_sqlite_bm25",
         "situation_context": (

@@ -211,6 +211,7 @@ def test_v2_future_refinance_uses_execution_date_remaining_balance() -> None:
     plan = preview.plans[0]
     assert 0 < plan.summary["refinanced_principal"] <= 50_000_000
     assert plan.summary["refinanced_principal"] <= baseline.loans[0].principal
+    assert plan.summary["new_payment_count"] == 120
     impact = apply_policy_plan(baseline, [plan])
     assert impact.with_policy.weekly_summary.ending_cash != impact.baseline.weekly_summary.ending_cash
 

@@ -23,7 +23,8 @@ from pydantic import BaseModel, ConfigDict, Field
 from scripts.build_re_stage7_examples import as_detailed, build_hero
 from src.cashflow import DetailedCashflowInput, LoanInput, SimpleCashflowInput
 from src.cashflow.engine import run_detailed_cashflow, run_simple_cashflow
-from src.cashflow.loans import add_months, build_loan_schedule
+from src.cashflow.errors import CashflowInputError
+from src.cashflow.loans import add_months, build_loan_schedule, first_monthly_date
 from src.cashflow.quick_mode import QuickModeInput, build_quick_schedules
 from src.models.re_stage5_scenario_service import predict_market_scenarios
 from src.policy import (
@@ -814,7 +815,7 @@ def _conditional_candidate_context(candidate: dict[str, Any]) -> CandidateContex
     )
 
 
-def _v2_conditional_policy_alternatives(
+def _build_v2_conditional_policy_alternatives_unchecked(
     request: SampleCompareRequest,
     discovery: dict[str, Any],
     baseline: DetailedCashflowInput,
@@ -958,14 +959,16 @@ def _v2_conditional_policy_alternatives(
                 continue
             principal = min(remaining, 50_000_000)
             refinanced_segment = existing.model_copy(update={"principal": principal})
-            maturity = add_months(execution_date, 120)
+            payment_day = 5
+            first_payment = first_monthly_date(execution_date, payment_day)
+            maturity = add_months(first_payment, 119)
             replacement = LoanInput(
                 loan_id="v2-conditional-refinance",
                 principal=principal,
                 annual_interest_rate_percent=4.5,
                 repayment_method="equal_principal",
-                payment_day=5,
-                maturity_date=date(maturity.year, maturity.month, 5),
+                payment_day=payment_day,
+                maturity_date=maturity,
             )
             plan = convert_refinance(RefinanceScenario(
                 policy_id=policy_id,
@@ -992,6 +995,48 @@ def _v2_conditional_policy_alternatives(
                     "연 4.5%·120개월 원금균등 조건부 비교",
                 ],
             ))
+    return alternatives
+
+
+def _v2_conditional_policy_alternatives(
+    request: SampleCompareRequest,
+    discovery: dict[str, Any],
+    baseline: DetailedCashflowInput,
+    market: MarketScenario,
+    *,
+    fallback_events: list[dict[str, str]] | None = None,
+) -> list[AlternativeSpec]:
+    """Build each conditional policy independently and fail open to comparison.
+
+    A policy-specific official-term or schedule mismatch must not prevent the
+    baseline diagnosis and the other valid policies from reaching the user.
+    Invalid user input is validated before this boundary and is not swallowed.
+    """
+
+    alternatives: list[AlternativeSpec] = []
+    for policy_id in request.conditional_policy_ids:
+        policy_request = request.model_copy(
+            update={"conditional_policy_ids": [policy_id]}
+        )
+        try:
+            alternatives.extend(
+                _build_v2_conditional_policy_alternatives_unchecked(
+                    policy_request,
+                    discovery,
+                    baseline,
+                    market,
+                )
+            )
+        except CashflowInputError as exc:
+            if fallback_events is not None:
+                fallback_events.append(
+                    {
+                        "policy_id": policy_id,
+                        "error_code": exc.code,
+                        "field": exc.field,
+                        "fallback": "baseline_and_remaining_policies",
+                    }
+                )
     return alternatives
 
 
@@ -1026,7 +1071,6 @@ def _market_scenario_comparison(
     selected_scenario: str,
     selected_result: Any,
     safe_cash_override: int | None,
-    assume_conditional: bool,
 ) -> list[dict[str, Any]]:
     """Return no-action cash paths for all available aggregate market ranges."""
 
@@ -1038,15 +1082,16 @@ def _market_scenario_comparison(
         if scenario_name == selected_scenario:
             scenario_result = selected_result
         else:
-            scenario_result, _ = build_hero(
+            scenario_result = compare_alternatives(
                 baseline,
-                market=MarketScenario(
+                MarketScenario(
                     target_a_percent=scenario["thirteen_week_percent"],
                     target_b_percent=scenario["six_month_percent"],
                     model_version=prediction["model_version"],
                 ),
+                [],
+                as_of=BASE_AS_OF,
                 safe_cash_override=safe_cash_override,
-                assume_conditional=assume_conditional,
             )
         no_action = next(
             item
@@ -1165,9 +1210,32 @@ def compare_sample(request: SampleCompareRequest) -> dict[str, Any]:
     dynamic_alternatives = _dynamic_policy_alternatives(
         request, discovery, reference_date=baseline.reference_date
     )
+    conditional_policy_fallbacks: list[dict[str, str]] = []
     conditional_alternatives = _v2_conditional_policy_alternatives(
-        request, discovery, baseline, market
+        request,
+        discovery,
+        baseline,
+        market,
+        fallback_events=conditional_policy_fallbacks,
     ) if request.v2_mode else []
+    fallback_policy_ids = {
+        item["policy_id"] for item in conditional_policy_fallbacks
+    }
+    for candidate in discovery["candidates"]:
+        if candidate.get("policy_id") not in fallback_policy_ids:
+            continue
+        readiness = candidate.get("application_readiness") or {}
+        readiness.update(
+            {
+                "conditional_graph_supported": False,
+                "conditional_graph_status": "calculation_unavailable",
+                "conditional_graph_reason": (
+                    "이번 입력에서는 이 정책의 조건부 그래프를 제외하고 "
+                    "무대응 기준선과 나머지 정책 결과를 계산했습니다."
+                ),
+            }
+        )
+        candidate["application_readiness"] = readiness
     if request.v2_mode:
         result = _build_v2_decision(
             request,
@@ -1232,7 +1300,6 @@ def compare_sample(request: SampleCompareRequest) -> dict[str, Any]:
             selected_scenario=request.market_scenario,
             selected_result=result,
             safe_cash_override=request.safe_cash_override,
-            assume_conditional=request.assume_conditional,
         ),
         eligibility_results=discovery["candidates"],
         intervention_results=[item.model_dump(mode="json") for item in result.alternatives],
@@ -1259,6 +1326,7 @@ def compare_sample(request: SampleCompareRequest) -> dict[str, Any]:
         conditional_policy_alternative_ids=[
             item.alternative_id for item in conditional_alternatives
         ],
+        conditional_policy_fallbacks=conditional_policy_fallbacks,
         v2={
             "enabled": request.v2_mode,
             "selected_policy_ids": request.selected_policy_ids,

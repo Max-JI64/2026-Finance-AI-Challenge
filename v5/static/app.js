@@ -176,10 +176,14 @@ function hideLoading() {
 
 async function api(path, options = {}) {
   const headers = options.body ? { "Content-Type": "application/json", ...(options.headers || {}) } : options.headers;
-  const response = await fetch(path, { ...options, headers });
-  const payload = await response.json();
-  if (!response.ok) throw new Error(payload.message || "요청을 처리하지 못했습니다.");
-  return payload;
+  const controller = new AbortController();
+  const timer = window.setTimeout(() => controller.abort(), 20000);
+  try {
+    const response = await fetch(path, { ...options, headers, signal: options.signal || controller.signal });
+    const payload = await response.json();
+    if (!response.ok) throw new Error(payload.message || "요청을 처리하지 못했습니다.");
+    return payload;
+  } finally { window.clearTimeout(timer); }
 }
 
 function showStep(id) {
@@ -658,6 +662,10 @@ async function runComparison(next = "diagnosis", navigate = true, manageLoading 
         await api("/api/v5/orchestrate", { method: "POST", body: JSON.stringify({ comparison: { ...body, market_scenario: scenario }, answered_fields: Object.keys(state.eligibilityAnswers), asked_fields: state.v3AskedFields, situation_context: situationContextPayload(), question_round: state.questionBatchRound, review_lens: state.reviewLens, review_lens_source: state.reviewLensSource, confirmed_review_lens: state.confirmedReviewLens }) }),
       ]));
       state.scenarioResults = Object.fromEntries(entries.map(([scenario, result]) => [scenario, applyGoalRanking(result)]));
+      if (entries.some(([, result]) => result.conditional_policy_fallbacks?.length)) {
+        state.scenarioCacheKey = "";
+        return await window.openDemoFallback();
+      }
       state.scenarioCacheKey = cacheKey;
     }
     state.data = applyGoalRanking(state.scenarioResults[state.scenario]);
@@ -674,7 +682,11 @@ async function runComparison(next = "diagnosis", navigate = true, manageLoading 
     state.selectedAlternative = state.data.comparison_result.top_alternative_id;
     syncPolicySearchToAlternative(state.selectedAlternative);
     renderResults(); updateSummary(); if (navigate) showStep(next); return true;
-  } catch (error) { toast(error.message); return false; }
+  } catch (error) {
+    console.error("Comparison recovery", error);
+    state.scenarioCacheKey = "";
+    return await window.openDemoFallback();
+  }
   finally { if (manageLoading) hideLoading(); button.disabled = false; button.textContent = original; }
 }
 

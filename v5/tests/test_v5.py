@@ -9,6 +9,7 @@ from pathlib import Path
 from fastapi.testclient import TestClient
 
 from app.main import app as v2_app
+from src.cashflow.errors import CashflowInputError
 from src.policy.discovery import POLICY_FIELDS
 from src.rag.policy_index import PolicyChunk, content_hash
 from v4.main import app as v4_app
@@ -319,6 +320,58 @@ def test_orchestration_returns_policy_specific_preparation_choices_without_upfro
     ]
     assert preparation_questions
     assert all(question["policy_ids"] == [candidate["policy_id"]] for candidate in candidates for question in candidate["preparation_questions"])
+
+
+def test_policy_calculation_error_falls_back_and_keeps_comparison_reachable(monkeypatch) -> None:
+    def fail_refinance(*_args, **_kwargs):
+        raise CashflowInputError(
+            "LOAN_TERMS_NOT_IN_OFFICIAL_OPTIONS",
+            "replacement_loan",
+            "대환 후 계약이 공식 옵션에 없습니다.",
+        )
+
+    monkeypatch.setattr("src.integration.re_stage8.convert_refinance", fail_refinance)
+    response = V5.post("/api/v5/orchestrate", json=orchestrate_payload())
+
+    assert response.status_code == 200, response.text
+    body = response.json()
+    assert any(
+        item["alternative_id"] == "no_action"
+        for item in body["intervention_results"]
+    )
+    assert body["v3"]["suppressed_conditional_policy_ids"] == [
+        "POL_SEMAS_REFINANCE_2026"
+    ]
+    refinance_candidate = next(
+        item
+        for item in body["policy_discovery"]["candidates"]
+        if item["policy_id"] == "POL_SEMAS_REFINANCE_2026"
+    )
+    assert (
+        refinance_candidate["application_readiness"]["conditional_graph_status"]
+        == "calculation_unavailable"
+    )
+    simulator_trace = next(
+        item
+        for item in body["tool_execution_trace"]
+        if item["tool_name"] == "policy_simulator"
+    )
+    assert simulator_trace["status"] == "fallback"
+
+
+def test_current_demo_reference_date_reaches_comparison_without_policy_fallback() -> None:
+    payload = orchestrate_payload()
+    payload["comparison"]["quick_input"]["reference_date"] = "2026-10-01"
+
+    response = V5.post("/api/v5/orchestrate", json=payload)
+
+    assert response.status_code == 200, response.text
+    body = response.json()
+    assert body["v3"]["suppressed_conditional_policy_ids"] == []
+    assert any(
+        item["alternative_id"] == "conditional_pol_semas_refinance_2026"
+        for item in body["intervention_results"]
+    )
 
 
 def test_unsure_lens_requires_user_confirmation() -> None:
