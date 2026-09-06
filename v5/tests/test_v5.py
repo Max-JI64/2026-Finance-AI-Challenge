@@ -554,7 +554,10 @@ def test_frontend_uses_v5_session_api_and_no_long_term_storage() -> None:
     assert "신청이 완료된 것은 아닙니다" in extension
     assert "현재 접수 여부 확인" in extension and "다른 정책과 다시 비교" in extension
     assert "analyzed_chunk_count" not in extension
-    assert "sourceDigest" not in extension
+    # Digest is now used internally to prevent replaying a changed notice, never displayed.
+    assert 'sourceDigest: response?.source_digest || ""' in extension
+    assert "${sourceDigest}" not in extension and "${extraction.source_digest}" not in extension
+    assert '/static/notice-fallback.js?v=notice-live-001' in html
     assert "원문 ${" not in extension
     ids = set(re.findall(r'id="([A-Za-z0-9_-]+)"', html))
     referenced = set(re.findall(r'byId\("([A-Za-z0-9_-]+)"\)', app_js + extension))

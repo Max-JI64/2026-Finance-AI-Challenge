@@ -188,6 +188,7 @@ async function api(path, options = {}) {
 }
 
 function showStep(id) {
+  if (id === "preparation" && typeof syncV5PreparationPolicy === "function") syncV5PreparationPolicy();
   const stageByScreen = { business: "diagnosis", finance: "diagnosis", diagnosis: "diagnosis", decision: "comparison", preparation: "preparation" };
   const stageLabels = { diagnosis: "진단", comparison: "비교", preparation: "준비" };
   document.querySelectorAll(".screen").forEach((node) => node.classList.toggle("is-active", node.id === id));

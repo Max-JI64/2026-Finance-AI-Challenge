@@ -381,8 +381,10 @@ function toggleV5RepresentativeDemo() {
 }
 
 async function loadV4ApplicationPlan(policyId = v4State.currentPolicy?.policy_id) {
-  const candidate = (state.data?.policy_discovery?.candidates || []).find((item) => item.policy_id === policyId) || v4State.currentPolicy;
+  const candidate = (state.data?.policy_discovery?.candidates || []).find((item) => item.policy_id === policyId)
+    || (v4State.currentPolicy?.policy_id === policyId ? v4State.currentPolicy : null);
   if (!candidate) return;
+  state.focusedPolicyId = candidate.policy_id;
   v4State.currentPolicy = candidate;
   const readiness = candidate.application_readiness || {};
   v4State.plan = {
@@ -400,6 +402,25 @@ async function loadV4ApplicationPlan(policyId = v4State.currentPolicy?.policy_id
     v4State.noticeExtractions.set(extractionKey, { analysis_status: "loading" });
   }
   renderV4Preparation(); saveV4Session();
+}
+
+function syncV5PreparationPolicy() {
+  // All entry routes (including the top navigation) use the comparison's policy.
+  // Confirmation keys remain policy/version/source-specific; navigation never clears them.
+  const candidates = policyFocusCandidates();
+  const candidate = candidates.find(item => item.policy_id === state.focusedPolicyId) || candidates[0];
+  if (!candidate) {
+    v4State.currentPolicy = null;
+    v4State.plan = null;
+    byId("v4-preparation-empty").hidden = false;
+    byId("v4-preparation-result").hidden = true;
+    return;
+  }
+  // loadV4ApplicationPlan binds and renders synchronously, before showing the screen.
+  // Late analysis responses only update their own keyed entry and render the current plan.
+  void loadV4ApplicationPlan(candidate.policy_id).then(loadV4NoticeExtractions).catch(error => {
+    console.error("Preparation policy synchronization failed", error);
+  });
 }
 
 function v4NoticeExtractionKey(policy) {
@@ -433,28 +454,39 @@ async function loadV4NoticeExtractions() {
   renderV4Preparation();
   await Promise.all(pending.map(async (candidate) => {
     const extractionKey = v4NoticeExtractionKey(candidate);
-    try {
-      const extraction = await api("/api/v5/application/notice-extract", { method: "POST", body: JSON.stringify({
-        policy_id: candidate.policy_id,
-        policy_name: candidate.policy_name,
-        policy_version: candidate.policy_version || null,
-        official_url: candidate.official_url,
-        force_refresh: false,
-      }) });
-      v4State.noticeExtractions.set(extractionKey, extraction);
-    } catch (error) {
-      console.error(error);
-      v4State.noticeExtractions.set(extractionKey, {
-        analysis_status: "unavailable",
-        external_ai_used: false,
-        fallback_reason: "request_failed",
-        fields: [],
-        notice: "AI 공고 분석을 완료하지 못했습니다. 공식 공고에서 필요한 값을 직접 확인해 주세요.",
-      });
-    }
+    v4State.noticeExtractions.set(extractionKey, await requestV5NoticeExtraction(candidate));
     renderV4Preparation();
   }));
   renderV4Preparation();
+}
+
+async function requestV5NoticeExtraction(candidate, forceRefresh = false, previous = null) {
+  let response = null;
+  try {
+    if (window.v5NoticeFallback?.testMode()) throw new Error("Forced GPT notice failure");
+    response = await api("/api/v5/application/notice-extract", { method: "POST", body: JSON.stringify({
+      policy_id: candidate.policy_id, policy_name: candidate.policy_name,
+      policy_version: candidate.policy_version || null, official_url: candidate.official_url,
+      force_refresh: forceRefresh,
+    }) });
+    if (!window.v5NoticeFallback?.usable(response, candidate)) throw new Error("Notice analysis unavailable or incomplete");
+    return response;
+  } catch (error) {
+    console.warn("Using recorded GPT notice analysis", error);
+    try {
+      return await window.v5NoticeFallback.load(candidate, {previous, sourceDigest: response?.source_digest || ""});
+    } catch (fallbackError) {
+      console.error(fallbackError);
+      // Never substitute a different policy/version or invent official requirements.
+      return {analysis_status: "unavailable", external_ai_used: false, fields: [], fallback_reason: "recorded_analysis_unavailable"};
+    }
+  }
+}
+
+function v5NoticeProvenance(extraction) {
+  if (!extraction.fallback) return extraction.cache_status === "fresh" ? "방금 다시 정리함" : "저장된 분석 결과 사용";
+  if (extraction.fallback.kind === "retained") return "연결 지연으로 기존 분석 결과 유지 · 새 AI 응답 아님";
+  return `실제 GPT 분석 저장본 · ${extraction.fallback.level}차 fallback · 분석 저장 ${extraction.fallback.captured_at || "시각 미확인"} · 새 AI 응답 아님`;
 }
 
 function renderV4NoticeExtraction(plan) {
@@ -477,7 +509,7 @@ function renderV4NoticeExtraction(plan) {
   }).join("");
   const foundFields = (extraction.fields || []).filter((field) => field.status === "found");
   const confirmedCount = foundFields.filter((field) => v4State.noticeFieldConfirmations.has(v4NoticeFieldConfirmationKey(plan.policy, extraction, field.key))).length;
-  const cacheLabel = extraction.cache_status === "fresh" ? "방금 다시 정리함" : "저장된 분석 결과 사용";
+  const cacheLabel = escapeHtml(v5NoticeProvenance(extraction));
   return `<section class="v4-notice-ai"><div class="v4-notice-ai-heading"><div><span>AI 공고 분석</span><h3>저장 공고에서 정리한 신청 핵심정보</h3></div><div class="v4-notice-ai-meta"><small>공고 저장 기준일 ${escapeHtml(extraction.retrieved_at || "미확인")} · ${cacheLabel}</small><button type="button" class="secondary" data-v4-refresh-notice="${escapeHtml(plan.policy.policy_id)}">공고 다시 분석</button></div></div><p class="v4-notice-ai-guide">항목별 내용을 살펴보고, 필요한 정보는 공식 공고에서 직접 확인해 주세요.</p><p class="v4-notice-confirm-summary"><strong>이 정책의 공고 항목 ${confirmedCount} / ${foundFields.length}개 확인</strong><span>정책 개수가 아니라, 선택한 정책 한 건에서 확인할 신청정보 개수입니다.</span></p><div class="v4-notice-field-grid">${fields}</div><p class="v4-evidence-warning">AI가 정리한 내용은 신청 준비를 위한 참고 정보입니다. 현재 접수 여부·잔여 예산·최종 자격은 공식 공고와 신청기관에서 확인해야 합니다.</p></section>`;
 }
 
@@ -508,7 +540,7 @@ function renderV5NoticeExtraction(plan) {
   const nextField = orderedFields.find((field) => !isConfirmed(field)) || null;
   const remaining = orderedFields.filter((field) => field !== nextField);
   const confirmedCount = orderedFields.filter(isConfirmed).length;
-  const cacheLabel = extraction.cache_status === "fresh" ? "방금 다시 정리함" : "저장된 분석 결과 사용";
+  const cacheLabel = escapeHtml(v5NoticeProvenance(extraction));
   const nextHtml = nextField
     ? `<section class="v5-next-notice" aria-labelledby="v5-next-notice-title"><p class="eyebrow">다음 확인 1개</p><h3 id="v5-next-notice-title" tabindex="-1">${escapeHtml(nextField.label)}부터 확인하세요</h3>${v5NoticeFieldCard(plan, extraction, nextField, true)}</section>`
     : `<section class="v5-next-notice is-complete"><p class="eyebrow">이 화면의 확인 완료</p><h3 id="v5-next-notice-title" tabindex="-1">여기서 확인할 내용은 모두 끝났습니다</h3><p>앞에서 확인한 자격조건과 공고 핵심정보를 모두 읽었습니다. 신청이 완료된 것은 아닙니다.</p><ol><li>공식 공고에서 현재 접수 여부와 잔여 예산 확인</li><li>신청기관에서 최종 자격과 확정 지원조건 확인</li><li>공식 신청 경로에서 접수 준비</li></ol><div class="v5-completion-actions"><a class="primary" href="${safeUrl(plan.policy.official_url)}" target="_blank" rel="noreferrer">현재 접수 여부 확인</a><button type="button" class="secondary" data-v5-return-comparison>다른 정책과 다시 비교</button></div></section>`;
@@ -522,21 +554,11 @@ async function refreshV4NoticeExtraction(policyId) {
   const candidate = v4SelectedNoticeCandidates().find((item) => item.policy_id === policyId) || v4State.currentPolicy;
   if (!candidate) return;
   const extractionKey = v4NoticeExtractionKey(candidate);
-  v4State.noticeExtractions.set(extractionKey, { analysis_status: "loading" });
+  const previous = v4State.noticeExtractions.get(extractionKey);
+  // Keep current cards visible while a refresh is running.
+  if (!previous || previous.analysis_status !== "completed") v4State.noticeExtractions.set(extractionKey, { analysis_status: "loading" });
   renderV4Preparation();
-  try {
-    const extraction = await api("/api/v5/application/notice-extract", { method: "POST", body: JSON.stringify({
-      policy_id: candidate.policy_id,
-      policy_name: candidate.policy_name,
-      policy_version: candidate.policy_version || null,
-      official_url: candidate.official_url,
-      force_refresh: true,
-    }) });
-    v4State.noticeExtractions.set(extractionKey, extraction);
-  } catch (error) {
-    console.error(error);
-    v4State.noticeExtractions.set(extractionKey, { analysis_status: "unavailable", fields: [], notice: "공고를 다시 분석하지 못했습니다. 잠시 후 다시 시도해 주세요." });
-  }
+  v4State.noticeExtractions.set(extractionKey, await requestV5NoticeExtraction(candidate, true, previous));
   renderV4Preparation();
 }
 
@@ -759,7 +781,6 @@ document.addEventListener("click", async (event) => {
     try {
       await loadV4ApplicationPlan(start.dataset.v4StartApplication);
       showStep("preparation");
-      await loadV4NoticeExtractions();
     } catch (error) {
       console.error(error);
       toast("신청 준비 내용을 불러오지 못했습니다. 화면을 새로고침한 뒤 다시 시도해 주세요.");
