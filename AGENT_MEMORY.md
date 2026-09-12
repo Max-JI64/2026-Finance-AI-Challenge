@@ -5,11 +5,18 @@
 
 ## Project snapshot
 
-- Last updated: 2026-09-05T13:04+09:00
+- Last updated: 2026-09-12T12:00+09:00
 - Purpose: Build a bounded-AI Seoul small-business finance copilot that separates store trends from aggregate market scenarios, shows policy candidates without an upfront question gate, lets users choose each selected policy's reviewed conditions in its preparation screen, and compares no action with confirmed or explicitly conditional policy effects on deterministic 13-week and 6-month cash/debt horizons.
 - Important paths: `V2 단계별 구현 계획표.md` and `V3 사용자 경험 구성안.md` preserve earlier versions; `V4 구현 계획표.md` and `v4/` preserve the implemented V4; `V5 구현 계획표.md`, `V5 사용자 경험 흐름.md`, `v5/`, `v5/VERIFICATION.md`, and `reports/v5/evaluation/` describe the implemented V5, its V6 comparison baseline, verification evidence, and fixed evaluation Oracles. `포트폴리오/2026 금융 AI Challenge - 버팀AI/` contains the final-service portfolio case study, two detail pages, eight HWPX-embedded images converted to PNG, and exact copies of the final proposal and function-specification PDFs. `데모 사이트/index.html` is the self-contained offline portfolio demo derived from the current V5 UI.
 
 ## Durable decisions
+
+- `decision:portfolio-root-readme`
+  - Created: 2026-09-12T12:00+09:00
+  - Updated: 2026-09-12T12:00+09:00
+  - Status: active
+  - Content: 루트 README는 사용자가 지정한 공개 버팀AI 포트폴리오를 기준으로 작성한 저장소 소개다. 문제 정의, 고정 가상 사례, 진단·비교·준비, 모델과 금융 계산의 역할 분리, 시행착오, 검증 한계와 코드 탐색을 담고, 공개 포트폴리오·정적 데모·PDF·화면 이미지에 연결한다. 이전 Stage 진행 상황과 구형 app.main 실행 안내는 제거했다.
+  - Evidence: `README.md`; https://max-ji64.github.io/projects/2026-finance-ai-challenge-buteomai/ 본문을 2026-09-12 직접 확인. 상대 경로 9개와 대표 사례 차액, 코드펜스, git diff --check 검증.
 
 - `decision:offline-portfolio-demo`
   - Created: 2026-08-31T17:12+09:00
@@ -860,12 +867,19 @@
 - Recovery extension (2026-09-05T13:04+09:00): 사용자 요청으로 정책 제외 이후 저장 예시 JSON을 사용하는 2차 fallback과 네트워크·파일 장애 시 브라우저 내장 예시를 사용하는 3차 fallback을 추가했다. 전체 비교를 독립 가상 시연 화면으로 전환하며 무대응·비차입 지원·대환·신규 융자 4개 현금 선과 금액 표, 정책 탭, 입력 복귀 버튼을 제공한다. 원래 선택 정책에 대한 개인화 결과로 표시하지 않는다. API에는 20초 제한, 예시 요청에는 3초 제한을 두었고 정상 JSON·offline·손상·timeout Node 검증이 통과했다. 공개 배포와 실제 브라우저 시각 검사는 미수행이다.
 
 - `handoff:current`
-  - Updated: 2026-09-04T17:52+09:00
-  - Current state: V5의 2026-10-01 대환 119개월 오류를 수정했고, 개별 조건부 정책 계산 실패 시 해당 정책만 제외한 채 무대응 기준선과 나머지 정책으로 비교 화면에 진입하는 규칙기반 fallback을 구현했다. 관련 전체 54개 테스트가 통과했다.
-  - Next step: 사용자가 공개 반영을 명시적으로 승인하면 현재 변경을 Cloud Run에 배포하고 실제 1→2페이지 흐름을 확인한다.
-  - Blockers: 로컬 코드는 완료됐지만 공개 Cloud Run에는 아직 배포하지 않았고 현재 로컬 V5 서버도 실행 중이지 않다.
+  - Updated: 2026-09-12T12:00+09:00
+  - Current state: 공개 포트폴리오 기반 루트 README 전면 재작성 완료. 기존 9월 4~5일 비교 화면 오류 수정과 가상 시연 fallback 기록은 유지하며 이번 작업에서 서비스 코드·배포를 변경하지 않았다.
+  - Next step: 이번 README 요청의 남은 작업 없음. 서비스 공개 반영은 기존과 같이 사용자의 명시적 요청이 있을 때 진행한다.
+  - Blockers: README 작업의 차단 사항 없음. 이전 서비스 수정의 배포·브라우저 시각 승인과 현재 서버 상태는 이번에 확인하지 않았다.
 
 ## Session log
+
+- `session:20260912-1155`
+  - Started: 2026-09-12T11:55+09:00
+  - Last activity: 2026-09-12T12:00+09:00
+  - Focus: 사용자가 지정한 공개 포트폴리오를 바탕으로 루트 README를 처음부터 재작성.
+  - Updated keys: `decision:portfolio-root-readme`, `handoff:current`
+  - Summary: 공개 페이지를 직접 읽고 문제·사례·흐름·설계·시행착오·검증 한계와 산출물 링크를 재구성했다. 현재 V5 진입점과 상대 경로, 사례 차액, Markdown 기본 구조를 확인했으며 서비스 코드와 배포는 변경하지 않았다.
 
 - `session:20260904-1742`
   - Started: 2026-09-04T17:42+09:00
